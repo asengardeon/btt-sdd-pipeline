@@ -1,0 +1,111 @@
+name: CD
+
+# CD dispara pelo término do workflow CI em main (não por push direto) — assim um push que pule
+# CI (ex.: branch protection mal configurada) não consegue disparar deploy. workflow_dispatch
+# permite rodar manualmente, para um ambiente escolhido.
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Ambiente de destino"
+        required: true
+        default: "staging"
+        type: choice
+        options: [staging, production]
+
+jobs:
+  build-and-push:
+    name: Build e push da imagem
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success')
+    outputs:
+      image: ${{ steps.image.outputs.uri }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar credenciais AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Login no ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build e push
+        id: image
+        env:
+          REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          REPOSITORY: projeto-base-ia-${{ inputs.environment || 'staging' }}
+          TAG: ${{ github.sha }}
+        run: |
+          docker build -f infra/docker/Dockerfile -t "$REGISTRY/$REPOSITORY:$TAG" .
+          docker push "$REGISTRY/$REPOSITORY:$TAG"
+          echo "uri=$REGISTRY/$REPOSITORY:$TAG" >> "$GITHUB_OUTPUT"
+
+  terraform-plan:
+    name: Terraform plan
+    runs-on: ubuntu-latest
+    needs: build-and-push
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: terraform init
+        working-directory: infra/terraform
+        run: terraform init
+
+      - name: terraform plan
+        working-directory: infra/terraform
+        run: >
+          terraform plan
+          -var="environment=${{ inputs.environment || 'staging' }}"
+          -var="container_image=${{ needs.build-and-push.outputs.image }}"
+          -out=tfplan
+
+      - name: Upload do plano
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan-${{ inputs.environment || 'staging' }}
+          path: infra/terraform/tfplan
+
+  terraform-apply:
+    name: Terraform apply (gated)
+    runs-on: ubuntu-latest
+    needs: terraform-plan
+    # environment protegido: exige aprovação manual no GitHub antes deste job rodar.
+    environment: ${{ inputs.environment || 'staging' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Download do plano
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan-${{ inputs.environment || 'staging' }}
+          path: infra/terraform
+
+      - name: terraform init
+        working-directory: infra/terraform
+        run: terraform init
+
+      - name: terraform apply
+        working-directory: infra/terraform
+        run: terraform apply tfplan

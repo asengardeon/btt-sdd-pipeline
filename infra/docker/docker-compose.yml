@@ -1,0 +1,7 @@
+services:
+  task-cli:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile
+    image: projeto-base-ia-example:local
+    command: ["list"]

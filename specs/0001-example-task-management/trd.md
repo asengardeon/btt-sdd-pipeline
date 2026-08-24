@@ -1,0 +1,101 @@
+# TRD — Gestão simples de tarefas (exemplo do pipeline SDD)
+
+> Status: aprovado
+> Autor: agente `architect`
+> PRD relacionado: `specs/0001-example-task-management/prd.md`
+> ADRs relacionados: nenhum (design direto, sem trade-off significativo a registrar)
+
+## 1. Contexto
+
+Implementar criar/listar/concluir tarefas como exemplo de referência do pipeline, usando Python
+como stack ilustrativa, respeitando ports & adapters, SOLID, TDD e o gate de cobertura de 80%.
+
+## 2. Visão de arquitetura
+
+```
+[CLI (adapters/inbound/cli.py)] → [CreateTask / ListTasks / CompleteTask] → [TaskRepository port]
+                                              ↓                                      ↑
+                                     [domain/task.py]              [InMemoryTaskRepository
+                                                                     (adapters/outbound)]
+```
+
+## 3. Modelo de domínio
+
+`Task` (`src/domain/task.py`): `id: str`, `title: str`, `done: bool = False`.
+
+Invariantes:
+- Título não pode ser vazio/em branco — viola gera `EmptyTaskTitleError` na construção.
+- Uma tarefa já concluída não pode ser concluída de novo — viola gera `TaskAlreadyCompletedError`.
+
+## 4. Ports (contratos)
+
+### `TaskRepository` (`src/application/ports/task_repository.py`)
+
+- Responsabilidade única: persistir e recuperar tarefas.
+- Métodos:
+  - `save(task: Task) -> None` — cria ou atualiza (upsert por `id`).
+  - `get(task_id: str) -> Task | None`
+  - `list_all() -> list[Task]`
+- Quem implementa: `InMemoryTaskRepository`.
+- Quem consome: `CreateTaskUseCase`, `ListTasksUseCase`, `CompleteTaskUseCase`.
+
+## 5. Casos de uso
+
+| Critério de aceite (PRD)                         | Caso de uso           | Ports usados     |
+|-----------------------------------------------------|-------------------------|--------------------|
+| US-1 (criar com título válido / rejeitar vazio)      | `CreateTaskUseCase`      | `TaskRepository`   |
+| US-2 (listar vazio / listar existentes)              | `ListTasksUseCase`       | `TaskRepository`   |
+| US-3 (concluir / concluir 2x / concluir inexistente) | `CompleteTaskUseCase`    | `TaskRepository`   |
+
+Validação de título vazio acontece no construtor de `Task` (domínio), não no caso de uso — é uma
+invariante do domínio, não uma regra de aplicação.
+
+## 6. Adapters
+
+### Entrada
+
+- `TaskCLI` (`src/adapters/inbound/cli.py`): comandos `create <título>`, `list`, `complete <id>`.
+  Formata a saída como texto; não contém lógica de negócio, só parsing de argumento e chamada aos
+  casos de uso.
+
+### Saída
+
+- `InMemoryTaskRepository` (`src/adapters/outbound/in_memory_task_repository.py`): dicionário em
+  memória, chave por `id`. Suficiente para o exemplo; uma implementação real (ex.: Postgres)
+  substituiria esta classe sem alterar caso de uso ou domínio.
+
+## 7. Modelo de dados / contratos externos
+
+N/A — sem persistência real nem API externa neste exemplo.
+
+## 8. Requisitos não funcionais
+
+- Performance: N/A (dataset trivial, em memória).
+- Segurança: N/A (sem dado sensível, sem rede).
+- Observabilidade: saída de CLI já serve como log mínimo para este exemplo.
+- **Impacto em infraestrutura para o SRE revisar:** nenhum além do Dockerfile/CI padrão do
+  template — não há serviço de longa duração nem recurso de nuvem específico exigido por esta
+  feature.
+
+## 9. Plano de testes (alto nível)
+
+- Unitário (`tests/unit/`): `domain/task.py` (invariantes) e cada caso de uso com um
+  `FakeTaskRepository` local ao teste.
+- Integração (`tests/integration/`): `InMemoryTaskRepository` contra o contrato do port
+  (`save`/`get`/`list_all`, incluindo upsert).
+- E2E (`tests/e2e/`): fluxo completo via `TaskCLI.run` — criar → listar → concluir, mais os
+  cenários de erro (título vazio, id inexistente, conclusão duplicada).
+- Meta de cobertura: 80% (padrão do repositório).
+
+## 10. Riscos e trade-offs
+
+- Repositório em memória não persiste entre execuções da CLI — aceito, é o escopo explícito do
+  PRD (fora de escopo: persistência real).
+
+## 11. Questões em aberto
+
+Nenhuma.
+
+## 12. Aprovação
+
+- [x] Aprovado por: asengardeons@hotmail.com em 2026-08-24

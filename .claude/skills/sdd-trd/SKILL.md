@@ -1,0 +1,26 @@
+---
+name: sdd-trd
+description: Etapa 2 do pipeline SDD. Use depois que um PRD existe e foi aprovado, para gerar o desenho técnico. Aciona o agente architect para produzir specs/<slug>/trd.md a partir de specs/<slug>/prd.md.
+---
+
+# /sdd-trd
+
+Aciona a **etapa 2** do pipeline SDD descrito em `CLAUDE.md`: geração do TRD a partir do PRD.
+
+## Passos
+
+1. Identifique o slug da feature: se `args` traz um slug ou número, use-o; senão, se só existe
+   uma spec com `prd.md` sem `trd.md` ainda, use essa; senão, pergunte ao usuário qual feature.
+2. Confirme que `specs/<slug>/prd.md` existe. Se não existir, informe o usuário e sugira rodar
+   `/sdd-prd` primeiro — não prossiga sem PRD.
+3. Invoque o agente `architect` (Agent tool, `subagent_type: "architect"`) passando o caminho do
+   PRD e instrução para salvar o TRD em `specs/<slug>/trd.md` usando
+   `specs/_template/trd.template.md`, registrando ADRs em `docs/adr/` quando relevante.
+4. Mostre ao usuário um resumo do TRD (arquitetura proposta, ports definidos, principais
+   trade-offs) e peça aprovação explícita.
+5. Se pedir ajustes, repasse ao `architect` até aprovação.
+6. Ao final, informe que a próxima etapa é `/sdd-implement`.
+
+## Quando usar sem o agente
+
+Se o Agent tool não estiver disponível, siga `.claude/agents/architect.md` diretamente.
