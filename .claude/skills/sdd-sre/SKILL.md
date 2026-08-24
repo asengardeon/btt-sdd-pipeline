@@ -1,20 +1,21 @@
 ---
 name: sdd-sre
-description: Etapa 5 (final) do pipeline SDD. Use depois que o QA aprovou uma feature, para validar CI/CD, Docker e Terraform antes do deploy. Também use fora do fluxo de uma feature específica quando o usuário pedir revisão de pipeline ou infraestrutura. Aciona o agente sre para produzir specs/<slug>/sre-review.md.
+description: Etapa 6 (final) do pipeline SDD. Use depois que QA e segurança aprovaram uma feature, para validar CI/CD, Docker e Terraform antes do deploy. Também use fora do fluxo de uma feature específica quando o usuário pedir revisão de pipeline ou infraestrutura. Aciona o agente sre para produzir specs/<slug>/sre-review.md.
 ---
 
 # /sdd-sre
 
-Aciona a **etapa 5** do pipeline SDD descrito em `CLAUDE.md`: validação de CI/CD e infraestrutura.
+Aciona a **etapa 6** do pipeline SDD descrito em `CLAUDE.md`: validação de CI/CD e infraestrutura.
 
 ## Passos
 
 1. Identifique o slug da feature (mesma lógica das skills anteriores).
-2. Confirme que `specs/<slug>/qa-report.md` existe com veredito aprovado. Se não, sugira
-   `/sdd-qa` primeiro — não pule QA.
+2. Confirme que `specs/<slug>/qa-report.md` **e** `specs/<slug>/security-review.md` existem com
+   veredito aprovado. Se algum faltar, sugira `/sdd-qa` e/ou `/sdd-security` primeiro — não pule
+   nenhum dos dois.
 3. Invoque o agente `sre` (Agent tool, `subagent_type: "sre"`) passando o caminho do TRD (seção
-   de requisitos não funcionais/infra) e do `qa-report.md`, e instrução para produzir
-   `specs/<slug>/sre-review.md` a partir de `specs/_template/sre-review.template.md`.
+   de pilares de engenharia/infra), do `qa-report.md` e do `security-review.md`, e instrução para
+   produzir `specs/<slug>/sre-review.md` a partir de `specs/_template/sre-review.template.md`.
 4. O agente `sre` já embute o gate de aprovação: qualquer proposta de mudança real de
    infraestrutura (`terraform apply`) é apresentada como plano e só executada após aprovação
    explícita do usuário via `AskUserQuestion`. Você não precisa duplicar essa confirmação, mas

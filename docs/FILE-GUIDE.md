@@ -11,30 +11,39 @@ e `docs/SDD-WORKFLOW.md`; este documento é sobre *o que cada coisa é*.
 - **`README.md`** — introdução para humanos (não é carregado automaticamente pelo Claude Code):
   o que é o repositório e como começar a usá-lo.
 
-## `.claude/agents/` — os 5 agentes do pipeline
+## `.claude/agents/` — os agentes do pipeline (6 + 1 condicional)
 
 Cada arquivo `.md` aqui define um **subagente** invocável pela ferramenta Agent/Task do Claude
 Code. O nome do arquivo (sem `.md`) é o `subagent_type`. O frontmatter YAML no topo declara nome,
 descrição (usada para o Claude decidir quando invocar) e quais ferramentas o agente pode usar; o
 corpo do arquivo é o "prompt de sistema" daquele agente — seu papel, regras e processo.
 
-Todos os 5 têm `AskUserQuestion` — é o mecanismo pelo qual param e perguntam ao usuário de verdade
-em vez de assumir (regra de governança em `docs/QUALITY-GATES.md`), sempre oferecendo "VALIDAR
+Todos têm `AskUserQuestion` — é o mecanismo pelo qual param e perguntam ao usuário de verdade em
+vez de assumir (regra de governança em `docs/QUALITY-GATES.md`), sempre oferecendo "VALIDAR
 DEPOIS" como opção quando cabível.
 
+- **`codebase-archaeologist.md`** — etapa **condicional** (etapa 0): produz `docs/BASELINE.md`
+  quando falta documentação base sobre código já existente. Tem `Bash` para ler histórico/rodar
+  testes existentes sem alterá-los, e `Write`/`Edit` só para documentação — nunca corrige/refatora
+  código.
 - **`product-design.md`** — gera o PRD a partir de um pedido. Não roda comandos (sem acesso a
   `Bash`) porque essa etapa é puramente de produto.
-- **`architect.md`** — gera o TRD a partir do PRD aprovado. Também sem `Bash`.
+- **`architect.md`** — gera o TRD a partir do PRD aprovado (e de `docs/BASELINE.md`, quando
+  existir), incluindo os pilares de engenharia (`docs/ENGINEERING-PILLARS.md`). Também sem `Bash`.
 - **`senior-developer.md`** — implementa a feature via TDD a partir do TRD, dentro de uma branch
   GitHub Flow. Tem acesso a `Bash` porque precisa rodar testes/lint/git durante o ciclo
   red-green-refactor. Apresenta um plano de implementação e pede aprovação antes do primeiro
   commit.
 - **`qa-engineer.md`** — valida a implementação contra PRD/TRD e o PR aberto. Tem `Bash` para
-  rodar a suíte de testes e o relatório de cobertura, mas não tem `Write`/`Edit` — QA não corrige
-  código, reporta.
-- **`sre.md`** — valida/ajusta CI/CD e infraestrutura. Tem `Bash`, `Write` e `Edit` porque pode
-  precisar ajustar arquivos de `infra/` e `.github/workflows/` diretamente; qualquer alteração
-  real de infraestrutura passa por um plano aprovado antes de executar.
+  rodar a suíte de testes e o relatório de cobertura, e `Write`/`Edit` só para o próprio
+  `qa-report.md` — QA não corrige código de produção, reporta.
+- **`security-engineer.md`** — revisa segurança da aplicação (OWASP, segredos, autenticação/
+  autorização, validação de entrada, dependências) depois do QA. Mesma lógica de `Write`/`Edit`
+  restrito ao próprio `security-review.md` — não corrige código, reporta.
+- **`sre.md`** — valida/ajusta CI/CD e infraestrutura, depois de QA e segurança aprovados. Tem
+  `Bash`, `Write` e `Edit` porque pode precisar ajustar arquivos de `infra/` e
+  `.github/workflows/` diretamente; qualquer alteração real de infraestrutura passa por um plano
+  aprovado antes de executar.
 
 ## `.claude/skills/` — os comandos que acionam o pipeline
 
@@ -42,10 +51,12 @@ Cada subpasta é uma skill invocável como slash command (`/nome-da-pasta`). O a
 `SKILL.md` dentro dela contém as instruções que o Claude segue quando o comando é chamado —
 tipicamente: validar pré-condição, invocar o agente correspondente, e comunicar o resultado.
 
+- **`sdd-baseline/`** → `/sdd-baseline` — aciona `codebase-archaeologist` (condicional).
 - **`sdd-prd/`** → `/sdd-prd` — aciona `product-design`.
 - **`sdd-trd/`** → `/sdd-trd` — aciona `architect`.
 - **`sdd-implement/`** → `/sdd-implement` — aciona `senior-developer`.
 - **`sdd-qa/`** → `/sdd-qa` — aciona `qa-engineer`.
+- **`sdd-security/`** → `/sdd-security` — aciona `security-engineer`.
 - **`sdd-sre/`** → `/sdd-sre` — aciona `sre`.
 - **`sdd-status/`** → `/sdd-status` — utilitário de leitura, não aciona nenhum agente; mostra em
   que etapa cada feature de `specs/` está, quantas pendências VALIDAR DEPOIS tem, e se alguma
@@ -60,14 +71,20 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
 
 - **`ARCHITECTURE.md`** — explica ports & adapters, SOLID e clean code, e como mapeiam para
   `src/`.
-- **`SDD-WORKFLOW.md`** — explica o pipeline de 5 etapas em detalhe: entrada/saída/gate de cada
-  uma.
+- **`SDD-WORKFLOW.md`** — explica o pipeline de 6 etapas (+ 1 condicional) em detalhe:
+  entrada/saída/gate de cada uma.
 - **`TESTING.md`** — explica TDD, a pirâmide de testes e o gate de cobertura de 80%.
+- **`ENGINEERING-PILLARS.md`** — explica os pilares de engenharia (performance, escalabilidade,
+  resiliência, disponibilidade, observabilidade, manutenibilidade) que o `architect` precisa
+  endereçar explicitamente na seção 8 do TRD.
 - **`QUALITY-GATES.md`** — checklist único e não-negociável dos gates críticos do pipeline
-  (governança de decisão, PRD, TRD, implementação, QA, SRE, merge) — referência central citada por
-  todos os agentes, para não duplicar a lista em cinco lugares.
+  (governança de decisão, baseline, PRD, TRD, implementação, QA, segurança, SRE, merge) —
+  referência central citada por todos os agentes, para não duplicar a lista em cada um deles.
 - **`GIT-WORKFLOW.md`** — GitHub Flow aplicado ao pipeline: convenção de branch, PR, proteção de
   `main`, e como cada etapa do SDD se relaciona com branch/PR/merge.
+- **`BASELINE.md`** — **gerado condicionalmente** pelo `codebase-archaeologist` (não existe por
+  padrão neste repositório, já que ele nasceu 100% documentado pelo próprio pipeline). Quando
+  existe, descreve um sistema/código pré-existente "como é" (as-is), não como deveria ser.
 - **`FILE-GUIDE.md`** — este arquivo.
 - **`adr/`** — Architecture Decision Records. Cada arquivo numerado registra uma decisão técnica
   significativa (contexto, opções consideradas, decisão, consequências). `0001-...md` é o próprio
@@ -76,13 +93,14 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
 ## `specs/` — os artefatos do pipeline SDD, um diretório por feature
 
 - **`_template/`** — os modelos (`prd.template.md`, `trd.template.md`, `qa-report.template.md`,
-  `sre-review.template.md`) que os agentes preenchem. Não é uma feature, é a fôrma usada por
-  todas. Todos os quatro têm uma seção "Pendências de validação (VALIDAR DEPOIS)" e um "Log de
-  revisões" (preenchido pelo `/sdd-amend`); o PRD também tem "Indicadores técnicos a observar"
-  (volumetria, segurança, legal) e o TRD tem "Controle de versão (GitHub Flow)" (branch/PR).
+  `security-review.template.md`, `sre-review.template.md`) que os agentes preenchem. Não é uma
+  feature, é a fôrma usada por todas. Todos têm uma seção "Pendências de validação (VALIDAR
+  DEPOIS)" e um "Log de revisões" (preenchido pelo `/sdd-amend`); o PRD também tem "Indicadores
+  técnicos a observar" (volumetria, segurança, legal), o TRD tem "Pilares de engenharia de
+  software" e "Controle de versão (GitHub Flow)" (branch/PR).
 - **`0001-example-task-management/`** — exemplo real e completo do pipeline rodado do início ao
-  fim (PRD → TRD → código em `src/` → QA report → SRE review), usado como referência de nível de
-  detalhe esperado.
+  fim (PRD → TRD → código em `src/` → QA report → security review → SRE review), usado como
+  referência de nível de detalhe esperado.
 - **Cada feature nova** ganha uma pasta `NNNN-slug-em-kebab-case/` com os artefatos que forem
   sendo produzidos por cada etapa.
 

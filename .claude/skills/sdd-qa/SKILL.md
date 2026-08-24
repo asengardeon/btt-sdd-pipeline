@@ -18,7 +18,7 @@ Aciona a **etapa 4** do pipeline SDD descrito em `CLAUDE.md`: validação de QA.
    `specs/_template/qa-report.template.md`, referenciando o PR.
 4. Mostre ao usuário o veredito geral (aprovado/reprovado) e os pontos principais do relatório.
 5. Se reprovado, informe que a feature volta para `/sdd-implement` com os achados listados. Se
-   aprovado, informe que a próxima etapa é `/sdd-sre`.
+   aprovado, informe que a próxima etapa é `/sdd-security`.
 
 ## Quando usar sem o agente
 

@@ -3,16 +3,21 @@
 Este repositório é um **template de desenvolvimento orientado a especificação (SDD — Spec-Driven
 Development)**. Ele existe para que qualquer feature nasça de uma especificação de produto,
 passe por um desenho técnico revisável, seja implementada com TDD e só chegue a produção depois
-de QA e validação de SRE — tudo com agentes dedicados a cada etapa.
+de QA, revisão de segurança e validação de SRE — tudo com agentes dedicados a cada etapa.
 
 Se você é uma instância do Claude Code trabalhando neste repo, leia isto antes de fazer qualquer
 mudança de código. Para o detalhe de cada arquivo/pasta, veja `docs/FILE-GUIDE.md`. Para o fluxo
 completo do pipeline, veja `docs/SDD-WORKFLOW.md`. Para os gates críticos que nenhuma etapa pode
-pular, veja `docs/QUALITY-GATES.md`. Para o fluxo de branch/PR, veja `docs/GIT-WORKFLOW.md`.
+pular, veja `docs/QUALITY-GATES.md`. Para o fluxo de branch/PR, veja `docs/GIT-WORKFLOW.md`. Para
+os pilares de engenharia (escalabilidade, resiliência etc.) que o TRD precisa endereçar, veja
+`docs/ENGINEERING-PILLARS.md`.
 
-## O pipeline (5 etapas, 5 agentes)
+## O pipeline (6 etapas, 6 agentes, + 1 etapa condicional)
 
 ```
+[0] codebase-archaeologist ──▶ docs/BASELINE.md  (SÓ quando falta documentação base — condicional)
+   │
+   ▼
 ideia/pedido
    │
    ▼
@@ -28,26 +33,31 @@ ideia/pedido
 [4] qa-engineer       ──▶  QA report (specs/<slug>/qa-report.md)
    │
    ▼
-[5] sre               ──▶  SRE review (specs/<slug>/sre-review.md) — CI/CD, Docker, Terraform
+[5] security-engineer ──▶  Security review (specs/<slug>/security-review.md) — OWASP, segredos, authn/authz
+   │
+   ▼
+[6] sre               ──▶  SRE review (specs/<slug>/sre-review.md) — CI/CD, Docker, Terraform
 ```
 
 Cada etapa só começa com o artefato aprovado da etapa anterior. Nenhuma etapa pula a anterior:
-o dev sênior não implementa sem TRD aprovado, o QA não assina sem os testes rodando, o SRE não
-aprova pipeline/infra sem o QA verde.
+o dev sênior não implementa sem TRD aprovado, o QA não assina sem os testes rodando, a segurança
+não aprova sem QA verde, o SRE não aprova pipeline/infra sem QA e segurança aprovados.
 
 Cada agente vive em `.claude/agents/<nome>.md` e é acionado por uma skill em
 `.claude/skills/sdd-*`. Use os comandos:
 
-| Comando            | Agente             | Produz                         |
-|--------------------|--------------------|---------------------------------|
-| `/sdd-prd`          | product-design     | `specs/<slug>/prd.md`          |
-| `/sdd-trd`          | architect          | `specs/<slug>/trd.md`          |
-| `/sdd-implement`    | senior-developer   | branch + PR + código + testes  |
-| `/sdd-qa`           | qa-engineer        | `specs/<slug>/qa-report.md`    |
-| `/sdd-sre`          | sre                | `specs/<slug>/sre-review.md`   |
-| `/sdd-status`       | (nenhum, utilitário) | resumo do estágio da feature |
-| `/sdd-amend`        | (nenhum, utilitário) | emenda um artefato já aprovado sem reiniciar o pipeline |
-| `/sdd-pending`      | (nenhum, utilitário) | lista itens "VALIDAR DEPOIS" em aberto |
+| Comando            | Agente                 | Produz                         |
+|--------------------|-------------------------|---------------------------------|
+| `/sdd-baseline`     | codebase-archaeologist  | `docs/BASELINE.md` (condicional, ver `docs/SDD-WORKFLOW.md`) |
+| `/sdd-prd`          | product-design          | `specs/<slug>/prd.md`          |
+| `/sdd-trd`          | architect                | `specs/<slug>/trd.md`          |
+| `/sdd-implement`    | senior-developer         | branch + PR + código + testes  |
+| `/sdd-qa`           | qa-engineer              | `specs/<slug>/qa-report.md`    |
+| `/sdd-security`     | security-engineer        | `specs/<slug>/security-review.md` |
+| `/sdd-sre`          | sre                      | `specs/<slug>/sre-review.md`   |
+| `/sdd-status`       | (nenhum, utilitário)     | resumo do estágio da feature |
+| `/sdd-amend`        | (nenhum, utilitário)     | emenda um artefato já aprovado sem reiniciar o pipeline |
+| `/sdd-pending`      | (nenhum, utilitário)     | lista itens "VALIDAR DEPOIS" em aberto |
 
 Veja um exemplo completo já rodado em `specs/0001-example-task-management/`.
 
@@ -96,7 +106,7 @@ fluxo ponta a ponta com código real e testes rodando. Ao adotar outra linguagem
 conteúdo de `src/`/`tests/`, o `Dockerfile` e o job de testes do `ci.yml` — a estrutura de pastas
 e o pipeline SDD continuam os mesmos.
 
-## Regras de governança (valem para os 5 agentes)
+## Regras de governança (valem para todos os agentes)
 
 Detalhe completo em `docs/QUALITY-GATES.md` — aqui só o resumo:
 

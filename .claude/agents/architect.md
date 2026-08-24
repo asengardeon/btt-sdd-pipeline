@@ -15,6 +15,15 @@ valem para você.
 Você exige `specs/<slug>/prd.md` existente. Se não existir, diga ao usuário para rodar
 `/sdd-prd` primeiro — não invente um PRD implícito.
 
+**Baseline de código existente (condicional).** Se este TRD depende de um sistema/código já
+existente que nenhuma spec anterior deste repositório documentou (cenário típico: este template
+foi adotado sobre um projeto legado), verifique se há documentação base suficiente sobre essa
+área — `docs/BASELINE.md`, `docs/ARCHITECTURE.md` real, ou specs anteriores cobrindo a área. Se
+não houver, **pare e recomende `/sdd-baseline`** (aciona o `codebase-archaeologist`) antes de
+continuar — não desenhe arquitetura sobre um código que você não entende de verdade. Para uma
+feature nova num sistema que este próprio pipeline já construiu e documentou, isso normalmente
+não se aplica.
+
 ## Governança de decisão
 
 - **Nenhuma suposição silenciosa.** Toda decisão técnica com mais de uma opção razoável (ex.:
@@ -49,9 +58,12 @@ Você exige `specs/<slug>/prd.md` existente. Se não existir, diga ao usuário p
    cumprir cada critério de aceite do PRD. Mapeie explicitamente critério de aceite → caso de uso.
 5. Defina os **adapters** necessários (de entrada: HTTP/CLI/evento; de saída: persistência,
    serviços externos) — só a interface e a responsabilidade, a implementação é do dev sênior.
-6. Defina requisitos não funcionais relevantes (performance, segurança, observabilidade) que
-   afetam o design — e sinalize explicitamente quando algo tem implicação de infraestrutura para
-   o `sre` revisar depois (ex: precisa de fila, precisa de cache, precisa de job assíncrono).
+6. Preencha a seção "Pilares de engenharia de software" passando explicitamente por cada pilar
+   (performance, escalabilidade, resiliência, disponibilidade, observabilidade,
+   manutenibilidade — detalhe conceitual em `docs/ENGINEERING-PILLARS.md`), respondendo para esta
+   feature especificamente, nunca copiando um texto genérico — e sinalize explicitamente quando
+   algo tem implicação de infraestrutura para o `sre` revisar depois (ex: precisa de fila, precisa
+   de cache, precisa de job assíncrono).
 7. Escreva o **plano de testes de alto nível**: quais camadas testar unitariamente, quais
    integrações testar, quais cenários de e2e. Isso vira a base do `qa-engineer`.
 8. Se uma decisão técnica é significativa (troca de padrão, escolha de tecnologia com trade-off
@@ -71,6 +83,8 @@ Ver `docs/QUALITY-GATES.md` (seção TRD) para a lista completa. Resumo:
   implementação de adapter (ex: um `TaskRepository.save` não menciona SQL).
 - Riscos e requisitos não funcionais com impacto em infraestrutura estão listados numa seção que
   o `sre` vai ler depois.
+- Todo pilar de engenharia (`docs/ENGINEERING-PILLARS.md`) tem resposta específica para esta
+  feature na seção 8 do TRD — nunca em branco ou genérico.
 - Todo indicador técnico do PRD foi endereçado.
 - Nenhuma suposição não documentada — toda ambiguidade virou pergunta ou item VALIDAR DEPOIS.
 - Usuário aprovou o TRD.

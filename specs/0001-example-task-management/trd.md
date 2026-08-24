@@ -68,17 +68,29 @@ invariante do domínio, não uma regra de aplicação.
 
 N/A — sem persistência real nem API externa neste exemplo.
 
-## 8. Requisitos não funcionais
+## 8. Pilares de engenharia de software
 
-- Performance: N/A (dataset trivial, em memória).
-- Segurança: N/A (sem dado sensível, sem rede).
-- Observabilidade: saída de CLI já serve como log mínimo para este exemplo.
+- **Performance**: não se aplica — dataset trivial, em memória, latência irrelevante para o
+  propósito de exemplo/demonstração.
+- **Escalabilidade**: não se aplica — a feature não introduz estado compartilhado entre
+  instâncias; `InMemoryTaskRepository` é deliberadamente per-processo (fora de escopo:
+  persistência real, ver PRD).
+- **Resiliência**: não se aplica — nenhuma dependência externa (sem rede, sem chamada a serviço
+  de terceiro), logo não há timeout/retry/circuit breaker a definir.
+- **Disponibilidade**: irrelevante — é uma CLI de execução curta e local, não um serviço de longa
+  duração; não há SLA/uptime a definir.
+- **Observabilidade** (logs/métricas mínimas): a saída da própria CLI (`_format_task`) já serve
+  como log mínimo suficiente para este exemplo; não há necessidade de logging estruturado ou
+  métricas para uma CLI local de demonstração.
+- **Manutenibilidade**: nenhum desvio de SOLID/Clean Code (`docs/ARCHITECTURE.md`) — a
+  implementação segue ports & adapters estritamente, como o restante do repositório.
 - **Impacto em infraestrutura para o SRE revisar:** nenhum além do Dockerfile/CI padrão do
   template — não há serviço de longa duração nem recurso de nuvem específico exigido por esta
   feature.
 - **Indicadores técnicos herdados do PRD**: volumetria trivial, sem indicador de segurança e sem
   indicador legal (ver seção 8 do `prd.md`) — nenhum dos três exige decisão técnica adicional
-  além do que já está desenhado (repositório em memória, sem rede, sem dado pessoal).
+  além do que já está desenhado (repositório em memória, sem rede, sem dado pessoal). O indicador
+  de segurança é aprofundado em `specs/0001-example-task-management/security-review.md`.
 
 ## 9. Plano de testes (alto nível)
 
@@ -111,6 +123,7 @@ Nenhuma.
 | Data       | Autor                 | O que mudou                                                              | Motivo                                                                 | Etapas revalidadas |
 |------------|------------------------|----------------------------------------------------------------------------|----------------------------------------------------------------------------|------------------------|
 | 2026-08-24 | sessão Claude Code      | Adicionadas as seções "Controle de versão", "Pendências de validação" e este log; adicionada referência a indicadores técnicos herdados do PRD na seção 8; renumeradas as seções seguintes | Alinhamento com o novo template (`specs/_template/trd.template.md`) após reforço de governança do pipeline | Nenhuma — mudança só de estrutura do documento, sem alterar arquitetura, ports ou casos de uso |
+| 2026-08-24 | sessão Claude Code      | Seção 8 "Requisitos não funcionais" virou "Pilares de engenharia de software", com cada pilar (performance, escalabilidade, resiliência, disponibilidade, observabilidade, manutenibilidade) respondido explicitamente | Adição do agente `security-engineer` e dos pilares de engenharia (`docs/ENGINEERING-PILLARS.md`) ao pipeline | Nenhuma — respostas são "não se aplica" com justificativa, mesma conclusão técnica de antes, só explicitada |
 
 ## 14. Aprovação
 

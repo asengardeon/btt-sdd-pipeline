@@ -1,19 +1,34 @@
 # Workflow SDD (Spec-Driven Development)
 
-Este documento explica o funcionamento completo do pipeline de 5 etapas deste repositório: por
-que ele existe, o que cada etapa exige/produz, e como as peças (agentes, skills, templates) se
-encaixam.
+Este documento explica o funcionamento completo do pipeline de 6 etapas (+ 1 condicional) deste
+repositório: por que ele existe, o que cada etapa exige/produz, e como as peças (agentes, skills,
+templates) se encaixam.
 
 ## Por que Spec-Driven Development
 
 O objetivo é que nenhuma decisão importante seja tomada implicitamente dentro do código. Cada
 decisão de **o que construir** (produto), **como construir** (arquitetura) e **está correto?**
-(qualidade) fica registrada em um artefato revisável, na ordem certa, antes do código ser escrito
-ou aceito. Isso troca "descobrir depois que o requisito era outro" por "alinhar antes de
-implementar", e troca "confiar que o dev testou" por "QA valida objetivamente contra critérios
-escritos".
+(qualidade, segurança) fica registrada em um artefato revisável, na ordem certa, antes do código
+ser escrito ou aceito. Isso troca "descobrir depois que o requisito era outro" por "alinhar antes
+de implementar", e troca "confiar que o dev testou/pensou em segurança" por "QA e segurança
+validam objetivamente contra critérios escritos".
 
-## As 5 etapas
+## Etapa 0 (condicional): Levantamento de baseline
+
+- **Agente**: `.claude/agents/codebase-archaeologist.md`
+- **Skill**: `/sdd-baseline`
+- **Quando roda**: só quando um TRD depende de código/sistema já existente que nenhuma spec
+  anterior documentou e que não tem documentação base suficiente — cenário típico: este template
+  foi adotado sobre um projeto legado. Num projeto 100% construído por este próprio pipeline
+  (já documentado por construção), isso normalmente nunca dispara.
+- **Entrada**: código existente insuficientemente documentado.
+- **Saída**: `docs/BASELINE.md` — visão geral real do sistema, stack, estrutura, convenções
+  observadas, dívida técnica identificada (nunca corrigida por este agente), lacunas de teste. Ou,
+  se a documentação já é suficiente, uma constatação explícita de que nada precisa ser criado.
+- **Gate de saída**: `docs/BASELINE.md` existe para a área relevante, ou a suficiência foi
+  constatada explicitamente — nunca um silêncio sem conclusão.
+
+## As 6 etapas
 
 ### 1. Produto & Design → PRD
 
@@ -21,17 +36,20 @@ escritos".
 - **Skill**: `/sdd-prd`
 - **Entrada**: um pedido de feature, em linguagem natural.
 - **Saída**: `specs/<slug>/prd.md` — o quê e por quê, nunca o como técnico. Critérios de aceite
-  em Gherkin, testáveis por um terceiro sem contexto adicional.
+  em Gherkin, testáveis por um terceiro sem contexto adicional. Inclui "Indicadores técnicos a
+  observar" (volumetria, segurança, legal) — sinalizados, não decididos.
 - **Gate de saída**: aprovação explícita do usuário.
 
 ### 2. Arquitetura → TRD
 
 - **Agente**: `.claude/agents/architect.md`
 - **Skill**: `/sdd-trd`
-- **Entrada**: PRD aprovado.
+- **Entrada**: PRD aprovado (e, se aplicável, `docs/BASELINE.md` da etapa 0).
 - **Saída**: `specs/<slug>/trd.md` — modelo de domínio, ports, casos de uso mapeados aos
-  critérios de aceite, adapters necessários, plano de testes de alto nível. ADRs em
-  `docs/adr/` para decisões técnicas significativas.
+  critérios de aceite, adapters necessários, plano de testes de alto nível, e a seção "Pilares de
+  engenharia de software" (performance, escalabilidade, resiliência, disponibilidade,
+  observabilidade, manutenibilidade — detalhe em `docs/ENGINEERING-PILLARS.md`) respondida
+  explicitamente para a feature. ADRs em `docs/adr/` para decisões técnicas significativas.
 - **Gate de saída**: aprovação explícita do usuário.
 
 ### 3. Desenvolvimento → Código + Testes
@@ -56,11 +74,23 @@ escritos".
   80%, achados de regressão e de violação de fronteira arquitetural.
 - **Gate de saída**: veredito geral aprovado (senão volta para a etapa 3).
 
-### 5. SRE → CI/CD e infraestrutura
+### 5. Segurança → Revisão de segurança da aplicação
+
+- **Agente**: `.claude/agents/security-engineer.md`
+- **Skill**: `/sdd-security`
+- **Entrada**: QA aprovado.
+- **Saída**: `specs/<slug>/security-review.md` — superfície de ataque, checklist OWASP Top 10,
+  gestão de segredos na aplicação, autenticação/autorização, validação de entrada, dependências
+  vulneráveis, com veredito. Foca em segurança **da aplicação**; segurança **operacional/infra**
+  (Docker, Terraform, segredos de pipeline) é revisada pelo `sre` na etapa seguinte, sem
+  sobreposição.
+- **Gate de saída**: veredito geral aprovado (senão volta para a etapa 3).
+
+### 6. SRE → CI/CD e infraestrutura
 
 - **Agente**: `.claude/agents/sre.md`
 - **Skill**: `/sdd-sre`
-- **Entrada**: QA aprovado.
+- **Entrada**: QA **e** segurança aprovados.
 - **Plano antes de executar**: qualquer alteração real de infraestrutura (`terraform apply`) é
   apresentada como plano e só executada após aprovação explícita do usuário.
 - **Saída**: `specs/<slug>/sre-review.md` — checklist de CI, CD, Docker, Terraform,
@@ -68,7 +98,7 @@ escritos".
 - **Gate de saída**: aprovado (ou aprovado com ressalvas registradas). Depois disso, o merge do PR
   para `main` é decisão do usuário — nenhum agente mergeia sozinho.
 
-## Governança de decisão (vale para as 5 etapas)
+## Governança de decisão (vale para todas as etapas, incluindo a condicional)
 
 Detalhe completo em `docs/QUALITY-GATES.md`. Resumo: nenhum agente faz suposição silenciosa —
 toda ambiguidade vira pergunta ao usuário, com **"VALIDAR DEPOIS"** sempre disponível como opção
@@ -81,7 +111,8 @@ validação" do artefato). Nenhuma ação ou pergunta se repete mais de 3 vezes 
 `/sdd-status` não aciona agente — lê `specs/` e reporta em que etapa cada feature está, qual o
 próximo comando a rodar, quantas pendências VALIDAR DEPOIS existem e se alguma etapa foi marcada
 "requer revalidação" por uma emenda. `/sdd-pending` lista o detalhe dos itens VALIDAR DEPOIS em
-todas as features. Use a qualquer momento para se orientar.
+todas as features (e em `docs/BASELINE.md`, quando existir). Use a qualquer momento para se
+orientar.
 
 ## Regra de ouro
 
@@ -92,8 +123,9 @@ disfarçado.
 
 ## Ciclo de feedback
 
-Se o QA reprova, a feature volta para `/sdd-implement` com achados específicos. Se o SRE reprova
-(ou aprova com ressalvas bloqueantes), os itens voltam para quem for responsável — pode ser o
+Se o QA reprova, a feature volta para `/sdd-implement` com achados específicos. Se a segurança
+reprova, também volta para `/sdd-implement` (com os achados de segurança). Se o SRE reprova (ou
+aprova com ressalvas bloqueantes), os itens voltam para quem for responsável — pode ser o
 `senior-developer` (ex.: falta observabilidade no código) ou ajuste direto do próprio `sre` em
 `infra/`. O PRD e o TRD só são reabertos se a causa raiz for de requisito ou de design.
 
@@ -104,17 +136,18 @@ item VALIDAR DEPOIS) não reinicia o pipeline. `/sdd-amend` edita o artefato in-
 mudança no "Log de revisões" dele, e marca só as etapas *posteriores* realmente afetadas como
 "requer revalidação" — etapas anteriores aprovadas continuam válidas. Ex.: mudar um detalhe de
 texto no PRD que não muda critério de aceite não invalida o TRD; mudar um critério de aceite
-invalida TRD, implementação e QA, mas não obriga a refazer a conversa toda do PRD.
+invalida TRD, implementação, QA e segurança, mas não obriga a refazer a conversa toda do PRD.
 
 ## GitHub Flow no pipeline
 
-Detalhe completo em `docs/GIT-WORKFLOW.md`. Resumo: PRD e TRD não têm branch (são documentos).
-`/sdd-implement` cria `feature/<NNNN-slug>` e abre PR draft cedo. QA e SRE revisam contra esse PR.
-Merge para `main` só acontece depois de QA e SRE aprovados, é uma decisão do usuário (nenhum
-agente mergeia sozinho), e dispara o CD.
+Detalhe completo em `docs/GIT-WORKFLOW.md`. Resumo: a etapa 0 e o PRD/TRD não têm branch (são
+documentos). `/sdd-implement` cria `feature/<NNNN-slug>` e abre PR draft cedo. QA, segurança e SRE
+revisam contra esse PR. Merge para `main` só acontece depois de QA, segurança e SRE aprovados, é
+uma decisão do usuário (nenhum agente mergeia sozinho), e dispara o CD.
 
 ## Exemplo completo
 
-`specs/0001-example-task-management/` contém um PRD, TRD, QA report e SRE review reais,
-correspondentes ao código de exemplo em `src/` e `tests/`. Use como referência de nível de
-detalhe esperado em cada artefato.
+`specs/0001-example-task-management/` contém um PRD, TRD, QA report, security review e SRE review
+reais, correspondentes ao código de exemplo em `src/` e `tests/`. Use como referência de nível de
+detalhe esperado em cada artefato. Essa feature não precisou da etapa 0 — nasceu 100% documentada
+por este próprio pipeline.

@@ -58,16 +58,29 @@ Mapeamento explícito de critério de aceite (PRD) → caso de uso:
 
 Schema, payloads de API, formato de eventos — o que for aplicável.
 
-## 8. Requisitos não funcionais
+## 8. Pilares de engenharia de software
 
-- Performance: <...ou N/A>
-- Segurança: <...ou N/A>
-- Observabilidade (logs/métricas mínimas): <...>
+Cada pilar exige resposta explícita — "não se aplica, porque X" é uma resposta válida; em branco
+não é. Detalhe conceitual de cada pilar em `docs/ENGINEERING-PILLARS.md`.
+
+- **Performance**: <latência/throughput esperado, ou "não se aplica, porque..."`>
+- **Escalabilidade**: <a feature introduz estado em memória do processo? aguenta múltiplas
+  instâncias? ou "não se aplica, porque..."`>
+- **Resiliência**: <para cada dependência externa nova: timeout/retry/circuit breaker/fallback
+  definidos, ou "não se aplica, porque..."`>
+- **Disponibilidade**: <impacto se esta feature ficar indisponível — crítico/degradação
+  aceitável/irrelevante — e por quê`>
+- **Observabilidade** (logs/métricas mínimas): <o que precisa ser logado/medido nas fronteiras de
+  adapter para diagnosticar problema em produção`>
+- **Manutenibilidade**: <desvio deliberado de SOLID/Clean Code (`docs/ARCHITECTURE.md`), se
+  houver, com justificativa; senão "nenhum desvio"`>
 - **Impacto em infraestrutura para o SRE revisar:** <fila? cache? novo serviço? escalonamento?
   ou "nenhum">
 - **Indicadores técnicos herdados do PRD** (seção "Indicadores técnicos a observar" do
   `prd.md`): para cada um (volumetria, segurança, legal), a decisão tomada aqui ou a justificativa
-  de por que foi adiada — nunca ignorado silenciosamente.
+  de por que foi adiada — nunca ignorado silenciosamente. O indicador de segurança é aprofundado
+  depois pelo agente `security-engineer` (`/sdd-security`); aqui só a decisão de design de alto
+  nível que o afeta (ex.: precisa de autenticação? qual dado é sensível?).
 
 ## 9. Plano de testes (alto nível)
 

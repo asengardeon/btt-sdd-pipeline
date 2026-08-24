@@ -59,7 +59,8 @@ esclarecer com o usuário.
 | Data       | Autor                 | O que mudou                          | Motivo                                                    | Etapas revalidadas |
 |------------|------------------------|-----------------------------------------|-----------------------------------------------------------------|------------------------|
 | 2026-08-24 | sessão Claude Code      | Adicionadas as seções "Pendências de validação" e este log; adicionado campo PR ao cabeçalho | Alinhamento com o novo template após reforço de governança do pipeline | Nenhuma — veredito e evidências originais não mudaram |
+| 2026-08-24 | sessão Claude Code      | "Próximo passo" alterado de `/sdd-sre` para `/sdd-security` | Adição da etapa 5 (segurança) ao pipeline, entre QA e SRE | Nenhuma — veredito original não muda, só o próximo passo do pipeline |
 
 ## 9. Próximo passo
 
-`/sdd-sre`.
+`/sdd-security`.

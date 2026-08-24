@@ -1,6 +1,6 @@
 ---
 name: sdd-pending
-description: Lista todos os itens "VALIDAR DEPOIS" em aberto em todas as features do pipeline SDD (PRD, TRD, QA report, SRE review), para o usuário revisar quando tiver tempo/resposta. Use quando o usuário perguntar o que ainda falta validar, pedir a lista de pendências, ou quiser resolver um item específico marcado como VALIDAR DEPOIS.
+description: Lista todos os itens "VALIDAR DEPOIS" em aberto em todas as features do pipeline SDD (PRD, TRD, QA report, security review, SRE review) e em docs/BASELINE.md, para o usuário revisar quando tiver tempo/resposta. Use quando o usuário perguntar o que ainda falta validar, pedir a lista de pendências, ou quiser resolver um item específico marcado como VALIDAR DEPOIS.
 ---
 
 # /sdd-pending
@@ -11,7 +11,9 @@ itens marcados "VALIDAR DEPOIS".
 ## Passos
 
 1. Para cada diretório em `specs/` (exceto `_template`), leia a seção "Pendências de validação
-   (VALIDAR DEPOIS)" de `prd.md`, `trd.md`, `qa-report.md` e `sre-review.md` (os que existirem).
+   (VALIDAR DEPOIS)" de `prd.md`, `trd.md`, `qa-report.md`, `security-review.md` e
+   `sre-review.md` (os que existirem). Se `docs/BASELINE.md` existir, leia a mesma seção nele
+   também (pendências do arqueólogo não são por feature).
 2. Filtre só os itens com status "pendente" (ignore os já marcados "validado").
 3. Se `args` traz um slug específico, mostre só aquela feature; senão, mostre todas as que têm
    pendência.
