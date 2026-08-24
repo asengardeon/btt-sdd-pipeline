@@ -2,8 +2,10 @@
 
 Este repositório é um **template de desenvolvimento orientado a especificação (SDD — Spec-Driven
 Development)**. Ele existe para que qualquer feature nasça de uma especificação de produto,
-passe por um desenho técnico revisável, seja implementada com TDD e só chegue a produção depois
-de QA, revisão de segurança e validação de SRE — tudo com agentes dedicados a cada etapa.
+passe por um desenho técnico revisável, seja implementada com TDD (backend e frontend em
+paralelo, quando aplicável) e só chegue a produção depois de QA, revisão de segurança e validação
+de SRE — tudo com agentes dedicados a cada etapa, **instalados globalmente** (ver "Distribuição
+global" abaixo) para funcionar em qualquer projeto, não só neste.
 
 Se você é uma instância do Claude Code trabalhando neste repo, leia isto antes de fazer qualquer
 mudança de código. Para o detalhe de cada arquivo/pasta, veja `docs/FILE-GUIDE.md`. Para o fluxo
@@ -12,7 +14,7 @@ pular, veja `docs/QUALITY-GATES.md`. Para o fluxo de branch/PR, veja `docs/GIT-W
 os pilares de engenharia (escalabilidade, resiliência etc.) que o TRD precisa endereçar, veja
 `docs/ENGINEERING-PILLARS.md`.
 
-## O pipeline (6 etapas, 6 agentes, + 1 etapa condicional)
+## O pipeline (6 etapas, + 1 etapa condicional)
 
 ```
 [0] codebase-archaeologist ──▶ docs/BASELINE.md  (SÓ quando falta documentação base — condicional)
@@ -21,45 +23,67 @@ os pilares de engenharia (escalabilidade, resiliência etc.) que o TRD precisa e
 ideia/pedido
    │
    ▼
-[1] product-design  ──▶  PRD  (specs/<slug>/prd.md)
+[1] product-design    ──▶  PRD  (specs/<slug>/prd.md) — inclui ordem de valor entre histórias
    │
    ▼
-[2] architect        ──▶  TRD  (specs/<slug>/trd.md)  [+ ADR se relevante]
+[2] architect          ──▶  TRD  (specs/<slug>/trd.md)  [+ ADR se relevante]
+                              — inclui contrato Frontend↔Backend e decomposição de tarefas
    │
    ▼
-[3] senior-developer  ──▶  código + testes (src/, tests/) via TDD
+[3] backend-developer   ──▶  código + testes em src/ (ports & adapters) via TDD
+    frontend-developer      código + testes em frontend/ via TDD, contra o contrato do TRD
+    (em paralelo quando a feature é full-stack, orquestrados por /sdd-implement)
    │
    ▼
-[4] qa-engineer       ──▶  QA report (specs/<slug>/qa-report.md)
+[4] qa-engineer         ──▶  QA report (specs/<slug>/qa-report.md)
    │
    ▼
-[5] security-engineer ──▶  Security review (specs/<slug>/security-review.md) — OWASP, segredos, authn/authz
+[5] security-engineer   ──▶  Security review (specs/<slug>/security-review.md) — OWASP, segredos, authn/authz
    │
    ▼
-[6] sre               ──▶  SRE review (specs/<slug>/sre-review.md) — CI/CD, Docker, Terraform
+[6] sre                 ──▶  SRE review (specs/<slug>/sre-review.md) — CI/CD, Docker, Terraform
 ```
 
 Cada etapa só começa com o artefato aprovado da etapa anterior. Nenhuma etapa pula a anterior:
-o dev sênior não implementa sem TRD aprovado, o QA não assina sem os testes rodando, a segurança
-não aprova sem QA verde, o SRE não aprova pipeline/infra sem QA e segurança aprovados.
+backend/frontend não implementam sem TRD aprovado, o QA não assina sem os testes rodando, a
+segurança não aprova sem QA verde, o SRE não aprova pipeline/infra sem QA e segurança aprovados.
 
 Cada agente vive em `.claude/agents/<nome>.md` e é acionado por uma skill em
 `.claude/skills/sdd-*`. Use os comandos:
 
-| Comando            | Agente                 | Produz                         |
-|--------------------|-------------------------|---------------------------------|
-| `/sdd-baseline`     | codebase-archaeologist  | `docs/BASELINE.md` (condicional, ver `docs/SDD-WORKFLOW.md`) |
-| `/sdd-prd`          | product-design          | `specs/<slug>/prd.md`          |
-| `/sdd-trd`          | architect                | `specs/<slug>/trd.md`          |
-| `/sdd-implement`    | senior-developer         | branch + PR + código + testes  |
-| `/sdd-qa`           | qa-engineer              | `specs/<slug>/qa-report.md`    |
-| `/sdd-security`     | security-engineer        | `specs/<slug>/security-review.md` |
-| `/sdd-sre`          | sre                      | `specs/<slug>/sre-review.md`   |
-| `/sdd-status`       | (nenhum, utilitário)     | resumo do estágio da feature |
-| `/sdd-amend`        | (nenhum, utilitário)     | emenda um artefato já aprovado sem reiniciar o pipeline |
-| `/sdd-pending`      | (nenhum, utilitário)     | lista itens "VALIDAR DEPOIS" em aberto |
+| Comando            | Agente(s)                                    | Produz                         |
+|--------------------|------------------------------------------------|---------------------------------|
+| `/create-project`   | (usa `product-design`)                          | um projeto novo, do zero, num diretório separado |
+| `/sdd-baseline`     | codebase-archaeologist                          | `docs/BASELINE.md` (condicional) |
+| `/sdd-prd`          | product-design                                  | `specs/<slug>/prd.md`          |
+| `/sdd-trd`          | architect                                        | `specs/<slug>/trd.md`          |
+| `/sdd-implement`    | backend-developer e/ou frontend-developer         | branch + PR + código + testes  |
+| `/sdd-qa`           | qa-engineer                                      | `specs/<slug>/qa-report.md`    |
+| `/sdd-security`     | security-engineer                                | `specs/<slug>/security-review.md` |
+| `/sdd-sre`          | sre                                              | `specs/<slug>/sre-review.md`   |
+| `/sdd-status`       | (nenhum, utilitário)                             | resumo do estágio da feature |
+| `/sdd-amend`        | (nenhum, utilitário)                             | emenda um artefato já aprovado sem reiniciar o pipeline |
+| `/sdd-pending`      | (nenhum, utilitário)                             | lista itens "VALIDAR DEPOIS" em aberto |
 
-Veja um exemplo completo já rodado em `specs/0001-example-task-management/`.
+Veja um exemplo completo já rodado em `specs/0001-example-task-management/` (backend-only, CLI
+Python).
+
+## Distribuição global
+
+Os agentes (`.claude/agents/`) e skills (`.claude/skills/`) deste repositório estão disponíveis
+**em qualquer projeto** neste computador via junction de diretório:
+`C:\Users\<usuário>\.claude\agents` e `...\.claude\skills` apontam para as pastas equivalentes
+aqui — um único conjunto de arquivos, editar aqui atualiza o que está disponível globalmente sem
+passo de sincronização manual. Isso significa duas coisas na prática:
+
+- Você pode rodar `/sdd-trd`, `/sdd-implement` etc. dentro de **qualquer outro projeto** que
+  tenha a mesma estrutura de `specs/`, `docs/`, `CLAUDE.md` — não precisa estar neste
+  repositório.
+- `/sdd-prd` e `/sdd-trd` aceitam um **caminho de arquivo explícito** como entrada (ex.:
+  `/sdd-trd caminho/para/spec.md`), não só a convenção `specs/<slug>/`.
+- `/create-project` é a forma de começar um projeto novo do zero: pergunta requisitos, cria um
+  diretório separado, copia a estrutura genérica (`.claude/skills/create-project/scaffold/`) para
+  lá, e inicia o pipeline com o primeiro PRD.
 
 ## Princípios de arquitetura (não negociáveis)
 
@@ -67,7 +91,9 @@ Veja um exemplo completo já rodado em `specs/0001-example-task-management/`.
    define casos de uso e *ports* (interfaces) — nunca implementações concretas de infraestrutura.
    `src/adapters` implementa os ports (saída: banco, filas, APIs externas) ou aciona os casos de uso
    (entrada: HTTP, CLI, eventos). Dependências sempre apontam para dentro (regra da dependência).
-   Detalhe completo em `docs/ARCHITECTURE.md`.
+   Quando a feature tem frontend, `frontend/` segue uma separação análoga (componentes vs.
+   serviços), consumindo o backend via o contrato definido no TRD. Detalhe completo em
+   `docs/ARCHITECTURE.md`.
 
 2. **SOLID.** Toda classe/módulo novo deve justificar sua responsabilidade única (S). Extensão de
    comportamento se dá por composição/novos adapters, não por `if/else` crescente (O). Implementações
@@ -80,31 +106,40 @@ Veja um exemplo completo já rodado em `specs/0001-example-task-management/`.
    feature esquecidas, sem abstração especulativa para "o futuro".
 
 4. **TDD estrito.** Todo código de produção nasce de um teste que falha primeiro (red), o mínimo
-   de código para passar (green), depois refatoração (refactor) mantendo os testes verdes. O
-   agente `senior-developer` segue esse ciclo — nunca escreve implementação sem teste antes.
+   de código para passar (green), depois refatoração (refactor) mantendo os testes verdes.
+   `backend-developer` e `frontend-developer` seguem esse ciclo — nunca escrevem implementação sem
+   teste antes.
 
-5. **Cobertura mínima de 80%.** Aplicado por CI (`.github/workflows/ci.yml`) e verificado pelo
-   agente `qa-engineer` antes de qualquer aprovação. Cobertura abaixo de 80% bloqueia o pipeline.
-   Detalhe em `docs/TESTING.md`.
+5. **Cobertura mínima de 80%, por pacote.** Aplicado por CI (`.github/workflows/ci.yml`) e
+   verificado pelo agente `qa-engineer` antes de qualquer aprovação. `src/` e `frontend/` (quando
+   existir) têm cada um seu próprio gate — cobertura abaixo de 80% em qualquer um bloqueia o
+   pipeline. Detalhe em `docs/TESTING.md`.
+
+6. **Pilares de engenharia.** Todo TRD responde explicitamente a performance, escalabilidade,
+   resiliência, disponibilidade, observabilidade e manutenibilidade — nunca em branco. Detalhe em
+   `docs/ENGINEERING-PILLARS.md`.
 
 ## Onde as coisas vivem
 
-- `specs/` — PRDs, TRDs, test plans, QA reports e SRE reviews, um diretório por feature.
-- `src/domain`, `src/application`, `src/adapters` — código de produção em ports & adapters.
-- `tests/unit`, `tests/integration`, `tests/e2e` — testes espelhando a arquitetura.
+- `specs/` — PRDs, TRDs, QA reports, security reviews e SRE reviews, um diretório por feature.
+- `src/domain`, `src/application`, `src/adapters` — código de produção de backend em ports &
+  adapters.
+- `frontend/` — código de produção de frontend, quando a feature tem UI (não existe neste
+  repositório hoje).
+- `tests/unit`, `tests/integration`, `tests/e2e` — testes de backend espelhando a arquitetura.
 - `infra/docker`, `infra/terraform` — containerização e infraestrutura como código.
 - `.github/workflows` — pipelines de CI (lint + testes + gate de cobertura) e CD (deploy via Terraform).
-- `docs/` — arquitetura, workflow SDD, política de testes, gates críticos, fluxo de Git e guia
-  arquivo-a-arquivo.
+- `docs/` — arquitetura, workflow SDD, política de testes, pilares de engenharia, gates críticos,
+  fluxo de Git e guia arquivo-a-arquivo.
 
 ## Nota sobre a stack
 
 Este template é **agnóstico de linguagem** na estrutura, nos agentes e nas skills — os princípios
 (ports & adapters, SOLID, TDD, cobertura 80%) valem para qualquer stack. O diretório `src/` traz
 uma **feature de exemplo em Python** (`specs/0001-example-task-management/`) só para ilustrar o
-fluxo ponta a ponta com código real e testes rodando. Ao adotar outra linguagem, troque o
-conteúdo de `src/`/`tests/`, o `Dockerfile` e o job de testes do `ci.yml` — a estrutura de pastas
-e o pipeline SDD continuam os mesmos.
+fluxo ponta a ponta com código real e testes rodando — é backend-only (sem frontend). Ao adotar
+outra linguagem, troque o conteúdo de `src/`/`tests/`, o `Dockerfile` e o job de testes do
+`ci.yml` — a estrutura de pastas e o pipeline SDD continuam os mesmos.
 
 ## Regras de governança (valem para todos os agentes)
 
@@ -121,19 +156,22 @@ Detalhe completo em `docs/QUALITY-GATES.md` — aqui só o resumo:
    tentou e sua recomendação — nunca insiste numa 4ª vez.
 3. **Planeje antes de executar, sempre.** PRD e TRD já são planos (a aprovação deles é o próprio
    gate). Para `/sdd-implement` e `/sdd-sre`, que executam ações reais (código, infraestrutura), o
-   agente apresenta o plano e pede aprovação explícita via `AskUserQuestion` antes de agir.
+   agente apresenta o plano e pede aprovação explícita via `AskUserQuestion` antes de agir — em
+   feature full-stack, `/sdd-implement` apresenta um único plano combinado antes de acionar
+   `backend-developer` e `frontend-developer` em paralelo.
 4. **Artefatos aprovados são editados in-place**, nunca recriados do zero. Mudar uma decisão já
    aprovada usa `/sdd-amend`, que só reabre as etapas posteriores realmente afetadas — sem
    reiniciar o pipeline da primeira etapa.
 5. **Fluxo de Git = GitHub Flow.** `main` sempre implantável, uma branch por feature
-   (`feature/<NNNN-slug>`), PR obrigatório, merge só após QA e SRE aprovados. Detalhe completo em
-   `docs/GIT-WORKFLOW.md`.
+   (`feature/<NNNN-slug>`, única mesmo em features full-stack), PR obrigatório, merge só após QA,
+   segurança e SRE aprovados. Detalhe completo em `docs/GIT-WORKFLOW.md`.
 6. Nunca avance uma etapa sem o artefato de entrada da etapa anterior existir e estar aprovado
    pelo usuário (não apenas gerado).
-7. Nunca escreva código de produção fora de `src/` seguindo a separação domain/application/adapters.
-8. Nunca reduza a cobertura de testes abaixo de 80% para "economizar tempo" — se um trecho é
-   genuinamente difícil de testar, isso é um sinal de design a ser resolvido pelo `architect`, não
-   ignorado.
+7. Nunca escreva código de produção fora de `src/`/`frontend/` seguindo a separação de
+   responsabilidade de cada um.
+8. Nunca reduza a cobertura de testes abaixo de 80% em qualquer pacote para "economizar tempo" —
+   se um trecho é genuinamente difícil de testar, isso é um sinal de design a ser resolvido pelo
+   `architect`, não ignorado.
 9. Sempre registre decisões técnicas relevantes (troca de padrão, escolha de tecnologia, trade-off
-   de arquitetura) como ADR em `docs/adr/`, usando `docs/adr/0001-record-architecture-decisions.md`
-   como modelo.
+   de arquitetura, contrato de API reutilizável) como ADR em `docs/adr/`, usando
+   `docs/adr/0001-record-architecture-decisions.md` como modelo.

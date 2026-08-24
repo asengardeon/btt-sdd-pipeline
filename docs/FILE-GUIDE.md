@@ -26,14 +26,20 @@ DEPOIS" como opção quando cabível.
   quando falta documentação base sobre código já existente. Tem `Bash` para ler histórico/rodar
   testes existentes sem alterá-los, e `Write`/`Edit` só para documentação — nunca corrige/refatora
   código.
-- **`product-design.md`** — gera o PRD a partir de um pedido. Não roda comandos (sem acesso a
-  `Bash`) porque essa etapa é puramente de produto.
+- **`product-design.md`** — gera o PRD a partir de um pedido, incluindo a ordem de valor entre
+  histórias. Não roda comandos (sem acesso a `Bash`) porque essa etapa é puramente de produto.
 - **`architect.md`** — gera o TRD a partir do PRD aprovado (e de `docs/BASELINE.md`, quando
-  existir), incluindo os pilares de engenharia (`docs/ENGINEERING-PILLARS.md`). Também sem `Bash`.
-- **`senior-developer.md`** — implementa a feature via TDD a partir do TRD, dentro de uma branch
-  GitHub Flow. Tem acesso a `Bash` porque precisa rodar testes/lint/git durante o ciclo
-  red-green-refactor. Apresenta um plano de implementação e pede aprovação antes do primeiro
-  commit.
+  existir), incluindo os pilares de engenharia (`docs/ENGINEERING-PILLARS.md`), o contrato
+  frontend↔backend e a decomposição de tarefas com dependências. Tem `Bash` para checar remote
+  GitHub/`gh auth status` e, com confirmação do usuário, espelhar tarefas como GitHub Issues.
+- **`backend-developer.md`** — implementa a trilha de backend via TDD a partir do TRD, em `src/`,
+  dentro de uma branch GitHub Flow. Tem acesso a `Bash` porque precisa rodar testes/lint/git
+  durante o ciclo red-green-refactor. Apresenta um plano de implementação e pede aprovação antes
+  do primeiro commit (a menos que orquestrado por `/sdd-implement` com plano já aprovado).
+- **`frontend-developer.md`** — implementa a trilha de frontend via TDD a partir do TRD, em
+  `frontend/`, contra o contrato definido pelo `architect`. Mesmo padrão de `Bash` e aprovação de
+  plano de `backend-developer`. Quando a feature é full-stack, os dois rodam em paralelo,
+  orquestrados por `/sdd-implement`.
 - **`qa-engineer.md`** — valida a implementação contra PRD/TRD e o PR aberto. Tem `Bash` para
   rodar a suíte de testes e o relatório de cobertura, e `Write`/`Edit` só para o próprio
   `qa-report.md` — QA não corrige código de produção, reporta.
@@ -52,9 +58,12 @@ Cada subpasta é uma skill invocável como slash command (`/nome-da-pasta`). O a
 tipicamente: validar pré-condição, invocar o agente correspondente, e comunicar o resultado.
 
 - **`sdd-baseline/`** → `/sdd-baseline` — aciona `codebase-archaeologist` (condicional).
-- **`sdd-prd/`** → `/sdd-prd` — aciona `product-design`.
-- **`sdd-trd/`** → `/sdd-trd` — aciona `architect`.
-- **`sdd-implement/`** → `/sdd-implement` — aciona `senior-developer`.
+- **`sdd-prd/`** → `/sdd-prd` — aciona `product-design`. Aceita um caminho de arquivo explícito
+  como entrada, além de texto livre.
+- **`sdd-trd/`** → `/sdd-trd` — aciona `architect`. Aceita um caminho de arquivo explícito como
+  PRD de entrada, além da convenção `specs/<slug>/prd.md`.
+- **`sdd-implement/`** → `/sdd-implement` — aciona `backend-developer` e/ou `frontend-developer`;
+  quando os dois, orquestra um plano combinado e os invoca em paralelo.
 - **`sdd-qa/`** → `/sdd-qa` — aciona `qa-engineer`.
 - **`sdd-security/`** → `/sdd-security` — aciona `security-engineer`.
 - **`sdd-sre/`** → `/sdd-sre` — aciona `sre`.
@@ -66,6 +75,13 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
   revalidação", sem reiniciar o pipeline da primeira etapa.
 - **`sdd-pending/`** → `/sdd-pending` — utilitário de leitura, não aciona nenhum agente; lista
   todos os itens "VALIDAR DEPOIS" em aberto em todas as features.
+- **`create-project/`** → `/create-project` — skill global (ver "Distribuição global" em
+  `CLAUDE.md`): pergunta nome, diretório e requisitos, cria um projeto novo em diretório separado
+  (fora deste repositório), copia o conteúdo genérico de `create-project/scaffold/` para lá, e
+  inicia o pipeline com o primeiro PRD. Não aciona um subagente próprio — usa o processo do
+  `product-design` diretamente. `create-project/scaffold/` é uma cópia genérica (sem menção ao
+  exemplo Python deste repo) dos arquivos estruturais stack-agnósticos — não inclui `infra/`,
+  `.github/workflows/`, `src/`/`tests/`, que dependem da stack decidida só no TRD.
 
 ## `docs/` — documentação de referência
 
@@ -96,27 +112,40 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
   `security-review.template.md`, `sre-review.template.md`) que os agentes preenchem. Não é uma
   feature, é a fôrma usada por todas. Todos têm uma seção "Pendências de validação (VALIDAR
   DEPOIS)" e um "Log de revisões" (preenchido pelo `/sdd-amend`); o PRD também tem "Indicadores
-  técnicos a observar" (volumetria, segurança, legal), o TRD tem "Pilares de engenharia de
-  software" e "Controle de versão (GitHub Flow)" (branch/PR).
+  técnicos a observar" (volumetria, segurança, legal) e "Ordem de valor / dependências entre
+  histórias"; o TRD tem "Pilares de engenharia de software", "Contrato Frontend↔Backend (API)",
+  "Decomposição de tarefas e dependências" e "Controle de versão (GitHub Flow)" (branch/PR).
 - **`0001-example-task-management/`** — exemplo real e completo do pipeline rodado do início ao
   fim (PRD → TRD → código em `src/` → QA report → security review → SRE review), usado como
   referência de nível de detalhe esperado.
 - **Cada feature nova** ganha uma pasta `NNNN-slug-em-kebab-case/` com os artefatos que forem
   sendo produzidos por cada etapa.
 
-## `src/` — código de produção, em ports & adapters
+## `src/` — código de produção de backend, em ports & adapters
 
 - **`domain/`** — entidades e regras de negócio puras, sem dependência de framework ou infra.
 - **`application/ports/`** — interfaces que a aplicação exige da infraestrutura (definidas pelo
   que o caso de uso precisa).
 - **`application/use_cases/`** — orquestram domínio + ports para cumprir um critério de aceite;
   dependem só de abstrações.
-- **`adapters/inbound/`** — o que aciona os casos de uso (CLI, HTTP, eventos).
+- **`adapters/inbound/`** — o que aciona os casos de uso (CLI, HTTP, eventos). Quando a feature
+  tem frontend, implementa exatamente o contrato definido no TRD.
 - **`adapters/outbound/`** — o que implementa os ports (persistência, serviços externos).
 
-Detalhe completo em `docs/ARCHITECTURE.md`.
+Detalhe completo em `docs/ARCHITECTURE.md`. Escrito pelo `backend-developer`.
 
-## `tests/` — testes, espelhando `src/`
+## `frontend/` — código de produção de frontend (quando a feature tem UI)
+
+- **`src/components/`** — UI; não fala com rede diretamente.
+- **`src/services/`** — client da API, implementando o contrato do TRD; a camada que os
+  componentes usam para falar com o backend (ou com um dublê, em desenvolvimento paralelo).
+- **`tests/`** — testes de componente/serviço.
+
+Detalhe completo em `docs/ARCHITECTURE.md` (seção "Frontend"). Escrito pelo `frontend-developer`.
+Não existe neste repositório hoje — o exemplo (`specs/0001-example-task-management/`) é
+backend-only.
+
+## `tests/` — testes de backend, espelhando `src/`
 
 - **`unit/`** — testa `domain` e `application` isoladamente, com dublês dos ports.
 - **`integration/`** — testa implementações reais de adapters de saída contra o contrato do port.

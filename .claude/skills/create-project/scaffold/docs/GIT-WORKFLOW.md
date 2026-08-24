@@ -51,9 +51,3 @@ commits já feitos em uma branch de feature — ela adiciona um novo commit regi
 (commits de correção fazem parte do histórico normal do PR). O log de revisões dentro do próprio
 artefato (`prd.md`/`trd.md`/etc.) é o registro de *por que* mudou; o git log é o registro de
 *quando*.
-
-## Exceção histórica
-
-O commit inicial deste template (estrutura, agentes, skills, docs e a feature de exemplo) foi
-feito diretamente em `main` antes desta política existir. A partir de agora, toda mudança segue
-GitHub Flow normalmente.

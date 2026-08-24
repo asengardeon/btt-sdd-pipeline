@@ -9,8 +9,11 @@ Aciona a **etapa 1** do pipeline SDD descrito em `CLAUDE.md`: geração do PRD.
 
 ## Passos
 
-1. Se `args` (o texto após `/sdd-prd`) descreve a feature, use isso como o pedido inicial. Se
-   vazio, pergunte ao usuário o que ele quer construir.
+1. Se `args` é um caminho de arquivo existente (ex.: uma spec/requisito já escrito em outro
+   lugar, não necessariamente dentro de `specs/`), leia seu conteúdo e use como base do pedido —
+   você não depende de nenhum arquivo anterior deste pipeline para começar. Senão, se `args`
+   descreve a feature em texto livre, use isso como o pedido inicial. Se vazio, pergunte ao
+   usuário o que ele quer construir.
 2. Determine o próximo número sequencial de spec olhando os diretórios existentes em `specs/`
    (ex.: se o maior é `0001-...`, o próximo é `0002-...`) e um slug curto em kebab-case para a
    feature.

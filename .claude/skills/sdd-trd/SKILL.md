@@ -9,10 +9,13 @@ Aciona a **etapa 2** do pipeline SDD descrito em `CLAUDE.md`: geração do TRD a
 
 ## Passos
 
-1. Identifique o slug da feature: se `args` traz um slug ou número, use-o; senão, se só existe
-   uma spec com `prd.md` sem `trd.md` ainda, use essa; senão, pergunte ao usuário qual feature.
-2. Confirme que `specs/<slug>/prd.md` existe. Se não existir, informe o usuário e sugira rodar
-   `/sdd-prd` primeiro — não prossiga sem PRD.
+1. Identifique o PRD de entrada: se `args` é um caminho de arquivo existente, use-o diretamente
+   como PRD (mesmo fora da convenção `specs/<slug>/prd.md` — você não depende dessa convenção
+   para funcionar em qualquer projeto). Senão, identifique o slug (se `args` traz um slug ou
+   número, use-o; senão, se só existe uma spec com `prd.md` sem `trd.md` ainda, use essa; senão,
+   pergunte ao usuário qual feature) e confirme que `specs/<slug>/prd.md` existe.
+2. Se nenhum PRD foi encontrado nem indicado, informe o usuário e sugira rodar `/sdd-prd`
+   primeiro — não prossiga sem PRD.
 3. Invoque o agente `architect` (Agent tool, `subagent_type: "architect"`) passando o caminho do
    PRD e instrução para salvar o TRD em `specs/<slug>/trd.md` usando
    `specs/_template/trd.template.md`, registrando ADRs em `docs/adr/` quando relevante.

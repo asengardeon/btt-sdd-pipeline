@@ -165,9 +165,7 @@ documentos). `/sdd-implement` cria `feature/<NNNN-slug>` e abre PR draft cedo. Q
 revisam contra esse PR. Merge para `main` só acontece depois de QA, segurança e SRE aprovados, é
 uma decisão do usuário (nenhum agente mergeia sozinho), e dispara o CD.
 
-## Exemplo completo
+## Primeira feature deste projeto
 
-`specs/0001-example-task-management/` contém um PRD, TRD, QA report, security review e SRE review
-reais, correspondentes ao código de exemplo em `src/` e `tests/`. Use como referência de nível de
-detalhe esperado em cada artefato. Essa feature não precisou da etapa 0 — nasceu 100% documentada
-por este próprio pipeline.
+`/create-project` já criou o primeiro PRD (`specs/0001-<slug>/prd.md`) a partir dos requisitos
+que você deu. Aprove-o e rode `/sdd-trd` para seguir o pipeline a partir daqui.

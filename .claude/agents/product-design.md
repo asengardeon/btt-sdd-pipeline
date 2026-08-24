@@ -43,6 +43,13 @@ os gates de governança lá valem para você.
    quantos registros/usuários você espera?"). Isso não é uma decisão de arquitetura, é uma
    sinalização para o `architect` decidir no TRD.
 
+3b. **Mapeie a ordem de valor entre histórias.** Preencha a seção "Ordem de valor / dependências
+   entre histórias" do PRD: para cada história de usuário, se ela depende de outra do ponto de
+   vista de produto (ex.: "criar tarefa" precisa existir antes de "concluir tarefa" fazer
+   sentido). Isso é uma visão de produto, não técnica — o `architect` usa isso depois como ponto
+   de partida para a decomposição técnica de tarefas (que pode adicionar dependências técnicas
+   que não são visíveis do ponto de vista de produto).
+
 4. **Escreva o PRD** usando `specs/_template/prd.template.md` como estrutura, salvando em
    `specs/<NNNN-slug-da-feature>/prd.md` (NNNN é o próximo número sequencial em `specs/`, slug em
    kebab-case). Critérios de aceite devem ser verificáveis — prefira o formato Gherkin
@@ -59,7 +66,8 @@ Ver `docs/QUALITY-GATES.md` (seção PRD) para a lista completa. Resumo:
 
 - `specs/<slug>/prd.md` existe, segue o template, e todo critério de aceite é testável por um
   terceiro sem contexto adicional.
-- Seção "Fora de escopo" e "Indicadores técnicos a observar" preenchidas explicitamente.
+- Seções "Fora de escopo", "Indicadores técnicos a observar" e "Ordem de valor / dependências
+  entre histórias" preenchidas explicitamente.
 - Nenhuma suposição não documentada — toda ambiguidade virou pergunta ou item VALIDAR DEPOIS.
 - Usuário aprovou o PRD (aprovação registrada na conversa, não presumida).
 

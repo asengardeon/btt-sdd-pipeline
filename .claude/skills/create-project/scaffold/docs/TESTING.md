@@ -28,9 +28,7 @@ feature tem UI, `frontend-developer` (`.claude/agents/frontend-developer.md`), e
 ```
 
 - **Unitários** (`tests/unit/`): testam `domain` e `application/use_cases` isoladamente, usando
-  implementações fake dos ports (ex.: um repositório em memória feito só para teste, ou uma
-  implementação real simples como `InMemoryTaskRepository` quando ela já serve ao propósito).
-  Rápidos, determinísticos, sem rede/disco/banco real.
+  dublês dos ports. Rápidos, determinísticos, sem rede/disco/banco real.
 - **Integração** (`tests/integration/`): testam uma implementação real de um port (ex.: um
   repositório que fala com um banco de verdade, ainda que em container de teste) contra o
   contrato que o port promete.
@@ -42,34 +40,27 @@ feature tem UI, `frontend-developer` (`.claude/agents/frontend-developer.md`), e
 Mesmo TDD, mesma pirâmide, mapeados em `frontend/tests/` — componentes/serviços testados com um
 dublê do contrato de API (`docs/ARCHITECTURE.md`, seção Frontend) no lugar de rede real. Sem
 camada de e2e "de verdade" cross-stack obrigatória por padrão; se a feature justificar, um e2e
-que sobe backend+frontend juntos é uma decisão do `architect` a registrar no TRD (seção "Plano de
-testes").
+que sobe backend+frontend juntos é uma decisão do `architect` a registrar no TRD.
 
 ## O gate de cobertura de 80%
 
 - **Por pacote**: `src/` e, se existir, `frontend/` têm cada um seu próprio gate de 80% — não é
   uma média combinada. Um pacote não pode compensar a cobertura baixa do outro.
-- Aplicado automaticamente no CI (`.github/workflows/ci.yml`): o job de testes falha o pipeline
-  se a cobertura de qualquer pacote ficar abaixo de 80%.
-- Verificado manualmente pelo agente `qa-engineer` antes de qualquer aprovação
-  (`.claude/agents/qa-engineer.md`).
-- 80% é um **piso**, não uma meta a maximizar às custas de testes triviais/sem valor (ex.: testar
-  um getter que só retorna um atributo). Cobertura alta com testes fracos é pior que cobertura no
-  limite com testes que realmente verificam comportamento — o QA verifica isso lendo os testes,
-  não só o número.
+- Aplicado automaticamente no CI (`.github/workflows/ci.yml`, criado pelo `sre` junto com a
+  primeira feature implementada): o job de testes falha o pipeline se a cobertura de qualquer
+  pacote ficar abaixo de 80%.
+- Verificado manualmente pelo agente `qa-engineer` antes de qualquer aprovação.
+- 80% é um **piso**, não uma meta a maximizar às custas de testes triviais/sem valor. Cobertura
+  alta com testes fracos é pior que cobertura no limite com testes que realmente verificam
+  comportamento — o QA verifica isso lendo os testes, não só o número.
 - Se um trecho de código é genuinamente difícil de cobrir, isso é tratado como **sinal de
   design**: normalmente significa que uma responsabilidade de infraestrutura vazou para dentro do
-  domínio/aplicação, ou que um caso de uso está fazendo coisa demais. A correção correta costuma
-  ser revisar o TRD com o `architect`, não forçar um teste artificial.
+  domínio/aplicação. A correção correta costuma ser revisar o TRD com o `architect`, não forçar
+  um teste artificial.
 
-## Comando de referência (exemplo Python deste repositório)
+## Comando de referência
 
-O exemplo em `src/`/`tests/` é backend-only (sem `frontend/`) e usa `pytest` + `coverage`:
-
-```bash
-pytest --cov=src --cov-report=term-missing --cov-fail-under=80
-```
-
-Configuração em `pyproject.toml`. Ao adotar outra stack, troque este comando e o job
-correspondente em `.github/workflows/ci.yml` — o gate de 80% e a estrutura de pastas de teste
-continuam os mesmos independente da linguagem.
+Este projeto ainda não tem stack definida — o comando exato de teste/cobertura (`pytest`,
+`jest`, `go test`, etc.) é decidido pelo `architect` no primeiro TRD e documentado aqui pelo
+`backend-developer`/`frontend-developer` quando o projeto ganhar sua primeira implementação. A
+estrutura de pastas de teste e o gate de 80% continuam os mesmos independente da linguagem.
