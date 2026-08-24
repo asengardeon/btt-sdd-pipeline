@@ -92,15 +92,26 @@ Cenário: Concluir tarefa inexistente
 N/A — feature de exemplo, não vai a produção real. O "sucesso" aqui é servir de referência clara
 para o pipeline SDD.
 
-## 8. Suposições
+## 8. Indicadores técnicos a observar
 
-- Cada tarefa tem um identificador único gerado pelo sistema (usuário não escolhe o id).
-- Não há prazo/data associada à tarefa nesta versão.
+- **Volumetria**: trivial — dataset em memória, escopo de uso pessoal/demonstração, sem
+  expectativa de crescimento (fora de escopo persistência real, ver seção 5).
+- **Segurança**: nenhum indicador relevante — não há dado sensível/pessoal, autenticação ou
+  superfície de ataque nova (CLI local, sem rede).
+- **Legal/compliance**: nenhum indicador relevante — não há dado pessoal armazenado, retenção ou
+  contrato com terceiro envolvido.
 
-## 9. Questões em aberto
+## 9. Pendências de validação (VALIDAR DEPOIS)
 
-Nenhuma — escopo fechado propositalmente para servir de exemplo.
+Nenhuma. O escopo desta feature de exemplo foi fechado deliberadamente pequeno e sem ambiguidade
+residual, exatamente para servir de referência do pipeline sem itens em aberto.
 
-## 10. Aprovação
+## 10. Log de revisões
+
+| Data       | Autor                 | O que mudou                                                              | Motivo                                                                 | Etapas revalidadas |
+|------------|------------------------|----------------------------------------------------------------------------|----------------------------------------------------------------------------|------------------------|
+| 2026-08-24 | sessão Claude Code      | Adicionadas as seções "Indicadores técnicos a observar", "Pendências de validação" e este log; removida a antiga seção "Suposições" (a política mudou: nenhuma suposição silenciosa, só pergunta ou VALIDAR DEPOIS) | Alinhamento com o novo template (`specs/_template/prd.template.md`) após reforço de governança do pipeline | Nenhuma — mudança só de estrutura do documento, sem alterar requisito ou critério de aceite |
+
+## 11. Aprovação
 
 - [x] Aprovado por: asengardeons@hotmail.com em 2026-08-24

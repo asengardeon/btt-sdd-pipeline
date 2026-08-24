@@ -2,6 +2,8 @@
 
 > Autor: agente `qa-engineer`
 > PRD: `specs/0001-example-task-management/prd.md` | TRD: `specs/0001-example-task-management/trd.md`
+> PR: não aplicável — feature commitada diretamente em `main` no commit inicial, antes da política
+> de GitHub Flow (ver `docs/GIT-WORKFLOW.md`, "Exceção histórica")
 > Data: 2026-08-24
 
 ## 1. Veredito geral
@@ -47,6 +49,17 @@ mock — condizente com o papel de cada camada da pirâmide.
 
 Nenhum. Lint (`ruff check src tests`) sem apontamentos.
 
-## 7. Próximo passo
+## 7. Pendências de validação (VALIDAR DEPOIS)
+
+Nenhuma. Todos os critérios de aceite do PRD tiveram veredito objetivo, sem ambiguidade a
+esclarecer com o usuário.
+
+## 8. Log de revisões
+
+| Data       | Autor                 | O que mudou                          | Motivo                                                    | Etapas revalidadas |
+|------------|------------------------|-----------------------------------------|-----------------------------------------------------------------|------------------------|
+| 2026-08-24 | sessão Claude Code      | Adicionadas as seções "Pendências de validação" e este log; adicionado campo PR ao cabeçalho | Alinhamento com o novo template após reforço de governança do pipeline | Nenhuma — veredito e evidências originais não mudaram |
+
+## 9. Próximo passo
 
 `/sdd-sre`.

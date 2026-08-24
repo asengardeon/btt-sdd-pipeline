@@ -65,6 +65,9 @@ Schema, payloads de API, formato de eventos — o que for aplicável.
 - Observabilidade (logs/métricas mínimas): <...>
 - **Impacto em infraestrutura para o SRE revisar:** <fila? cache? novo serviço? escalonamento?
   ou "nenhum">
+- **Indicadores técnicos herdados do PRD** (seção "Indicadores técnicos a observar" do
+  `prd.md`): para cada um (volumetria, segurança, legal), a decisão tomada aqui ou a justificativa
+  de por que foi adiada — nunca ignorado silenciosamente.
 
 ## 9. Plano de testes (alto nível)
 
@@ -77,8 +80,22 @@ Schema, payloads de API, formato de eventos — o que for aplicável.
 
 Riscos técnicos identificados e a decisão tomada (com justificativa).
 
-## 11. Questões em aberto
+## 11. Controle de versão (GitHub Flow)
 
-## 12. Aprovação
+- Branch: `feature/<NNNN-slug>`
+- PR: <link, preenchido quando existir>
+
+## 12. Pendências de validação (VALIDAR DEPOIS)
+
+| ID     | Pergunta                          | Contexto                              | Status              |
+|--------|--------------------------------------|-------------------------------------------|------------------------|
+| TRD-1  | <pergunta que ficou sem resposta>     | <por que essa pergunta importa>            | pendente / validado |
+
+## 13. Log de revisões
+
+| Data | Autor | O que mudou | Motivo | Etapas revalidadas |
+|------|-------|--------------|--------|-----------------------|
+
+## 14. Aprovação
 
 - [ ] Aprovado por: <usuário> em <data>

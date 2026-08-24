@@ -2,6 +2,8 @@
 
 > Autor: agente `sre`
 > QA report: `specs/0001-example-task-management/qa-report.md`
+> PR: não aplicável — feature commitada diretamente em `main` no commit inicial, antes da política
+> de GitHub Flow (ver `docs/GIT-WORKFLOW.md`, "Exceção histórica")
 > Data: 2026-08-24
 
 ## 1. Veredito geral
@@ -33,6 +35,9 @@ lint sem apontamentos — ver `qa-report.md`).
 - [x] Estratégia de rollback documentada: reaplicar a task definition/imagem anterior via novo
       `workflow_dispatch` apontando `container_image` para a tag anterior (tags são imutáveis no
       ECR — `image_tag_mutability = "IMMUTABLE"` em `main.tf`)
+- [ ] `main` protegida (GitHub Flow): **não verificado** — é configuração das settings do
+      repositório no GitHub, fora do controle de arquivos versionados; nada a validar localmente
+      neste momento (o repositório nem tem remote configurado ainda)
 
 Evidência: `cd.yml` validado como YAML sintaticamente correto.
 
@@ -93,7 +98,20 @@ caso desta feature de exemplo).
 Item 1 resolvido nesta revisão. O item 2 não bloqueia o uso do template/pipeline SDD em si — só
 bloqueia um `apply` real da infraestrutura ilustrativa em `infra/terraform/`.
 
-## 8. Próximo passo
+## 8. Pendências de validação (VALIDAR DEPOIS)
+
+Nenhuma nova. A verificação de proteção de `main` (seção 3) não é um item VALIDAR DEPOIS — é uma
+ação de configuração de repositório que cabe ao usuário/administrador quando houver um remote
+GitHub configurado, listada na tabela de pendências acima (item 2 é sobre Terraform; a proteção
+de `main` ainda não tem número próprio porque depende de existir um remote primeiro).
+
+## 9. Log de revisões
+
+| Data       | Autor                 | O que mudou                                                        | Motivo                                                                 | Etapas revalidadas |
+|------------|------------------------|------------------------------------------------------------------------|----------------------------------------------------------------------------|------------------------|
+| 2026-08-24 | sessão Claude Code      | Adicionado item de verificação de proteção de `main` à seção CD; adicionadas as seções "Pendências de validação" e este log; adicionado campo PR ao cabeçalho | Alinhamento com o novo template após reforço de governança do pipeline (GitHub Flow) | Nenhuma — veredito original não mudou |
+
+## 10. Próximo passo
 
 Feature de exemplo pronta como referência do pipeline. Para features reais, resolva as pendências
 acima antes de considerar o SRE review daquela feature aprovado sem ressalvas.

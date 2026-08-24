@@ -48,14 +48,36 @@ contexto adicional — isso vira o checklist literal do QA.)
 
 Como saberemos que a feature funcionou depois de lançada.
 
-## 8. Suposições
+## 8. Indicadores técnicos a observar
 
-Suposições assumidas na ausência de resposta do usuário (documentadas, não escondidas).
+Não é papel do PRD decidir arquitetura, mas é papel do PRD **sinalizar** o que pode ter peso
+técnico significativo, para o `architect` endereçar no TRD. Preencha cada item mesmo que a
+resposta seja "nenhum" — não deixe implícito.
 
-## 9. Questões em aberto
+- **Volumetria**: ordem de grandeza de dados/tráfego esperado (registros, requisições/segundo,
+  crescimento esperado). `<preencher ou "nenhum indicador relevante">`
+- **Segurança**: envolve dado sensível/pessoal, autenticação, autorização, ou superfície de
+  ataque nova? `<preencher ou "nenhum indicador relevante">`
+- **Legal/compliance**: implica LGPD/GDPR, retenção de dados, contrato com terceiro, ou
+  regulação específica do domínio? `<preencher ou "nenhum indicador relevante">`
 
-Perguntas ainda sem resposta que não bloqueiam o TRD, mas devem ser resolvidas antes do release.
+## 9. Pendências de validação (VALIDAR DEPOIS)
 
-## 10. Aprovação
+Toda ambiguidade que o usuário não soube/quis responder agora, registrada aqui em vez de virar
+suposição silenciosa. Resolvida via `/sdd-amend` quando o usuário pedir a revisão.
+
+| ID     | Pergunta                          | Contexto                              | Status              |
+|--------|--------------------------------------|-------------------------------------------|------------------------|
+| PRD-1  | <pergunta que ficou sem resposta>     | <por que essa pergunta importa>            | pendente / validado |
+
+## 10. Log de revisões
+
+Preenchido pelo `/sdd-amend` a cada mudança neste PRD depois de aprovado — nunca recrie o
+documento do zero para registrar uma mudança.
+
+| Data | Autor | O que mudou | Motivo | Etapas revalidadas |
+|------|-------|--------------|--------|-----------------------|
+
+## 11. Aprovação
 
 - [ ] Aprovado por: <usuário> em <data>

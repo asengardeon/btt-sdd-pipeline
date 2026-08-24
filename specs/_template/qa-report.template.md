@@ -2,6 +2,7 @@
 
 > Autor: agente `qa-engineer`
 > PRD: `specs/<slug>/prd.md` | TRD: `specs/<slug>/trd.md`
+> PR: <link do Pull Request revisado>
 > Data:
 
 ## 1. Veredito geral
@@ -37,6 +38,20 @@ onde a fronteira foi violada.
 | # | Arquivo/cenário | Esperado | Observado | Severidade |
 |---|-------------------|----------|-----------|------------|
 
-## 7. Próximo passo
+## 7. Pendências de validação (VALIDAR DEPOIS)
+
+Critério de aceite ambíguo o suficiente para não dar veredito sozinho vira pergunta ao usuário;
+se ele não souber responder agora, registre aqui em vez de decidir por conta própria.
+
+| ID    | Pergunta                          | Contexto                              | Status              |
+|-------|--------------------------------------|-------------------------------------------|------------------------|
+| QA-1  | <pergunta que ficou sem resposta>     | <por que essa pergunta importa>            | pendente / validado |
+
+## 8. Log de revisões
+
+| Data | Autor | O que mudou | Motivo | Etapas revalidadas |
+|------|-------|--------------|--------|-----------------------|
+
+## 9. Próximo passo
 
 `/sdd-sre` (se aprovado) ou `/sdd-implement` (se reprovado, com os achados acima).

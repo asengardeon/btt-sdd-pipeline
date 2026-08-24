@@ -7,7 +7,8 @@ de QA e validação de SRE — tudo com agentes dedicados a cada etapa.
 
 Se você é uma instância do Claude Code trabalhando neste repo, leia isto antes de fazer qualquer
 mudança de código. Para o detalhe de cada arquivo/pasta, veja `docs/FILE-GUIDE.md`. Para o fluxo
-completo do pipeline, veja `docs/SDD-WORKFLOW.md`.
+completo do pipeline, veja `docs/SDD-WORKFLOW.md`. Para os gates críticos que nenhuma etapa pode
+pular, veja `docs/QUALITY-GATES.md`. Para o fluxo de branch/PR, veja `docs/GIT-WORKFLOW.md`.
 
 ## O pipeline (5 etapas, 5 agentes)
 
@@ -41,10 +42,12 @@ Cada agente vive em `.claude/agents/<nome>.md` e é acionado por uma skill em
 |--------------------|--------------------|---------------------------------|
 | `/sdd-prd`          | product-design     | `specs/<slug>/prd.md`          |
 | `/sdd-trd`          | architect          | `specs/<slug>/trd.md`          |
-| `/sdd-implement`    | senior-developer   | código + testes                |
+| `/sdd-implement`    | senior-developer   | branch + PR + código + testes  |
 | `/sdd-qa`           | qa-engineer        | `specs/<slug>/qa-report.md`    |
 | `/sdd-sre`          | sre                | `specs/<slug>/sre-review.md`   |
 | `/sdd-status`       | (nenhum, utilitário) | resumo do estágio da feature |
+| `/sdd-amend`        | (nenhum, utilitário) | emenda um artefato já aprovado sem reiniciar o pipeline |
+| `/sdd-pending`      | (nenhum, utilitário) | lista itens "VALIDAR DEPOIS" em aberto |
 
 Veja um exemplo completo já rodado em `specs/0001-example-task-management/`.
 
@@ -81,7 +84,8 @@ Veja um exemplo completo já rodado em `specs/0001-example-task-management/`.
 - `tests/unit`, `tests/integration`, `tests/e2e` — testes espelhando a arquitetura.
 - `infra/docker`, `infra/terraform` — containerização e infraestrutura como código.
 - `.github/workflows` — pipelines de CI (lint + testes + gate de cobertura) e CD (deploy via Terraform).
-- `docs/` — explicação de arquitetura, workflow SDD, política de testes e guia arquivo-a-arquivo.
+- `docs/` — arquitetura, workflow SDD, política de testes, gates críticos, fluxo de Git e guia
+  arquivo-a-arquivo.
 
 ## Nota sobre a stack
 
@@ -92,14 +96,34 @@ fluxo ponta a ponta com código real e testes rodando. Ao adotar outra linguagem
 conteúdo de `src/`/`tests/`, o `Dockerfile` e o job de testes do `ci.yml` — a estrutura de pastas
 e o pipeline SDD continuam os mesmos.
 
-## Regras de trabalho para os agentes
+## Regras de governança (valem para os 5 agentes)
 
-- Nunca avance uma etapa sem o artefato de entrada da etapa anterior existir e estar aprovado
-  pelo usuário (não apenas gerado).
-- Nunca escreva código de produção fora de `src/` seguindo a separação domain/application/adapters.
-- Nunca reduza a cobertura de testes abaixo de 80% para "economizar tempo" — se um trecho é
-  genuinamente difícil de testar, isso é um sinal de design a ser resolvido pelo `architect`, não
-  ignorado.
-- Sempre registre decisões técnicas relevantes (troca de padrão, escolha de tecnologia, trade-off
-  de arquitetura) como ADR em `docs/adr/`, usando `docs/adr/0001-record-architecture-decisions.md`
-  como modelo.
+Detalhe completo em `docs/QUALITY-GATES.md` — aqui só o resumo:
+
+1. **Nenhuma suposição silenciosa.** Toda ambiguidade que mudaria um artefato (requisito, decisão
+   técnica, interpretação de critério de aceite, decisão de infraestrutura) é uma pergunta ao
+   usuário via `AskUserQuestion` — nunca uma escolha implícita do agente. Quando o usuário não
+   souber responder agora, **"VALIDAR DEPOIS"** é sempre uma opção válida; o item fica registrado
+   na seção "Pendências de validação (VALIDAR DEPOIS)" do artefato e pode ser revisado depois com
+   `/sdd-pending` e resolvido com `/sdd-amend`.
+2. **Nenhuma ação ou pergunta se repete mais de 3 vezes.** Na 3ª tentativa (correção de teste,
+   comando, reformulação de pergunta) sem sucesso, o agente para e escala ao usuário com o que
+   tentou e sua recomendação — nunca insiste numa 4ª vez.
+3. **Planeje antes de executar, sempre.** PRD e TRD já são planos (a aprovação deles é o próprio
+   gate). Para `/sdd-implement` e `/sdd-sre`, que executam ações reais (código, infraestrutura), o
+   agente apresenta o plano e pede aprovação explícita via `AskUserQuestion` antes de agir.
+4. **Artefatos aprovados são editados in-place**, nunca recriados do zero. Mudar uma decisão já
+   aprovada usa `/sdd-amend`, que só reabre as etapas posteriores realmente afetadas — sem
+   reiniciar o pipeline da primeira etapa.
+5. **Fluxo de Git = GitHub Flow.** `main` sempre implantável, uma branch por feature
+   (`feature/<NNNN-slug>`), PR obrigatório, merge só após QA e SRE aprovados. Detalhe completo em
+   `docs/GIT-WORKFLOW.md`.
+6. Nunca avance uma etapa sem o artefato de entrada da etapa anterior existir e estar aprovado
+   pelo usuário (não apenas gerado).
+7. Nunca escreva código de produção fora de `src/` seguindo a separação domain/application/adapters.
+8. Nunca reduza a cobertura de testes abaixo de 80% para "economizar tempo" — se um trecho é
+   genuinamente difícil de testar, isso é um sinal de design a ser resolvido pelo `architect`, não
+   ignorado.
+9. Sempre registre decisões técnicas relevantes (troca de padrão, escolha de tecnologia, trade-off
+   de arquitetura) como ADR em `docs/adr/`, usando `docs/adr/0001-record-architecture-decisions.md`
+   como modelo.

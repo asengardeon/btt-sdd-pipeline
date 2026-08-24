@@ -76,6 +76,9 @@ N/A — sem persistência real nem API externa neste exemplo.
 - **Impacto em infraestrutura para o SRE revisar:** nenhum além do Dockerfile/CI padrão do
   template — não há serviço de longa duração nem recurso de nuvem específico exigido por esta
   feature.
+- **Indicadores técnicos herdados do PRD**: volumetria trivial, sem indicador de segurança e sem
+  indicador legal (ver seção 8 do `prd.md`) — nenhum dos três exige decisão técnica adicional
+  além do que já está desenhado (repositório em memória, sem rede, sem dado pessoal).
 
 ## 9. Plano de testes (alto nível)
 
@@ -92,10 +95,23 @@ N/A — sem persistência real nem API externa neste exemplo.
 - Repositório em memória não persiste entre execuções da CLI — aceito, é o escopo explícito do
   PRD (fora de escopo: persistência real).
 
-## 11. Questões em aberto
+## 11. Controle de versão (GitHub Flow)
+
+- Branch: `feature/0001-example-task-management`
+- PR: não aplicável — esta feature de exemplo foi commitada diretamente em `main` no commit
+  inicial do repositório, antes da política de GitHub Flow existir (ver "Exceção histórica" em
+  `docs/GIT-WORKFLOW.md`). Toda feature a partir de agora segue o fluxo de branch/PR normalmente.
+
+## 12. Pendências de validação (VALIDAR DEPOIS)
 
 Nenhuma.
 
-## 12. Aprovação
+## 13. Log de revisões
+
+| Data       | Autor                 | O que mudou                                                              | Motivo                                                                 | Etapas revalidadas |
+|------------|------------------------|----------------------------------------------------------------------------|----------------------------------------------------------------------------|------------------------|
+| 2026-08-24 | sessão Claude Code      | Adicionadas as seções "Controle de versão", "Pendências de validação" e este log; adicionada referência a indicadores técnicos herdados do PRD na seção 8; renumeradas as seções seguintes | Alinhamento com o novo template (`specs/_template/trd.template.md`) após reforço de governança do pipeline | Nenhuma — mudança só de estrutura do documento, sem alterar arquitetura, ports ou casos de uso |
+
+## 14. Aprovação
 
 - [x] Aprovado por: asengardeons@hotmail.com em 2026-08-24

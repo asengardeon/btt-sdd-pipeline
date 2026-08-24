@@ -39,9 +39,13 @@ escritos".
 - **Agente**: `.claude/agents/senior-developer.md`
 - **Skill**: `/sdd-implement`
 - **Entrada**: TRD aprovado.
-- **Saída**: código em `src/` (ports & adapters) e testes em `tests/`, produzidos via TDD
-  (red-green-refactor), com cobertura ≥ 80% nas linhas/branches novas ou alteradas.
-- **Gate de saída**: suíte de testes passando, lint limpo, cobertura reportada.
+- **Plano antes de executar**: o agente quebra o TRD em incrementos e pede aprovação explícita do
+  usuário *antes* de escrever qualquer código (ver `docs/QUALITY-GATES.md`) — só depois disso cria
+  a branch `feature/<NNNN-slug>` (GitHub Flow, `docs/GIT-WORKFLOW.md`) e abre o PR.
+- **Saída**: branch + PR + código em `src/` (ports & adapters) e testes em `tests/`, produzidos
+  via TDD (red-green-refactor), com cobertura ≥ 80% nas linhas/branches novas ou alteradas.
+- **Gate de saída**: plano aprovado, suíte de testes passando, lint limpo, cobertura reportada,
+  PR aberto.
 
 ### 4. QA → Validação objetiva
 
@@ -57,14 +61,27 @@ escritos".
 - **Agente**: `.claude/agents/sre.md`
 - **Skill**: `/sdd-sre`
 - **Entrada**: QA aprovado.
-- **Saída**: `specs/<slug>/sre-review.md` — checklist de CI, CD, Docker, Terraform e
-  observabilidade, com veredito.
-- **Gate de saída**: aprovado (ou aprovado com ressalvas registradas).
+- **Plano antes de executar**: qualquer alteração real de infraestrutura (`terraform apply`) é
+  apresentada como plano e só executada após aprovação explícita do usuário.
+- **Saída**: `specs/<slug>/sre-review.md` — checklist de CI, CD, Docker, Terraform,
+  observabilidade e proteção de `main` (GitHub Flow), com veredito.
+- **Gate de saída**: aprovado (ou aprovado com ressalvas registradas). Depois disso, o merge do PR
+  para `main` é decisão do usuário — nenhum agente mergeia sozinho.
 
-## Utilitário: `/sdd-status`
+## Governança de decisão (vale para as 5 etapas)
 
-Não aciona agente — apenas lê `specs/` e reporta em que etapa cada feature está e qual o próximo
-comando a rodar. Use a qualquer momento para se orientar.
+Detalhe completo em `docs/QUALITY-GATES.md`. Resumo: nenhum agente faz suposição silenciosa —
+toda ambiguidade vira pergunta ao usuário, com **"VALIDAR DEPOIS"** sempre disponível como opção
+quando o usuário não souber responder agora (o item fica registrado na seção "Pendências de
+validação" do artefato). Nenhuma ação ou pergunta se repete mais de 3 vezes sem escalar. Use
+`/sdd-pending` para ver todos os itens VALIDAR DEPOIS em aberto em qualquer momento.
+
+## Utilitários: `/sdd-status` e `/sdd-pending`
+
+`/sdd-status` não aciona agente — lê `specs/` e reporta em que etapa cada feature está, qual o
+próximo comando a rodar, quantas pendências VALIDAR DEPOIS existem e se alguma etapa foi marcada
+"requer revalidação" por uma emenda. `/sdd-pending` lista o detalhe dos itens VALIDAR DEPOIS em
+todas as features. Use a qualquer momento para se orientar.
 
 ## Regra de ouro
 
@@ -78,8 +95,23 @@ disfarçado.
 Se o QA reprova, a feature volta para `/sdd-implement` com achados específicos. Se o SRE reprova
 (ou aprova com ressalvas bloqueantes), os itens voltam para quem for responsável — pode ser o
 `senior-developer` (ex.: falta observabilidade no código) ou ajuste direto do próprio `sre` em
-`infra/`. O PRD e o TRD só são reabertos se a causa raiz for de requisito ou de design — nesse
-caso, trate como uma iteração normal: edite o artefato existente, não crie um novo do zero.
+`infra/`. O PRD e o TRD só são reabertos se a causa raiz for de requisito ou de design.
+
+## Emenda sem reiniciar: `/sdd-amend`
+
+Mudar uma decisão **já aprovada** (não uma reprovação — uma mudança de ideia, ou a resolução de um
+item VALIDAR DEPOIS) não reinicia o pipeline. `/sdd-amend` edita o artefato in-place, registra a
+mudança no "Log de revisões" dele, e marca só as etapas *posteriores* realmente afetadas como
+"requer revalidação" — etapas anteriores aprovadas continuam válidas. Ex.: mudar um detalhe de
+texto no PRD que não muda critério de aceite não invalida o TRD; mudar um critério de aceite
+invalida TRD, implementação e QA, mas não obriga a refazer a conversa toda do PRD.
+
+## GitHub Flow no pipeline
+
+Detalhe completo em `docs/GIT-WORKFLOW.md`. Resumo: PRD e TRD não têm branch (são documentos).
+`/sdd-implement` cria `feature/<NNNN-slug>` e abre PR draft cedo. QA e SRE revisam contra esse PR.
+Merge para `main` só acontece depois de QA e SRE aprovados, é uma decisão do usuário (nenhum
+agente mergeia sozinho), e dispara o CD.
 
 ## Exemplo completo
 

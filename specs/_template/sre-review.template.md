@@ -2,6 +2,7 @@
 
 > Autor: agente `sre`
 > QA report: `specs/<slug>/qa-report.md`
+> PR: <link do Pull Request>
 > Data:
 
 ## 1. Veredito geral
@@ -22,6 +23,8 @@ Evidência/observações:
 - [ ] Deploy só roda após CI verde
 - [ ] `terraform apply` gated (plan revisável, aprovação manual quando aplicável)
 - [ ] Estratégia de rollback documentada
+- [ ] `main` protegida (GitHub Flow, ver `docs/GIT-WORKFLOW.md`): push direto bloqueado, PR
+  obrigatório, status checks do CI obrigatórios
 
 Evidência/observações:
 
@@ -54,6 +57,17 @@ Evidência/observações:
 | # | Item | Responsável | Bloqueia release? |
 |---|------|--------------|---------------------|
 
-## 8. Próximo passo
+## 8. Pendências de validação (VALIDAR DEPOIS)
+
+| ID    | Pergunta                          | Contexto                              | Status              |
+|-------|--------------------------------------|-------------------------------------------|------------------------|
+| SRE-1 | <pergunta que ficou sem resposta>     | <por que essa pergunta importa>            | pendente / validado |
+
+## 9. Log de revisões
+
+| Data | Autor | O que mudou | Motivo | Etapas revalidadas |
+|------|-------|--------------|--------|-----------------------|
+
+## 10. Próximo passo
 
 Se aprovado: feature pronta para release. Caso contrário: itens acima devem ser resolvidos antes.

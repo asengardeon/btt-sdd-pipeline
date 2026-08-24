@@ -15,11 +15,15 @@ Aciona a **etapa 5** do pipeline SDD descrito em `CLAUDE.md`: validação de CI/
 3. Invoque o agente `sre` (Agent tool, `subagent_type: "sre"`) passando o caminho do TRD (seção
    de requisitos não funcionais/infra) e do `qa-report.md`, e instrução para produzir
    `specs/<slug>/sre-review.md` a partir de `specs/_template/sre-review.template.md`.
-4. Se o agente propuser mudança real de infraestrutura (`terraform apply`), NUNCA execute sem
-   confirmação explícita do usuário — trate como ação destrutiva/de alto impacto.
-5. Mostre ao usuário o veredito e os checklists de CI, Docker e Terraform.
-6. Se aprovado, informe que a feature está pronta ponta a ponta pelo pipeline SDD. Se reprovado
-   ou aprovado com ressalvas, liste os itens pendentes e quem deve resolvê-los.
+4. O agente `sre` já embute o gate de aprovação: qualquer proposta de mudança real de
+   infraestrutura (`terraform apply`) é apresentada como plano e só executada após aprovação
+   explícita do usuário via `AskUserQuestion`. Você não precisa duplicar essa confirmação, mas
+   nunca instrua o agente a pular esse passo.
+5. Mostre ao usuário o veredito e os checklists de CI, Docker e Terraform — incluindo a
+   verificação de proteção da branch `main` (`docs/GIT-WORKFLOW.md`).
+6. Se aprovado, informe que a feature está pronta ponta a ponta pelo pipeline SDD, e que o merge
+   do PR (GitHub Flow) fica a critério do usuário. Se reprovado ou aprovado com ressalvas, liste
+   os itens pendentes e quem deve resolvê-los.
 
 ## Quando usar fora do fluxo de feature
 
