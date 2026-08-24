@@ -1,0 +1,15 @@
+{
+  "name": "projeto-base-ia",
+  "description": "Marketplace local deste repositório, com o plugin btt-sdd (pipeline de desenvolvimento orientado a especificação).",
+  "owner": {
+    "name": "asengardeons",
+    "email": "asengardeons@hotmail.com"
+  },
+  "plugins": [
+    {
+      "name": "btt-sdd",
+      "source": "./plugins/btt-sdd",
+      "description": "Pipeline SDD completo com agentes de produto, arquitetura, desenvolvimento backend/frontend em paralelo, QA, segurança e SRE."
+    }
+  ]
+}

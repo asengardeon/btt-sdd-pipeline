@@ -1,0 +1,116 @@
+# Quality Gates — validações críticas do pipeline
+
+Checklist único e não-negociável. Qualquer agente (ou pessoa) trabalhando neste repositório
+verifica isto antes de avançar uma etapa. Um gate marcado aqui como bloqueante **bloqueia mesmo**
+— não é sugestão, é a definição do que "pronto" significa neste pipeline. Os "Definition of Done"
+de cada agente (`.claude/agents/*.md`) são a aplicação específica destes gates à etapa dele; este
+documento é a referência única para não duplicar a lista em cada um deles.
+
+## Governança de decisão (vale para todas as etapas, incluindo a condicional de baseline)
+
+- [ ] **Nenhuma suposição não documentada.** Toda ambiguidade que mudaria o artefato (requisito,
+  decisão técnica, interpretação de critério de aceite, decisão de infraestrutura) vira uma
+  pergunta explícita ao usuário — nunca uma escolha silenciosa do agente.
+- [ ] **"VALIDAR DEPOIS" é sempre uma opção válida.** Quando o usuário não sabe responder agora,
+  o agente registra o item na seção "Pendências de validação (VALIDAR DEPOIS)" do artefato, com
+  contexto suficiente para retomar sem re-explicar tudo. O item some da lista de pendências só
+  quando resolvido via `/sdd-amend` (ver `docs/SDD-WORKFLOW.md`).
+- [ ] **Nenhuma ação ou requisição se repete mais de 3 vezes.** Tentativas de corrigir o mesmo
+  teste, rodar o mesmo comando, ou reformular a mesma pergunta contam como a mesma ação. Na 3ª
+  falha consecutiva, o agente para e escala ao usuário: o que foi tentado, por que falhou, e o
+  que ele recomenda como próximo passo. Isso vale tanto para ações técnicas (fix de teste, `apply`
+  de infraestrutura) quanto para tentativas de obter uma resposta clara do usuário.
+- [ ] **Todo plano de ação real (código, infraestrutura) é aprovado antes de executar.** PRD e TRD
+  já são planos por natureza — sua aprovação é o próprio gate. Para `/sdd-implement` e `/sdd-sre`,
+  o agente apresenta o plano (incrementos, branch, ou mudança de infra proposta) e obtém aprovação
+  explícita do usuário antes de escrever código ou tocar infraestrutura real.
+- [ ] **Artefatos aprovados são editados in-place, nunca recriados do zero.** Mudar uma decisão já
+  aprovada usa `/sdd-amend`, que registra a mudança no "Log de revisões" e só reabre as etapas
+  posteriores realmente afetadas — etapas anteriores aprovadas continuam válidas.
+
+## Baseline (condicional, `codebase-archaeologist`)
+
+- [ ] Só roda quando falta documentação base suficiente sobre código/sistema já existente — nunca
+  gera `docs/BASELINE.md` redundante quando a documentação já é suficiente.
+- [ ] Nada do código existente é corrigido/refatorado — só documentado como é.
+- [ ] Toda ambiguidade de intenção virou pergunta ou item VALIDAR DEPOIS.
+
+## PRD
+
+- [ ] Todo critério de aceite é verificável por um terceiro sem contexto adicional (idealmente
+  Gherkin).
+- [ ] Seção "Fora de escopo" preenchida explicitamente.
+- [ ] Seção "Indicadores técnicos a observar" preenchida (volumetria, segurança, legal) — mesmo
+  que a resposta seja "nenhum indicador relevante", isso precisa estar escrito, não implícito.
+- [ ] Aprovação explícita do usuário registrada.
+
+## TRD
+
+- [ ] Todo critério de aceite do PRD tem um caso de uso e um plano de teste correspondente.
+- [ ] Todo port tem contrato claro sem vazar detalhe de implementação de adapter.
+- [ ] Indicadores técnicos do PRD foram lidos e endereçados (decisão tomada ou explicitamente
+  adiada com justificativa, nunca ignorados).
+- [ ] Todo pilar de engenharia (`docs/ENGINEERING-PILLARS.md`: performance, escalabilidade,
+  resiliência, disponibilidade, observabilidade, manutenibilidade) tem resposta específica para a
+  feature, nunca em branco ou genérica.
+- [ ] Se a feature inclui frontend, "Contrato Frontend↔Backend" está definido (no TRD ou num ADR
+  referenciado) — nunca "a definir depois".
+- [ ] "Decomposição de tarefas e dependências" preenchida, com trilha (backend/frontend/ambos) e
+  dependências técnicas explícitas para cada tarefa.
+- [ ] Se o TRD depende de código pré-existente sem documentação suficiente, `/sdd-baseline` rodou
+  antes (ou a documentação já era suficiente, explicitamente constatado).
+- [ ] Nome de branch GitHub Flow definido (`feature/<NNNN-slug>`).
+- [ ] Aprovação explícita do usuário registrada.
+
+## Implementação
+
+- [ ] Todo código de produção nasceu de um teste que falhou primeiro (TDD).
+- [ ] Cobertura de linhas/branches novas ou alteradas ≥ 80%, **por pacote** (`src/` e, se
+  aplicável, `frontend/` separadamente).
+- [ ] Lint sem erros.
+- [ ] Nenhuma violação de fronteira ports & adapters (domain/application sem import de infra).
+- [ ] Se a feature é full-stack: todo adapter de entrada que o frontend consome implementa
+  exatamente o contrato do TRD — nenhum campo/rota inventado por qualquer um dos dois lados.
+- [ ] Branch `feature/<NNNN-slug>` criada a partir de `main` atualizada; PR aberto (única
+  branch/PR mesmo quando backend e frontend desenvolvem em paralelo).
+- [ ] Plano de implementação foi aprovado pelo usuário antes do primeiro commit de código (plano
+  combinado quando full-stack, orquestrado por `/sdd-implement`).
+
+## QA
+
+- [ ] Cobertura medida e comparada ao gate de 80% — sem relatório de cobertura confiável, não há
+  aprovação possível.
+- [ ] Todo critério de aceite do PRD tem veredito individual com evidência (teste ou passo manual).
+- [ ] Suíte completa rodou (regressão), não só os testes novos.
+- [ ] `qa-report.md` referencia o PR da feature.
+
+## Segurança (`security-engineer`)
+
+- [ ] Superfície de ataque/fronteiras de confiança identificadas para a feature.
+- [ ] Cada categoria do OWASP Top 10 tem avaliação (aplicável com achado, ou não aplicável com
+  justificativa) — nunca em branco.
+- [ ] Nenhum segredo em texto claro na aplicação (código, config, log).
+- [ ] Autenticação/autorização revisada em todo caminho relevante, quando a feature tem noção de
+  identidade/permissão.
+- [ ] Toda fronteira de confiança (CLI, request, evento) valida entrada antes de usar.
+- [ ] Dependências novas/alteradas checadas por vulnerabilidade conhecida, dentro do que as
+  ferramentas disponíveis permitem verificar.
+- [ ] `security-review.md` referencia o PR da feature.
+
+## SRE / CI-CD / Infra
+
+- [ ] CI roda lint + testes + gate de cobertura em todo PR.
+- [ ] `main` protegida: sem push direto, PR obrigatório, status checks obrigatórios (verificado,
+  não necessariamente configurado pelo agente — configuração real é do administrador do repo).
+- [ ] Deploy só roda após CI verde.
+- [ ] Nenhuma alteração de infraestrutura real (`terraform apply`) roda sem plano revisado
+  (`terraform plan`) e aprovação explícita do usuário.
+- [ ] Docker: build multi-stage, imagem mínima, usuário não-root, sem segredo hardcoded.
+- [ ] Terraform: estado remoto configurado, variáveis sensíveis marcadas `sensitive`.
+- [ ] Nenhum segredo em texto claro em código, workflow, Dockerfile ou arquivo Terraform.
+
+## Merge para `main`
+
+- [ ] PR aberto, CI verde, QA aprovado, segurança aprovada, SRE aprovado (ou aprovado com
+  ressalvas não-bloqueantes explicitamente aceitas pelo usuário em qualquer uma dessas etapas).
+- [ ] Nenhum item "VALIDAR DEPOIS" bloqueante (marcado como tal pelo usuário) segue em aberto.
