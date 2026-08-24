@@ -85,6 +85,23 @@ passo de sincronização manual. Isso significa duas coisas na prática:
   diretório separado, copia a estrutura genérica (`.claude/skills/create-project/scaffold/`) para
   lá, e inicia o pipeline com o primeiro PRD.
 
+Além da junction, o mesmo pipeline também existe empacotado como **plugin instalável** do Claude
+Code, em `plugins/btt-sdd/` (manifesto `.claude-plugin/plugin.json`, mais `.claude-plugin/
+marketplace.json` na raiz do repo funcionando como marketplace local). É uma cópia própria, não
+um link — necessária porque comandos instalados via plugin ganham o namespace `btt-sdd:` (ex.:
+`/btt-sdd:sdd-trd` em vez de `/sdd-trd`); ver `plugins/btt-sdd/README.md` para o processo de
+manter as duas cópias em sincronia. Instalação testada e confirmada de verdade neste computador:
+
+```
+claude plugin marketplace add C:\repositorios\projeto-base-ia
+claude plugin install btt-sdd@projeto-base-ia
+```
+
+Depois de instalado, os comandos ficam disponíveis com o prefixo `/btt-sdd:` em qualquer sessão
+nova do Claude Code neste computador, coexistindo sem conflito com os comandos sem prefixo da
+junction (`/sdd-status` e `/btt-sdd:sdd-status`, por exemplo, funcionam os dois, cada um lendo o
+projeto onde a sessão estiver aberta).
+
 ## Princípios de arquitetura (não negociáveis)
 
 1. **Ports & Adapters (arquitetura hexagonal).** `src/domain` não importa nada de fora. `src/application`

@@ -10,6 +10,20 @@ e `docs/SDD-WORKFLOW.md`; este documento é sobre *o que cada coisa é*.
   cada detalhe. Se você só vai ler um arquivo, é este.
 - **`README.md`** — introdução para humanos (não é carregado automaticamente pelo Claude Code):
   o que é o repositório e como começar a usá-lo.
+- **`.claude-plugin/marketplace.json`** — manifesto que faz este repositório funcionar como um
+  marketplace local de plugins do Claude Code, listando `plugins/btt-sdd` como plugin instalável
+  (`claude plugin marketplace add` + `claude plugin install btt-sdd@projeto-base-ia`).
+
+## `plugins/btt-sdd/` — o pipeline empacotado como plugin instalável
+
+Mesmo pipeline de `.claude/agents/`/`.claude/skills/` (ver seções abaixo), empacotado no formato
+de plugin do Claude Code (`.claude-plugin/plugin.json` + `agents/` + `skills/`, incluindo
+`create-project/scaffold/`). É uma **cópia própria**, não um link para `.claude/` — necessária
+porque comandos instalados via plugin ganham o namespace `btt-sdd:` (`/btt-sdd:sdd-trd`, não
+`/sdd-trd`), então toda referência interna a um comando `/sdd-*` dentro dos arquivos do plugin já
+vem com esse prefixo. `plugins/btt-sdd/README.md` documenta o processo de replicar uma edição de
+`.claude/agents/*.md`/`.claude/skills/*` para cá quando necessário. Instalação local testada e
+confirmada funcionando (ver `CLAUDE.md`, seção "Distribuição global").
 
 ## `.claude/agents/` — os agentes do pipeline (6 + 1 condicional)
 

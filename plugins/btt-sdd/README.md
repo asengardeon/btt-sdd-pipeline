@@ -18,6 +18,12 @@ Ou, para testar sem instalar:
 claude --plugin-dir plugins\btt-sdd
 ```
 
+**Status**: instalação testada de verdade neste computador — `marketplace add` e `plugin
+install` rodaram com sucesso (`claude plugin list` mostra `btt-sdd@projeto-base-ia`, escopo
+`user`, `enabled`), e uma sessão nova (`claude -p "/btt-sdd:sdd-status"`) reconheceu e executou o
+comando namespaced corretamente contra `specs/0001-example-task-management/`, coexistindo sem
+conflito com os comandos sem prefixo da junction (`/sdd-pending` etc.).
+
 ## ⚠️ Isto é uma cópia, não um link
 
 Diferente de `.claude/agents/`/`.claude/skills/` (que ficam disponíveis globalmente via junction
