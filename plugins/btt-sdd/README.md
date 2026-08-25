@@ -21,8 +21,7 @@ privado via HTTPS usando as credenciais já configuradas (sem prompt adicional),
 funcionou, e `claude plugin details` confirmou os 11 skills e 8 agentes corretos.
 
 Essa instalação é uma **cópia fixa do momento do clone** — editar o repositório depois não
-atualiza o plugin já instalado. Para pegar mudanças novas, rode `claude plugin update
-btt-sdd@btt-sdd-pipeline` (ou remova e reinstale).
+atualiza o plugin já instalado sozinho. Ver "Atualizar o plugin" abaixo.
 
 ## Instalação local (para desenvolver o próprio plugin)
 
@@ -47,6 +46,38 @@ install` rodaram com sucesso (`claude plugin list` mostra `btt-sdd@btt-sdd-pipel
 `user`, `enabled`), e uma sessão nova (`claude -p "/btt-sdd:sdd-status"`) reconheceu e executou o
 comando namespaced corretamente contra `specs/0001-example-task-management/`, coexistindo sem
 conflito com os comandos sem prefixo da junction (`/sdd-pending` etc.).
+
+## Atualizar o plugin
+
+Depende de como foi instalado (ver seções acima):
+
+- **Instalação via GitHub** (`marketplace add asengardeon/btt-sdd-pipeline`): é uma cópia fixa do
+  momento do clone — mudanças no repositório remoto não chegam sozinhas. Depois que uma mudança
+  estiver commitada e *pushed* neste repositório, rode:
+  ```
+  claude plugin update btt-sdd@btt-sdd-pipeline
+  ```
+  Se isso não pegar a versão mais nova, remova e reinstale:
+  ```
+  claude plugin uninstall btt-sdd@btt-sdd-pipeline
+  claude plugin install btt-sdd@btt-sdd-pipeline
+  ```
+
+- **Instalação local** (`marketplace add C:\repositorios\projeto-base-ia`, ou
+  `--plugin-dir plugins\btt-sdd`): aponta direto para os arquivos deste repositório no disco —
+  não precisa de `update`. A próxima sessão nova do Claude Code já reflete qualquer edição salva
+  em `plugins/btt-sdd/`.
+
+**Se você é quem mantém este repositório** (editando `.claude/agents/`/`.claude/skills/` na
+raiz): editar só a raiz não atualiza o plugin. A ordem completa é:
+
+1. Sincronize a mudança para dentro de `plugins/btt-sdd/` seguindo o processo descrito em
+   "⚠️ Isto é uma cópia, não um link" logo abaixo.
+2. Commit e *push* das duas cópias juntas (raiz + `plugins/btt-sdd/`) no mesmo commit, para não
+   deixar o marketplace remoto com as cópias divergentes.
+3. Só depois disso os usuários com instalação via GitHub verão a mudança ao rodar
+   `claude plugin update btt-sdd@btt-sdd-pipeline` — quem usa instalação local já vê na próxima
+   sessão, sem passo extra.
 
 ## ⚠️ Isto é uma cópia, não um link
 

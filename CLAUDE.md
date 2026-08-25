@@ -111,6 +111,11 @@ nova do Claude Code neste computador, coexistindo sem conflito com os comandos s
 junction (`/sdd-status` e `/btt-sdd:sdd-status`, por exemplo, funcionam os dois, cada um lendo o
 projeto onde a sessão estiver aberta).
 
+**Atualizar o plugin depois de uma mudança** não é automático — instalação via GitHub é uma cópia
+fixa do momento do clone, precisa de `claude plugin update btt-sdd@btt-sdd-pipeline` (instalação
+local reflete sozinha na próxima sessão). Ver `plugins/btt-sdd/README.md`, seção "Atualizar o
+plugin", para o passo a passo completo (sincronizar as duas cópias antes de commitar/dar push).
+
 ## Princípios de arquitetura (não negociáveis)
 
 1. **Ports & Adapters (arquitetura hexagonal).** `src/domain` não importa nada de fora. `src/application`
