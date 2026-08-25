@@ -2,8 +2,12 @@
 # de specs/ e em docs/BASELINE.md, sem precisar ler cada artefato inteiro no
 # contexto do agente. Usado por .claude/skills/sdd-pending.
 #
-# Uso: pwsh scripts/sdd-pending.ps1 [-Slug <slug>]
-#   -Slug (opcional) — mostra só aquela feature.
+# Uso: powershell -File scripts/sdd-pending.ps1 [-Slug <slug>]
+#   -Slug (opcional) - mostra so aquela feature.
+#
+# Nota: strings deste arquivo evitam acentos de proposito - .ps1 sem BOM e
+# lido pela codepage do sistema no Windows PowerShell 5.1, e caracteres
+# multibyte podem quebrar o parser ou sair como mojibake na saida.
 
 param([string]$Slug)
 
@@ -59,5 +63,5 @@ if (Test-Path $SpecsDir) {
 }
 
 if (-not $found) {
-  Write-Host "Nenhuma pendência VALIDAR DEPOIS em aberto."
+  Write-Host "Nenhuma pendencia VALIDAR DEPOIS em aberto."
 }
