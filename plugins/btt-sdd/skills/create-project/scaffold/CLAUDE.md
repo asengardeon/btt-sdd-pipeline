@@ -71,6 +71,10 @@ Cada etapa só começa com o artefato aprovado da etapa anterior. Nenhuma etapa 
 4. **TDD estrito.** Todo código nasce de um teste que falha primeiro (red-green-refactor).
 5. **Cobertura mínima de 80%, por pacote** (`src/` e `frontend/`, quando existir).
 6. **Pilares de engenharia** respondidos explicitamente em todo TRD — `docs/ENGINEERING-PILLARS.md`.
+7. **Stack tecnológica nunca implícita.** O `architect` decide a stack antes de desenhar qualquer
+   outra coisa no TRD: reaproveita `docs/STACK.md` deste projeto se já existir, senão propõe o
+   padrão de `~/.claude/stack-defaults.md` (opcional) confirmando com o usuário, senão pergunta
+   do zero. Toda decisão nova é gravada em `docs/STACK.md`.
 
 ## Onde as coisas vivem
 

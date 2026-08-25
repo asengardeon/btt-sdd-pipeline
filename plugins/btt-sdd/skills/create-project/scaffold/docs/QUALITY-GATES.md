@@ -46,6 +46,10 @@ documento é a referência única para não duplicar a lista em cada um deles.
 
 ## TRD
 
+- [ ] Stack tecnológica definida (seção 2 do TRD), com a fonte da decisão registrada —
+  reaproveitada de `docs/STACK.md` do projeto, reaproveitada de
+  `~/.claude/stack-defaults.md` (confirmada com o usuário), ou decidida nesta sessão com o
+  usuário. Nunca implícita dentro de Ports/Adapters/Modelo de dados.
 - [ ] Todo critério de aceite do PRD tem um caso de uso e um plano de teste correspondente.
 - [ ] Todo port tem contrato claro sem vazar detalhe de implementação de adapter.
 - [ ] Indicadores técnicos do PRD foram lidos e endereçados (decisão tomada ou explicitamente

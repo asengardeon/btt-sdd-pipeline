@@ -38,7 +38,7 @@ não se aplica.
   tentativa sem resposta conclusiva, registre como VALIDAR DEPOIS e siga com a opção mais
   conservadora, documentando a justificativa.
 - Você deve ler a seção "Indicadores técnicos a observar" do PRD e endereçar cada item
-  explicitamente na seção 8 do TRD (decisão tomada ou adiamento justificado) — nunca ignorar.
+  explicitamente na seção 10 do TRD (decisão tomada ou adiamento justificado) — nunca ignorar.
 
 ## O que você sempre respeita
 
@@ -55,22 +55,43 @@ não se aplica.
 
 1. Leia o PRD (inclusive a seção "Ordem de valor / dependências entre histórias") e qualquer
    TRD/ADR relacionado já existente em `specs/` e `docs/adr/`.
-2. Defina o **modelo de domínio**: entidades, invariantes, regras de negócio — sem framework.
-3. Defina os **ports** (interfaces) que a aplicação precisa: um por responsabilidade, nomeado pelo
+2. **Decida a stack tecnológica** (linguagem/runtime, framework principal, persistência,
+   gerenciador de pacotes) — sempre antes de desenhar qualquer coisa que dependa dela. Verifique,
+   nesta ordem, e pare na primeira que responder:
+   1. **`docs/STACK.md` já existe neste projeto** (não é o `create-project` que o cria — ele fica
+      ausente de propósito até uma stack ser decidida): se tem uma decisão real, reaproveite
+      direto, sem perguntar de novo. Registre no TRD que a fonte foi "reaproveitada de
+      `docs/STACK.md`".
+   2. **`~/.claude/stack-defaults.md` existe** (arquivo opcional, pessoal, fora deste projeto —
+      o padrão que o usuário prefere por padrão em projetos novos, formato livre em prosa): se
+      existe e `docs/STACK.md` deste projeto ainda não existe, proponha esse padrão como opção
+      recomendada via `AskUserQuestion` (não adote silenciosamente — é uma decisão nova para
+      *este* projeto, ainda passa por confirmação, só que com uma opção pré-preenchida em vez de
+      pergunta em branco). Registre no TRD que a fonte foi "harness global
+      (`~/.claude/stack-defaults.md`), confirmada com o usuário".
+   3. **Nenhum dos dois existe**: pergunte do zero via `AskUserQuestion` (linguagem/runtime,
+      framework principal se houver, persistência se houver), com "VALIDAR DEPOIS" como opção.
+      Registre no TRD que a fonte foi "decidida nesta sessão com o usuário".
+   Em qualquer decisão nova (fontes 2 ou 3), **escreva/atualize `docs/STACK.md`** deste projeto ao
+   final desta etapa — para que a próxima feature (e `backend-developer`/`frontend-developer`/
+   `sre`) encontrem a fonte 1 já preenchida e não precisem perguntar de novo neste projeto.
+   Preencha a seção "Stack Tecnológica" do TRD com o resultado e a proveniência.
+3. Defina o **modelo de domínio**: entidades, invariantes, regras de negócio — sem framework.
+4. Defina os **ports** (interfaces) que a aplicação precisa: um por responsabilidade, nomeado pelo
    papel que cumpre (`TaskRepository`, não `Database`).
-4. Defina os **casos de uso** (`application/use_cases`) que orquestram domínio + ports para
+5. Defina os **casos de uso** (`application/use_cases`) que orquestram domínio + ports para
    cumprir cada critério de aceite do PRD. Mapeie explicitamente critério de aceite → caso de uso.
-5. Defina os **adapters** necessários (de entrada: HTTP/CLI/evento; de saída: persistência,
+6. Defina os **adapters** necessários (de entrada: HTTP/CLI/evento; de saída: persistência,
    serviços externos) — só a interface e a responsabilidade, a implementação é do
    `backend-developer`.
-5b. **Se a feature inclui frontend**, preencha a seção "Contrato Frontend↔Backend (API)" do TRD:
+6b. **Se a feature inclui frontend**, preencha a seção "Contrato Frontend↔Backend (API)" do TRD:
    endpoints/mensagens, schema de request/response, formato de erro padrão, mecanismo de
    autenticação (se houver). Isso é o que permite `backend-developer` e `frontend-developer`
    trabalharem em paralelo sem esperar um pelo outro. Se este contrato estabelece uma convenção
    reutilizável por todo o app (não só por esta feature — ex.: o padrão de erro de toda API),
    registre como ADR (`docs/adr/`) e referencie-o aqui. Se a feature é só backend ou só frontend,
    marque "não aplicável, porque..." explicitamente.
-5c. Preencha "Decomposição de tarefas e dependências": quebre a feature em tarefas técnicas
+6c. Preencha "Decomposição de tarefas e dependências": quebre a feature em tarefas técnicas
    (backend/frontend/ambos), usando a "Ordem de valor" do PRD como ponto de partida para a
    sequência, e adicione as dependências técnicas que só a arquitetura revela (ex.: o endpoint
    precisa existir — nem que seja como stub respeitando o contrato — antes do client de frontend
@@ -81,19 +102,19 @@ não se aplica.
    outra issue no corpo) — nunca crie issues sem essa confirmação explícita, e nunca tente de
    novo mais de 3 vezes se `gh` falhar (relate o erro e siga sem bloquear o TRD por isso).
    Registre os números de issue de volta na tabela do TRD.
-6. Preencha a seção "Pilares de engenharia de software" passando explicitamente por cada pilar
+7. Preencha a seção "Pilares de engenharia de software" passando explicitamente por cada pilar
    (performance, escalabilidade, resiliência, disponibilidade, observabilidade,
    manutenibilidade — detalhe conceitual em `docs/ENGINEERING-PILLARS.md`), respondendo para esta
    feature especificamente, nunca copiando um texto genérico — e sinalize explicitamente quando
    algo tem implicação de infraestrutura para o `sre` revisar depois (ex: precisa de fila, precisa
    de cache, precisa de job assíncrono).
-7. Escreva o **plano de testes de alto nível**: quais camadas testar unitariamente, quais
+8. Escreva o **plano de testes de alto nível**: quais camadas testar unitariamente, quais
    integrações testar, quais cenários de e2e. Isso vira a base do `qa-engineer`.
-8. Se uma decisão técnica é significativa (troca de padrão, escolha de tecnologia com trade-off
+9. Se uma decisão técnica é significativa (troca de padrão, escolha de tecnologia com trade-off
    real), registre um ADR em `docs/adr/` seguindo `docs/adr/0001-record-architecture-decisions.md`.
-9. Defina o nome da branch GitHub Flow (`feature/<NNNN-slug>`, ver `docs/GIT-WORKFLOW.md`) e
-   registre na seção "Controle de versão" do TRD.
-10. Salve o TRD em `specs/<slug>/trd.md` usando `specs/_template/trd.template.md`. Se o TRD já
+10. Defina o nome da branch GitHub Flow (`feature/<NNNN-slug>`, ver `docs/GIT-WORKFLOW.md`) e
+    registre na seção "Controle de versão" do TRD.
+11. Salve o TRD em `specs/<slug>/trd.md` usando `specs/_template/trd.template.md`. Se o TRD já
     existia e está sendo alterado após aprovado, edite in-place e registre no "Log de revisões" —
     nunca recrie do zero.
 
@@ -101,13 +122,15 @@ não se aplica.
 
 Ver `docs/QUALITY-GATES.md` (seção TRD) para a lista completa. Resumo:
 
+- Stack tecnológica definida na seção 2 do TRD, com a proveniência da decisão registrada — nunca
+  implícita dentro de Ports/Adapters/Modelo de dados.
 - Todo critério de aceite do PRD tem um caso de uso e um plano de teste correspondente no TRD.
 - Todo port tem assinatura clara (entrada/saída/erros esperados), sem vazar detalhe de
   implementação de adapter (ex: um `TaskRepository.save` não menciona SQL).
 - Riscos e requisitos não funcionais com impacto em infraestrutura estão listados numa seção que
   o `sre` vai ler depois.
 - Todo pilar de engenharia (`docs/ENGINEERING-PILLARS.md`) tem resposta específica para esta
-  feature na seção 8 do TRD — nunca em branco ou genérico.
+  feature na seção correspondente do TRD — nunca em branco ou genérico.
 - Se a feature é full-stack, o "Contrato Frontend↔Backend" está definido (no TRD ou num ADR
   referenciado) — nunca "a definir depois".
 - "Decomposição de tarefas e dependências" preenchida, com dependências técnicas explícitas.

@@ -10,7 +10,17 @@
 Implementar criar/listar/concluir tarefas como exemplo de referência do pipeline, usando Python
 como stack ilustrativa, respeitando ports & adapters, SOLID, TDD e o gate de cobertura de 80%.
 
-## 2. Visão de arquitetura
+## 2. Stack Tecnológica
+
+- **Linguagem/runtime**: Python 3.11+
+- **Framework principal**: nenhum — só stdlib (`argparse` para a CLI).
+- **Persistência**: nenhuma — repositório em memória (fora de escopo por PRD).
+- **Gerenciador de pacotes**: `pip` + `pyproject.toml`
+- **Proveniência desta decisão**: decidida nesta sessão com o usuário (primeira feature deste
+  repositório — não havia `docs/STACK.md` nem `~/.claude/stack-defaults.md` ainda). `docs/STACK.md`
+  foi criado com este mesmo conteúdo a partir desta decisão.
+
+## 3. Visão de arquitetura
 
 ```
 [CLI (adapters/inbound/cli.py)] → [CreateTask / ListTasks / CompleteTask] → [TaskRepository port]
@@ -19,7 +29,7 @@ como stack ilustrativa, respeitando ports & adapters, SOLID, TDD e o gate de cob
                                                                      (adapters/outbound)]
 ```
 
-## 3. Modelo de domínio
+## 4. Modelo de domínio
 
 `Task` (`src/domain/task.py`): `id: str`, `title: str`, `done: bool = False`.
 
@@ -27,7 +37,7 @@ Invariantes:
 - Título não pode ser vazio/em branco — viola gera `EmptyTaskTitleError` na construção.
 - Uma tarefa já concluída não pode ser concluída de novo — viola gera `TaskAlreadyCompletedError`.
 
-## 4. Ports (contratos)
+## 5. Ports (contratos)
 
 ### `TaskRepository` (`src/application/ports/task_repository.py`)
 
@@ -39,7 +49,7 @@ Invariantes:
 - Quem implementa: `InMemoryTaskRepository`.
 - Quem consome: `CreateTaskUseCase`, `ListTasksUseCase`, `CompleteTaskUseCase`.
 
-## 5. Casos de uso
+## 6. Casos de uso
 
 | Critério de aceite (PRD)                         | Caso de uso           | Ports usados     |
 |-----------------------------------------------------|-------------------------|--------------------|
@@ -50,7 +60,7 @@ Invariantes:
 Validação de título vazio acontece no construtor de `Task` (domínio), não no caso de uso — é uma
 invariante do domínio, não uma regra de aplicação.
 
-## 6. Adapters
+## 7. Adapters
 
 ### Entrada
 
@@ -64,17 +74,17 @@ invariante do domínio, não uma regra de aplicação.
   memória, chave por `id`. Suficiente para o exemplo; uma implementação real (ex.: Postgres)
   substituiria esta classe sem alterar caso de uso ou domínio.
 
-## 7. Contrato Frontend↔Backend (API)
+## 8. Contrato Frontend↔Backend (API)
 
 - **Aplicável?** Não — esta feature é só backend (CLI local). Não há frontend consumindo nenhuma
   API; a própria CLI é a interface com o usuário. Ver `docs/ARCHITECTURE.md`, seção "Frontend",
   para quando esta seção passa a ser preenchida numa feature full-stack.
 
-## 8. Modelo de dados / contratos externos
+## 9. Modelo de dados / contratos externos
 
 N/A — sem persistência real nem API externa neste exemplo.
 
-## 9. Pilares de engenharia de software
+## 10. Pilares de engenharia de software
 
 - **Performance**: não se aplica — dataset trivial, em memória, latência irrelevante para o
   propósito de exemplo/demonstração.
@@ -98,7 +108,7 @@ N/A — sem persistência real nem API externa neste exemplo.
   além do que já está desenhado (repositório em memória, sem rede, sem dado pessoal). O indicador
   de segurança é aprofundado em `specs/0001-example-task-management/security-review.md`.
 
-## 10. Plano de testes (alto nível)
+## 11. Plano de testes (alto nível)
 
 - Unitário (`tests/unit/`): `domain/task.py` (invariantes) e cada caso de uso com um
   `FakeTaskRepository` local ao teste.
@@ -108,12 +118,12 @@ N/A — sem persistência real nem API externa neste exemplo.
   cenários de erro (título vazio, id inexistente, conclusão duplicada).
 - Meta de cobertura: 80% (padrão do repositório).
 
-## 11. Riscos e trade-offs
+## 12. Riscos e trade-offs
 
 - Repositório em memória não persiste entre execuções da CLI — aceito, é o escopo explícito do
   PRD (fora de escopo: persistência real).
 
-## 12. Decomposição de tarefas e dependências
+## 13. Decomposição de tarefas e dependências
 
 | ID   | Tarefa                                    | Trilha  | Depende de | Issue GitHub      |
 |------|----------------------------------------------|-----------|---------------|------------------------|
@@ -124,25 +134,26 @@ N/A — sem persistência real nem API externa neste exemplo.
 
 Sem trilha de frontend (feature backend-only) — nenhuma dependência cross-trilha a coordenar.
 
-## 13. Controle de versão (GitHub Flow)
+## 14. Controle de versão (GitHub Flow)
 
 - Branch: `feature/0001-example-task-management`
 - PR: não aplicável — esta feature de exemplo foi commitada diretamente em `main` no commit
   inicial do repositório, antes da política de GitHub Flow existir (ver "Exceção histórica" em
   `docs/GIT-WORKFLOW.md`). Toda feature a partir de agora segue o fluxo de branch/PR normalmente.
 
-## 14. Pendências de validação (VALIDAR DEPOIS)
+## 15. Pendências de validação (VALIDAR DEPOIS)
 
 Nenhuma.
 
-## 15. Log de revisões
+## 16. Log de revisões
 
 | Data       | Autor                 | O que mudou                                                              | Motivo                                                                 | Etapas revalidadas |
 |------------|------------------------|----------------------------------------------------------------------------|----------------------------------------------------------------------------|------------------------|
 | 2026-08-24 | sessão Claude Code      | Adicionadas as seções "Controle de versão", "Pendências de validação" e este log; adicionada referência a indicadores técnicos herdados do PRD na seção 8; renumeradas as seções seguintes | Alinhamento com o novo template (`specs/_template/trd.template.md`) após reforço de governança do pipeline | Nenhuma — mudança só de estrutura do documento, sem alterar arquitetura, ports ou casos de uso |
 | 2026-08-24 | sessão Claude Code      | Seção 8 "Requisitos não funcionais" virou "Pilares de engenharia de software", com cada pilar (performance, escalabilidade, resiliência, disponibilidade, observabilidade, manutenibilidade) respondido explicitamente | Adição do agente `security-engineer` e dos pilares de engenharia (`docs/ENGINEERING-PILLARS.md`) ao pipeline | Nenhuma — respostas são "não se aplica" com justificativa, mesma conclusão técnica de antes, só explicitada |
 | 2026-08-24 | sessão Claude Code      | Adicionadas as seções "Contrato Frontend↔Backend" (não aplicável) e "Decomposição de tarefas e dependências"; renumeradas as seções seguintes; referências a `senior-developer` trocadas por `backend-developer` | Split do agente de desenvolvimento em backend/frontend, contrato de API no TRD, e mapeamento de dependências entre tarefas | Nenhuma — mudança só de estrutura/nomenclatura, sem alterar arquitetura, ports ou casos de uso |
+| 2026-08-24 | sessão Claude Code      | Adicionada a seção "Stack Tecnológica" (Python 3.11+, stdlib only, sem persistência real), com proveniência registrada; renumeradas as seções seguintes; criado `docs/STACK.md` deste repositório com o mesmo conteúdo | Fechar a lacuna de "onde a stack é decidida" — antes era implícita dentro de Ports/Adapters, agora é um passo e uma seção explícitos (`.claude/agents/architect.md`) | Nenhuma — a stack já era essa na prática, só ficou explícita e centralizada |
 
-## 16. Aprovação
+## 17. Aprovação
 
 - [x] Aprovado por: asengardeons@hotmail.com em 2026-08-24

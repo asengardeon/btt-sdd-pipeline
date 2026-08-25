@@ -136,6 +136,12 @@ projeto onde a sessão estiver aberta).
    resiliência, disponibilidade, observabilidade e manutenibilidade — nunca em branco. Detalhe em
    `docs/ENGINEERING-PILLARS.md`.
 
+7. **Stack tecnológica nunca implícita.** O `architect` decide a stack antes de desenhar qualquer
+   outra coisa no TRD, nesta ordem: reaproveita `docs/STACK.md` deste projeto se já existir;
+   senão propõe o padrão de `~/.claude/stack-defaults.md` (arquivo pessoal opcional) se existir,
+   confirmando com o usuário; senão pergunta do zero. Toda decisão nova é gravada em
+   `docs/STACK.md` para a próxima feature reaproveitar.
+
 ## Onde as coisas vivem
 
 - `specs/` — PRDs, TRDs, QA reports, security reviews e SRE reviews, um diretório por feature.

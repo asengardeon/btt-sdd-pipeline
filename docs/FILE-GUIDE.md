@@ -43,8 +43,10 @@ DEPOIS" como opção quando cabível.
 - **`product-design.md`** — gera o PRD a partir de um pedido, incluindo a ordem de valor entre
   histórias. Não roda comandos (sem acesso a `Bash`) porque essa etapa é puramente de produto.
 - **`architect.md`** — gera o TRD a partir do PRD aprovado (e de `docs/BASELINE.md`, quando
-  existir), incluindo os pilares de engenharia (`docs/ENGINEERING-PILLARS.md`), o contrato
-  frontend↔backend e a decomposição de tarefas com dependências. Tem `Bash` para checar remote
+  existir), incluindo a decisão de stack tecnológica (reaproveitando `docs/STACK.md` ou
+  `~/.claude/stack-defaults.md` quando existirem, perguntando só se nenhum dos dois existir), os
+  pilares de engenharia (`docs/ENGINEERING-PILLARS.md`), o contrato frontend↔backend e a
+  decomposição de tarefas com dependências. Tem `Bash` para checar `docs/STACK.md`/remote
   GitHub/`gh auth status` e, com confirmação do usuário, espelhar tarefas como GitHub Issues.
 - **`backend-developer.md`** — implementa a trilha de backend via TDD a partir do TRD, em `src/`,
   dentro de uma branch GitHub Flow. Tem acesso a `Bash` porque precisa rodar testes/lint/git
@@ -106,7 +108,7 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
 - **`TESTING.md`** — explica TDD, a pirâmide de testes e o gate de cobertura de 80%.
 - **`ENGINEERING-PILLARS.md`** — explica os pilares de engenharia (performance, escalabilidade,
   resiliência, disponibilidade, observabilidade, manutenibilidade) que o `architect` precisa
-  endereçar explicitamente na seção 8 do TRD.
+  endereçar explicitamente na seção 10 do TRD.
 - **`QUALITY-GATES.md`** — checklist único e não-negociável dos gates críticos do pipeline
   (governança de decisão, baseline, PRD, TRD, implementação, QA, segurança, SRE, merge) —
   referência central citada por todos os agentes, para não duplicar a lista em cada um deles.
@@ -115,6 +117,11 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
 - **`BASELINE.md`** — **gerado condicionalmente** pelo `codebase-archaeologist` (não existe por
   padrão neste repositório, já que ele nasceu 100% documentado pelo próprio pipeline). Quando
   existe, descreve um sistema/código pré-existente "como é" (as-is), não como deveria ser.
+- **`STACK.md`** — criado/atualizado pelo `architect` na primeira vez que a stack tecnológica é
+  decidida neste repositório (etapa 2 do processo em `.claude/agents/architect.md`) — não é criado
+  pelo `/create-project`, sua ausência é o próprio sinal de "stack ainda não decidida". Existe
+  neste repositório desde o exemplo `0001-example-task-management` (Python) e serve de fonte para
+  qualquer feature nova aqui não precisar perguntar de novo.
 - **`FILE-GUIDE.md`** — este arquivo.
 - **`adr/`** — Architecture Decision Records. Cada arquivo numerado registra uma decisão técnica
   significativa (contexto, opções consideradas, decisão, consequências). `0001-...md` é o próprio

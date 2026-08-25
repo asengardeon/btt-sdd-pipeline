@@ -33,6 +33,10 @@ onde este projeto foi criado, e funcionam aqui porque este repositório segue a 
 - **`BASELINE.md`** — **gerado condicionalmente** pelo `codebase-archaeologist`, só se este
   projeto vier a incorporar código pré-existente sem documentação suficiente. Não existe por
   padrão num projeto criado do zero.
+- **`STACK.md`** — **gerado condicionalmente** pelo `architect`, na primeira vez que a stack
+  tecnológica é decidida neste projeto (linguagem, framework, persistência). Não é criado por
+  `/create-project` — sua ausência é o sinal de "stack ainda não decidida". Quando existe, é a
+  fonte que evita perguntar de novo em features seguintes.
 - **`FILE-GUIDE.md`** — este arquivo.
 - **`adr/`** — Architecture Decision Records. `0001-...md` é o próprio ADR que estabelece a
   convenção de registrar ADRs.
@@ -58,7 +62,9 @@ já foi decidida no TRD — não faz sentido escolher Docker/Terraform antes de 
 
 ## Arquivos de configuração da stack
 
-Decididos e documentados pelo `architect` no primeiro TRD (`pyproject.toml`, `package.json`, ou
-equivalente) e criados por `backend-developer`/`frontend-developer` durante a implementação.
+Decididos pelo `architect` no primeiro TRD e registrados em `docs/STACK.md` (linguagem,
+framework, persistência, gerenciador de pacotes); os arquivos de configuração propriamente ditos
+(`pyproject.toml`, `package.json`, ou equivalente) são criados por
+`backend-developer`/`frontend-developer` durante a implementação, seguindo essa decisão.
 
 - **`.gitignore`** — padrões genéricos a ignorar; ajuste conforme a stack escolhida.
