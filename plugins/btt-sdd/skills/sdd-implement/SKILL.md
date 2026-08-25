@@ -40,7 +40,7 @@ TRD, em uma branch GitHub Flow (`docs/GIT-WORKFLOW.md`).
    trilhas).
 6. Mostre ao usuário um resumo do que foi implementado (por trilha, se full-stack), o link/nome
    do PR, os comandos usados para rodar os testes, e a cobertura obtida por pacote.
-7. Ao final, informe que a próxima etapa é `/btt-sdd:sdd-qa`, referenciando o PR.
+7. Ao final, informe que a próxima etapa é `/btt-sdd:sdd-code-review`, referenciando o PR.
 
 ## Quando usar sem o agente
 

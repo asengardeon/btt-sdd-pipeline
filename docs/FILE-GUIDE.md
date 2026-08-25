@@ -25,7 +25,7 @@ vem com esse prefixo. `plugins/btt-sdd/README.md` documenta o processo de replic
 `.claude/agents/*.md`/`.claude/skills/*` para cá quando necessário. Instalação local testada e
 confirmada funcionando (ver `CLAUDE.md`, seção "Distribuição global").
 
-## `.claude/agents/` — os agentes do pipeline (6 + 1 condicional)
+## `.claude/agents/` — os agentes do pipeline (7 + 1 condicional)
 
 Cada arquivo `.md` aqui define um **subagente** invocável pela ferramenta Agent/Task do Claude
 Code. O nome do arquivo (sem `.md`) é o `subagent_type`. O frontmatter YAML no topo declara nome,
@@ -56,9 +56,13 @@ DEPOIS" como opção quando cabível.
   `frontend/`, contra o contrato definido pelo `architect`. Mesmo padrão de `Bash` e aprovação de
   plano de `backend-developer`. Quando a feature é full-stack, os dois rodam em paralelo,
   orquestrados por `/sdd-implement`.
-- **`qa-engineer.md`** — valida a implementação contra PRD/TRD e o PR aberto. Tem `Bash` para
-  rodar a suíte de testes e o relatório de cobertura, e `Write`/`Edit` só para o próprio
-  `qa-report.md` — QA não corrige código de produção, reporta.
+- **`code-reviewer.md`** — engenheiro de software sênior fazendo *code review* do PR entre a
+  implementação e o QA: ports & adapters, SOLID, clean code, qualidade dos próprios testes,
+  contrato Frontend↔Backend quando full-stack. Tem `Bash` para ler o diff do PR e rodar lint, e
+  `Write`/`Edit` só para o próprio `code-review.md` — não corrige código de produção, reporta.
+- **`qa-engineer.md`** — valida a implementação contra PRD/TRD e o PR aberto, depois da revisão
+  de código aprovada. Tem `Bash` para rodar a suíte de testes e o relatório de cobertura, e
+  `Write`/`Edit` só para o próprio `qa-report.md` — QA não corrige código de produção, reporta.
 - **`security-engineer.md`** — revisa segurança da aplicação (OWASP, segredos, autenticação/
   autorização, validação de entrada, dependências) depois do QA. Mesma lógica de `Write`/`Edit`
   restrito ao próprio `security-review.md` — não corrige código, reporta.
@@ -80,6 +84,7 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
   PRD de entrada, além da convenção `specs/<slug>/prd.md`.
 - **`sdd-implement/`** → `/sdd-implement` — aciona `backend-developer` e/ou `frontend-developer`;
   quando os dois, orquestra um plano combinado e os invoca em paralelo.
+- **`sdd-code-review/`** → `/sdd-code-review` — aciona `code-reviewer`.
 - **`sdd-qa/`** → `/sdd-qa` — aciona `qa-engineer`.
 - **`sdd-security/`** → `/sdd-security` — aciona `security-engineer`.
 - **`sdd-sre/`** → `/sdd-sre` — aciona `sre`.
@@ -103,7 +108,7 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
 
 - **`ARCHITECTURE.md`** — explica ports & adapters, SOLID e clean code, e como mapeiam para
   `src/`.
-- **`SDD-WORKFLOW.md`** — explica o pipeline de 6 etapas (+ 1 condicional) em detalhe:
+- **`SDD-WORKFLOW.md`** — explica o pipeline de 7 etapas (+ 1 condicional) em detalhe:
   entrada/saída/gate de cada uma.
 - **`TESTING.md`** — explica TDD, a pirâmide de testes e o gate de cobertura de 80%.
 - **`ENGINEERING-PILLARS.md`** — explica os pilares de engenharia (performance, escalabilidade,
@@ -129,13 +134,14 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
 
 ## `specs/` — os artefatos do pipeline SDD, um diretório por feature
 
-- **`_template/`** — os modelos (`prd.template.md`, `trd.template.md`, `qa-report.template.md`,
-  `security-review.template.md`, `sre-review.template.md`) que os agentes preenchem. Não é uma
-  feature, é a fôrma usada por todas. Todos têm uma seção "Pendências de validação (VALIDAR
-  DEPOIS)" e um "Log de revisões" (preenchido pelo `/sdd-amend`); o PRD também tem "Indicadores
-  técnicos a observar" (volumetria, segurança, legal) e "Ordem de valor / dependências entre
-  histórias"; o TRD tem "Pilares de engenharia de software", "Contrato Frontend↔Backend (API)",
-  "Decomposição de tarefas e dependências" e "Controle de versão (GitHub Flow)" (branch/PR).
+- **`_template/`** — os modelos (`prd.template.md`, `trd.template.md`,
+  `code-review.template.md`, `qa-report.template.md`, `security-review.template.md`,
+  `sre-review.template.md`) que os agentes preenchem. Não é uma feature, é a fôrma usada por
+  todas. Todos têm uma seção "Pendências de validação (VALIDAR DEPOIS)" e um "Log de revisões"
+  (preenchido pelo `/sdd-amend`); o PRD também tem "Indicadores técnicos a observar" (volumetria,
+  segurança, legal) e "Ordem de valor / dependências entre histórias"; o TRD tem "Pilares de
+  engenharia de software", "Contrato Frontend↔Backend (API)", "Decomposição de tarefas e
+  dependências" e "Controle de versão (GitHub Flow)" (branch/PR).
 - **`0001-example-task-management/`** — exemplo real e completo do pipeline rodado do início ao
   fim (PRD → TRD → código em `src/` → QA report → security review → SRE review), usado como
   referência de nível de detalhe esperado.

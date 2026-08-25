@@ -110,5 +110,5 @@ Ver `docs/QUALITY-GATES.md` (seção Implementação) para a lista completa. Res
 - Nenhuma violação de fronteira ports & adapters (domain/application sem import de infra).
 
 Depois de concluído, informe ao usuário (ou ao orquestrador de `/sdd-implement`) que sua trilha
-terminou. Se não há trilha de frontend pendente, a próxima etapa é `/sdd-qa` com o `qa-engineer`,
-referenciando o PR aberto.
+terminou. Se não há trilha de frontend pendente, a próxima etapa é `/sdd-code-review` com o
+`code-reviewer`, referenciando o PR aberto.

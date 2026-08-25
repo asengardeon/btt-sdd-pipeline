@@ -1,6 +1,6 @@
 {
   "name": "btt-sdd",
-  "description": "Pipeline de desenvolvimento orientado a especificação (SDD): PRD -> TRD -> implementação backend/frontend em paralelo -> QA -> segurança -> SRE, com gates de governança e um agente arqueólogo condicional para baseline de código legado.",
+  "description": "Pipeline de desenvolvimento orientado a especificação (SDD): PRD -> TRD -> implementação backend/frontend em paralelo -> revisão de código -> QA -> segurança -> SRE, com gates de governança e um agente arqueólogo condicional para baseline de código legado.",
   "version": "1.0.0",
   "author": {
     "name": "asengardeons",

@@ -2,7 +2,8 @@
 
 Template de desenvolvimento orientado a especificação (**SDD — Spec-Driven Development**) para o
 Claude Code: cada feature nasce de um PRD, passa por um TRD, é implementada com TDD em ports &
-adapters, é validada por QA e liberada por SRE — com um agente dedicado a cada etapa.
+adapters, passa por revisão de código, é validada por QA e segurança, e liberada por SRE — com um
+agente dedicado a cada etapa.
 
 Comece por `CLAUDE.md` — é o arquivo que o Claude Code lê automaticamente e que explica todo o
 pipeline. Para a explicação de cada arquivo/pasta deste repositório, veja `docs/FILE-GUIDE.md`.
@@ -10,7 +11,7 @@ pipeline. Para a explicação de cada arquivo/pasta deste repositório, veja `do
 ## Pipeline
 
 ```
-/sdd-prd  →  /sdd-trd  →  /sdd-implement  →  /sdd-qa  →  /sdd-sre
+/sdd-prd  →  /sdd-trd  →  /sdd-implement  →  /sdd-code-review  →  /sdd-qa  →  /sdd-security  →  /sdd-sre
 ```
 
 Use `/sdd-status` a qualquer momento para ver em que etapa cada feature está. Veja

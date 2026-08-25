@@ -80,8 +80,24 @@ documento é a referência única para não duplicar a lista em cada um deles.
 - [ ] Plano de implementação foi aprovado pelo usuário antes do primeiro commit de código (plano
   combinado quando full-stack, orquestrado por `/sdd-implement`).
 
+## Revisão de código (`code-reviewer`)
+
+- [ ] Nenhuma violação de fronteira ports & adapters (domain/application sem import de infra)
+  aprovada sem ressalva.
+- [ ] Princípios SOLID avaliados de forma funcional (import de fato, não intenção declarada).
+- [ ] Qualidade dos próprios testes avaliada (fragilidade, falso positivo) — cobertura numérica é
+  do QA, não desta etapa.
+- [ ] Se full-stack: contrato Frontend↔Backend do TRD checado como implementado exatamente pelos
+  dois lados.
+- [ ] Débito técnico introduzido está sinalizado explicitamente (pelo dev ou pela revisão) — débito
+  silencioso não documentado é achado bloqueante.
+- [ ] `code-review.md` existe, referencia o PR, e cada área de revisão tem veredito com evidência
+  (arquivo/linha) ou "sem achados".
+
 ## QA
 
+- [ ] `code-review.md` com veredito aprovado (ou aprovado com ressalvas aceitas pelo usuário) —
+  sem isso, o QA não começa.
 - [ ] Cobertura medida e comparada ao gate de 80% — sem relatório de cobertura confiável, não há
   aprovação possível.
 - [ ] Todo critério de aceite do PRD tem veredito individual com evidência (teste ou passo manual).
@@ -115,6 +131,7 @@ documento é a referência única para não duplicar a lista em cada um deles.
 
 ## Merge para `main`
 
-- [ ] PR aberto, CI verde, QA aprovado, segurança aprovada, SRE aprovado (ou aprovado com
-  ressalvas não-bloqueantes explicitamente aceitas pelo usuário em qualquer uma dessas etapas).
+- [ ] PR aberto, CI verde, revisão de código aprovada, QA aprovado, segurança aprovada, SRE
+  aprovado (ou aprovado com ressalvas não-bloqueantes explicitamente aceitas pelo usuário em
+  qualquer uma dessas etapas).
 - [ ] Nenhum item "VALIDAR DEPOIS" bloqueante (marcado como tal pelo usuário) segue em aberto.

@@ -110,6 +110,6 @@ Ver `docs/QUALITY-GATES.md` (seção Implementação) para a lista completa. Res
 - Cobertura de linhas/branches novas ou alteradas em `frontend/` ≥ 80%.
 - Lint sem erros, sem warnings ignorados sem justificativa.
 
-Depois de concluído, informe ao usuário (ou ao orquestrador de `/btt-sdd:sdd-implement`) que sua trilha
-terminou. Se não há trilha de backend pendente, a próxima etapa é `/btt-sdd:sdd-qa` com o `qa-engineer`,
-referenciando o PR aberto.
+Depois de concluído, informe ao usuário (ou ao orquestrador de `/btt-sdd:sdd-implement`) que sua
+trilha terminou. Se não há trilha de backend pendente, a próxima etapa é
+`/btt-sdd:sdd-code-review` com o `code-reviewer`, referenciando o PR aberto.

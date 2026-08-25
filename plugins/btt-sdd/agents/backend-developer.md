@@ -109,6 +109,6 @@ Ver `docs/QUALITY-GATES.md` (seção Implementação) para a lista completa. Res
 - Lint sem erros, sem warnings ignorados sem justificativa.
 - Nenhuma violação de fronteira ports & adapters (domain/application sem import de infra).
 
-Depois de concluído, informe ao usuário (ou ao orquestrador de `/btt-sdd:sdd-implement`) que sua trilha
-terminou. Se não há trilha de frontend pendente, a próxima etapa é `/btt-sdd:sdd-qa` com o `qa-engineer`,
-referenciando o PR aberto.
+Depois de concluído, informe ao usuário (ou ao orquestrador de `/btt-sdd:sdd-implement`) que sua
+trilha terminou. Se não há trilha de frontend pendente, a próxima etapa é
+`/btt-sdd:sdd-code-review` com o `code-reviewer`, referenciando o PR aberto.

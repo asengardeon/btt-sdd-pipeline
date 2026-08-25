@@ -13,8 +13,8 @@ e `docs/SDD-WORKFLOW.md`; este documento é sobre *o que cada coisa é*.
 ## Agentes e skills (globais)
 
 Os agentes (`product-design`, `architect`, `backend-developer`, `frontend-developer`,
-`qa-engineer`, `security-engineer`, `sre`, `codebase-archaeologist`) e as skills (`/sdd-*`,
-`/create-project`) **não vivem neste repositório** — estão instalados globalmente no computador
+`code-reviewer`, `qa-engineer`, `security-engineer`, `sre`, `codebase-archaeologist`) e as skills
+(`/sdd-*`, `/create-project`) **não vivem neste repositório** — estão instalados globalmente no computador
 onde este projeto foi criado, e funcionam aqui porque este repositório segue a mesma estrutura de
 `specs/`, `docs/`, `CLAUDE.md` que eles esperam. Não é necessário (nem esperado) copiar
 `.claude/agents/` ou `.claude/skills/` para dentro deste projeto.
@@ -23,7 +23,7 @@ onde este projeto foi criado, e funcionam aqui porque este repositório segue a 
 
 - **`ARCHITECTURE.md`** — explica ports & adapters, SOLID, clean code, e a convenção de
   `frontend/` quando aplicável.
-- **`SDD-WORKFLOW.md`** — explica o pipeline de 6 etapas (+ 1 condicional) em detalhe.
+- **`SDD-WORKFLOW.md`** — explica o pipeline de 7 etapas (+ 1 condicional) em detalhe.
 - **`TESTING.md`** — explica TDD, a pirâmide de testes e o gate de cobertura de 80% por pacote.
 - **`ENGINEERING-PILLARS.md`** — explica os pilares de engenharia (performance, escalabilidade,
   resiliência, disponibilidade, observabilidade, manutenibilidade) que o `architect` precisa
@@ -43,8 +43,8 @@ onde este projeto foi criado, e funcionam aqui porque este repositório segue a 
 
 ## `specs/` — os artefatos do pipeline SDD, um diretório por feature
 
-- **`_template/`** — os modelos que os agentes preenchem (`prd`, `trd`, `qa-report`,
-  `security-review`, `sre-review`). Não é uma feature, é a fôrma usada por todas.
+- **`_template/`** — os modelos que os agentes preenchem (`prd`, `trd`, `code-review`,
+  `qa-report`, `security-review`, `sre-review`). Não é uma feature, é a fôrma usada por todas.
 - **Cada feature** ganha uma pasta `NNNN-slug-em-kebab-case/` com os artefatos que forem sendo
   produzidos por cada etapa.
 

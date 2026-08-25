@@ -17,11 +17,12 @@ implantável), uma branch curta por feature, Pull Request obrigatório para volt
 3. **PR aberto cedo**, como *draft*, assim que o primeiro commit da implementação existe — não só
    no final. Isso deixa o CI rodando continuamente contra a branch (`ci.yml` já dispara em
    `pull_request`) e dá visibilidade do progresso.
-4. **QA, segurança e SRE revisam contra o PR**, não contra código local solto: `qa-report.md`,
-   `security-review.md` e `sre-review.md` da feature referenciam o número/link do PR.
-5. **Merge só depois de QA, segurança e SRE aprovados** e CI verde (lint + testes + gate de
-   cobertura 80%). Preferência por *squash merge* — um commit por feature em `main`, histórico
-   linear e legível.
+4. **Revisão de código, QA, segurança e SRE revisam contra o PR**, não contra código local solto:
+   `code-review.md`, `qa-report.md`, `security-review.md` e `sre-review.md` da feature referenciam
+   o número/link do PR.
+5. **Merge só depois de revisão de código, QA, segurança e SRE aprovados** e CI verde (lint +
+   testes + gate de cobertura 80%). Preferência por *squash merge* — um commit por feature em
+   `main`, histórico linear e legível.
 6. **`main` protegida** nas configurações do repositório GitHub (fora do controle de arquivos
    versionados, é responsabilidade de quem administra o repo — normalmente o agente `sre` valida
    isso, não configura sozinho):
@@ -39,6 +40,7 @@ implantável), uma branch curta por feature, Pull Request obrigatório para volt
 |-----------------------|-------------------------------------------------------------------------------|
 | `/sdd-prd`, `/sdd-trd` | Nenhuma — são documentos em `specs/`, ainda não há código/branch.             |
 | `/sdd-implement`       | Cria `feature/<NNNN-slug>` a partir de `main`; abre PR draft no primeiro commit; commita incrementalmente (um commit por ciclo TDD ou por incremento coerente). Se full-stack, `backend-developer` e `frontend-developer` commitam na mesma branch em paralelo. |
+| `/sdd-code-review`      | Roda contra a branch/PR; referencia o PR no `code-review.md`.                 |
 | `/sdd-qa`               | Roda contra a branch/PR; referencia o PR no `qa-report.md`.                   |
 | `/sdd-security`         | Roda contra a branch/PR; referencia o PR no `security-review.md`.             |
 | `/sdd-sre`              | Revisa CI/CD/infra; se aprovado, marca o PR como pronto para review humano/merge. |

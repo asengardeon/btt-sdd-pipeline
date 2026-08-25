@@ -1,6 +1,6 @@
 # Workflow SDD (Spec-Driven Development)
 
-Este documento explica o funcionamento completo do pipeline de 6 etapas (+ 1 condicional) deste
+Este documento explica o funcionamento completo do pipeline de 7 etapas (+ 1 condicional) deste
 repositório: por que ele existe, o que cada etapa exige/produz, e como as peças (agentes, skills,
 templates) se encaixam.
 
@@ -28,7 +28,7 @@ validam objetivamente contra critérios escritos".
 - **Gate de saída**: `docs/BASELINE.md` existe para a área relevante, ou a suficiência foi
   constatada explicitamente — nunca um silêncio sem conclusão.
 
-## As 6 etapas
+## As 7 etapas
 
 ### 1. Produto & Design → PRD
 
@@ -75,16 +75,30 @@ validam objetivamente contra critérios escritos".
 - **Gate de saída**: plano aprovado, suíte de testes passando, lint limpo, cobertura reportada por
   pacote, PR aberto, contrato respeitado por ambos os lados quando full-stack.
 
-### 4. QA → Validação objetiva
+### 4. Revisão de código → Code review de engenheiro sênior
+
+- **Agente**: `.claude/agents/code-reviewer.md`
+- **Skill**: `/sdd-code-review`
+- **Entrada**: PR aberto pela etapa de implementação + TRD.
+- **Saída**: `specs/<slug>/code-review.md` — veredito sobre ports & adapters/regra da
+  dependência, SOLID, clean code, qualidade dos próprios testes (não cobertura numérica),
+  consistência com o contrato Frontend↔Backend quando full-stack, tratamento de erros/casos de
+  borda no código, e débito técnico introduzido. Foca em **qualidade e design do código**; não
+  julga critério de aceite (isso é o QA na etapa seguinte) nem segurança (isso é o
+  `security-engineer`).
+- **Gate de saída**: veredito geral aprovado, ou aprovado com ressalvas não-bloqueantes aceitas
+  pelo usuário (senão volta para a etapa 3).
+
+### 5. QA → Validação objetiva
 
 - **Agente**: `.claude/agents/qa-engineer.md`
 - **Skill**: `/sdd-qa`
-- **Entrada**: implementação + PRD + TRD.
+- **Entrada**: revisão de código aprovada + PRD + TRD.
 - **Saída**: `specs/<slug>/qa-report.md` — veredito por critério de aceite, cobertura vs. gate de
   80%, achados de regressão e de violação de fronteira arquitetural.
 - **Gate de saída**: veredito geral aprovado (senão volta para a etapa 3).
 
-### 5. Segurança → Revisão de segurança da aplicação
+### 6. Segurança → Revisão de segurança da aplicação
 
 - **Agente**: `.claude/agents/security-engineer.md`
 - **Skill**: `/sdd-security`
@@ -96,7 +110,7 @@ validam objetivamente contra critérios escritos".
   sobreposição.
 - **Gate de saída**: veredito geral aprovado (senão volta para a etapa 3).
 
-### 6. SRE → CI/CD e infraestrutura
+### 7. SRE → CI/CD e infraestrutura
 
 - **Agente**: `.claude/agents/sre.md`
 - **Skill**: `/sdd-sre`
@@ -142,6 +156,7 @@ disfarçado.
 
 ## Ciclo de feedback
 
+Se a revisão de código reprova, a feature volta para `/sdd-implement` com os achados específicos.
 Se o QA reprova, a feature volta para `/sdd-implement` com achados específicos. Se a segurança
 reprova, também volta para `/sdd-implement` (com os achados de segurança). Se o SRE reprova (ou
 aprova com ressalvas bloqueantes), os itens voltam para quem for responsável — pode ser
@@ -156,14 +171,16 @@ item VALIDAR DEPOIS) não reinicia o pipeline. `/sdd-amend` edita o artefato in-
 mudança no "Log de revisões" dele, e marca só as etapas *posteriores* realmente afetadas como
 "requer revalidação" — etapas anteriores aprovadas continuam válidas. Ex.: mudar um detalhe de
 texto no PRD que não muda critério de aceite não invalida o TRD; mudar um critério de aceite
-invalida TRD, implementação, QA e segurança, mas não obriga a refazer a conversa toda do PRD.
+invalida TRD, implementação, revisão de código, QA e segurança, mas não obriga a refazer a
+conversa toda do PRD.
 
 ## GitHub Flow no pipeline
 
 Detalhe completo em `docs/GIT-WORKFLOW.md`. Resumo: a etapa 0 e o PRD/TRD não têm branch (são
-documentos). `/sdd-implement` cria `feature/<NNNN-slug>` e abre PR draft cedo. QA, segurança e SRE
-revisam contra esse PR. Merge para `main` só acontece depois de QA, segurança e SRE aprovados, é
-uma decisão do usuário (nenhum agente mergeia sozinho), e dispara o CD.
+documentos). `/sdd-implement` cria `feature/<NNNN-slug>` e abre PR draft cedo. Revisão de código,
+QA, segurança e SRE revisam contra esse PR. Merge para `main` só acontece depois de revisão de
+código, QA, segurança e SRE aprovados, é uma decisão do usuário (nenhum agente mergeia sozinho), e
+dispara o CD.
 
 ## Exemplo completo
 

@@ -3,9 +3,9 @@
 Este repositório é um **template de desenvolvimento orientado a especificação (SDD — Spec-Driven
 Development)**. Ele existe para que qualquer feature nasça de uma especificação de produto,
 passe por um desenho técnico revisável, seja implementada com TDD (backend e frontend em
-paralelo, quando aplicável) e só chegue a produção depois de QA, revisão de segurança e validação
-de SRE — tudo com agentes dedicados a cada etapa, **instalados globalmente** (ver "Distribuição
-global" abaixo) para funcionar em qualquer projeto, não só neste.
+paralelo, quando aplicável) e só chegue a produção depois de revisão de código, QA, revisão de
+segurança e validação de SRE — tudo com agentes dedicados a cada etapa, **instalados globalmente**
+(ver "Distribuição global" abaixo) para funcionar em qualquer projeto, não só neste.
 
 Se você é uma instância do Claude Code trabalhando neste repo, leia isto antes de fazer qualquer
 mudança de código. Para o detalhe de cada arquivo/pasta, veja `docs/FILE-GUIDE.md`. Para o fluxo
@@ -14,7 +14,7 @@ pular, veja `docs/QUALITY-GATES.md`. Para o fluxo de branch/PR, veja `docs/GIT-W
 os pilares de engenharia (escalabilidade, resiliência etc.) que o TRD precisa endereçar, veja
 `docs/ENGINEERING-PILLARS.md`.
 
-## O pipeline (6 etapas, + 1 etapa condicional)
+## O pipeline (7 etapas, + 1 etapa condicional)
 
 ```
 [0] codebase-archaeologist ──▶ docs/BASELINE.md  (SÓ quando falta documentação base — condicional)
@@ -35,13 +35,17 @@ ideia/pedido
     (em paralelo quando a feature é full-stack, orquestrados por /sdd-implement)
    │
    ▼
-[4] qa-engineer         ──▶  QA report (specs/<slug>/qa-report.md)
+[4] code-reviewer       ──▶  Code review (specs/<slug>/code-review.md) — engenheiro sênior:
+                              ports & adapters, SOLID, clean code, qualidade dos testes
    │
    ▼
-[5] security-engineer   ──▶  Security review (specs/<slug>/security-review.md) — OWASP, segredos, authn/authz
+[5] qa-engineer         ──▶  QA report (specs/<slug>/qa-report.md)
    │
    ▼
-[6] sre                 ──▶  SRE review (specs/<slug>/sre-review.md) — CI/CD, Docker, Terraform
+[6] security-engineer   ──▶  Security review (specs/<slug>/security-review.md) — OWASP, segredos, authn/authz
+   │
+   ▼
+[7] sre                 ──▶  SRE review (specs/<slug>/sre-review.md) — CI/CD, Docker, Terraform
 ```
 
 Cada etapa só começa com o artefato aprovado da etapa anterior. Nenhuma etapa pula a anterior:
@@ -58,6 +62,7 @@ Cada agente vive em `.claude/agents/<nome>.md` e é acionado por uma skill em
 | `/sdd-prd`          | product-design                                  | `specs/<slug>/prd.md`          |
 | `/sdd-trd`          | architect                                        | `specs/<slug>/trd.md`          |
 | `/sdd-implement`    | backend-developer e/ou frontend-developer         | branch + PR + código + testes  |
+| `/sdd-code-review`  | code-reviewer                                    | `specs/<slug>/code-review.md`  |
 | `/sdd-qa`           | qa-engineer                                      | `specs/<slug>/qa-report.md`    |
 | `/sdd-security`     | security-engineer                                | `specs/<slug>/security-review.md` |
 | `/sdd-sre`          | sre                                              | `specs/<slug>/sre-review.md`   |
@@ -190,8 +195,8 @@ Detalhe completo em `docs/QUALITY-GATES.md` — aqui só o resumo:
    aprovada usa `/sdd-amend`, que só reabre as etapas posteriores realmente afetadas — sem
    reiniciar o pipeline da primeira etapa.
 5. **Fluxo de Git = GitHub Flow.** `main` sempre implantável, uma branch por feature
-   (`feature/<NNNN-slug>`, única mesmo em features full-stack), PR obrigatório, merge só após QA,
-   segurança e SRE aprovados. Detalhe completo em `docs/GIT-WORKFLOW.md`.
+   (`feature/<NNNN-slug>`, única mesmo em features full-stack), PR obrigatório, merge só após
+   revisão de código, QA, segurança e SRE aprovados. Detalhe completo em `docs/GIT-WORKFLOW.md`.
 6. Nunca avance uma etapa sem o artefato de entrada da etapa anterior existir e estar aprovado
    pelo usuário (não apenas gerado).
 7. Nunca escreva código de produção fora de `src/`/`frontend/` seguindo a separação de
