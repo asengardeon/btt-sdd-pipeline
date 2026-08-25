@@ -1,6 +1,7 @@
 ---
 name: sdd-status
 description: Utilitário do pipeline SDD. Use quando o usuário perguntar em que estágio está uma feature, ou quiser um panorama de todas as features em specs/. Não aciona nenhum agente — só lê o estado atual dos artefatos.
+allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/sdd-status.sh *) PowerShell(${CLAUDE_SKILL_DIR}/scripts/sdd-status.ps1 *)
 ---
 
 # /sdd-status
@@ -10,16 +11,17 @@ Não aciona nenhum agente — é um utilitário de leitura.
 ## Passos
 
 1. **Prefira o script auxiliar em vez de ler cada artefato inteiro** (economiza tokens): rode
-   `scripts/sdd-status.sh [slug]` (bash) ou `scripts/sdd-status.ps1 [-Slug <slug>]` (PowerShell),
-   a partir da raiz do projeto, escolhendo o interpretador disponível no ambiente. Ele já
-   devolve, por feature: etapa atual, próximo comando, contagem de pendências VALIDAR DEPOIS, e
-   se alguma etapa posterior "requer revalidação".
+   `${CLAUDE_SKILL_DIR}/scripts/sdd-status.sh [slug]` (bash) ou
+   `${CLAUDE_SKILL_DIR}/scripts/sdd-status.ps1 [-Slug <slug>]` (PowerShell), escolhendo o
+   interpretador disponível no ambiente — o script roda a partir de onde estiver instalado (não
+   depende de estar na raiz do projeto), mas lê `specs/`/`docs/` relativos ao diretório de
+   trabalho atual, que deve ser a raiz do projeto. Ele já devolve, por feature: etapa atual,
+   próximo comando, contagem de pendências VALIDAR DEPOIS, e se alguma etapa posterior "requer
+   revalidação".
 2. Apresente a tabela retornada pelo script diretamente ao usuário (traduza/formate se útil, mas
    não recalcule do zero).
-3. **Só leia os artefatos manualmente** (fallback) se: o script não existir no projeto atual
-   (projetos criados antes deste script existir — nesse caso siga a lógica abaixo), o script
-   falhar, ou uma linha vier marcada como "veredito não identificado"/"rascunho, não aprovado"
-   e o usuário pedir detalhe.
+3. **Só leia os artefatos manualmente** (fallback) se o script falhar, ou se uma linha vier
+   marcada como "veredito não identificado"/"rascunho, não aprovado" e o usuário pedir detalhe.
 4. Se `args` traz um slug específico, passe-o como argumento do script (evita processar features
    que não interessam); senão, rode sem argumento para ver todas.
 5. Para o detalhe de uma pendência específica, aponte o usuário para `/sdd-pending` em vez de

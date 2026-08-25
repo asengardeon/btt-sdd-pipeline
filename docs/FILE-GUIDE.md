@@ -191,23 +191,30 @@ Detalhe completo em `docs/TESTING.md`.
   reutilizáveis entre ambientes). É um esqueleto ilustrativo — adapte o provider/recursos ao
   ambiente real de destino antes de aplicar.
 
-## `scripts/` — utilitários para reduzir uso de tokens no pipeline
+## `scripts/` dentro de cada skill — utilitários para reduzir uso de tokens no pipeline
 
 Scripts sh/PowerShell que fazem no shell o que, de outra forma, o agente faria lendo cada
-artefato inteiro no contexto — usados pelos utilitários `/sdd-status` e `/sdd-pending`
-(`.claude/skills/`), que preferem rodar o script e só caem de volta para leitura manual se ele
-não existir/falhar. Best-effort via grep/awk/regex sobre a convenção de formatação dos templates
-em `specs/_template/` — não são um parser de markdown completo.
+artefato inteiro no contexto — vivem dentro da própria pasta da skill que os usa
+(`.claude/skills/sdd-status/scripts/`, `.claude/skills/sdd-pending/scripts/`, e as cópias
+equivalentes em `plugins/btt-sdd/skills/`), não num `scripts/` solto na raiz. Isso é proposital:
+skills são o que viaja pela junction global (`~/.claude/skills`) e pelo empacotamento do plugin,
+então um script guardado dentro da própria skill chega a qualquer projeto (mesmo um que nunca
+passou por `/create-project`) sem precisar de cópia manual. O `SKILL.md` de cada uma referencia
+o script via `${CLAUDE_SKILL_DIR}/scripts/...` — variável que o Claude Code resolve para a pasta
+real da skill, seja ela alcançada pela junction, por um plugin instalado, ou localmente neste
+repositório. `/sdd-status` e `/sdd-pending` preferem rodar o script e só caem de volta para
+leitura manual dos artefatos se ele falhar. Best-effort via grep/awk/regex sobre a convenção de
+formatação dos templates em `specs/_template/` — não são um parser de markdown completo.
 
-- **`sdd-status.sh` / `sdd-status.ps1`** — varre `specs/*/`, extrai etapa atual, próximo comando,
-  contagem de pendências VALIDAR DEPOIS e sinalização de "requer revalidação" por feature.
-- **`sdd-pending.sh` / `sdd-pending.ps1`** — varre `specs/*/` e `docs/BASELINE.md`, lista só os
-  itens VALIDAR DEPOIS com status "pendente".
+- **`sdd-status.sh` / `sdd-status.ps1`** (em `.claude/skills/sdd-status/scripts/`) — varre
+  `specs/*/`, extrai etapa atual, próximo comando, contagem de pendências VALIDAR DEPOIS e
+  sinalização de "requer revalidação" por feature.
+- **`sdd-pending.sh` / `sdd-pending.ps1`** (em `.claude/skills/sdd-pending/scripts/`) — varre
+  `specs/*/` e `docs/BASELINE.md`, lista só os itens VALIDAR DEPOIS com status "pendente".
 
-Copiados também para dentro dos dois scaffolds de `/create-project`
-(`.claude/skills/create-project/scaffold/scripts/` e
-`plugins/btt-sdd/skills/create-project/scaffold/scripts/`), para que todo projeto novo já nasça
-com eles.
+Como qualquer outro arquivo de skill, mudar o script exige replicar a mudança na cópia
+equivalente em `plugins/btt-sdd/skills/` (ver "⚠️ Isto é uma cópia, não um link" em
+`plugins/btt-sdd/README.md`).
 
 ## `.github/workflows/` — pipelines de CI/CD
 
