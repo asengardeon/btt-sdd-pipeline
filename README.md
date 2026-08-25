@@ -1,4 +1,4 @@
-# projeto-base-ia
+# btt-sdd-pipeline
 
 Template de desenvolvimento orientado a especificação (**SDD — Spec-Driven Development**) para o
 Claude Code: cada feature nasce de um PRD, passa por um TRD, é implementada com TDD em ports &

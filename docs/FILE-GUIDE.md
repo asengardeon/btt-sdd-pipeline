@@ -12,7 +12,7 @@ e `docs/SDD-WORKFLOW.md`; este documento é sobre *o que cada coisa é*.
   o que é o repositório e como começar a usá-lo.
 - **`.claude-plugin/marketplace.json`** — manifesto que faz este repositório funcionar como um
   marketplace local de plugins do Claude Code, listando `plugins/btt-sdd` como plugin instalável
-  (`claude plugin marketplace add` + `claude plugin install btt-sdd@projeto-base-ia`).
+  (`claude plugin marketplace add` + `claude plugin install btt-sdd@btt-sdd-pipeline`).
 
 ## `plugins/btt-sdd/` — o pipeline empacotado como plugin instalável
 

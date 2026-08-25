@@ -1,4 +1,4 @@
-# projeto-base-ia — guia para o Claude Code
+# btt-sdd-pipeline — guia para o Claude Code
 
 Este repositório é um **template de desenvolvimento orientado a especificação (SDD — Spec-Driven
 Development)**. Ele existe para que qualquer feature nasça de uma especificação de produto,
@@ -94,8 +94,12 @@ manter as duas cópias em sincronia. Instalação testada e confirmada de verdad
 
 ```
 claude plugin marketplace add C:\repositorios\projeto-base-ia
-claude plugin install btt-sdd@projeto-base-ia
+claude plugin install btt-sdd@btt-sdd-pipeline
 ```
+
+(a pasta local deste repositório continua se chamando `projeto-base-ia` no disco — só a
+identidade do projeto/marketplace/repositório GitHub é `btt-sdd-pipeline`; o caminho acima reflete
+isso.)
 
 Depois de instalado, os comandos ficam disponíveis com o prefixo `/btt-sdd:` em qualquer sessão
 nova do Claude Code neste computador, coexistindo sem conflito com os comandos sem prefixo da

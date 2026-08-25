@@ -9,7 +9,7 @@ empacotamento como plugin.
 
 ```
 claude plugin marketplace add C:\repositorios\projeto-base-ia
-claude plugin install btt-sdd@projeto-base-ia
+claude plugin install btt-sdd@btt-sdd-pipeline
 ```
 
 Ou, para testar sem instalar:
@@ -19,7 +19,7 @@ claude --plugin-dir plugins\btt-sdd
 ```
 
 **Status**: instalação testada de verdade neste computador — `marketplace add` e `plugin
-install` rodaram com sucesso (`claude plugin list` mostra `btt-sdd@projeto-base-ia`, escopo
+install` rodaram com sucesso (`claude plugin list` mostra `btt-sdd@btt-sdd-pipeline`, escopo
 `user`, `enabled`), e uma sessão nova (`claude -p "/btt-sdd:sdd-status"`) reconheceu e executou o
 comando namespaced corretamente contra `specs/0001-example-task-management/`, coexistindo sem
 conflito com os comandos sem prefixo da junction (`/sdd-pending` etc.).
