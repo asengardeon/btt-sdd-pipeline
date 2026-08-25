@@ -18,6 +18,20 @@ Use `/sdd-status` a qualquer momento para ver em que etapa cada feature está. V
 um exemplo completo já rodado (PRD, TRD, QA report, SRE review e o código correspondente em
 `src/`/`tests/`).
 
+## Instalação do plugin
+
+O pipeline também existe empacotado como plugin instalável do Claude Code
+(`plugins/btt-sdd/`), com namespace `/btt-sdd:`. Para instalar a partir do GitHub (repositório
+privado — exige autenticação já configurada: `gh auth login` ou credenciais git):
+
+```
+claude plugin marketplace add asengardeon/btt-sdd-pipeline
+claude plugin install btt-sdd@btt-sdd-pipeline
+```
+
+Veja `plugins/btt-sdd/README.md` para a instalação local (recomendada se você for editar o
+próprio pipeline) e mais detalhes sobre os dois métodos.
+
 ## Rodando o exemplo (Python)
 
 ```bash

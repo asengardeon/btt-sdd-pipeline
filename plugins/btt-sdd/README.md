@@ -5,7 +5,26 @@ Empacotamento, como plugin instalável do Claude Code, do mesmo pipeline SDD que
 `docs/SDD-WORKFLOW.md` para o funcionamento completo do pipeline — este README é só sobre o
 empacotamento como plugin.
 
-## Instalação local
+## Instalação a partir do GitHub (qualquer computador)
+
+```
+claude plugin marketplace add asengardeon/btt-sdd-pipeline
+claude plugin install btt-sdd@btt-sdd-pipeline
+```
+
+O repositório é **privado** — precisa de uma conta com acesso já autenticada (`gh auth login`,
+ou credenciais HTTPS/SSH do git já configuradas nesta máquina) antes de rodar `marketplace add`.
+Sem isso, o clone do marketplace falha silenciosamente ou pede autenticação.
+
+**Testado de verdade**: `marketplace add asengardeon/btt-sdd-pipeline` clonou o repositório
+privado via HTTPS usando as credenciais já configuradas (sem prompt adicional), `plugin install`
+funcionou, e `claude plugin details` confirmou os 11 skills e 8 agentes corretos.
+
+Essa instalação é uma **cópia fixa do momento do clone** — editar o repositório depois não
+atualiza o plugin já instalado. Para pegar mudanças novas, rode `claude plugin update
+btt-sdd@btt-sdd-pipeline` (ou remova e reinstale).
+
+## Instalação local (para desenvolver o próprio plugin)
 
 ```
 claude plugin marketplace add C:\repositorios\projeto-base-ia
@@ -17,6 +36,11 @@ Ou, para testar sem instalar:
 ```
 claude --plugin-dir plugins\btt-sdd
 ```
+
+Diferente da instalação via GitHub, este método aponta para o caminho local — editar os arquivos
+do plugin aqui reflete na próxima sessão nova do Claude Code, sem precisar de `update`. É o método
+recomendado enquanto você estiver editando o próprio pipeline; use a instalação via GitHub para
+usar o plugin em outro computador ou sem manter uma cópia local do repositório.
 
 **Status**: instalação testada de verdade neste computador — `marketplace add` e `plugin
 install` rodaram com sucesso (`claude plugin list` mostra `btt-sdd@btt-sdd-pipeline`, escopo
