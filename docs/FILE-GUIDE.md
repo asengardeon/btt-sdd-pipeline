@@ -191,6 +191,24 @@ Detalhe completo em `docs/TESTING.md`.
   reutilizáveis entre ambientes). É um esqueleto ilustrativo — adapte o provider/recursos ao
   ambiente real de destino antes de aplicar.
 
+## `scripts/` — utilitários para reduzir uso de tokens no pipeline
+
+Scripts sh/PowerShell que fazem no shell o que, de outra forma, o agente faria lendo cada
+artefato inteiro no contexto — usados pelos utilitários `/sdd-status` e `/sdd-pending`
+(`.claude/skills/`), que preferem rodar o script e só caem de volta para leitura manual se ele
+não existir/falhar. Best-effort via grep/awk/regex sobre a convenção de formatação dos templates
+em `specs/_template/` — não são um parser de markdown completo.
+
+- **`sdd-status.sh` / `sdd-status.ps1`** — varre `specs/*/`, extrai etapa atual, próximo comando,
+  contagem de pendências VALIDAR DEPOIS e sinalização de "requer revalidação" por feature.
+- **`sdd-pending.sh` / `sdd-pending.ps1`** — varre `specs/*/` e `docs/BASELINE.md`, lista só os
+  itens VALIDAR DEPOIS com status "pendente".
+
+Copiados também para dentro dos dois scaffolds de `/create-project`
+(`.claude/skills/create-project/scaffold/scripts/` e
+`plugins/btt-sdd/skills/create-project/scaffold/scripts/`), para que todo projeto novo já nasça
+com eles.
+
 ## `.github/workflows/` — pipelines de CI/CD
 
 - **`ci.yml`** — roda em todo push/PR: lint, suíte de testes, gate de cobertura de 80%. Se

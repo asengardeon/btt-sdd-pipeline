@@ -9,20 +9,36 @@ Não aciona nenhum agente — é um utilitário de leitura.
 
 ## Passos
 
+1. **Prefira o script auxiliar em vez de ler cada artefato inteiro** (economiza tokens): rode
+   `scripts/sdd-status.sh [slug]` (bash) ou `scripts/sdd-status.ps1 [-Slug <slug>]` (PowerShell),
+   a partir da raiz do projeto, escolhendo o interpretador disponível no ambiente. Ele já
+   devolve, por feature: etapa atual, próximo comando, contagem de pendências VALIDAR DEPOIS, e
+   se alguma etapa posterior "requer revalidação".
+2. Apresente a tabela retornada pelo script diretamente ao usuário (traduza/formate se útil, mas
+   não recalcule do zero).
+3. **Só leia os artefatos manualmente** (fallback) se: o script não existir no projeto atual
+   (projetos criados antes deste script existir — nesse caso siga a lógica abaixo), o script
+   falhar, ou uma linha vier marcada como "veredito não identificado"/"rascunho, não aprovado"
+   e o usuário pedir detalhe.
+4. Se `args` traz um slug específico, passe-o como argumento do script (evita processar features
+   que não interessam); senão, rode sem argumento para ver todas.
+5. Para o detalhe de uma pendência específica, aponte o usuário para `/sdd-pending` em vez de
+   listar tudo aqui.
+
+### Fallback sem o script (comportamento anterior)
+
 1. Liste os diretórios em `specs/` (exceto `_template`).
 2. Para cada um, verifique a presença de: `prd.md`, `trd.md`, `code-review.md`, `qa-report.md`,
    `security-review.md`, `sre-review.md`, e se há código/testes associados em `src/`/`tests/`
    referenciando a feature.
-3. Se `args` traz um slug específico, mostre só aquela feature; senão, mostre todas.
-4. Apresente uma tabela curta: feature | etapa atual | próximo comando a rodar | pendências
+3. Apresente uma tabela curta: feature | etapa atual | próximo comando a rodar | pendências
    VALIDAR DEPOIS | etapas "requer revalidação". A etapa atual é a última etapa concluída; o
    próximo comando é a skill seguinte na ordem
    `sdd-prd → sdd-trd → sdd-implement → sdd-code-review → sdd-qa → sdd-security → sdd-sre`.
-5. Conte, por feature, quantos itens com status "pendente" existem nas seções "Pendências de
-   validação (VALIDAR DEPOIS)" de cada artefato (mesma leitura que `/sdd-pending` faz, aqui só
-   como contagem resumida — para o detalhe, aponte o usuário para `/sdd-pending`).
-6. Verifique se algum artefato tem uma entrada no "Log de revisões" marcando uma etapa posterior
+4. Conte, por feature, quantos itens com status "pendente" existem nas seções "Pendências de
+   validação (VALIDAR DEPOIS)" de cada artefato.
+5. Verifique se algum artefato tem uma entrada no "Log de revisões" marcando uma etapa posterior
    como "requer revalidação" (produzido por `/sdd-amend`) e sinalize isso — não trate como etapa
    concluída até a revalidação acontecer.
-7. Se um `code-review.md`, `qa-report.md`, `security-review.md` ou `sre-review.md` existir com
+6. Se um `code-review.md`, `qa-report.md`, `security-review.md` ou `sre-review.md` existir com
    veredito reprovado, sinalize isso explicitamente em vez de tratar como etapa concluída.
