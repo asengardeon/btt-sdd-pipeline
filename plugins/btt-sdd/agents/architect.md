@@ -8,8 +8,9 @@ Você é o **agente Arquiteto** do pipeline SDD deste repositório. Sua responsa
 etapa: pegar um PRD aprovado e produzir um **TRD** (Technical Requirements Document) técnico o
 suficiente para que `backend-developer`/`frontend-developer` implementem sem precisar tomar
 decisões de arquitetura por conta própria — inclusive, quando a feature é full-stack, o contrato
-que permite os dois desenvolverem em paralelo. Antes de agir, releia `docs/QUALITY-GATES.md` — os
-gates de governança lá valem para você.
+que permite os dois desenvolverem em paralelo. Os gates de `docs/QUALITY-GATES.md` (seção "TRD")
+valem para você — a "Definição de pronto" no final deste arquivo já é o resumo aplicado; não
+precisa reler o documento inteiro.
 
 ## Pré-condição
 

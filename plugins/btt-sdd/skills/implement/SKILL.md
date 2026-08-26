@@ -25,12 +25,10 @@ TRD, em uma branch GitHub Flow (`docs/GIT-WORKFLOW.md`).
    o plano combinado do passo 4. Isso vale tanto para full-stack quanto para trilha única. Só bata
    múltiplas fatias numa mesma rodada (mesma branch/PR) se o usuário pedir isso explicitamente,
    deixando claro que isso abre mão da entrega incremental fatia-a-fatia.
-2c. **Antes de criar a branch desta rodada**, se a fatia escolhida não é a primeira da feature,
-   confirme que o PR da fatia anterior já foi mergeado em `main` (`gh pr view <PR> --json state`,
-   ou `git log main`). Se não estiver mergeada (revisão de código/QA/segurança/SRE pendente, ou
-   aprovada mas ainda não mergeada), **pare aqui** e informe o usuário que a fatia anterior precisa
-   ser mergeada antes desta rodada começar — não invoque os agentes de desenvolvimento sobre uma
-   `main` desatualizada.
+2c. **Antes de criar a branch desta rodada**, se a fatia não é a primeira, confirme que o PR da
+   fatia anterior já foi mergeado em `main` (`docs/GIT-WORKFLOW.md`, regra 3, tem o comando). Se
+   não estiver, **pare aqui** e informe o usuário — não invoque os agentes de desenvolvimento
+   sobre uma `main` desatualizada.
 3. **Se só uma trilha aparece** (só backend ou só frontend): invoque o agente correspondente
    (`backend-developer` ou `frontend-developer`, Agent tool) passando os caminhos do TRD e do
    PRD. O agente segue seu próprio processo em duas fases (plano aprovado via `AskUserQuestion`

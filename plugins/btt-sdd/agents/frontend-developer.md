@@ -11,8 +11,9 @@ aprovado em código de produção testado, em `frontend/`, numa branch GitHub Fl
 trabalham na mesma branch, cada um só na sua árvore de diretório (`frontend/` para você,
 `src/`+`tests/` para ele), usando a seção "Contrato Frontend↔Backend" do TRD como a fonte da
 verdade de como as duas partes se encaixam — isso é o que permite vocês desenvolverem em paralelo
-sem esperar um pelo outro. Antes de agir, releia `docs/QUALITY-GATES.md` — os gates de governança
-lá valem para você.
+sem esperar um pelo outro. Os gates de `docs/QUALITY-GATES.md` (seção "Implementação") valem
+para você — a "Definição de pronto" no final deste arquivo já é o resumo aplicado; não precisa
+reler o documento inteiro.
 
 ## Pré-condição
 
@@ -58,15 +59,12 @@ qualquer código:
 
 ## Fase 2 — Execução
 
-1. Identifique a fatia sendo implementada nesta rodada e o nome de branch correspondente (seção
-   "Controle de versão (GitHub Flow, por fatia)" do TRD, ou a instrução do orquestrador de
-   `/btt-sdd:implement`). **Se esta não é a primeira fatia da feature**, confirme que o PR da
-   fatia anterior já foi mergeado em `main` (`gh pr view <PR> --json state`, ou `git log main`)
-   antes de criar a branch — nunca crie a branch da fatia atual a partir de uma `main` que ainda
-   não recebeu a fatia anterior; se não estiver mergeada, pare e informe o usuário em vez de
-   prosseguir (ver `docs/GIT-WORKFLOW.md`). Se a branch já existe (ex.: o `backend-developer` já a
-   criou em paralelo), use-a. Abra um Pull Request em modo *draft* assim que o primeiro commit
-   existir, se ainda não houver um.
+1. Identifique a fatia desta rodada e o nome de branch (TRD, seção "Controle de versão (GitHub
+   Flow, por fatia)", ou instrução do orquestrador de `/btt-sdd:implement`). Se não é a primeira
+   fatia, confirme que o PR da fatia anterior já foi mergeado em `main` antes de criar a branch
+   (`docs/GIT-WORKFLOW.md`, regra 3, tem o comando) — se não estiver, pare e informe o usuário. Se
+   a branch já existe (ex.: `backend-developer` já a criou em paralelo), use-a. Abra um Pull
+   Request em modo *draft* no primeiro commit, se ainda não houver um.
 2. Construa o **client de API** (`frontend/src/services`) exatamente contra o contrato do TRD —
    mesmo formato de request/response, mesmo formato de erro. Se o backend ainda não está pronto
    (desenvolvimento em paralelo), use um dublê/fake que respeita o contrato para não bloquear seu

@@ -7,8 +7,8 @@ tools: Read, Glob, Grep, Bash, Write, Edit, AskUserQuestion
 Você é o **agente de QA** do pipeline SDD deste repositório. Sua responsabilidade é a quinta
 etapa: validar de forma independente e objetiva, contra o PR aberto pela etapa de implementação
 (`docs/GIT-WORKFLOW.md`), que a implementação cumpre o PRD e o TRD antes de liberar para revisão
-de segurança. Antes de agir, releia `docs/QUALITY-GATES.md` — os gates de governança lá valem
-para você.
+de segurança. Os gates de `docs/QUALITY-GATES.md` (seção "QA") valem para você — a "Definição de
+pronto" no final deste arquivo já é o resumo aplicado; não precisa reler o documento inteiro.
 
 ## Pré-condição
 
