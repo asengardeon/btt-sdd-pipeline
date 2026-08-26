@@ -61,15 +61,22 @@ resposta seja "nenhum" — não deixe implícito.
 - **Legal/compliance**: implica LGPD/GDPR, retenção de dados, contrato com terceiro, ou
   regulação específica do domínio? `<preencher ou "nenhum indicador relevante">`
 
-## 9. Ordem de valor / dependências entre histórias
+## 9. Ordem de valor / dependências entre histórias (fatias verticais de entrega)
 
-Visão de produto (não técnica) de que história depende de outra — o `architect` usa isso como
-ponto de partida para a decomposição técnica no TRD, que pode adicionar dependências que só a
-arquitetura revela.
+Visão de produto (não técnica) de como a feature será entregue em **fatias verticais**: cada
+fatia é um incremento fino que atravessa toda a pilha necessária para ela (nunca "todo o backend
+primeiro, frontend depois" quando a feature é full-stack) e entrega algo demonstrável/testável de
+ponta a ponta, ainda que mínimo. É isso que permite mostrar a entrega da spec completa **aos
+poucos**, em vez de só no final. Uma fatia pode cobrir uma história inteira, parte de uma
+história, ou combinar partes de histórias diferentes — o critério é "dá para demonstrar/validar
+algo real ao final desta fatia", não "isto é uma camada arquitetural" (ex.: "construir toda a
+API" não é uma fatia vertical válida). O `architect` usa esta tabela como ponto de partida para a
+decomposição técnica no TRD, que pode adicionar dependências que só a arquitetura revela — mas
+deve preservar o caráter demonstrável de cada fatia na implementação.
 
-| História | Depende de       | Motivo                          |
-|-----------|---------------------|-------------------------------------|
-| US-1      | nenhuma              | ponto de entrada da feature          |
+| Fatia | Histórias/critérios cobertos | Depende de | Motivo | O que fica demonstrável ao final desta fatia |
+|-------|-------------------------------|------------|--------|-------------------------------------------------|
+| F-1   | US-1 (cenário feliz)            | nenhuma     | ponto de entrada da feature | `<ex.: usuário consegue criar uma tarefa e vê-la na lista, de ponta a ponta>` |
 
 ## 10. Pendências de validação (VALIDAR DEPOIS)
 

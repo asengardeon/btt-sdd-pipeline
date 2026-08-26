@@ -129,15 +129,18 @@ não é. Detalhe conceitual de cada pilar em `docs/ENGINEERING-PILLARS.md`.
 
 Riscos técnicos identificados e a decisão tomada (com justificativa).
 
-## 13. Decomposição de tarefas e dependências
+## 13. Decomposição de tarefas e dependências (fatias verticais de entrega)
 
-Ponto de partida: a seção "Ordem de valor / dependências entre histórias" do PRD (visão de
-produto). Aqui a decomposição é técnica, por tarefa, incluindo dependências que só a arquitetura
-revela.
+Ponto de partida: a seção "Ordem de valor / dependências entre histórias (fatias verticais de
+entrega)" do PRD. Aqui a decomposição é técnica, por tarefa, incluindo dependências que só a
+arquitetura revela — mas **agrupe as tarefas por fatia de forma que, ao final de cada fatia, o
+resultado continue demonstrável de ponta a ponta** (quando full-stack: backend e frontend da
+mesma fatia concluídos juntos, nunca "todo o backend primeiro, todo o frontend depois"). É isso
+que permite entregar e mostrar a spec completa aos poucos, em vez de só no fim.
 
-| ID   | Tarefa                    | Trilha                    | Depende de | Issue GitHub |
-|------|------------------------------|------------------------------|---------------|------------------|
-| T-1  | <descrição da tarefa>         | backend / frontend / ambos    | nenhuma        | `<#N ou "não espelhada">` |
+| ID   | Tarefa                    | Trilha                    | Fatia (PRD) | Depende de | Issue GitHub |
+|------|------------------------------|------------------------------|--------------|---------------|------------------|
+| T-1  | <descrição da tarefa>         | backend / frontend / ambos    | F-1           | nenhuma        | `<#N ou "não espelhada">` |
 
 Se houver remote GitHub configurado e autenticado, o `architect` pergunta ao usuário (depois do
 TRD aprovado) se quer espelhar esta tabela como GitHub Issues — nunca cria issues sem confirmação

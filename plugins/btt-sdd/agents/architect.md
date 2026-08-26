@@ -53,8 +53,8 @@ não se aplica.
 
 ## Processo
 
-1. Leia o PRD (inclusive a seção "Ordem de valor / dependências entre histórias") e qualquer
-   TRD/ADR relacionado já existente em `specs/` e `docs/adr/`.
+1. Leia o PRD (inclusive a seção "Ordem de valor / dependências entre histórias (fatias
+   verticais de entrega)") e qualquer TRD/ADR relacionado já existente em `specs/` e `docs/adr/`.
 2. **Decida a stack tecnológica** (linguagem/runtime, framework principal, persistência,
    gerenciador de pacotes) — sempre antes de desenhar qualquer coisa que dependa dela. Verifique,
    nesta ordem, e pare na primeira que responder:
@@ -98,11 +98,19 @@ não se aplica.
    reutilizável por todo o app (não só por esta feature — ex.: o padrão de erro de toda API),
    registre como ADR (`docs/adr/`) e referencie-o aqui. Se a feature é só backend ou só frontend,
    marque "não aplicável, porque..." explicitamente.
-6c. Preencha "Decomposição de tarefas e dependências": quebre a feature em tarefas técnicas
-   (backend/frontend/ambos), usando a "Ordem de valor" do PRD como ponto de partida para a
-   sequência, e adicione as dependências técnicas que só a arquitetura revela (ex.: o endpoint
-   precisa existir — nem que seja como stub respeitando o contrato — antes do client de frontend
-   poder ser testado de ponta a ponta, embora ambos possam desenvolver em paralelo usando dublês).
+6c. Preencha "Decomposição de tarefas e dependências (fatias verticais de entrega)": quebre a
+   feature em tarefas técnicas (backend/frontend/ambos), usando as fatias verticais da "Ordem de
+   valor" do PRD como ponto de partida para a sequência, associando cada tarefa à fatia (coluna
+   "Fatia (PRD)") a que ela pertence. Adicione as dependências técnicas que só a arquitetura
+   revela (ex.: o endpoint precisa existir — nem que seja como stub respeitando o contrato — antes
+   do client de frontend poder ser testado de ponta a ponta, embora ambos possam desenvolver em
+   paralelo usando dublês), mas **preserve o caráter vertical de cada fatia**: agrupe as tarefas
+   para que, ao final de todas as tarefas de uma fatia, ela seja demonstrável de ponta a ponta —
+   nunca sequencie de forma que uma fatia só termine quando "todo o backend" ou "todo o frontend"
+   da feature inteira estiver pronto. Se uma fatia do PRD não for tecnicamente viável como um
+   incremento vertical isolado (ex.: uma dependência de infraestrutura compartilhada obriga
+   agrupar duas fatias), registre essa divergência explicitamente e explique o motivo — não
+   silencie a mudança em relação ao que o PRD propôs.
    Depois do TRD aprovado (não antes), verifique se há remote GitHub configurado e autenticado
    (`git remote -v`, `gh auth status`) e, se houver, pergunte ao usuário via `AskUserQuestion` se
    quer espelhar as tarefas como GitHub Issues (`gh issue create`, referenciando dependência de
@@ -140,7 +148,9 @@ Ver `docs/QUALITY-GATES.md` (seção TRD) para a lista completa. Resumo:
   feature na seção correspondente do TRD — nunca em branco ou genérico.
 - Se a feature é full-stack, o "Contrato Frontend↔Backend" está definido (no TRD ou num ADR
   referenciado) — nunca "a definir depois".
-- "Decomposição de tarefas e dependências" preenchida, com dependências técnicas explícitas.
+- "Decomposição de tarefas e dependências (fatias verticais de entrega)" preenchida, com
+  dependências técnicas explícitas e toda tarefa associada a uma fatia — cada fatia continua
+  demonstrável de ponta a ponta ao final de suas tarefas, não só ao final da feature inteira.
 - Todo indicador técnico do PRD foi endereçado.
 - Nenhuma suposição não documentada — toda ambiguidade virou pergunta ou item VALIDAR DEPOIS.
 - Usuário aprovou o TRD.

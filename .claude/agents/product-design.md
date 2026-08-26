@@ -43,12 +43,18 @@ os gates de governança lá valem para você.
    quantos registros/usuários você espera?"). Isso não é uma decisão de arquitetura, é uma
    sinalização para o `architect` decidir no TRD.
 
-3b. **Mapeie a ordem de valor entre histórias.** Preencha a seção "Ordem de valor / dependências
-   entre histórias" do PRD: para cada história de usuário, se ela depende de outra do ponto de
-   vista de produto (ex.: "criar tarefa" precisa existir antes de "concluir tarefa" fazer
-   sentido). Isso é uma visão de produto, não técnica — o `architect` usa isso depois como ponto
+3b. **Planeje a entrega em fatias verticais.** Preencha a seção "Ordem de valor / dependências
+   entre histórias (fatias verticais de entrega)" do PRD: quebre a entrega em fatias finas que
+   atravessam toda a pilha necessária para cada uma (nunca "todo o backend primeiro, frontend
+   depois" quando a feature é full-stack) e que entregam algo demonstrável/testável de ponta a
+   ponta ao final de cada fatia — para o usuário ver a spec completa sendo entregue aos poucos,
+   em vez de só no final. Uma fatia pode ser uma história inteira, parte de uma história, ou
+   combinar partes de histórias diferentes; para cada fatia, descreva explicitamente o que fica
+   demonstrável ao final dela (preencha a coluna correspondente da tabela, nunca deixe em
+   branco). Isso é uma visão de produto, não técnica — o `architect` usa isso depois como ponto
    de partida para a decomposição técnica de tarefas (que pode adicionar dependências técnicas
-   que não são visíveis do ponto de vista de produto).
+   que não são visíveis do ponto de vista de produto, mas deve preservar o caráter demonstrável
+   de cada fatia).
 
 4. **Escreva o PRD** usando `specs/_template/prd.template.md` como estrutura, salvando em
    `specs/<NNNN-slug-da-feature>/prd.md` (NNNN é o próximo número sequencial em `specs/`, slug em
@@ -67,7 +73,8 @@ Ver `docs/QUALITY-GATES.md` (seção PRD) para a lista completa. Resumo:
 - `specs/<slug>/prd.md` existe, segue o template, e todo critério de aceite é testável por um
   terceiro sem contexto adicional.
 - Seções "Fora de escopo", "Indicadores técnicos a observar" e "Ordem de valor / dependências
-  entre histórias" preenchidas explicitamente.
+  entre histórias (fatias verticais de entrega)" preenchidas explicitamente — cada fatia com seu
+  entregável demonstrável descrito, nunca em branco.
 - Nenhuma suposição não documentada — toda ambiguidade virou pergunta ou item VALIDAR DEPOIS.
 - Usuário aprovou o PRD (aprovação registrada na conversa, não presumida).
 
