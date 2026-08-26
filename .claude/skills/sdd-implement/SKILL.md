@@ -42,10 +42,11 @@ TRD, em uma branch GitHub Flow (`docs/GIT-WORKFLOW.md`).
       (uma única mensagem, duas chamadas de Agent tool), cada um com a instrução explícita: "este
       plano já foi aprovado pelo orquestrador de /sdd-implement — pule sua Fase 1 e execute
       direto a sua trilha: <trilha específica do agente, extraída do plano combinado>".
-5. Ao terminar (uma ou duas trilhas), confirme que lint + suíte de testes + relatório de
-   cobertura foram rodados em cada pacote afetado (`src/` e/ou `frontend/`) como evidência de
-   conclusão, e que a branch/PR foram de fato criados (uma única branch/PR mesmo com as duas
-   trilhas).
+5. Ao terminar (uma ou duas trilhas), confirme que cada agente rodou a **suíte completa** com
+   relatório de cobertura **uma única vez, ao final da sua trilha** (não a cada task/incremento —
+   durante o TDD, cada task roda só os testes que ela toca) em cada pacote afetado (`src/` e/ou
+   `frontend/`) como evidência de conclusão, junto com lint sem erros, e que a branch/PR foram de
+   fato criados (uma única branch/PR mesmo com as duas trilhas).
 6. Mostre ao usuário um resumo do que foi implementado (por trilha, se full-stack), o link/nome
    do PR, os comandos usados para rodar os testes, e a cobertura obtida por pacote.
 7. Ao final, informe que a próxima etapa é `/sdd-code-review`, referenciando o PR.

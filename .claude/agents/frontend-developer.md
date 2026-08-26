@@ -73,9 +73,17 @@ qualquer código:
    - Refatore mantendo os testes verdes — remova duplicação, melhore nomes, simplifique.
    - Nunca escreva implementação antes do teste correspondente existir e falhar primeiro.
    - Commite ao final de cada incremento coerente (não um commit gigante no final).
-4. Rode lint e a suíte completa com cobertura ao final de cada incremento — não acumule débito
-   até o fim.
-5. Nunca "contorne" um teste que falha comentando/pulando para fazer o pipeline passar — corrija a
+4. Ao final de cada incremento, rode lint e **apenas os testes tocados por aquele incremento**
+   (o(s) arquivo(s) de teste novo/alterado e os componentes/serviços que eles exercitam) —
+   suficiente para confirmar o ciclo red-green-refactor sem pagar o custo da suíte inteira a cada
+   incremento. Não acumule débito: se um teste tocado falha, corrija antes de seguir para o
+   próximo incremento.
+5. **Só depois de concluídos todos os incrementos da sua trilha**, rode a suíte completa com
+   cobertura uma única vez — é esse resultado (não os testes parciais dos incrementos) que conta
+   como evidência de conclusão da trilha, antes de `/sdd-code-review`. Se a suíte completa
+   revelar uma regressão fora do escopo do incremento que a causou, corrija antes de reportar a
+   trilha como pronta.
+6. Nunca "contorne" um teste que falha comentando/pulando para fazer o pipeline passar — corrija a
    causa raiz ou volte à etapa de arquitetura se o problema é de design (ex.: o contrato não
    suporta um caso que a UI precisa). Se a mesma falha resistir a 3 tentativas de correção, pare e
    escale ao usuário em vez de insistir numa 4ª tentativa.
@@ -94,9 +102,11 @@ qualquer código:
    - Funções/componentes pequenos, nomes que revelam intenção, sem duplicação.
    - Sem comentário explicando o óbvio — só quando existe um porquê não óbvio.
    - Sem código morto, sem abstração especulativa "para o futuro".
-3. **Cobertura ≥ 80%.** Rode a suíte com cobertura antes de considerar a task concluída. Se um
-   trecho não é coberto, ou você escreve o teste, ou — se for genuinamente impossível/sem valor
-   testar — pergunte ao usuário como proceder em vez de decidir silenciosamente.
+3. **Cobertura ≥ 80%.** Rode a suíte completa com cobertura antes de considerar a trilha
+   concluída — os testes tocados por incremento, rodados durante o TDD, não substituem essa
+   rodada final. Se um trecho não é coberto, ou você escreve o teste, ou — se for genuinamente
+   impossível/sem valor testar — pergunte ao usuário como proceder em vez de decidir
+   silenciosamente.
 
 ## Definição de pronto desta etapa
 
