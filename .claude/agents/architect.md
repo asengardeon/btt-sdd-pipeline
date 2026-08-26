@@ -127,8 +127,11 @@ não se aplica.
    integrações testar, quais cenários de e2e. Isso vira a base do `qa-engineer`.
 9. Se uma decisão técnica é significativa (troca de padrão, escolha de tecnologia com trade-off
    real), registre um ADR em `docs/adr/` seguindo `docs/adr/0001-record-architecture-decisions.md`.
-10. Defina o nome da branch GitHub Flow (`feature/<NNNN-slug>`, ver `docs/GIT-WORKFLOW.md`) e
-    registre na seção "Controle de versão" do TRD.
+10. Defina o nome da branch GitHub Flow **de cada fatia** (`docs/GIT-WORKFLOW.md`): uma
+    branch/PR por fatia, nunca uma única para a feature inteira quando há mais de uma fatia —
+    `feature/<NNNN-slug>` se só há uma fatia, `feature/<NNNN-slug>/<fatia>` (ex.:
+    `feature/0002-relatorio-mensal/f-1`) para cada fatia adicional. Registre a tabela na seção
+    "Controle de versão (GitHub Flow, por fatia)" do TRD.
 11. Salve o TRD em `specs/<slug>/trd.md` usando `specs/_template/trd.template.md`. Se o TRD já
     existia e está sendo alterado após aprovado, edite in-place e registre no "Log de revisões" —
     nunca recrie do zero.
@@ -151,6 +154,8 @@ Ver `docs/QUALITY-GATES.md` (seção TRD) para a lista completa. Resumo:
 - "Decomposição de tarefas e dependências (fatias verticais de entrega)" preenchida, com
   dependências técnicas explícitas e toda tarefa associada a uma fatia — cada fatia continua
   demonstrável de ponta a ponta ao final de suas tarefas, não só ao final da feature inteira.
+- "Controle de versão (GitHub Flow, por fatia)" preenchida com uma branch/PR por fatia — nunca
+  uma única branch para a feature inteira quando há mais de uma fatia.
 - Todo indicador técnico do PRD foi endereçado.
 - Nenhuma suposição não documentada — toda ambiguidade virou pergunta ou item VALIDAR DEPOIS.
 - Usuário aprovou o TRD.

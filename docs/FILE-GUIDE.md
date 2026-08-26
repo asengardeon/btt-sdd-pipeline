@@ -19,7 +19,7 @@ e `docs/SDD-WORKFLOW.md`; este documento é sobre *o que cada coisa é*.
 Mesmo pipeline de `.claude/agents/`/`.claude/skills/` (ver seções abaixo), empacotado no formato
 de plugin do Claude Code (`.claude-plugin/plugin.json` + `agents/` + `skills/`, incluindo
 `create-project/scaffold/`). É uma **cópia própria**, não um link para `.claude/` — necessária
-porque comandos instalados via plugin ganham o namespace `btt-sdd:` (`/btt-sdd:sdd-trd`, não
+porque comandos instalados via plugin ganham o namespace `btt-sdd:` (`/btt-sdd:trd`, não
 `/sdd-trd`), então toda referência interna a um comando `/sdd-*` dentro dos arquivos do plugin já
 vem com esse prefixo. `plugins/btt-sdd/README.md` documenta o processo de replicar uma edição de
 `.claude/agents/*.md`/`.claude/skills/*` para cá quando necessário. Instalação local testada e

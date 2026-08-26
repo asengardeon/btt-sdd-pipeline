@@ -50,6 +50,11 @@ ideia/pedido
 
 Cada etapa só começa com o artefato aprovado da etapa anterior. Nenhuma etapa pula a anterior.
 
+**Quando o TRD tem mais de uma fatia vertical de entrega** (seção "Decomposição de tarefas e
+dependências (fatias verticais de entrega)"), as etapas [3] a [7] se repetem **por fatia**, em
+loop: cada fatia é sua própria branch/PR, passa por code review/QA/segurança/SRE, e só é mergeada
+em `main` antes da fatia seguinte começar. Detalhe completo em `docs/GIT-WORKFLOW.md`.
+
 | Comando            | Agente(s)                                    | Produz                         |
 |--------------------|------------------------------------------------|---------------------------------|
 | `/create-project`   | (usa `product-design`)                          | um projeto novo, do zero, num diretório separado |

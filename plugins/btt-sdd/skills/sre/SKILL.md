@@ -1,9 +1,9 @@
 ---
-name: sdd-sre
+name: sre
 description: Etapa 6 (final) do pipeline SDD. Use depois que QA e segurança aprovaram uma feature, para validar CI/CD, Docker e Terraform antes do deploy. Também use fora do fluxo de uma feature específica quando o usuário pedir revisão de pipeline ou infraestrutura. Aciona o agente sre para produzir specs/<slug>/sre-review.md.
 ---
 
-# /btt-sdd:sdd-sre
+# /btt-sdd:sre
 
 Aciona a **etapa 6** do pipeline SDD descrito em `CLAUDE.md`: validação de CI/CD e infraestrutura.
 
@@ -11,7 +11,7 @@ Aciona a **etapa 6** do pipeline SDD descrito em `CLAUDE.md`: validação de CI/
 
 1. Identifique o slug da feature (mesma lógica das skills anteriores).
 2. Confirme que `specs/<slug>/qa-report.md` **e** `specs/<slug>/security-review.md` existem com
-   veredito aprovado. Se algum faltar, sugira `/btt-sdd:sdd-qa` e/ou `/btt-sdd:sdd-security` primeiro — não pule
+   veredito aprovado. Se algum faltar, sugira `/btt-sdd:qa` e/ou `/btt-sdd:security` primeiro — não pule
    nenhum dos dois.
 3. Invoque o agente `sre` (Agent tool, `subagent_type: "sre"`) passando o caminho do TRD (seção
    de pilares de engenharia/infra), do `qa-report.md` e do `security-review.md`, e instrução para

@@ -18,7 +18,7 @@ lá valem para você.
 
 Você exige `specs/<slug>/trd.md` existente, com a seção "Contrato Frontend↔Backend" preenchida
 (não "não aplicável" — se estiver, esta feature não tem trilha de frontend e você não deveria ter
-sido chamado). Se o TRD não existir, diga ao usuário para rodar `/btt-sdd:sdd-trd` primeiro. Se o
+sido chamado). Se o TRD não existir, diga ao usuário para rodar `/btt-sdd:trd` primeiro. Se o
 contrato deixa uma decisão em aberto, não decida sozinho — volte para o `architect`.
 
 ## Convenção de estrutura
@@ -40,7 +40,7 @@ repositório.
 
 ## Fase 1 — Plano de implementação
 
-**Se você foi invocado por `/btt-sdd:sdd-implement` como parte de uma feature full-stack com plano já
+**Se você foi invocado por `/btt-sdd:implement` como parte de uma feature full-stack com plano já
 aprovado pelo orquestrador** (a instrução vai dizer isso explicitamente), pule esta fase inteira e
 vá direto para a Fase 2 executando sua trilha do plano combinado.
 
@@ -58,10 +58,15 @@ qualquer código:
 
 ## Fase 2 — Execução
 
-1. Se a branch `feature/<NNNN-slug>` ainda não existe, crie-a a partir de `main` atualizada (ver
-   `docs/GIT-WORKFLOW.md`); se já existe (ex.: o `backend-developer` já a criou em paralelo),
-   use-a. Abra um Pull Request em modo *draft* assim que o primeiro commit existir, se ainda não
-   houver um.
+1. Identifique a fatia sendo implementada nesta rodada e o nome de branch correspondente (seção
+   "Controle de versão (GitHub Flow, por fatia)" do TRD, ou a instrução do orquestrador de
+   `/btt-sdd:implement`). **Se esta não é a primeira fatia da feature**, confirme que o PR da
+   fatia anterior já foi mergeado em `main` (`gh pr view <PR> --json state`, ou `git log main`)
+   antes de criar a branch — nunca crie a branch da fatia atual a partir de uma `main` que ainda
+   não recebeu a fatia anterior; se não estiver mergeada, pare e informe o usuário em vez de
+   prosseguir (ver `docs/GIT-WORKFLOW.md`). Se a branch já existe (ex.: o `backend-developer` já a
+   criou em paralelo), use-a. Abra um Pull Request em modo *draft* assim que o primeiro commit
+   existir, se ainda não houver um.
 2. Construa o **client de API** (`frontend/src/services`) exatamente contra o contrato do TRD —
    mesmo formato de request/response, mesmo formato de erro. Se o backend ainda não está pronto
    (desenvolvimento em paralelo), use um dublê/fake que respeita o contrato para não bloquear seu
@@ -80,7 +85,7 @@ qualquer código:
    próximo incremento.
 5. **Só depois de concluídos todos os incrementos da sua trilha**, rode a suíte completa com
    cobertura uma única vez — é esse resultado (não os testes parciais dos incrementos) que conta
-   como evidência de conclusão da trilha, antes de `/btt-sdd:sdd-code-review`. Se a suíte completa
+   como evidência de conclusão da trilha, antes de `/btt-sdd:code-review`. Se a suíte completa
    revelar uma regressão fora do escopo do incremento que a causou, corrija antes de reportar a
    trilha como pronta.
 6. Nunca "contorne" um teste que falha comentando/pulando para fazer o pipeline passar — corrija a
@@ -113,13 +118,13 @@ qualquer código:
 Ver `docs/QUALITY-GATES.md` (seção Implementação) para a lista completa. Resumo:
 
 - Plano de implementação foi aprovado (pelo usuário diretamente, ou pelo orquestrador de
-  `/btt-sdd:sdd-implement` quando full-stack) antes do primeiro commit.
+  `/btt-sdd:implement` quando full-stack) antes do primeiro commit.
 - Branch `feature/<NNNN-slug>` existe, PR aberto.
 - Todo critério de aceite do PRD/TRD relativo à UI tem teste automatizado.
 - O client de API implementa exatamente o contrato do TRD — nenhum campo/rota inventado.
 - Cobertura de linhas/branches novas ou alteradas em `frontend/` ≥ 80%.
 - Lint sem erros, sem warnings ignorados sem justificativa.
 
-Depois de concluído, informe ao usuário (ou ao orquestrador de `/btt-sdd:sdd-implement`) que sua
+Depois de concluído, informe ao usuário (ou ao orquestrador de `/btt-sdd:implement`) que sua
 trilha terminou. Se não há trilha de backend pendente, a próxima etapa é
-`/btt-sdd:sdd-code-review` com o `code-reviewer`, referenciando o PR aberto.
+`/btt-sdd:code-review` com o `code-reviewer`, referenciando o PR aberto.

@@ -2,12 +2,25 @@
 
 > Autor: agente `qa-engineer`
 > PRD: `specs/<slug>/prd.md` | TRD: `specs/<slug>/trd.md`
-> PR: <link do Pull Request revisado>
+> Fatia validada nesta rodada: `<F-1, ou "única — feature não fatiada">`
+> PR desta fatia: <link do Pull Request revisado>
 > Data:
 
-## 1. Veredito geral
+Este documento é editado in-place a cada fatia (nunca recriado do zero) — ver seção "Histórico de
+aprovações por fatia" abaixo para o veredito de fatias anteriores já mergeadas.
+
+## 1. Veredito geral (fatia desta rodada)
 
 **Aprovado / Reprovado**
+
+### Histórico de aprovações por fatia
+
+Uma linha por rodada de QA (uma por fatia) — nunca sobrescreva o veredito de uma fatia já
+aprovada e mergeada, acrescente uma linha nova.
+
+| Fatia | PR      | Veredito | Data |
+|-------|---------|----------|------|
+| F-1   | `<link>` | `<veredito>` | `<data>` |
 
 ## 2. Cobertura de testes
 
@@ -18,7 +31,10 @@
 
 Comando usado: `<comando de teste com cobertura>`
 
-## 3. Critérios de aceite (PRD)
+## 3. Critérios de aceite (PRD) cobertos por esta fatia
+
+Só os critérios da fatia desta rodada (seção "Ordem de valor" do PRD / coluna "Fatia (PRD)" do
+TRD) — critérios de fatias futuras ainda não implementadas não entram aqui.
 
 | ID    | Critério                         | Teste automatizado         | Veredito |
 |-------|------------------------------------|------------------------------|----------|
@@ -54,4 +70,5 @@ se ele não souber responder agora, registre aqui em vez de decidir por conta pr
 
 ## 9. Próximo passo
 
-`/sdd-sre` (se aprovado) ou `/sdd-implement` (se reprovado, com os achados acima).
+`/sdd-security` (se aprovado, para esta fatia) ou `/sdd-implement` (se reprovado, com os achados
+acima).

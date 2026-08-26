@@ -2,12 +2,28 @@
 
 > Autor: agente `sre`
 > QA report: `specs/<slug>/qa-report.md`
-> PR: <link do Pull Request>
+> Fatia revisada nesta rodada: `<F-1, ou "única — feature não fatiada">`
+> PR desta fatia: <link do Pull Request>
 > Data:
 
-## 1. Veredito geral
+Este documento é editado in-place a cada fatia (nunca recriado do zero) — ver seção "Histórico de
+aprovações por fatia" abaixo para o veredito de fatias anteriores já mergeadas. Boa parte do
+checklist abaixo tende a se repetir sem mudança entre fatias da mesma feature — quando não houver
+mudança relevante desde a última fatia aprovada, diga isso explicitamente em vez de preencher
+evidência idêntica sem necessidade.
+
+## 1. Veredito geral (fatia desta rodada)
 
 **Aprovado / Aprovado com ressalvas / Reprovado**
+
+### Histórico de aprovações por fatia
+
+Uma linha por rodada de revisão (uma por fatia) — nunca sobrescreva o veredito de uma fatia já
+aprovada e mergeada, acrescente uma linha nova.
+
+| Fatia | PR      | Veredito | Data |
+|-------|---------|----------|------|
+| F-1   | `<link>` | `<veredito>` | `<data>` |
 
 ## 2. CI
 
@@ -70,4 +86,6 @@ Evidência/observações:
 
 ## 10. Próximo passo
 
-Se aprovado: feature pronta para release. Caso contrário: itens acima devem ser resolvidos antes.
+Se aprovado: esta fatia está pronta para merge em `main` (`docs/GIT-WORKFLOW.md`) — se houver
+fatias seguintes na feature, elas só começam depois deste merge. Caso contrário: itens acima devem
+ser resolvidos antes.

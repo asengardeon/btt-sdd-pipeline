@@ -63,7 +63,8 @@ documento é a referência única para não duplicar a lista em cada um deles.
   dependências técnicas explícitas para cada tarefa.
 - [ ] Se o TRD depende de código pré-existente sem documentação suficiente, `/sdd-baseline` rodou
   antes (ou a documentação já era suficiente, explicitamente constatado).
-- [ ] Nome de branch GitHub Flow definido (`feature/<NNNN-slug>`).
+- [ ] Nome de branch GitHub Flow definido **por fatia** (`docs/GIT-WORKFLOW.md`) — uma branch/PR
+  por fatia, nunca uma única para a feature inteira quando há mais de uma fatia.
 - [ ] Aprovação explícita do usuário registrada.
 
 ## Implementação
@@ -75,8 +76,9 @@ documento é a referência única para não duplicar a lista em cada um deles.
 - [ ] Nenhuma violação de fronteira ports & adapters (domain/application sem import de infra).
 - [ ] Se a feature é full-stack: todo adapter de entrada que o frontend consome implementa
   exatamente o contrato do TRD — nenhum campo/rota inventado por qualquer um dos dois lados.
-- [ ] Branch `feature/<NNNN-slug>` criada a partir de `main` atualizada; PR aberto (única
-  branch/PR mesmo quando backend e frontend desenvolvem em paralelo).
+- [ ] Branch da fatia criada a partir de `main` atualizada (só depois do PR da fatia anterior já
+  mergeado, se houver uma); PR aberto (única branch/PR por fatia, mesmo quando backend e frontend
+  desenvolvem em paralelo dentro dela).
 - [ ] Plano de implementação foi aprovado pelo usuário antes do primeiro commit de código (plano
   combinado quando full-stack, orquestrado por `/sdd-implement`).
 
@@ -91,8 +93,8 @@ documento é a referência única para não duplicar a lista em cada um deles.
   dois lados.
 - [ ] Débito técnico introduzido está sinalizado explicitamente (pelo dev ou pela revisão) — débito
   silencioso não documentado é achado bloqueante.
-- [ ] `code-review.md` existe, referencia o PR, e cada área de revisão tem veredito com evidência
-  (arquivo/linha) ou "sem achados".
+- [ ] `code-review.md` existe, referencia o PR e a fatia desta rodada, e cada área de revisão tem
+  veredito com evidência (arquivo/linha) ou "sem achados".
 
 ## QA
 
@@ -100,9 +102,11 @@ documento é a referência única para não duplicar a lista em cada um deles.
   sem isso, o QA não começa.
 - [ ] Cobertura medida e comparada ao gate de 80% — sem relatório de cobertura confiável, não há
   aprovação possível.
-- [ ] Todo critério de aceite do PRD tem veredito individual com evidência (teste ou passo manual).
-- [ ] Suíte completa rodou (regressão), não só os testes novos.
-- [ ] `qa-report.md` referencia o PR da feature.
+- [ ] Todo critério de aceite coberto pela fatia desta rodada tem veredito individual com
+  evidência (teste ou passo manual).
+- [ ] Suíte completa rodou (regressão, inclui fatias anteriores já mergeadas), não só os testes
+  desta fatia.
+- [ ] `qa-report.md` referencia o PR e a fatia desta rodada.
 
 ## Segurança (`security-engineer`)
 
@@ -115,7 +119,7 @@ documento é a referência única para não duplicar a lista em cada um deles.
 - [ ] Toda fronteira de confiança (CLI, request, evento) valida entrada antes de usar.
 - [ ] Dependências novas/alteradas checadas por vulnerabilidade conhecida, dentro do que as
   ferramentas disponíveis permitem verificar.
-- [ ] `security-review.md` referencia o PR da feature.
+- [ ] `security-review.md` referencia o PR e a fatia desta rodada.
 
 ## SRE / CI-CD / Infra
 
@@ -134,9 +138,11 @@ documento é a referência única para não duplicar a lista em cada um deles.
 - [ ] Terraform: estado remoto configurado, variáveis sensíveis marcadas `sensitive`.
 - [ ] Nenhum segredo em texto claro em código, workflow, Dockerfile ou arquivo Terraform.
 
-## Merge para `main`
+## Merge para `main` (por fatia)
 
-- [ ] PR aberto, CI verde, revisão de código aprovada, QA aprovado, segurança aprovada, SRE
-  aprovado (ou aprovado com ressalvas não-bloqueantes explicitamente aceitas pelo usuário em
-  qualquer uma dessas etapas).
+- [ ] PR desta fatia aberto, CI verde, revisão de código aprovada, QA aprovado, segurança
+  aprovada, SRE aprovado (ou aprovado com ressalvas não-bloqueantes explicitamente aceitas pelo
+  usuário em qualquer uma dessas etapas) — tudo escopado a esta fatia, não à feature inteira.
+- [ ] Se houver fatia seguinte pendente na feature, ela só começa depois deste merge
+  (`docs/GIT-WORKFLOW.md`).
 - [ ] Nenhum item "VALIDAR DEPOIS" bloqueante (marcado como tal pelo usuário) segue em aberto.

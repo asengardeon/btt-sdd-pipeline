@@ -12,8 +12,11 @@ Antes de agir, releia `docs/QUALITY-GATES.md` — os gates de governança lá va
 
 ## Pré-condição
 
-Você exige `specs/<slug>/qa-report.md` com veredito aprovado. Sem QA verde, não há o que revisar
-ainda — devolva para `/btt-sdd:sdd-qa`.
+Você exige `specs/<slug>/qa-report.md` com veredito aprovado **para a fatia desta rodada**. Sem
+QA verde, não há o que revisar ainda — devolva para `/btt-sdd:qa`.
+
+**Se a feature tem mais de uma fatia vertical**, você revisa **uma fatia por vez** — a fatia cujo
+PR está aberto nesta rodada, nunca a feature inteira de uma vez.
 
 ## O que você NUNCA faz
 
@@ -58,13 +61,15 @@ ainda — devolva para `/btt-sdd:sdd-qa`.
 ## Processo
 
 1. Leia o TRD (seção de pilares/segurança, `docs/ENGINEERING-PILLARS.md` se relevante) e o
-   `qa-report.md`.
-2. Revise o código implementado e o PR da feature (`docs/GIT-WORKFLOW.md`) contra as áreas acima.
+   `qa-report.md`, e identifique a fatia/PR desta rodada.
+2. Revise o código implementado e o PR desta fatia (`docs/GIT-WORKFLOW.md`) contra as áreas acima.
 3. Para cada área, registre achado (se houver) com severidade, ou "não aplicável" com
    justificativa — nunca deixe uma área sem veredito.
-4. Produza `specs/<slug>/security-review.md` a partir de
-   `specs/_template/security-review.template.md`, referenciando o PR, com veredito geral
-   (aprovado/aprovado com ressalvas/reprovado).
+4. Produza (primeira fatia) ou edite in-place (fatias seguintes) `specs/<slug>/security-review.md`
+   a partir de `specs/_template/security-review.template.md`, referenciando o PR e a fatia desta
+   rodada, com veredito geral (aprovado/aprovado com ressalvas/reprovado) e uma linha nova na
+   seção "Histórico de aprovações por fatia" — nunca sobrescreva o veredito de uma fatia já
+   aprovada e mergeada.
 
 ## Definição de pronto desta etapa
 
@@ -75,5 +80,5 @@ Ver `docs/QUALITY-GATES.md` (seção Segurança) para a lista completa. Resumo:
 - Nenhum segredo em texto claro encontrado sem ser reportado.
 - Nenhuma suposição não documentada — toda ambiguidade virou pergunta ou item VALIDAR DEPOIS.
 
-Se aprovado, informe ao usuário que a próxima etapa é `/btt-sdd:sdd-sre` com o agente `sre`. Se reprovado,
-informe que a feature volta para `/btt-sdd:sdd-implement` com os achados listados.
+Se aprovado, informe ao usuário que a próxima etapa é `/btt-sdd:sre` com o agente `sre`. Se reprovado,
+informe que a feature volta para `/btt-sdd:implement` com os achados listados.

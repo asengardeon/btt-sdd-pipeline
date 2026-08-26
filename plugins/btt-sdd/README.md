@@ -43,7 +43,7 @@ usar o plugin em outro computador ou sem manter uma cópia local do repositório
 
 **Status**: instalação testada de verdade neste computador — `marketplace add` e `plugin
 install` rodaram com sucesso (`claude plugin list` mostra `btt-sdd@btt-sdd-pipeline`, escopo
-`user`, `enabled`), e uma sessão nova (`claude -p "/btt-sdd:sdd-status"`) reconheceu e executou o
+`user`, `enabled`), e uma sessão nova (`claude -p "/btt-sdd:status"`) reconheceu e executou o
 comando namespaced corretamente contra `specs/0001-example-task-management/`, coexistindo sem
 conflito com os comandos sem prefixo da junction (`/sdd-pending` etc.).
 
@@ -84,21 +84,38 @@ raiz): editar só a raiz não atualiza o plugin. A ordem completa é:
 Diferente de `.claude/agents/`/`.claude/skills/` (que ficam disponíveis globalmente via junction
 de diretório em `~/.claude/agents`/`~/.claude/skills`, apontando direto para cá), o conteúdo
 deste plugin é uma **cópia própria** — necessário porque skills instaladas via plugin ganham o
-namespace `btt-sdd:` (ex.: `/btt-sdd:sdd-trd`), então toda referência interna a um comando
-`/sdd-*` dentro dos arquivos deste plugin já vem com esse prefixo, diferente das cópias em
+namespace `btt-sdd:` (ex.: `/btt-sdd:trd`), então toda referência interna a um comando `/sdd-*`
+dentro dos arquivos deste plugin já vem adaptada para esse namespace, diferente das cópias em
 `.claude/`.
+
+**Convenção de nomes das skills deste plugin — sem o prefixo `sdd-` redundante.** Os diretórios
+em `.claude/skills/` mantêm o nome completo (`sdd-prd`, `sdd-trd`, `sdd-implement`,
+`sdd-code-review`, `sdd-qa`, `sdd-security`, `sdd-sre`, `sdd-status`, `sdd-amend`,
+`sdd-pending`, `sdd-baseline`) porque, sem namespace de plugin, o prefixo `sdd-` é o que evita
+colisão com skills de outros projetos (`/sdd-trd`, não `/trd`). Dentro deste plugin o namespace
+`btt-sdd:` já cumpre esse papel sozinho, então o `sdd-` seria redundante — por isso os diretórios
+equivalentes aqui **removem** esse prefixo: `skills/prd/`, `skills/trd/`, `skills/implement/`,
+`skills/code-review/`, `skills/qa/`, `skills/security/`, `skills/sre/`, `skills/status/`,
+`skills/amend/`, `skills/pending/`, `skills/baseline/` — resultando em `/btt-sdd:trd` em vez de
+`/btt-sdd:sdd-trd`. `create-project` já não tinha o prefixo `sdd-`, então seu diretório não muda
+(`skills/create-project/` nos dois lados).
 
 **Isso significa que editar `.claude/agents/*.md` ou `.claude/skills/*` na raiz do repositório não
 atualiza este plugin automaticamente.** Ao mudar algo relevante lá, replique aqui:
 
-1. Copie o arquivo alterado de `.claude/agents/` ou `.claude/skills/` para o caminho equivalente
-   em `agents/`/`skills/` deste plugin.
-2. Se o arquivo copiado menciona um comando `/sdd-*` ou `/create-project`, adicione o prefixo
-   `btt-sdd:` logo após a barra (ex.: `/sdd-trd` → `/btt-sdd:sdd-trd`).
+1. Copie o arquivo alterado de `.claude/agents/` para o caminho equivalente em `agents/` deste
+   plugin (mesmo nome de arquivo). Para skills, copie `.claude/skills/sdd-<nome>/SKILL.md` para
+   `skills/<nome>/SKILL.md` deste plugin — **sem** o prefixo `sdd-` no caminho — e atualize o
+   campo `name:` do frontmatter para o mesmo `<nome>` sem prefixo (ex.: `.claude/skills/sdd-trd/`
+   com `name: sdd-trd` vira `plugins/btt-sdd/skills/trd/` com `name: trd`).
+2. Se o arquivo copiado menciona um comando `/sdd-*` (skill deste pipeline) ou `/create-project`,
+   troque pelo namespace deste plugin **removendo também o `sdd-`**: `/sdd-trd` → `/btt-sdd:trd`,
+   `/sdd-code-review` → `/btt-sdd:code-review`, `/create-project` → `/btt-sdd:create-project`.
 3. Se o arquivo menciona `.claude/agents/<nome>.md` como fallback ("se o Agent tool não estiver
    disponível, siga..."), troque pela referência genérica ao nome do agente (esse caminho não
    existe no contexto de um projeto onde o plugin foi instalado).
 
 `skills/create-project/scaffold/` é a exceção — é conteúdo genérico que vai para o projeto-alvo
-tal como está, sem menção a comandos deste plugin, então uma cópia direta de
+tal como está, sem menção a comandos deste plugin (usa a convenção `/sdd-*` sem namespace, igual
+à raiz deste repositório), então uma cópia direta de
 `.claude/skills/create-project/scaffold/` sempre basta.

@@ -146,12 +146,22 @@ Se houver remote GitHub configurado e autenticado, o `architect` pergunta ao usu
 TRD aprovado) se quer espelhar esta tabela como GitHub Issues — nunca cria issues sem confirmação
 explícita.
 
-## 14. Controle de versão (GitHub Flow)
+## 14. Controle de versão (GitHub Flow, por fatia)
 
-- Branch: `feature/<NNNN-slug>` — única para a feature inteira, mesmo quando full-stack.
-- PR: <link, preenchido quando existir>
-- Se full-stack: `backend-developer` trabalha em `src/`+`tests/`, `frontend-developer` em
-  `frontend/`, ambos na mesma branch — árvores de diretório separadas evitam conflito de merge.
+Cada fatia vertical da seção 13 é entregue como sua **própria branch/PR**, incremental sobre a
+fatia anterior já mergeada em `main` — nunca uma branch/PR única cobrindo todas as fatias de uma
+vez (ver `docs/GIT-WORKFLOW.md`). A branch da fatia N só é criada depois que o PR da fatia N-1
+está mergeado.
+
+| Fatia | Branch                                              | PR                            | Status                              |
+|-------|--------------------------------------------------------|----------------------------------|------------------------------------------|
+| F-1   | `feature/<NNNN-slug>` (ou `feature/<NNNN-slug>/f-1` se houver mais de uma fatia) | <link, preenchido quando existir> | aberto / mergeado |
+
+- Se a fatia é full-stack: dentro da branch dessa fatia, `backend-developer` trabalha em
+  `src/`+`tests/`, `frontend-developer` em `frontend/`, ambos na mesma branch — árvores de
+  diretório separadas evitam conflito de merge.
+- Se houver só uma fatia (feature pequena, não fatiada), a tabela tem uma única linha e a branch
+  usa o nome simples `feature/<NNNN-slug>`, sem sufixo de fatia.
 
 ## 15. Pendências de validação (VALIDAR DEPOIS)
 

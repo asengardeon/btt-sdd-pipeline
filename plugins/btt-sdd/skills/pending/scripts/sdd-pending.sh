@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Lista os itens "VALIDAR DEPOIS" com status "pendente" em todas as features de
 # specs/ e em docs/BASELINE.md, sem precisar ler cada artefato inteiro no
-# contexto do agente. Usado por .claude/skills/sdd-pending.
+# contexto do agente. Usado pela skill deste plugin (skills/pending/, comando
+# /btt-sdd:pending) — equivalente a .claude/skills/sdd-pending (/sdd-pending).
 #
 # Uso: scripts/sdd-pending.sh [slug]
 #   slug (opcional) — mostra só aquela feature.

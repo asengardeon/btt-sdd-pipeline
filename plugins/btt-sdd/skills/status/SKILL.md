@@ -1,10 +1,10 @@
 ---
-name: sdd-status
+name: status
 description: Utilitário do pipeline SDD. Use quando o usuário perguntar em que estágio está uma feature, ou quiser um panorama de todas as features em specs/. Não aciona nenhum agente — só lê o estado atual dos artefatos.
 allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/sdd-status.sh *) PowerShell(${CLAUDE_SKILL_DIR}/scripts/sdd-status.ps1 *)
 ---
 
-# /btt-sdd:sdd-status
+# /btt-sdd:status
 
 Não aciona nenhum agente — é um utilitário de leitura.
 
@@ -24,7 +24,7 @@ Não aciona nenhum agente — é um utilitário de leitura.
    marcada como "veredito não identificado"/"rascunho, não aprovado" e o usuário pedir detalhe.
 4. Se `args` traz um slug específico, passe-o como argumento do script (evita processar features
    que não interessam); senão, rode sem argumento para ver todas.
-5. Para o detalhe de uma pendência específica, aponte o usuário para `/btt-sdd:sdd-pending` em
+5. Para o detalhe de uma pendência específica, aponte o usuário para `/btt-sdd:pending` em
    vez de listar tudo aqui.
 
 ### Fallback sem o script (comportamento anterior)
@@ -40,7 +40,7 @@ Não aciona nenhum agente — é um utilitário de leitura.
 4. Conte, por feature, quantos itens com status "pendente" existem nas seções "Pendências de
    validação (VALIDAR DEPOIS)" de cada artefato.
 5. Verifique se algum artefato tem uma entrada no "Log de revisões" marcando uma etapa posterior
-   como "requer revalidação" (produzido por `/btt-sdd:sdd-amend`) e sinalize isso — não trate
+   como "requer revalidação" (produzido por `/btt-sdd:amend`) e sinalize isso — não trate
    como etapa concluída até a revalidação acontecer.
 6. Se um `code-review.md`, `qa-report.md`, `security-review.md` ou `sre-review.md` existir com
    veredito reprovado, sinalize isso explicitamente em vez de tratar como etapa concluída.

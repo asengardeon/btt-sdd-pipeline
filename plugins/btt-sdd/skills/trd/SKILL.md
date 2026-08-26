@@ -1,9 +1,9 @@
 ---
-name: sdd-trd
+name: trd
 description: Etapa 2 do pipeline SDD. Use depois que um PRD existe e foi aprovado, para gerar o desenho técnico. Aciona o agente architect para produzir specs/<slug>/trd.md a partir de specs/<slug>/prd.md.
 ---
 
-# /btt-sdd:sdd-trd
+# /btt-sdd:trd
 
 Aciona a **etapa 2** do pipeline SDD descrito em `CLAUDE.md`: geração do TRD a partir do PRD.
 
@@ -14,7 +14,7 @@ Aciona a **etapa 2** do pipeline SDD descrito em `CLAUDE.md`: geração do TRD a
    para funcionar em qualquer projeto). Senão, identifique o slug (se `args` traz um slug ou
    número, use-o; senão, se só existe uma spec com `prd.md` sem `trd.md` ainda, use essa; senão,
    pergunte ao usuário qual feature) e confirme que `specs/<slug>/prd.md` existe.
-2. Se nenhum PRD foi encontrado nem indicado, informe o usuário e sugira rodar `/btt-sdd:sdd-prd`
+2. Se nenhum PRD foi encontrado nem indicado, informe o usuário e sugira rodar `/btt-sdd:prd`
    primeiro — não prossiga sem PRD.
 3. Invoque o agente `architect` (Agent tool, `subagent_type: "architect"`) passando o caminho do
    PRD e instrução para salvar o TRD em `specs/<slug>/trd.md` usando
@@ -22,7 +22,7 @@ Aciona a **etapa 2** do pipeline SDD descrito em `CLAUDE.md`: geração do TRD a
 4. Mostre ao usuário um resumo do TRD (arquitetura proposta, ports definidos, principais
    trade-offs) e peça aprovação explícita.
 5. Se pedir ajustes, repasse ao `architect` até aprovação.
-6. Ao final, informe que a próxima etapa é `/btt-sdd:sdd-implement`.
+6. Ao final, informe que a próxima etapa é `/btt-sdd:implement`.
 
 ## Quando usar sem o agente
 

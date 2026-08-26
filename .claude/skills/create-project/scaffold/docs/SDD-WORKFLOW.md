@@ -62,16 +62,21 @@ validam objetivamente contra critérios escritos".
   `.claude/agents/frontend-developer.md`.
 - **Skill**: `/sdd-implement`
 - **Entrada**: TRD aprovado.
-- **Plano antes de executar**: se só uma trilha, o agente correspondente quebra sua parte do TRD
+- **Uma fatia por rodada**: se o TRD tem mais de uma fatia vertical, esta etapa (e as etapas 4-7
+  seguintes) roda **uma fatia por vez**, nunca todas de uma vez — a skill escolhe a próxima fatia
+  pendente e confirma com o usuário antes de montar o plano. Antes de criar a branch, confirma que
+  o PR da fatia anterior já está mergeado em `main` (`docs/GIT-WORKFLOW.md`) — se não estiver,
+  para e não avança.
+- **Plano antes de executar**: se só uma trilha, o agente correspondente quebra sua parte da fatia
   em incrementos e pede aprovação explícita antes de escrever qualquer código (ver
   `docs/QUALITY-GATES.md`). Se as duas trilhas (full-stack), a skill `/sdd-implement` monta e
   aprova **um plano combinado** com o usuário antes de invocar os dois agentes **em paralelo**,
   cada um executando sua trilha contra o contrato do TRD sem esperar pelo outro. Só depois disso
-  cria a branch `feature/<NNNN-slug>` (GitHub Flow, `docs/GIT-WORKFLOW.md`, uma única branch/PR
+  cria a branch desta fatia (GitHub Flow, `docs/GIT-WORKFLOW.md`, uma única branch/PR por fatia,
   mesmo com as duas trilhas) e abre o PR.
-- **Saída**: branch + PR + código em `src/` (ports & adapters) e/ou `frontend/`, com testes em
-  `tests/` e/ou `frontend/tests/`, produzidos via TDD (red-green-refactor), com cobertura ≥ 80%
-  por pacote.
+- **Saída**: branch + PR desta fatia + código em `src/` (ports & adapters) e/ou `frontend/`, com
+  testes em `tests/` e/ou `frontend/tests/`, produzidos via TDD (red-green-refactor), com
+  cobertura ≥ 80% por pacote.
 - **Gate de saída**: plano aprovado, suíte de testes passando, lint limpo, cobertura reportada por
   pacote, PR aberto, contrato respeitado por ambos os lados quando full-stack.
 
@@ -79,7 +84,7 @@ validam objetivamente contra critérios escritos".
 
 - **Agente**: `.claude/agents/code-reviewer.md`
 - **Skill**: `/sdd-code-review`
-- **Entrada**: PR aberto pela etapa de implementação + TRD.
+- **Entrada**: PR aberto pela etapa de implementação desta fatia + TRD.
 - **Saída**: `specs/<slug>/code-review.md` — veredito sobre ports & adapters/regra da
   dependência, SOLID, clean code, qualidade dos próprios testes (não cobertura numérica),
   consistência com o contrato Frontend↔Backend quando full-stack, tratamento de erros/casos de
@@ -120,7 +125,8 @@ validam objetivamente contra critérios escritos".
 - **Saída**: `specs/<slug>/sre-review.md` — checklist de CI, CD, Docker, Terraform,
   observabilidade e proteção de `main` (GitHub Flow), com veredito.
 - **Gate de saída**: aprovado (ou aprovado com ressalvas registradas). Depois disso, o merge do PR
-  para `main` é decisão do usuário — nenhum agente mergeia sozinho.
+  desta fatia para `main` é decisão do usuário — nenhum agente mergeia sozinho. Se houver fatia
+  seguinte pendente na feature, ela só começa depois desse merge (`docs/GIT-WORKFLOW.md`).
 
 ## Governança de decisão (vale para todas as etapas, incluindo a condicional)
 
@@ -177,10 +183,11 @@ conversa toda do PRD.
 ## GitHub Flow no pipeline
 
 Detalhe completo em `docs/GIT-WORKFLOW.md`. Resumo: a etapa 0 e o PRD/TRD não têm branch (são
-documentos). `/sdd-implement` cria `feature/<NNNN-slug>` e abre PR draft cedo. Revisão de código,
-QA, segurança e SRE revisam contra esse PR. Merge para `main` só acontece depois de revisão de
-código, QA, segurança e SRE aprovados, é uma decisão do usuário (nenhum agente mergeia sozinho), e
-dispara o CD.
+documentos). Cada **fatia vertical** do TRD é sua própria branch/PR: `/sdd-implement` cria a
+branch da fatia (só depois do PR da fatia anterior já mergeado) e abre PR draft cedo. Revisão de
+código, QA, segurança e SRE revisam contra o PR dessa fatia. Merge para `main` só acontece depois
+de revisão de código, QA, segurança e SRE aprovados **para aquela fatia**, é uma decisão do
+usuário (nenhum agente mergeia sozinho), e dispara o CD — liberando a fatia seguinte para começar.
 
 ## Primeira feature deste projeto
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Resumo do estágio de cada feature em specs/, sem precisar ler cada artefato
-# inteiro no contexto do agente. Usado por .claude/skills/sdd-status.
+# inteiro no contexto do agente. Usado pela skill deste plugin (skills/status/,
+# comando /btt-sdd:status) — equivalente a .claude/skills/sdd-status (/sdd-status).
 #
 # Uso: scripts/sdd-status.sh [slug]
 #   slug (opcional) — mostra só aquela feature.
@@ -28,11 +29,11 @@ label() {
 
 next_cmd() {
   case "$1" in
-    prd) echo "/sdd-trd" ;;
-    trd) echo "/sdd-implement" ;;
-    code-review) echo "/sdd-qa" ;;
-    qa-report) echo "/sdd-security" ;;
-    security-review) echo "/sdd-sre" ;;
+    prd) echo "/btt-sdd:trd" ;;
+    trd) echo "/btt-sdd:implement" ;;
+    code-review) echo "/btt-sdd:qa" ;;
+    qa-report) echo "/btt-sdd:security" ;;
+    security-review) echo "/btt-sdd:sre" ;;
     sre-review) echo "(pipeline concluído)" ;;
   esac
 }
@@ -54,7 +55,7 @@ for dir in "$SPECS_DIR"/*/; do
   any=1
 
   current="(nenhum artefato)"
-  next="/sdd-prd"
+  next="/btt-sdd:prd"
   pending=0
   revalidate="não"
 
@@ -77,7 +78,7 @@ for dir in "$SPECS_DIR"/*/; do
       case "$verdict" in
         *[Rr]eprovado*)
           current="$(label "$stage") — REPROVADO"
-          next="/sdd-implement (corrigir achados)"
+          next="/btt-sdd:implement (corrigir achados)"
           ;;
         *[Aa]provado*)
           extra=""

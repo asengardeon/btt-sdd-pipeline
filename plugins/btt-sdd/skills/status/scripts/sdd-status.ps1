@@ -1,5 +1,6 @@
 # Resumo do estagio de cada feature em specs/, sem precisar ler cada artefato
-# inteiro no contexto do agente. Usado por .claude/skills/sdd-status.
+# inteiro no contexto do agente. Usado pela skill deste plugin (skills/status/,
+# comando /btt-sdd:status) - equivalente a .claude/skills/sdd-status (/sdd-status).
 #
 # Uso: powershell -File scripts/sdd-status.ps1 [-Slug <slug>]
 #   -Slug (opcional) - mostra so aquela feature.
@@ -27,11 +28,11 @@ $Labels = @{
   "sre-review"       = "SRE"
 }
 $NextCmds = @{
-  "prd"              = "/sdd-trd"
-  "trd"              = "/sdd-implement"
-  "code-review"      = "/sdd-qa"
-  "qa-report"        = "/sdd-security"
-  "security-review"  = "/sdd-sre"
+  "prd"              = "/btt-sdd:trd"
+  "trd"              = "/btt-sdd:implement"
+  "code-review"      = "/btt-sdd:qa"
+  "qa-report"        = "/btt-sdd:security"
+  "security-review"  = "/btt-sdd:sre"
   "sre-review"       = "(pipeline concluido)"
 }
 
@@ -55,7 +56,7 @@ if (-not $dirs) {
 foreach ($d in $dirs) {
   $slugName = $d.Name
   $current = "(nenhum artefato)"
-  $next = "/sdd-prd"
+  $next = "/btt-sdd:prd"
   $pending = 0
   $revalidate = "nao"
 
@@ -79,7 +80,7 @@ foreach ($d in $dirs) {
       }
       if ($verdict -match '(?i)reprovado') {
         $current = "$($Labels[$stage]) - REPROVADO"
-        $next = "/sdd-implement (corrigir achados)"
+        $next = "/btt-sdd:implement (corrigir achados)"
       } elseif ($verdict -match '(?i)aprovado') {
         $extra = ""
         if ($verdict -match '(?i)ressalvas') { $extra = " (com ressalvas)" }

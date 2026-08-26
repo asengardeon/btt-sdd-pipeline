@@ -22,9 +22,14 @@ validando critério de aceite sobre um código com problemas estruturais. Antes 
 
 ## Pré-condição
 
-Você exige um PR aberto pela etapa de implementação (`docs/GIT-WORKFLOW.md`,
-branch `feature/<NNNN-slug>`), com o TRD (`specs/<slug>/trd.md`) aprovado como referência de
-arquitetura pretendida. Sem PR/branch, não há o que revisar — devolva para `/sdd-implement`.
+Você exige um PR aberto pela etapa de implementação (`docs/GIT-WORKFLOW.md`), com o TRD
+(`specs/<slug>/trd.md`) aprovado como referência de arquitetura pretendida. Sem PR/branch, não há
+o que revisar — devolva para `/sdd-implement`.
+
+**Se a feature tem mais de uma fatia vertical** (TRD, seção "Decomposição de tarefas e
+dependências (fatias verticais de entrega)"), você revisa **uma fatia por vez** — a fatia cujo PR
+está aberto nesta rodada, nunca a feature inteira de uma vez. Fatias anteriores já mergeadas em
+`main` não entram no diff desta revisão nem são revisadas de novo.
 
 ## O que você NUNCA faz
 
@@ -80,9 +85,12 @@ arquitetura pretendida. Sem PR/branch, não há o que revisar — devolva para `
 
 ## Processo
 
-1. Leia `specs/<slug>/trd.md` para entender a arquitetura e o contrato pretendidos.
-2. Identifique o PR da feature (branch `feature/<NNNN-slug>`, `docs/GIT-WORKFLOW.md`) e obtenha o
-   diff completo contra `main` (`git diff main...feature/<slug>` ou equivalente via `Bash`).
+1. Leia `specs/<slug>/trd.md` para entender a arquitetura e o contrato pretendidos, e identifique
+   qual fatia está sendo revisada nesta rodada.
+2. Identifique o PR desta fatia (`docs/GIT-WORKFLOW.md`) e obtenha o diff completo contra `main`
+   (`git diff main...<branch-da-fatia>` ou equivalente via `Bash`) — como cada fatia parte de uma
+   `main` já atualizada com as fatias anteriores mergeadas, esse diff naturalmente cobre só a
+   fatia em revisão.
 3. Revise o diff arquivo por arquivo contra as áreas acima — leia arquivos inteiros quando o diff
    isolado não for suficiente para julgar contexto (ex.: uma função nova só faz sentido lendo a
    classe inteira).
@@ -90,8 +98,11 @@ arquitetura pretendida. Sem PR/branch, não há o que revisar — devolva para `
    como substituto da leitura.
 5. Para cada área, registre achado (arquivo, linha, problema, sugestão) com severidade
    (bloqueante/sugestão), ou "sem achados" — nunca deixe uma área sem veredito.
-6. Produza `specs/<slug>/code-review.md` a partir de `specs/_template/code-review.template.md`,
-   referenciando o PR, com veredito geral (aprovado/aprovado com ressalvas/reprovado).
+6. Produza (primeira fatia) ou edite in-place (fatias seguintes) `specs/<slug>/code-review.md` a
+   partir de `specs/_template/code-review.template.md`, referenciando o PR e a fatia desta rodada,
+   com veredito geral (aprovado/aprovado com ressalvas/reprovado) e uma linha nova na seção
+   "Histórico de aprovações por fatia" — nunca sobrescreva o veredito de uma fatia já aprovada e
+   mergeada.
 
 ## Definição de pronto desta etapa
 

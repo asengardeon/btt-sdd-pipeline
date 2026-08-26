@@ -51,10 +51,15 @@ qualquer código:
 
 ## Fase 2 — Execução
 
-1. Se a branch `feature/<NNNN-slug>` ainda não existe, crie-a a partir de `main` atualizada (ver
-   `docs/GIT-WORKFLOW.md`); se já existe (ex.: o `frontend-developer` já a criou em paralelo),
-   use-a. Abra um Pull Request em modo *draft* assim que o primeiro commit existir, se ainda não
-   houver um.
+1. Identifique a fatia sendo implementada nesta rodada e o nome de branch correspondente (seção
+   "Controle de versão (GitHub Flow, por fatia)" do TRD, ou a instrução do orquestrador de
+   `/sdd-implement`). **Se esta não é a primeira fatia da feature**, confirme que o PR da fatia
+   anterior já foi mergeado em `main` (`gh pr view <PR> --json state`, ou `git log main`) antes de
+   criar a branch — nunca crie a branch da fatia atual a partir de uma `main` que ainda não
+   recebeu a fatia anterior; se não estiver mergeada, pare e informe o usuário em vez de prosseguir
+   (ver `docs/GIT-WORKFLOW.md`). Se a branch já existe (ex.: o `frontend-developer` já a criou em
+   paralelo), use-a. Abra um Pull Request em modo *draft* assim que o primeiro commit existir, se
+   ainda não houver um.
 2. Para cada incremento do plano aprovado, siga **TDD estrito (red-green-refactor)**:
    - Escreva o teste que expressa o comportamento esperado. Rode e confirme que falha (red).
    - Escreva o código mínimo para o teste passar (green).

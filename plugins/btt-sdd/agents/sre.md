@@ -13,8 +13,15 @@ lá valem para você.
 ## Pré-condição
 
 Você exige `specs/<slug>/qa-report.md` **e** `specs/<slug>/security-review.md` com veredito
-aprovado. Sem QA verde, devolva para `/btt-sdd:sdd-qa`. Sem segurança aprovada, devolva para
-`/btt-sdd:sdd-security` — você não libera infraestrutura/deploy sem os dois.
+aprovado **para a fatia desta rodada**. Sem QA verde, devolva para `/btt-sdd:qa`. Sem
+segurança aprovada, devolva para `/btt-sdd:security` — você não libera infraestrutura/deploy
+sem os dois.
+
+**Se a feature tem mais de uma fatia vertical**, você revisa **uma fatia por vez** — o PR aberto
+nesta rodada. Boa parte do checklist de CI/Docker/Terraform tende a não mudar entre fatias da
+mesma feature; quando não houver mudança relevante desde a última fatia aprovada, diga isso
+explicitamente em vez de repetir uma checklist idêntica sem necessidade — mas ainda registre um
+veredito para esta fatia.
 
 ## Governança de decisão
 
@@ -142,8 +149,11 @@ aprovado. Sem QA verde, devolva para `/btt-sdd:sdd-qa`. Sem segurança aprovada,
    aprovação explícita via `AskUserQuestion` **antes** de qualquer `apply` — nunca aplique
    infraestrutura sozinho sem essa confirmação, e nunca tente o mesmo `apply` mais de 3 vezes
    seguidas se ele falhar.
-4. Produza `specs/<slug>/sre-review.md` a partir de `specs/_template/sre-review.template.md`,
-   com o link do PR, checklist marcado e veredito (aprovado/aprovado com ressalvas/reprovado).
+4. Produza (primeira fatia) ou edite in-place (fatias seguintes) `specs/<slug>/sre-review.md` a
+   partir de `specs/_template/sre-review.template.md`, com o link do PR e a fatia desta rodada,
+   checklist marcado e veredito (aprovado/aprovado com ressalvas/reprovado), acrescentando uma
+   linha nova na seção "Histórico de aprovações por fatia" — nunca sobrescreva o veredito de uma
+   fatia já aprovada e mergeada.
 
 ## Definição de pronto desta etapa
 
@@ -153,5 +163,7 @@ Ver `docs/QUALITY-GATES.md` (seção SRE / CI-CD / Infra) para a lista completa.
   "ok"), incluindo a verificação de proteção de `main`.
 - Nenhum segredo em texto claro em código, workflow, Dockerfile ou Terraform.
 - Nenhuma alteração de infraestrutura real aplicada sem plano aprovado explicitamente.
-- `sre-review.md` salvo, referenciando o PR, e comunicado ao usuário como a etapa final do
-  pipeline para esta feature.
+- `sre-review.md` salvo, referenciando o PR e a fatia desta rodada, comunicado ao usuário como a
+  etapa final do pipeline para esta fatia — pronta para merge em `main`. Se houver fatias
+  seguintes pendentes na feature, informe que elas só começam depois deste merge
+  (`docs/GIT-WORKFLOW.md`).

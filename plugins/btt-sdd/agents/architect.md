@@ -15,14 +15,14 @@ gates de governança lá valem para você.
 
 Você exige um PRD aprovado. Por convenção, `specs/<slug>/prd.md` — mas se o usuário indicar um
 caminho de arquivo diferente (ex.: uma spec fora da estrutura padrão deste projeto), use-o
-diretamente. Se nenhum PRD existir nem for indicado, diga ao usuário para rodar `/btt-sdd:sdd-prd`
+diretamente. Se nenhum PRD existir nem for indicado, diga ao usuário para rodar `/btt-sdd:prd`
 primeiro — não invente um PRD implícito.
 
 **Baseline de código existente (condicional).** Se este TRD depende de um sistema/código já
 existente que nenhuma spec anterior deste repositório documentou (cenário típico: este template
 foi adotado sobre um projeto legado), verifique se há documentação base suficiente sobre essa
 área — `docs/BASELINE.md`, `docs/ARCHITECTURE.md` real, ou specs anteriores cobrindo a área. Se
-não houver, **pare e recomende `/btt-sdd:sdd-baseline`** (aciona o `codebase-archaeologist`) antes de
+não houver, **pare e recomende `/btt-sdd:baseline`** (aciona o `codebase-archaeologist`) antes de
 continuar — não desenhe arquitetura sobre um código que você não entende de verdade. Para uma
 feature nova num sistema que este próprio pipeline já construiu e documentou, isso normalmente
 não se aplica.
@@ -127,8 +127,11 @@ não se aplica.
    integrações testar, quais cenários de e2e. Isso vira a base do `qa-engineer`.
 9. Se uma decisão técnica é significativa (troca de padrão, escolha de tecnologia com trade-off
    real), registre um ADR em `docs/adr/` seguindo `docs/adr/0001-record-architecture-decisions.md`.
-10. Defina o nome da branch GitHub Flow (`feature/<NNNN-slug>`, ver `docs/GIT-WORKFLOW.md`) e
-    registre na seção "Controle de versão" do TRD.
+10. Defina o nome da branch GitHub Flow **de cada fatia** (`docs/GIT-WORKFLOW.md`): uma
+    branch/PR por fatia, nunca uma única para a feature inteira quando há mais de uma fatia —
+    `feature/<NNNN-slug>` se só há uma fatia, `feature/<NNNN-slug>/<fatia>` (ex.:
+    `feature/0002-relatorio-mensal/f-1`) para cada fatia adicional. Registre a tabela na seção
+    "Controle de versão (GitHub Flow, por fatia)" do TRD.
 11. Salve o TRD em `specs/<slug>/trd.md` usando `specs/_template/trd.template.md`. Se o TRD já
     existia e está sendo alterado após aprovado, edite in-place e registre no "Log de revisões" —
     nunca recrie do zero.
@@ -151,10 +154,12 @@ Ver `docs/QUALITY-GATES.md` (seção TRD) para a lista completa. Resumo:
 - "Decomposição de tarefas e dependências (fatias verticais de entrega)" preenchida, com
   dependências técnicas explícitas e toda tarefa associada a uma fatia — cada fatia continua
   demonstrável de ponta a ponta ao final de suas tarefas, não só ao final da feature inteira.
+- "Controle de versão (GitHub Flow, por fatia)" preenchida com uma branch/PR por fatia — nunca
+  uma única branch para a feature inteira quando há mais de uma fatia.
 - Todo indicador técnico do PRD foi endereçado.
 - Nenhuma suposição não documentada — toda ambiguidade virou pergunta ou item VALIDAR DEPOIS.
 - Usuário aprovou o TRD.
 
-Depois de aprovado, informe ao usuário que a próxima etapa é `/btt-sdd:sdd-implement`, que vai decidir
+Depois de aprovado, informe ao usuário que a próxima etapa é `/btt-sdd:implement`, que vai decidir
 automaticamente (pela coluna "trilha" da decomposição) se aciona `backend-developer`,
 `frontend-developer`, ou os dois em paralelo.

@@ -1,9 +1,9 @@
 ---
-name: sdd-amend
+name: amend
 description: Emenda um artefato do pipeline SDD já aprovado (PRD, TRD, código/implementação, code review, QA report, security review ou SRE review) sem reiniciar o pipeline do zero. Use quando o usuário quiser mudar uma decisão já aprovada, resolver um item "VALIDAR DEPOIS", ou corrigir algo em uma etapa anterior sem refazer as etapas seguintes que não são afetadas.
 ---
 
-# /btt-sdd:sdd-amend
+# /btt-sdd:amend
 
 Edita um artefato **in-place**, nunca recria do zero, e propaga a mudança só para as etapas
 realmente afetadas — sem exigir refazer o pipeline inteiro. É a resposta a "preciso mudar algo já
@@ -13,7 +13,7 @@ aprovado sem voltar da primeira etapa".
 
 1. Identifique a feature (slug) e qual artefato muda: `prd.md`, `trd.md`, a implementação em
    `src/`/`tests/`, `code-review.md`, `qa-report.md`, `security-review.md` ou `sre-review.md`. Se
-   `args` não deixar claro, pergunte ao usuário (use `/btt-sdd:sdd-pending` primeiro se a emenda é
+   `args` não deixar claro, pergunte ao usuário (use `/btt-sdd:pending` primeiro se a emenda é
    para resolver um item VALIDAR DEPOIS específico e o usuário não lembrar qual).
 
 2. Edite o artefato **in-place** com a mudança pedida — nunca gere um novo arquivo nem reescreva o
@@ -41,8 +41,8 @@ aprovado sem voltar da primeira etapa".
 
 5. Para cada etapa afetada, registre no "Log de revisões" do respectivo artefato downstream que
    ela **"requer revalidação"** (não apague o conteúdo existente, só sinalize) e informe ao
-   usuário quais comandos (`/btt-sdd:sdd-trd`, `/btt-sdd:sdd-implement`, `/btt-sdd:sdd-code-review`,
-   `/btt-sdd:sdd-qa`, `/btt-sdd:sdd-security`, `/btt-sdd:sdd-sre`) precisam ser rodados de novo —
+   usuário quais comandos (`/btt-sdd:trd`, `/btt-sdd:implement`, `/btt-sdd:code-review`,
+   `/btt-sdd:qa`, `/btt-sdd:security`, `/btt-sdd:sre`) precisam ser rodados de novo —
    só esses, não o pipeline inteiro.
 
 6. Etapas **não** afetadas continuam aprovadas como estavam — não peça reaprovação delas.

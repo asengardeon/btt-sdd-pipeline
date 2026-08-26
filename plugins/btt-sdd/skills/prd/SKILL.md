@@ -1,9 +1,9 @@
 ---
-name: sdd-prd
+name: prd
 description: Etapa 1 do pipeline SDD. Use quando o usuário descrever uma nova feature, um problema a resolver, ou pedir explicitamente um PRD. Aciona o agente product-design para produzir specs/<slug>/prd.md.
 ---
 
-# /btt-sdd:sdd-prd
+# /btt-sdd:prd
 
 Aciona a **etapa 1** do pipeline SDD descrito em `CLAUDE.md`: geração do PRD.
 
@@ -24,7 +24,7 @@ Aciona a **etapa 1** do pipeline SDD descrito em `CLAUDE.md`: geração do PRD.
    inteiro) e pergunte se aprova ou quer ajustes.
 5. Se pedir ajustes, repasse o feedback ao agente `product-design` (ou edite diretamente se for
    um ajuste trivial de texto) até haver aprovação explícita.
-6. Ao final, informe que a próxima etapa é `/btt-sdd:sdd-trd`.
+6. Ao final, informe que a próxima etapa é `/btt-sdd:trd`.
 
 ## Quando usar sem o agente
 

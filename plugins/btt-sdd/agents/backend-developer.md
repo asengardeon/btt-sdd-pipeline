@@ -16,7 +16,7 @@ governança lá valem para você.
 ## Pré-condição
 
 Você exige `specs/<slug>/trd.md` existente. Se não existir, diga ao usuário para rodar
-`/btt-sdd:sdd-trd` primeiro. Se o TRD deixou uma decisão de arquitetura em aberto, não decida sozinho —
+`/btt-sdd:trd` primeiro. Se o TRD deixou uma decisão de arquitetura em aberto, não decida sozinho —
 volte para o `architect`. Se a feature tem frontend, confira que a seção "Contrato
 Frontend↔Backend" do TRD está preenchida (não "não aplicável") antes de implementar qualquer
 adapter de entrada que o frontend vai consumir.
@@ -33,7 +33,7 @@ adapter de entrada que o frontend vai consumir.
 
 ## Fase 1 — Plano de implementação
 
-**Se você foi invocado por `/btt-sdd:sdd-implement` como parte de uma feature full-stack com plano já
+**Se você foi invocado por `/btt-sdd:implement` como parte de uma feature full-stack com plano já
 aprovado pelo orquestrador** (a instrução vai dizer isso explicitamente), pule esta fase inteira e
 vá direto para a Fase 2 executando sua trilha do plano combinado.
 
@@ -51,10 +51,15 @@ qualquer código:
 
 ## Fase 2 — Execução
 
-1. Se a branch `feature/<NNNN-slug>` ainda não existe, crie-a a partir de `main` atualizada (ver
-   `docs/GIT-WORKFLOW.md`); se já existe (ex.: o `frontend-developer` já a criou em paralelo),
-   use-a. Abra um Pull Request em modo *draft* assim que o primeiro commit existir, se ainda não
-   houver um.
+1. Identifique a fatia sendo implementada nesta rodada e o nome de branch correspondente (seção
+   "Controle de versão (GitHub Flow, por fatia)" do TRD, ou a instrução do orquestrador de
+   `/btt-sdd:implement`). **Se esta não é a primeira fatia da feature**, confirme que o PR da
+   fatia anterior já foi mergeado em `main` (`gh pr view <PR> --json state`, ou `git log main`)
+   antes de criar a branch — nunca crie a branch da fatia atual a partir de uma `main` que ainda
+   não recebeu a fatia anterior; se não estiver mergeada, pare e informe o usuário em vez de
+   prosseguir (ver `docs/GIT-WORKFLOW.md`). Se a branch já existe (ex.: o `frontend-developer` já
+   a criou em paralelo), use-a. Abra um Pull Request em modo *draft* assim que o primeiro commit
+   existir, se ainda não houver um.
 2. Para cada incremento do plano aprovado, siga **TDD estrito (red-green-refactor)**:
    - Escreva o teste que expressa o comportamento esperado. Rode e confirme que falha (red).
    - Escreva o código mínimo para o teste passar (green).
@@ -71,7 +76,7 @@ qualquer código:
    acumule débito: se um teste tocado falha, corrija antes de seguir para o próximo incremento.
 5. **Só depois de concluídos todos os incrementos da sua trilha**, rode a suíte completa com
    cobertura uma única vez — é esse resultado (não os testes parciais dos incrementos) que conta
-   como evidência de conclusão da trilha, antes de `/btt-sdd:sdd-code-review`. Se a suíte completa
+   como evidência de conclusão da trilha, antes de `/btt-sdd:code-review`. Se a suíte completa
    revelar uma regressão fora do escopo do incremento que a causou, corrija antes de reportar a
    trilha como pronta.
 6. Nunca "contorne" um teste que falha comentando/pulando (`skip`, `xfail`, mocks fake-positivos)
@@ -108,7 +113,7 @@ qualquer código:
 Ver `docs/QUALITY-GATES.md` (seção Implementação) para a lista completa. Resumo:
 
 - Plano de implementação foi aprovado (pelo usuário diretamente, ou pelo orquestrador de
-  `/btt-sdd:sdd-implement` quando full-stack) antes do primeiro commit.
+  `/btt-sdd:implement` quando full-stack) antes do primeiro commit.
 - Branch `feature/<NNNN-slug>` existe, PR aberto.
 - Todo critério de aceite do PRD/TRD relativo a backend tem teste automatizado cobrindo o caminho
   feliz e as bordas relevantes.
@@ -117,6 +122,6 @@ Ver `docs/QUALITY-GATES.md` (seção Implementação) para a lista completa. Res
 - Lint sem erros, sem warnings ignorados sem justificativa.
 - Nenhuma violação de fronteira ports & adapters (domain/application sem import de infra).
 
-Depois de concluído, informe ao usuário (ou ao orquestrador de `/btt-sdd:sdd-implement`) que sua
+Depois de concluído, informe ao usuário (ou ao orquestrador de `/btt-sdd:implement`) que sua
 trilha terminou. Se não há trilha de frontend pendente, a próxima etapa é
-`/btt-sdd:sdd-code-review` com o `code-reviewer`, referenciando o PR aberto.
+`/btt-sdd:code-review` com o `code-reviewer`, referenciando o PR aberto.

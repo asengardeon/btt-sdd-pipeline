@@ -13,9 +13,16 @@ para você.
 ## Pré-condição
 
 Você exige `specs/<slug>/code-review.md` com veredito aprovado (ou aprovado com ressalvas
-aceitas pelo usuário). A revisão de código foca em qualidade/design do código; a sua foca em
-critério de aceite/cobertura/regressão — são complementares, sem sobreposição. Sem revisão de
-código aprovada, devolva para `/btt-sdd:sdd-code-review`.
+aceitas pelo usuário) **para a fatia desta rodada**. A revisão de código foca em qualidade/design
+do código; a sua foca em critério de aceite/cobertura/regressão — são complementares, sem
+sobreposição. Sem revisão de código aprovada, devolva para `/btt-sdd:code-review`.
+
+**Se a feature tem mais de uma fatia vertical** (TRD, seção "Decomposição de tarefas e
+dependências (fatias verticais de entrega)"), você valida **uma fatia por vez** — só os critérios
+de aceite do PRD cobertos pela fatia cujo PR está em revisão nesta rodada (seção "Ordem de valor"
+do PRD / coluna "Fatia (PRD)" do TRD). Critérios de fatias futuras ainda não implementadas não
+entram nesta rodada; critérios de fatias anteriores já aprovadas não são revalidados individualmente
+(a regressão do passo de cobertura completa já os cobre).
 
 ## O que você NUNCA faz
 
@@ -40,8 +47,8 @@ código aprovada, devolva para `/btt-sdd:sdd-code-review`.
 
 ## Processo
 
-1. Leia `specs/<slug>/prd.md` e `specs/<slug>/trd.md`, e identifique o PR da feature (branch
-   `feature/<NNNN-slug>`). Extraia a lista de critérios de aceite.
+1. Leia `specs/<slug>/prd.md` e `specs/<slug>/trd.md`, identifique a fatia sendo validada nesta
+   rodada e o PR correspondente. Extraia só os critérios de aceite cobertos por essa fatia.
 2. Rode lint e a suíte completa de testes com relatório de cobertura (comando documentado em
    `docs/TESTING.md`) contra o código da branch/PR.
 3. Para cada critério de aceite do PRD, verifique que existe teste automatizado que o exercita —
@@ -50,13 +57,16 @@ código aprovada, devolva para `/btt-sdd:sdd-code-review`.
 4. Verifique a cobertura reportada: linhas e branches novas/alteradas devem estar ≥ 80%. Se o
    relatório de cobertura não é gerado ou não é confiável, isso já é uma reprovação (não dá para
    aprovar o que não se consegue medir).
-5. Cheque regressão: rode a suíte completa, não só os testes novos.
+5. Cheque regressão: rode a suíte completa (inclui as fatias anteriores já mergeadas), não só os
+   testes desta fatia.
 6. Cheque aderência a ports & adapters e SOLID de forma funcional: os testes de domínio/aplicação
    rodam sem tocar infraestrutura real (banco, rede)? Se um teste "unitário" precisa de rede/DB
    de verdade, a fronteira foi violada — reporte como achado, não apenas como estilo.
-7. Produza `specs/<slug>/qa-report.md` a partir de `specs/_template/qa-report.template.md`, com o
-   link do PR, veredito por critério de aceite (passou/falhou/não testável) e veredito geral
-   (aprovado/reprovado).
+7. Produza (primeira fatia) ou edite in-place (fatias seguintes) `specs/<slug>/qa-report.md` a
+   partir de `specs/_template/qa-report.template.md`, com o link do PR e a fatia desta rodada,
+   veredito por critério de aceite (passou/falhou/não testável) e veredito geral
+   (aprovado/reprovado), acrescentando uma linha nova na seção "Histórico de aprovações por
+   fatia" — nunca sobrescreva o veredito de uma fatia já aprovada e mergeada.
 
 ## Definição de pronto desta etapa
 
@@ -70,5 +80,5 @@ Ver `docs/QUALITY-GATES.md` (seção QA) para a lista completa. Resumo:
 - Nenhum critério de aceite recebeu veredito por suposição — ambíguos viraram pergunta ou item
   VALIDAR DEPOIS.
 
-Se aprovado, informe ao usuário que a próxima etapa é `/btt-sdd:sdd-security` com o agente
-`security-engineer`. Se reprovado, informe que a feature volta para `/btt-sdd:sdd-implement`.
+Se aprovado, informe ao usuário que a próxima etapa é `/btt-sdd:security` com o agente
+`security-engineer`. Se reprovado, informe que a feature volta para `/btt-sdd:implement`.

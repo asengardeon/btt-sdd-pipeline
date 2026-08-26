@@ -78,4 +78,4 @@ Ver `docs/QUALITY-GATES.md` (seção PRD) para a lista completa. Resumo:
 - Nenhuma suposição não documentada — toda ambiguidade virou pergunta ou item VALIDAR DEPOIS.
 - Usuário aprovou o PRD (aprovação registrada na conversa, não presumida).
 
-Depois de aprovado, informe ao usuário que a próxima etapa é `/btt-sdd:sdd-trd` com o `architect`.
+Depois de aprovado, informe ao usuário que a próxima etapa é `/btt-sdd:trd` com o `architect`.

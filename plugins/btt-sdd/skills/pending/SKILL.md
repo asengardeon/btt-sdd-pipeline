@@ -1,12 +1,12 @@
 ---
-name: sdd-pending
+name: pending
 description: Lista todos os itens "VALIDAR DEPOIS" em aberto em todas as features do pipeline SDD (PRD, TRD, QA report, security review, SRE review) e em docs/BASELINE.md, para o usuário revisar quando tiver tempo/resposta. Use quando o usuário perguntar o que ainda falta validar, pedir a lista de pendências, ou quiser resolver um item específico marcado como VALIDAR DEPOIS.
 allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/sdd-pending.sh *) PowerShell(${CLAUDE_SKILL_DIR}/scripts/sdd-pending.ps1 *)
 ---
 
-# /btt-sdd:sdd-pending
+# /btt-sdd:pending
 
-Não aciona nenhum agente — é um utilitário de leitura, como `/btt-sdd:sdd-status`, mas focado só
+Não aciona nenhum agente — é um utilitário de leitura, como `/btt-sdd:status`, mas focado só
 nos itens marcados "VALIDAR DEPOIS".
 
 ## Passos
@@ -21,7 +21,7 @@ nos itens marcados "VALIDAR DEPOIS".
 2. Apresente a tabela retornada diretamente ao usuário.
 3. **Só leia os artefatos manualmente** (fallback abaixo) se o script falhar.
 4. Se o usuário pedir para resolver um item específico (responder a pergunta agora), colete a
-   resposta e acione `/btt-sdd:sdd-amend` para registrar a resolução no artefato correto — não
+   resposta e acione `/btt-sdd:amend` para registrar a resolução no artefato correto — não
    edite o artefato diretamente por fora desse fluxo, para o log de revisões ficar consistente.
 5. Se não houver nenhuma pendência em lugar nenhum, diga isso claramente em vez de não retornar
    nada.

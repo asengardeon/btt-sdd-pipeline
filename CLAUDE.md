@@ -52,6 +52,12 @@ Cada etapa só começa com o artefato aprovado da etapa anterior. Nenhuma etapa 
 backend/frontend não implementam sem TRD aprovado, o QA não assina sem os testes rodando, a
 segurança não aprova sem QA verde, o SRE não aprova pipeline/infra sem QA e segurança aprovados.
 
+**Quando o TRD tem mais de uma fatia vertical de entrega** (seção "Decomposição de tarefas e
+dependências (fatias verticais de entrega)"), as etapas [3] a [7] se repetem **por fatia**, em
+loop: cada fatia é sua própria branch/PR, passa por code review/QA/segurança/SRE, e só é mergeada
+em `main` antes da fatia seguinte começar — nunca se implementam todas as fatias de uma vez para
+só depois revisar tudo junto. Detalhe completo em `docs/GIT-WORKFLOW.md`.
+
 Cada agente vive em `.claude/agents/<nome>.md` e é acionado por uma skill em
 `.claude/skills/sdd-*`. Use os comandos:
 
@@ -94,7 +100,7 @@ Além da junction, o mesmo pipeline também existe empacotado como **plugin inst
 Code, em `plugins/btt-sdd/` (manifesto `.claude-plugin/plugin.json`, mais `.claude-plugin/
 marketplace.json` na raiz do repo funcionando como marketplace local). É uma cópia própria, não
 um link — necessária porque comandos instalados via plugin ganham o namespace `btt-sdd:` (ex.:
-`/btt-sdd:sdd-trd` em vez de `/sdd-trd`); ver `plugins/btt-sdd/README.md` para o processo de
+`/btt-sdd:trd` em vez de `/sdd-trd`); ver `plugins/btt-sdd/README.md` para o processo de
 manter as duas cópias em sincronia. Instalação testada e confirmada de verdade neste computador:
 
 ```
@@ -108,7 +114,7 @@ isso.)
 
 Depois de instalado, os comandos ficam disponíveis com o prefixo `/btt-sdd:` em qualquer sessão
 nova do Claude Code neste computador, coexistindo sem conflito com os comandos sem prefixo da
-junction (`/sdd-status` e `/btt-sdd:sdd-status`, por exemplo, funcionam os dois, cada um lendo o
+junction (`/sdd-status` e `/btt-sdd:status`, por exemplo, funcionam os dois, cada um lendo o
 projeto onde a sessão estiver aberta).
 
 **Atualizar o plugin depois de uma mudança** não é automático — instalação via GitHub é uma cópia
