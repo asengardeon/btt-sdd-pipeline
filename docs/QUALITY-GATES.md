@@ -126,6 +126,11 @@ documento é a referência única para não duplicar a lista em cada um deles.
 - [ ] Nenhuma alteração de infraestrutura real (`terraform apply`) roda sem plano revisado
   (`terraform plan`) e aprovação explícita do usuário.
 - [ ] Docker: build multi-stage, imagem mínima, usuário não-root, sem segredo hardcoded.
+- [ ] Se a entrega inclui ambiente de desenvolvimento local (`docker-compose.yml`): validado com
+  build + subida reais (não só `docker compose config`), exercitando pelo menos um caminho
+  funcional de ponta a ponta (não só "o container subiu"); ambiente verificado livre de
+  containers/processos órfãos de sessões anteriores antes de subir; teardown completo (incluindo
+  qualquer processo iniciado fora do Docker durante a validação) ao final.
 - [ ] Terraform: estado remoto configurado, variáveis sensíveis marcadas `sensitive`.
 - [ ] Nenhum segredo em texto claro em código, workflow, Dockerfile ou arquivo Terraform.
 

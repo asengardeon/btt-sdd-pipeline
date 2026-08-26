@@ -20,6 +20,13 @@ Aciona a **etapa 6** do pipeline SDD descrito em `CLAUDE.md`: validação de CI/
    infraestrutura (`terraform apply`) é apresentada como plano e só executada após aprovação
    explícita do usuário via `AskUserQuestion`. Você não precisa duplicar essa confirmação, mas
    nunca instrua o agente a pular esse passo.
+4b. Se o agente `sre` estiver rodando como subagente assíncrono/em background e devolver uma
+   pergunta ou plano em texto puro (sinal de que `AskUserQuestion` não estava disponível para ele
+   nesse modo), **você** — o orquestrador desta skill — é responsável por apresentar esse plano ao
+   usuário via *sua própria* `AskUserQuestion` antes de instruir o agente a prosseguir. Nunca
+   repasse "pode prosseguir" para o agente sem ter, você mesmo, obtido a aprovação explícita do
+   usuário nesse turno — aprovação de uma etapa anterior (ex. do Docker base) não cobre
+   automaticamente uma extensão nova (ex. adicionar um serviço novo ao compose).
 5. Mostre ao usuário o veredito e os checklists de CI, Docker e Terraform — incluindo a
    verificação de proteção da branch `main` (`docs/GIT-WORKFLOW.md`).
 6. Se aprovado, informe que a feature está pronta ponta a ponta pelo pipeline SDD, e que o merge

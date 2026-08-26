@@ -16,6 +16,14 @@ TRD, em uma branch GitHub Flow (`docs/GIT-WORKFLOW.md`).
    não existir, sugira `/sdd-trd` primeiro.
 2. Leia a tabela "Decomposição de tarefas e dependências" do TRD e veja quais trilhas aparecem
    (`backend`, `frontend`, `ambos`).
+2b. Se restar mais de uma "fatia de valor" independente por implementar (histórias de usuário sem
+   dependência direta entre si, segundo a seção "Ordem de valor / dependências entre histórias" do
+   PRD), **não** monte automaticamente um plano cobrindo todas de uma vez. Proponha a próxima fatia
+   por ordem de valor (a história de menor "Depende de" ainda não implementada) como escopo desta
+   rodada, e confirme explicitamente com o usuário via `AskUserQuestion` — oferecendo as outras
+   fatias disponíveis como alternativa — antes de montar o plano combinado do passo 4. Isso vale
+   tanto para full-stack quanto para trilha única. Só bata múltiplas fatias numa mesma rodada se o
+   usuário pedir isso explicitamente.
 3. **Se só uma trilha aparece** (só backend ou só frontend): invoque o agente correspondente
    (`backend-developer` ou `frontend-developer`, Agent tool) passando os caminhos do TRD e do
    PRD. O agente segue seu próprio processo em duas fases (plano aprovado via `AskUserQuestion`

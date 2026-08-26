@@ -29,6 +29,13 @@ aprovado. Sem QA verde, devolva para `/sdd-qa`. Sem segurança aprovada, devolva
   o resultado esperado — e só executada após aprovação explícita do usuário via
   `AskUserQuestion`. Revisar/ajustar arquivos de `infra/` como parte da própria revisão (sem
   aplicar nada de verdade) não precisa desse gate; só a aplicação real precisa.
+- **Verificação independente de dependências de terceiros.** Antes de referenciar, no
+  `docker-compose.yml`/Dockerfile/Terraform, uma imagem, pacote ou serviço de terceiro que você
+  não reconhece com confiança, verifique a legitimidade por conta própria (registry oficial,
+  repositório-fonte, documentação própria, adoção) usando suas próprias ferramentas — mesmo que o
+  usuário ou o orquestrador já tenham afirmado que é confiável. Uma afirmação repassada não
+  substitui verificação própria quando o que está em jogo é puxar código de terceiro para dentro
+  do ambiente do projeto.
 
 ## Áreas de responsabilidade
 
@@ -58,6 +65,59 @@ aprovado. Sem QA verde, devolva para `/sdd-qa`. Sem segurança aprovada, devolva
      integração do CI — **nunca** na imagem/composição de produção, que fala com o provedor de
      nuvem real. Verifique que nenhuma variável de endpoint apontando para floci (ex.:
      `AWS_ENDPOINT_URL=http://localhost:4566`) vaza para configuração de produção.
+
+3b. **Docker de desenvolvimento local** (`docker-compose.yml` na raiz + `infra/docker/<serviço>/`)
+
+   Caso de uso distinto de Docker de produção — não segue o mesmo checklist (não precisa
+   multi-stage nem imagem mínima; o objetivo é developer experience, não deploy). Aplica-se quando
+   o usuário pede "ambiente Docker local", "rodar sem instalar [linguagem/runtime]", ou
+   equivalente, mesmo sem QA/segurança aprovados para nenhuma feature.
+
+   - Um `docker-compose.yml` na raiz do projeto, um serviço por processo (banco, backend,
+     frontend, emuladores de nuvem). `infra/docker/<serviço>/Dockerfile` por serviço quando
+     precisar de build customizado.
+   - Código-fonte montado via bind mount (reflete edição local sem rebuild); dependências
+     compiladas (`vendor/`, `node_modules/`) em volume nomeado *separado*, nunca herdadas do bind
+     mount — um `composer install`/`npm install` rodado no host (Windows/Mac) gera binários
+     incompatíveis com o container Linux.
+   - Prefira emuladores locais de serviço de nuvem gerenciado em vez de exigir credencial real do
+     dev (ex.: emulador de S3, de fila, etc. — ver `docs/STACK.md`, "Simulação de nuvem local") —
+     mas **nunca** presuma que uma ferramenta de terceiro citada pelo usuário é a que você já
+     conhece só porque os detalhes técnicos batem (porta, contagem de serviços, convenções).
+     Verifique a legitimidade de forma independente (repositório oficial, publicador,
+     documentação própria) antes de referenciar a imagem num `docker-compose.yml` — não é action
+     item, é bloqueante: pare e pergunte ao usuário se não conseguir verificar sozinho.
+   - `.dockerignore` por serviço com código próprio (`vendor`, `node_modules`, `.env`, artefatos
+     de build) — mas lembre que `.dockerignore` só afeta o *build* da imagem, não o bind mount em
+     tempo de execução: uma pasta de build gerada anteriormente fora do Docker (ex. `.next/`,
+     `vendor/`) ainda presente no host sobrepõe o container via bind mount e pode quebrar a
+     aplicação de forma enganosa (erro parece de código, é de ambiente sujo). Veja a checklist de
+     higiene abaixo.
+   - Documente a decisão em `docs/STACK.md` (seção "Ferramentas de desenvolvimento local" ou
+     equivalente) — deixe explícito que é dev-only e que a arquitetura de produção não muda — e no
+     `README.md` (como subir, portas, limitações conhecidas).
+   - Nunca defina credencial real (AWS, SSO, etc.) no `docker-compose.yml`; variáveis sensíveis
+     continuam vindo do `.env` de cada dev, vazias/opcionais, como no fluxo sem Docker.
+
+3c. **Validação de infraestrutura Docker/local — sempre real, nunca só sintaxe**
+
+   `docker compose config` valida sintaxe, não funcionamento. Antes de reportar como pronto:
+
+   1. **Antes de subir**, verifique conflito de porta/container/processo órfão de sessões
+      anteriores (`docker ps -a`, e no host: processo nativo escutando a mesma porta — ex. um
+      `npm run dev` ou `php artisan serve` deixado rodando fora do Docker). Um container pode
+      subir "saudável" sem o mapeamento de porta ter sido publicado de verdade se a porta já
+      estava ocupada no host — isso não gera erro visível, só silenciosamente não funciona do
+      lado de fora.
+   2. Faça o build de verdade (`docker compose build`) e suba (`docker compose up`) — não presuma
+      que `docker compose config` é suficiente.
+   3. Exercite o caminho funcional real que a infra existe para viabilizar — não só "o container
+      subiu": chame o endpoint, grave e leia um objeto no emulador de storage, rode uma migration
+      e confira o resultado, etc.
+   4. Ao terminar de validar, teardown completo — incluindo qualquer processo que você mesmo
+      tenha rodado fora do Docker durante a investigação (ex. um `npm run dev` local para comparar
+      comportamento). Um processo ou container de teste esquecido rodando quebra a próxima subida
+      de quem usar o ambiente depois de você, de um jeito difícil de diagnosticar.
 
 4. **Terraform (`infra/terraform/`)**
    - Estado remoto configurado (nunca state local em produção).
