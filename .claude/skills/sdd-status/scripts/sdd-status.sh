@@ -92,7 +92,36 @@ for dir in "$SPECS_DIR"/*/; do
     fi
 
     if grep -qi 'requer revalida' "$file" 2>/dev/null; then
-      revalidate="sim ($(label "$stage"))"
+      # Uma flag "requer revalidação" registrada no log pode já ter sido resolvida por
+      # uma (re)aprovação formal posterior do artefato-alvo (seção "Aprovação" do PRD
+      # ou do TRD — os únicos artefatos com checkbox "Aprovado por"). O alvo nem sempre
+      # é o próprio arquivo: uma flag registrada no log do PRD tipicamente aponta para
+      # "TRD requer revalidação". Para cada linha de log com a flag, identifica o
+      # artefato-alvo pela palavra TRD/PRD na própria linha e compara a data da flag
+      # com a data da (re)aprovação mais recente desse artefato-alvo.
+      unresolved=0
+      while IFS= read -r flagline; do
+        flag_date="$(echo "$flagline" | grep -oE '^\|[[:space:]]*[0-9]{4}-[0-9]{2}-[0-9]{2}' | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}')"
+        target_file=""
+        if [ -n "$flag_date" ]; then
+          if echo "$flagline" | grep -qiw 'TRD'; then
+            target_file="${dir}trd.md"
+          elif echo "$flagline" | grep -qiw 'PRD'; then
+            target_file="${dir}prd.md"
+          fi
+        fi
+        if [ -z "$flag_date" ] || [ -z "$target_file" ] || [ ! -f "$target_file" ]; then
+          unresolved=1
+          continue
+        fi
+        approve_date="$(grep -ioE '(re)?aprovad[oa] por.*em[[:space:]]+[0-9]{4}-[0-9]{2}-[0-9]{2}' "$target_file" 2>/dev/null \
+          | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | sort | tail -1)"
+        if [ -z "$approve_date" ] || [[ "$flag_date" > "$approve_date" ]]; then
+          unresolved=1
+        fi
+      done < <(grep -iE '^\|[[:space:]]*[0-9]{4}-[0-9]{2}-[0-9]{2}[[:space:]]*\|.*requer revalida' "$file" 2>/dev/null)
+
+      [ "$unresolved" = "1" ] && revalidate="sim ($(label "$stage"))"
     fi
 
     p="$(grep -cE '\|[[:space:]]*pendente[[:space:]]*\|' "$file" 2>/dev/null)"

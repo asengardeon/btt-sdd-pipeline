@@ -92,7 +92,46 @@ foreach ($d in $dirs) {
     }
 
     if ($content -match '(?i)requer revalida') {
-      $revalidate = "sim ($($Labels[$stage]))"
+      # Uma flag "requer revalidacao" registrada no log pode ja ter sido resolvida por
+      # uma (re)aprovacao formal posterior do artefato-alvo (secao "Aprovacao" do PRD
+      # ou do TRD - os unicos artefatos com checkbox "Aprovado por"). O alvo nem sempre
+      # e o proprio arquivo: uma flag registrada no log do PRD tipicamente aponta para
+      # "TRD requer revalidacao". Para cada linha de log com a flag, identifica o
+      # artefato-alvo pela palavra TRD/PRD na propria linha e compara a data da flag
+      # com a data da (re)aprovacao mais recente desse artefato-alvo.
+      $flagLines = [regex]::Matches($content, '(?mi)^\|\s*(\d{4}-\d{2}-\d{2})\s*\|.*requer revalida.*$')
+      $unresolved = $false
+
+      foreach ($m in $flagLines) {
+        $flagDate = $m.Groups[1].Value
+        $lineText = $m.Value
+        $targetFile = $null
+        if ($lineText -match '(?i)\bTRD\b') {
+          $targetFile = Join-Path $d.FullName "trd.md"
+        } elseif ($lineText -match '(?i)\bPRD\b') {
+          $targetFile = Join-Path $d.FullName "prd.md"
+        }
+
+        if (-not $targetFile -or -not (Test-Path $targetFile)) {
+          $unresolved = $true
+          continue
+        }
+
+        $targetContent = Get-Content $targetFile -Raw
+        # @(...) força coleção mesmo com um único match — sem isso, um resultado só vira
+        # string escalar e "[-1]" pega o último caractere da data, não a data inteira.
+        $approveDates = @([regex]::Matches($targetContent, '(?i)(?:re)?aprovad[oa] por.*?em\s+(\d{4}-\d{2}-\d{2})') |
+          ForEach-Object { $_.Groups[1].Value } | Sort-Object)
+        $approveDate = if ($approveDates.Count -gt 0) { $approveDates[-1] } else { $null }
+
+        if (-not $approveDate -or $flagDate -gt $approveDate) {
+          $unresolved = $true
+        }
+      }
+
+      if ($unresolved) {
+        $revalidate = "sim ($($Labels[$stage]))"
+      }
     }
 
     $pending += [regex]::Matches($content, '\|\s*pendente\s*\|').Count
