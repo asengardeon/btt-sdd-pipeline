@@ -113,9 +113,12 @@ Detalhe completo em `docs/QUALITY-GATES.md` — aqui só o resumo:
    aprovação explícita antes de agir; em feature full-stack, um único plano combinado antes de
    acionar `backend-developer` e `frontend-developer` em paralelo.
 4. **Artefatos aprovados são editados in-place**, nunca recriados do zero — use `/sdd-amend`.
-5. **Fluxo de Git = GitHub Flow.** `main` sempre implantável, uma branch por feature, PR
-   obrigatório, merge só após revisão de código, QA, segurança e SRE aprovados. Detalhe em
-   `docs/GIT-WORKFLOW.md`.
+5. **Fluxo de Git = GitHub Flow.** `main` sempre implantável, uma branch por fatia vertical de
+   entrega (não por feature inteira), PR obrigatório, merge só após revisão de código, QA,
+   segurança e SRE aprovados para aquela fatia. Vale também para mudanças no próprio pipeline
+   (agentes, skills, docs, templates) — nunca commite direto em `main`/`master`; crie uma branch
+   com o prefixo certo (`fix/`, `hotfix/`, `chore/`, `docs/`, `refactor/`, `perf/`, `test/`,
+   `ci/` — tabela completa em `docs/GIT-WORKFLOW.md`) e abra PR antes de mergear.
 6. Nunca avance uma etapa sem o artefato de entrada da anterior aprovado.
 7. Nunca reduza a cobertura de testes abaixo de 80% em qualquer pacote para "economizar tempo".
 8. Sempre registre decisões técnicas relevantes como ADR em `docs/adr/`.
