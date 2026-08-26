@@ -56,8 +56,26 @@ Uma emenda a um artefato já aprovado (`/sdd-amend`, ver `docs/SDD-WORKFLOW.md`)
 commits já feitos numa branch — adiciona um novo commit registrando a mudança. O "Log de
 revisões" do artefato é o registro de *por que* mudou; o git log é o registro de *quando*.
 
+## Mudanças no próprio pipeline (agentes, skills, docs, templates)
+
+A regra 1 (`main` sempre implantável, ninguém commita direto nela) **vale para qualquer mudança
+neste repositório, não só para features rastreadas em `specs/`** — inclusive edições em
+`.claude/agents/`, `.claude/skills/`, `plugins/btt-sdd/`, `docs/` ou `specs/_template/` feitas
+por uma sessão do Claude Code mantendo o próprio pipeline. Esse tipo de mudança não tem PRD/TRD
+nem fatia (não é uma feature de produto), então usa uma branch simples em vez do padrão
+`feature/<NNNN-slug>/<fatia>`:
+
+1. Antes de editar qualquer arquivo, crie uma branch a partir de `main` atualizada:
+   `chore/<slug-curto>` (ex.: `chore/reduz-tokens-agentes`) — ou `fix/<slug>`/`docs/<slug>` se a
+   natureza da mudança pedir esse prefixo, seguindo as mesmas convenções de commit já usadas no
+   histórico deste repositório.
+2. Commite nessa branch, abra o PR, e só mergeie em `main` com decisão explícita do usuário — as
+   mesmas regras 1, 4, 6 e 7 acima se aplicam (PR obrigatório, sem push direto, sem force-push).
+   Não há gate de QA/segurança/SRE automático para esse tipo de mudança (não é uma feature de
+   produto), mas o PR ainda é o mecanismo de revisão antes do merge.
+
 ## Exceção histórica
 
 O commit inicial deste template (estrutura, agentes, skills, docs e a feature de exemplo) foi
 feito diretamente em `main`, antes desta política existir. A partir daí, toda mudança segue
-GitHub Flow normalmente.
+GitHub Flow normalmente — inclusive as mudanças no próprio pipeline descritas acima.
