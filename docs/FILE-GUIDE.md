@@ -126,7 +126,10 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
   decidida neste repositório (etapa 2 do processo em `.claude/agents/architect.md`) — não é criado
   pelo `/create-project`, sua ausência é o próprio sinal de "stack ainda não decidida". Existe
   neste repositório desde o exemplo `0001-example-task-management` (Python) e serve de fonte para
-  qualquer feature nova aqui não precisar perguntar de novo.
+  qualquer feature nova aqui não precisar perguntar de novo. Também registra, na seção "Simulação
+  de nuvem local", quais adapters de saída falam com serviços de nuvem gerenciados (AWS/Azure/GCP/
+  OCI) e que [floci](https://floci.io) é o padrão para emulá-los em dev/teste (ver
+  `docs/TESTING.md`).
 - **`FILE-GUIDE.md`** — este arquivo.
 - **`adr/`** — Architecture Decision Records. Cada arquivo numerado registra uma decisão técnica
   significativa (contexto, opções consideradas, decisão, consequências). `0001-...md` é o próprio

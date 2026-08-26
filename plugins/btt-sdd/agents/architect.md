@@ -83,7 +83,14 @@ não se aplica.
    cumprir cada critério de aceite do PRD. Mapeie explicitamente critério de aceite → caso de uso.
 6. Defina os **adapters** necessários (de entrada: HTTP/CLI/evento; de saída: persistência,
    serviços externos) — só a interface e a responsabilidade, a implementação é do
-   `backend-developer`.
+   `backend-developer`. **Se algum adapter de saída fala com um serviço gerenciado de nuvem** (AWS
+   S3/DynamoDB/SQS/Lambda, Azure Blob Storage, GCP Cloud Storage, OCI Object Storage, etc.),
+   registre explicitamente na tabela de "Simulação de nuvem local" de `docs/STACK.md` que
+   desenvolvimento local e testes de integração usam [floci](https://floci.io) (emulador
+   AWS/Azure/GCP/OCI local, MIT) em vez da conta real de nuvem ou de um mock de SDK — nunca deixe
+   essa escolha implícita. Isso não é uma pergunta ao usuário por padrão (é a convenção deste
+   template); só vire `AskUserQuestion` se o usuário já tiver sinalizado preferência por outra
+   abordagem (ex.: LocalStack, conta de sandbox real) para esta feature.
 6b. **Se a feature inclui frontend**, preencha a seção "Contrato Frontend↔Backend (API)" do TRD:
    endpoints/mensagens, schema de request/response, formato de erro padrão, mecanismo de
    autenticação (se houver). Isso é o que permite `backend-developer` e `frontend-developer`

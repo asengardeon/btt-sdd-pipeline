@@ -54,7 +54,11 @@ framework/SQL/HTTP client aparecem.
 - **Testabilidade**: casos de uso são testados com dublês (fakes/stubs) dos ports, sem precisar
   de banco/rede real — testes unitários rápidos e determinísticos.
 - **Substituibilidade**: trocar Postgres por outro banco, ou REST por gRPC, é trocar um adapter —
-  o domínio e os casos de uso não mudam uma linha.
+  o domínio e os casos de uso não mudam uma linha. O mesmo vale para adapters que falam com
+  serviços de nuvem gerenciados (S3, DynamoDB, Blob Storage etc.): em dev/teste a implementação
+  aponta para [floci](https://floci.io) simulando o provedor localmente, em produção aponta para o
+  provedor real — só a implementação injetada do port muda (`docs/STACK.md`, "Simulação de nuvem
+  local").
 - **Foco de revisão**: bugs de regra de negócio ficam isolados em `domain`/`application`; bugs de
   integração ficam isolados em `adapters`.
 

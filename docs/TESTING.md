@@ -33,7 +33,27 @@ feature tem UI, `frontend-developer` (`.claude/agents/frontend-developer.md`), e
   Rápidos, determinísticos, sem rede/disco/banco real.
 - **Integração** (`tests/integration/`): testam uma implementação real de um port (ex.: um
   repositório que fala com um banco de verdade, ainda que em container de teste) contra o
-  contrato que o port promete.
+  contrato que o port promete. Quando o adapter fala com um serviço gerenciado de nuvem (AWS S3/
+  DynamoDB/SQS, Azure Blob Storage, GCP Cloud Storage, OCI Object Storage), a dependência
+  "containerizada" é [floci](https://floci.io) (ver `docs/STACK.md`, seção "Simulação de nuvem
+  local") — nunca a conta real de nuvem, nem um mock do SDK que não valida o comportamento real do
+  serviço.
+
+### Simulação de nuvem em testes de integração (floci)
+
+```bash
+# sobe o emulador AWS localmente (porta 4566) e aponta o SDK para ele
+docker run -d --rm -p 4566:4566 floci/floci:latest
+export AWS_ENDPOINT_URL=http://localhost:4566   # ou variável equivalente do SDK da stack em uso
+
+# roda só os testes de integração que dependem do serviço de nuvem
+pytest tests/integration -k s3   # exemplo — adapte ao serviço/stack real
+```
+
+Em CI (`.github/workflows/ci.yml`), floci sobe como um serviço efêmero do próprio job — nunca como
+dependência externa de rede. Em produção, o mesmo port é implementado pelo adapter real contra o
+provedor de nuvem de verdade; a troca é só a implementação injetada (Liskov,
+`docs/ARCHITECTURE.md`), nunca uma checagem de ambiente dentro do caso de uso.
 - **E2E** (`tests/e2e/`): testam o fluxo completo através de um adapter de entrada real (CLI,
   HTTP), exercitando o caminho ponta a ponta que o usuário realmente percorre.
 

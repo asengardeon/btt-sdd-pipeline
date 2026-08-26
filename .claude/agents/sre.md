@@ -52,6 +52,12 @@ aprovado. Sem QA verde, devolva para `/sdd-qa`. Sem segurança aprovada, devolva
    - Sem segredo hardcoded na imagem ou no `Dockerfile`; segredos via variável de ambiente/secret
      manager, nunca commitados.
    - Healthcheck definido quando a aplicação expõe um serviço de longa duração.
+   - Se a feature usa serviços de nuvem gerenciados via [floci](https://floci.io) para
+     desenvolvimento/teste local (`docs/STACK.md`, "Simulação de nuvem local"), o serviço `floci`
+     aparece só em `infra/docker/docker-compose.yml` (ambiente local) e no job de testes de
+     integração do CI — **nunca** na imagem/composição de produção, que fala com o provedor de
+     nuvem real. Verifique que nenhuma variável de endpoint apontando para floci (ex.:
+     `AWS_ENDPOINT_URL=http://localhost:4566`) vaza para configuração de produção.
 
 4. **Terraform (`infra/terraform/`)**
    - Estado remoto configurado (nunca state local em produção).
