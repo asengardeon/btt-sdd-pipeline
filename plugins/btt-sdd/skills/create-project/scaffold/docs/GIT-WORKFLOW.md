@@ -65,10 +65,23 @@ por uma sessão do Claude Code mantendo o próprio pipeline. Esse tipo de mudan�
 nem fatia (não é uma feature de produto), então usa uma branch simples em vez do padrão
 `feature/<NNNN-slug>/<fatia>`:
 
-1. Antes de editar qualquer arquivo, crie uma branch a partir de `main` atualizada:
-   `chore/<slug-curto>` (ex.: `chore/reduz-tokens-agentes`) — ou `fix/<slug>`/`docs/<slug>` se a
-   natureza da mudança pedir esse prefixo, seguindo as mesmas convenções de commit já usadas no
-   histórico deste repositório.
+1. Antes de editar qualquer arquivo, crie uma branch a partir de `main` atualizada, com o prefixo
+   que descreve a natureza da mudança — mesma taxonomia dos tipos de commit já usados no
+   histórico deste repositório (`feat:`, `fix:`, `chore:`, `perf:`, etc.):
+
+   | Prefixo         | Quando usar                                                              |
+   |------------------|---------------------------------------------------------------------------|
+   | `feature/<NNNN-slug>/<fatia>` | Feature de produto rastreada em `specs/` (regra 2 acima) — não usar para mudanças no próprio pipeline. |
+   | `fix/<slug>`     | Correção de bug (código, comportamento do pipeline, ou conteúdo incorreto) sem urgência de produção. |
+   | `hotfix/<slug>`  | Correção urgente de algo já em produção/`main` quebrado — mesmo fluxo de PR, só não espera o próximo ciclo normal. |
+   | `chore/<slug>`   | Manutenção do pipeline/tooling que não é bug nem doc pura (ex.: renomear skills, reorganizar arquivos). |
+   | `docs/<slug>`    | Mudança só de documentação, sem código.                                  |
+   | `refactor/<slug>`| Refatoração sem mudança de comportamento observável.                     |
+   | `perf/<slug>`    | Otimização de performance ou custo (ex.: redução de tokens consumidos por um agente). |
+   | `test/<slug>`    | Mudança só em testes.                                                    |
+   | `ci/<slug>`      | Mudança em pipelines de CI/CD (`.github/workflows/`).                    |
+
+   `<slug>` é um nome curto em kebab-case descrevendo a mudança (ex.: `chore/reduz-tokens-agentes`).
 2. Commite nessa branch, abra o PR, e só mergeie em `main` com decisão explícita do usuário — as
    mesmas regras 1, 4, 6 e 7 acima se aplicam (PR obrigatório, sem push direto, sem force-push).
    Não há gate de QA/segurança/SRE automático para esse tipo de mudança (não é uma feature de
