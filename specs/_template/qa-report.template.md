@@ -29,6 +29,7 @@ aprovada e mergeada, acrescente uma linha nova.
 | Cobertura de linhas  | __%       | 80%   | ✅/❌ |
 | Cobertura de branches| __%       | 80%   | ✅/❌ |
 
+Fonte: `<reaproveitado de specs/<slug>/coverage/<fatia>-<trilha>.md, commit <sha> | re-executado nesta rodada — arquivo estava ausente/desatualizado>`
 Comando usado: `<comando de teste com cobertura>`
 
 ## 3. Critérios de aceite (PRD) cobertos por esta fatia

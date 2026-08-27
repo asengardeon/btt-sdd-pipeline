@@ -85,7 +85,14 @@ qualquer código:
    cobertura uma única vez — é esse resultado (não os testes parciais dos incrementos) que conta
    como evidência de conclusão da trilha, antes de `/sdd-code-review`. Se a suíte completa
    revelar uma regressão fora do escopo do incremento que a causou, corrija antes de reportar a
-   trilha como pronta.
+   trilha como pronta. Grave o resultado dessa rodada em
+   `specs/<slug>/coverage/<fatia>-frontend.md` (a partir de
+   `specs/_template/coverage-summary.template.md`), com o commit SHA do momento da execução — é
+   esse arquivo que `code-reviewer`/`qa-engineer` reaproveitam em vez de rodar a suíte de novo
+   (`docs/TESTING.md`, seção "Reaproveitamento do artefato de cobertura entre etapas"). Se depois
+   de reportar a trilha como pronta você ainda precisar commitar de novo nessa branch (ex.:
+   corrigindo um achado de code review), rode a suíte completa de novo ao final e regrave esse
+   arquivo com o novo commit — nunca deixe um resumo apontando para um commit antigo.
 6. Nunca "contorne" um teste que falha comentando/pulando para fazer o pipeline passar — corrija a
    causa raiz ou volte à etapa de arquitetura se o problema é de design (ex.: o contrato não
    suporta um caso que a UI precisa). Se a mesma falha resistir a 3 tentativas de correção, pare e
@@ -109,7 +116,9 @@ qualquer código:
    concluída — os testes tocados por incremento, rodados durante o TDD, não substituem essa
    rodada final. Se um trecho não é coberto, ou você escreve o teste, ou — se for genuinamente
    impossível/sem valor testar — pergunte ao usuário como proceder em vez de decidir
-   silenciosamente.
+   silenciosamente. Ao extrair os números para o resumo de cobertura, nunca use o relatório HTML
+   como fonte — gere a saída legível por máquina que a stack já produz (`term-missing`/XML/JSON/
+   `lcov.info`) e condense a partir dela.
 
 ## Definição de pronto desta etapa
 

@@ -81,6 +81,10 @@ documento é a referência única para não duplicar a lista em cada um deles.
   desenvolvem em paralelo dentro dela).
 - [ ] Plano de implementação foi aprovado pelo usuário antes do primeiro commit de código (plano
   combinado quando full-stack, orquestrado por `/sdd-implement`).
+- [ ] Resultado da suíte completa com cobertura gravado em
+  `specs/<slug>/coverage/<fatia>-<trilha>.md` (`docs/TESTING.md`), com o commit SHA da execução —
+  formato condensado, nunca o relatório bruto (HTML) colado — para as etapas seguintes
+  reaproveitarem em vez de re-executar a suíte.
 
 ## Revisão de código (`code-reviewer`)
 
@@ -105,7 +109,9 @@ documento é a referência única para não duplicar a lista em cada um deles.
 - [ ] Todo critério de aceite coberto pela fatia desta rodada tem veredito individual com
   evidência (teste ou passo manual).
 - [ ] Suíte completa rodou (regressão, inclui fatias anteriores já mergeadas), não só os testes
-  desta fatia.
+  desta fatia — reaproveitando o resumo de cobertura já gravado pela implementação
+  (`specs/<slug>/coverage/`) quando o commit bate com o HEAD atual; re-executada e regravada só se
+  o arquivo estiver ausente ou desatualizado (`docs/TESTING.md`).
 - [ ] `qa-report.md` referencia o PR e a fatia desta rodada.
 
 ## Segurança (`security-engineer`)

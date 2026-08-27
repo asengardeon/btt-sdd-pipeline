@@ -61,8 +61,10 @@ DEPOIS" como opção quando cabível.
   contrato Frontend↔Backend quando full-stack. Tem `Bash` para ler o diff do PR e rodar lint, e
   `Write`/`Edit` só para o próprio `code-review.md` — não corrige código de produção, reporta.
 - **`qa-engineer.md`** — valida a implementação contra PRD/TRD e o PR aberto, depois da revisão
-  de código aprovada. Tem `Bash` para rodar a suíte de testes e o relatório de cobertura, e
-  `Write`/`Edit` só para o próprio `qa-report.md` — QA não corrige código de produção, reporta.
+  de código aprovada. Tem `Bash` para rodar a suíte de testes e o relatório de cobertura quando
+  precisa (o resumo já gerado pela implementação em `specs/<slug>/coverage/` é reaproveitado
+  quando ainda corresponde ao commit atual — `docs/TESTING.md`), e `Write`/`Edit` só para o
+  próprio `qa-report.md` — QA não corrige código de produção, reporta.
 - **`security-engineer.md`** — revisa segurança da aplicação (OWASP, segredos, autenticação/
   autorização, validação de entrada, dependências) depois do QA. Mesma lógica de `Write`/`Edit`
   restrito ao próprio `security-review.md` — não corrige código, reporta.
@@ -139,17 +141,22 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
 
 - **`_template/`** — os modelos (`prd.template.md`, `trd.template.md`,
   `code-review.template.md`, `qa-report.template.md`, `security-review.template.md`,
-  `sre-review.template.md`) que os agentes preenchem. Não é uma feature, é a fôrma usada por
-  todas. Todos têm uma seção "Pendências de validação (VALIDAR DEPOIS)" e um "Log de revisões"
-  (preenchido pelo `/sdd-amend`); o PRD também tem "Indicadores técnicos a observar" (volumetria,
-  segurança, legal) e "Ordem de valor / dependências entre histórias"; o TRD tem "Pilares de
-  engenharia de software", "Contrato Frontend↔Backend (API)", "Decomposição de tarefas e
-  dependências" e "Controle de versão (GitHub Flow)" (branch/PR).
+  `sre-review.template.md`, `coverage-summary.template.md`) que os agentes preenchem. Não é uma
+  feature, é a fôrma usada por todas. Todos os artefatos de revisão têm uma seção "Pendências de
+  validação (VALIDAR DEPOIS)" e um "Log de revisões" (preenchido pelo `/sdd-amend`); o PRD também
+  tem "Indicadores técnicos a observar" (volumetria, segurança, legal) e "Ordem de valor /
+  dependências entre histórias"; o TRD tem "Pilares de engenharia de software", "Contrato
+  Frontend↔Backend (API)", "Decomposição de tarefas e dependências" e "Controle de versão (GitHub
+  Flow)" (branch/PR). `coverage-summary.template.md` é diferente dos demais — não é um artefato de
+  revisão com veredito, é a evidência condensada (resultado de suíte + cobertura, nunca o relatório
+  bruto) que `backend-developer`/`frontend-developer` geram e outras etapas reaproveitam em vez de
+  re-executar a suíte (`docs/TESTING.md`).
 - **`0001-example-task-management/`** — exemplo real e completo do pipeline rodado do início ao
   fim (PRD → TRD → código em `src/` → QA report → security review → SRE review), usado como
   referência de nível de detalhe esperado.
 - **Cada feature nova** ganha uma pasta `NNNN-slug-em-kebab-case/` com os artefatos que forem
-  sendo produzidos por cada etapa.
+  sendo produzidos por cada etapa, incluindo uma subpasta `coverage/` com os resumos de cobertura
+  por fatia/trilha.
 
 ## `src/` — código de produção de backend, em ports & adapters
 

@@ -49,16 +49,25 @@ entram nesta rodada; critérios de fatias anteriores já aprovadas não são rev
 
 1. Leia `specs/<slug>/prd.md` e `specs/<slug>/trd.md`, identifique a fatia sendo validada nesta
    rodada e o PR correspondente. Extraia só os critérios de aceite cobertos por essa fatia.
-2. Rode lint e a suíte completa de testes com relatório de cobertura (comando documentado em
-   `docs/TESTING.md`) contra o código da branch/PR.
+2. Reaproveite a evidência de teste/cobertura em vez de regenerá-la por padrão
+   (`docs/TESTING.md`, seção "Reaproveitamento do artefato de cobertura entre etapas"): procure
+   `specs/<slug>/coverage/<fatia>-backend.md`/`<fatia>-frontend.md` (conforme a trilha desta
+   fatia) e confira se o `Commit` gravado ali bate com o HEAD atual da branch (`git rev-parse
+   HEAD`). Se bater, use esses números como evidência de teste/cobertura desta rodada — não rode a
+   suíte completa de novo só para confirmar o que a implementação já rodou. Rode lint e a suíte
+   completa de testes com relatório de cobertura (comando documentado em `docs/TESTING.md`) você
+   mesmo só se o arquivo não existir, ou se o `Commit` estiver desatualizado (ex.: houve commit
+   novo depois da geração) — e, ao rodar, regrave o arquivo de resumo com o novo commit, no mesmo
+   formato condensado (nunca copiando um relatório HTML bruto), para as etapas seguintes também
+   reaproveitarem.
 3. Para cada critério de aceite do PRD, verifique que existe teste automatizado que o exercita —
    não confie na declaração do dev, confira o teste de fato e, quando fizer sentido, rode o
    cenário manualmente (ex.: via CLI/endpoint do adapter de entrada).
 4. Verifique a cobertura reportada: linhas e branches novas/alteradas devem estar ≥ 80%. Se o
    relatório de cobertura não é gerado ou não é confiável, isso já é uma reprovação (não dá para
    aprovar o que não se consegue medir).
-5. Cheque regressão: rode a suíte completa (inclui as fatias anteriores já mergeadas), não só os
-   testes desta fatia.
+5. Cheque regressão: a suíte completa (inclui as fatias anteriores já mergeadas, não só os testes
+   desta fatia) já é o que o passo 2 reaproveitou ou rodou — não é uma rodada extra.
 6. Cheque aderência a ports & adapters e SOLID de forma funcional: os testes de domínio/aplicação
    rodam sem tocar infraestrutura real (banco, rede)? Se um teste "unitário" precisa de rede/DB
    de verdade, a fronteira foi violada — reporte como achado, não apenas como estilo.
