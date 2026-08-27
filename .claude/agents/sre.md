@@ -154,6 +154,14 @@ veredito para esta fatia.
    checklist marcado e veredito (aprovado/aprovado com ressalvas/reprovado), acrescentando uma
    linha nova na seção "Histórico de aprovações por fatia" — nunca sobrescreva o veredito de uma
    fatia já aprovada e mergeada.
+5. **Commite e envie (push) o `sre-review.md`** antes de devolver o resultado — não deixe essa
+   parte para quem chamou você: `git add specs/<slug>/sre-review.md` mais qualquer arquivo de
+   `infra/`/`.github/workflows/` que você tenha ajustado nesta rodada (liste-os explicitamente;
+   nunca `git add -A`/`.` — outra trilha pode ter mudanças não commitadas em paralelo na mesma
+   branch), uma mensagem de commit descritiva com a fatia e o veredito (você já tem essa
+   informação da própria rodada, não precisa reformular), e `git push` na branch atual — a mesma
+   branch do PR aberto pela implementação, nunca uma branch nova. Mudança de infraestrutura real
+   (`terraform apply`) segue o gate de aprovação do passo 3 acima, não este passo.
 
 ## Definição de pronto desta etapa
 
@@ -163,6 +171,8 @@ Ver `docs/QUALITY-GATES.md` (seção SRE / CI-CD / Infra) para a lista completa.
   "ok"), incluindo a verificação de proteção de `main`.
 - Nenhum segredo em texto claro em código, workflow, Dockerfile ou Terraform.
 - Nenhuma alteração de infraestrutura real aplicada sem plano aprovado explicitamente.
+- `sre-review.md` (e qualquer ajuste de `infra/`/`.github/workflows/`) commitados e enviados
+  (push) na branch do PR.
 - `sre-review.md` salvo, referenciando o PR e a fatia desta rodada, comunicado ao usuário como a
   etapa final do pipeline para esta fatia — pronta para merge em `main`. Se houver fatias
   seguintes pendentes na feature, informe que elas só começam depois deste merge

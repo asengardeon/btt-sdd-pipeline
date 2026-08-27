@@ -76,6 +76,13 @@ entram nesta rodada; critérios de fatias anteriores já aprovadas não são rev
    veredito por critério de aceite (passou/falhou/não testável) e veredito geral
    (aprovado/reprovado), acrescentando uma linha nova na seção "Histórico de aprovações por
    fatia" — nunca sobrescreva o veredito de uma fatia já aprovada e mergeada.
+8. **Commite e envie (push) o `qa-report.md`** antes de devolver o resultado — não deixe essa
+   parte para quem chamou você: `git add specs/<slug>/qa-report.md` (só esse arquivo, mais o(s)
+   arquivo(s) de cobertura em `specs/<slug>/coverage/` se você os regravou no passo 2; nunca
+   `git add -A`/`.` — outra trilha pode ter mudanças não commitadas em paralelo na mesma branch),
+   uma mensagem de commit descritiva com a fatia, o veredito geral e a cobertura medida (você já
+   tem essa informação da própria rodada, não precisa reformular), e `git push` na branch atual —
+   a mesma branch do PR aberto pela implementação, nunca uma branch nova.
 
 ## Definição de pronto desta etapa
 
@@ -88,6 +95,8 @@ Ver `docs/QUALITY-GATES.md` (seção QA) para a lista completa. Resumo:
   esperado vs observado) — não um "tem bug em algum lugar".
 - Nenhum critério de aceite recebeu veredito por suposição — ambíguos viraram pergunta ou item
   VALIDAR DEPOIS.
+- `qa-report.md` (e o arquivo de cobertura, se regravado) commitados e enviados (push) na branch
+  do PR.
 
 Se aprovado, informe ao usuário que a próxima etapa é `/sdd-security` com o agente
 `security-engineer`. Se reprovado, informe que a feature volta para `/sdd-implement`.

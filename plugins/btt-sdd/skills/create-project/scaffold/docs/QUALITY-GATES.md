@@ -99,6 +99,8 @@ documento é a referência única para não duplicar a lista em cada um deles.
   silencioso não documentado é achado bloqueante.
 - [ ] `code-review.md` existe, referencia o PR e a fatia desta rodada, e cada área de revisão tem
   veredito com evidência (arquivo/linha) ou "sem achados".
+- [ ] `code-review.md` commitado (só esse arquivo, nunca `git add -A`/`.`) e enviado (push) na
+  branch do PR pelo próprio `code-reviewer` antes de devolver o resultado.
 
 ## QA
 
@@ -113,6 +115,9 @@ documento é a referência única para não duplicar a lista em cada um deles.
   (`specs/<slug>/coverage/`) quando o commit bate com o HEAD atual; re-executada e regravada só se
   o arquivo estiver ausente ou desatualizado (`docs/TESTING.md`).
 - [ ] `qa-report.md` referencia o PR e a fatia desta rodada.
+- [ ] `qa-report.md` (e o arquivo de cobertura, se regravado) commitados (só esses arquivos, nunca
+  `git add -A`/`.`) e enviados (push) na branch do PR pelo próprio `qa-engineer` antes de devolver
+  o resultado.
 
 ## Segurança (`security-engineer`)
 
@@ -126,6 +131,8 @@ documento é a referência única para não duplicar a lista em cada um deles.
 - [ ] Dependências novas/alteradas checadas por vulnerabilidade conhecida, dentro do que as
   ferramentas disponíveis permitem verificar.
 - [ ] `security-review.md` referencia o PR e a fatia desta rodada.
+- [ ] `security-review.md` commitado (só esse arquivo, nunca `git add -A`/`.`) e enviado (push) na
+  branch do PR pelo próprio `security-engineer` antes de devolver o resultado.
 
 ## SRE / CI-CD / Infra
 
@@ -143,6 +150,9 @@ documento é a referência única para não duplicar a lista em cada um deles.
   qualquer processo iniciado fora do Docker durante a validação) ao final.
 - [ ] Terraform: estado remoto configurado, variáveis sensíveis marcadas `sensitive`.
 - [ ] Nenhum segredo em texto claro em código, workflow, Dockerfile ou arquivo Terraform.
+- [ ] `sre-review.md` (e qualquer ajuste de `infra/`/`.github/workflows/` desta rodada)
+  commitados (arquivos explícitos, nunca `git add -A`/`.`) e enviados (push) na branch do PR pelo
+  próprio `sre` antes de devolver o resultado.
 
 ## Merge para `main` (por fatia)
 
