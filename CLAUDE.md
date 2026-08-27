@@ -75,6 +75,7 @@ Cada agente vive em `.claude/agents/<nome>.md` e é acionado por uma skill em
 | `/sdd-status`       | (nenhum, utilitário)                             | resumo do estágio da feature |
 | `/sdd-amend`        | (nenhum, utilitário)                             | emenda um artefato já aprovado sem reiniciar o pipeline |
 | `/sdd-pending`      | (nenhum, utilitário)                             | lista itens "VALIDAR DEPOIS" em aberto |
+| `/sdd-gap-report`   | (nenhum, utilitário)                             | compara casos de uso do TRD (seção 6) com o código real |
 
 Veja um exemplo completo já rodado em `specs/0001-example-task-management/` (backend-only, CLI
 Python).

@@ -69,6 +69,7 @@ em `main` antes da fatia seguinte começar. Detalhe completo em `docs/GIT-WORKFL
 | `/sdd-status`       | (nenhum, utilitário)                             | resumo do estágio da feature |
 | `/sdd-amend`        | (nenhum, utilitário)                             | emenda um artefato já aprovado sem reiniciar o pipeline |
 | `/sdd-pending`      | (nenhum, utilitário)                             | lista itens "VALIDAR DEPOIS" em aberto |
+| `/sdd-gap-report`   | (nenhum, utilitário)                             | compara casos de uso do TRD (seção 6) com o código real |
 
 ## Princípios de arquitetura (não negociáveis)
 

@@ -58,20 +58,24 @@ DEPOIS" como opção quando cabível.
   orquestrados por `/sdd-implement`.
 - **`code-reviewer.md`** — engenheiro de software sênior fazendo *code review* do PR entre a
   implementação e o QA: ports & adapters, SOLID, clean code, qualidade dos próprios testes,
-  contrato Frontend↔Backend quando full-stack. Tem `Bash` para ler o diff do PR e rodar lint, e
-  `Write`/`Edit` só para o próprio `code-review.md` — não corrige código de produção, reporta.
+  contrato Frontend↔Backend quando full-stack. Tem `Bash` para ler o diff do PR, rodar lint, e
+  commitar/enviar (push) o próprio `code-review.md` na branch do PR antes de terminar; `Write`/
+  `Edit` só para esse arquivo — não corrige código de produção, reporta.
 - **`qa-engineer.md`** — valida a implementação contra PRD/TRD e o PR aberto, depois da revisão
   de código aprovada. Tem `Bash` para rodar a suíte de testes e o relatório de cobertura quando
   precisa (o resumo já gerado pela implementação em `specs/<slug>/coverage/` é reaproveitado
-  quando ainda corresponde ao commit atual — `docs/TESTING.md`), e `Write`/`Edit` só para o
-  próprio `qa-report.md` — QA não corrige código de produção, reporta.
+  quando ainda corresponde ao commit atual — `docs/TESTING.md`), e para commitar/enviar (push) o
+  próprio `qa-report.md` na branch do PR antes de terminar; `Write`/`Edit` só para esse arquivo —
+  QA não corrige código de produção, reporta.
 - **`security-engineer.md`** — revisa segurança da aplicação (OWASP, segredos, autenticação/
   autorização, validação de entrada, dependências) depois do QA. Mesma lógica de `Write`/`Edit`
-  restrito ao próprio `security-review.md` — não corrige código, reporta.
+  restrito ao próprio `security-review.md`, que também commita e envia (push) antes de terminar —
+  não corrige código, reporta.
 - **`sre.md`** — valida/ajusta CI/CD e infraestrutura, depois de QA e segurança aprovados. Tem
   `Bash`, `Write` e `Edit` porque pode precisar ajustar arquivos de `infra/` e
-  `.github/workflows/` diretamente; qualquer alteração real de infraestrutura passa por um plano
-  aprovado antes de executar.
+  `.github/workflows/` diretamente (commitando/enviando esses ajustes junto com `sre-review.md`
+  antes de terminar); qualquer alteração real de infraestrutura passa por um plano aprovado antes
+  de executar.
 
 ## `.claude/skills/` — os comandos que acionam o pipeline
 
@@ -98,6 +102,9 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
   revalidação", sem reiniciar o pipeline da primeira etapa.
 - **`sdd-pending/`** → `/sdd-pending` — utilitário de leitura, não aciona nenhum agente; lista
   todos os itens "VALIDAR DEPOIS" em aberto em todas as features.
+- **`sdd-gap-report/`** → `/sdd-gap-report <slug> [caminho-busca ...]` — utilitário de leitura,
+  não aciona nenhum agente; compara os casos de uso da seção 6 do TRD com o código real em `src/`
+  (e `frontend/`, quando existir), reportando implementado sim/não por caso de uso.
 - **`create-project/`** → `/create-project` — skill global (ver "Distribuição global" em
   `CLAUDE.md`): pergunta nome, diretório e requisitos, cria um projeto novo em diretório separado
   (fora deste repositório), copia o conteúdo genérico de `create-project/scaffold/` para lá, e
@@ -212,15 +219,21 @@ então um script guardado dentro da própria skill chega a qualquer projeto (mes
 passou por `/create-project`) sem precisar de cópia manual. O `SKILL.md` de cada uma referencia
 o script via `${CLAUDE_SKILL_DIR}/scripts/...` — variável que o Claude Code resolve para a pasta
 real da skill, seja ela alcançada pela junction, por um plugin instalado, ou localmente neste
-repositório. `/sdd-status` e `/sdd-pending` preferem rodar o script e só caem de volta para
-leitura manual dos artefatos se ele falhar. Best-effort via grep/awk/regex sobre a convenção de
-formatação dos templates em `specs/_template/` — não são um parser de markdown completo.
+repositório. `/sdd-status`, `/sdd-pending` e `/sdd-gap-report` preferem rodar o script e só caem
+de volta para leitura manual dos artefatos se ele falhar. Best-effort via grep/awk/regex sobre a
+convenção de formatação dos templates em `specs/_template/` — não são um parser de markdown
+completo.
 
 - **`sdd-status.sh` / `sdd-status.ps1`** (em `.claude/skills/sdd-status/scripts/`) — varre
   `specs/*/`, extrai etapa atual, próximo comando, contagem de pendências VALIDAR DEPOIS e
   sinalização de "requer revalidação" por feature.
 - **`sdd-pending.sh` / `sdd-pending.ps1`** (em `.claude/skills/sdd-pending/scripts/`) — varre
   `specs/*/` e `docs/BASELINE.md`, lista só os itens VALIDAR DEPOIS com status "pendente".
+- **`sdd-gap-report.sh` / `sdd-gap-report.ps1`** (em `.claude/skills/sdd-gap-report/scripts/`) —
+  extrai a tabela da seção 6 (Casos de uso) de `specs/<slug>/trd.md` e faz grep de cada caso de
+  uso em `src/`/`frontend/` (ou num caminho informado como argumento, para stacks com outra
+  convenção de pastas), reportando implementado sim/não por caso de uso com o arquivo de
+  evidência.
 
 Como qualquer outro arquivo de skill, mudar o script exige replicar a mudança na cópia
 equivalente em `plugins/btt-sdd/skills/` (ver "⚠️ Isto é uma cópia, não um link" em
