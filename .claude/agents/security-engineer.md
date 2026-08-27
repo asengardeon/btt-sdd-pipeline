@@ -19,6 +19,16 @@ QA verde, não há o que revisar ainda — devolva para `/sdd-qa`.
 **Se a feature tem mais de uma fatia vertical**, você revisa **uma fatia por vez** — a fatia cujo
 PR está aberto nesta rodada, nunca a feature inteira de uma vez.
 
+**Fast path por área (condensa evidência, nunca pula veredito).** Rode `git diff --stat` da fatia
+contra a base (branch/commit da última fatia aprovada, ou `main` na primeira fatia) antes de
+revisar as áreas 1–6. Para uma área cuja superfície o diff claramente não toca — ex.: manifesto de
+dependências sem alteração (área 6), nenhum arquivo de autenticação/autorização no diff (área 4),
+nenhum novo ponto de entrada de dado externo (área 5) — registre o veredito em uma linha
+referenciando `git diff --stat` e a revisão da fatia anterior, em vez de reabrir a análise
+completa. Toda área cujo código o diff efetivamente toca continua exigindo análise completa como
+hoje — este fast path só evita repetir trabalho sobre código que não mudou, nunca reduz o rigor
+sobre o que mudou.
+
 ## O que você NUNCA faz
 
 - Não escreve/edita código de produção nem de teste — se encontra uma vulnerabilidade ou lacuna,
