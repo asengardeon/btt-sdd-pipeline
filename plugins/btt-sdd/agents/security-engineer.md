@@ -71,6 +71,13 @@ PR está aberto nesta rodada, nunca a feature inteira de uma vez.
    rodada, com veredito geral (aprovado/aprovado com ressalvas/reprovado) e uma linha nova na
    seção "Histórico de aprovações por fatia" — nunca sobrescreva o veredito de uma fatia já
    aprovada e mergeada.
+5. **Commite e envie (push) o `security-review.md`** antes de devolver o resultado — não deixe
+   essa parte para quem chamou você: `git add specs/<slug>/security-review.md` (só esse arquivo;
+   nunca `git add -A`/`.` — outra trilha pode ter mudanças não commitadas em paralelo na mesma
+   branch), uma mensagem de commit descritiva com a fatia, o veredito geral e as vulnerabilidades
+   principais encontradas (você já tem essa informação da própria rodada, não precisa reformular),
+   e `git push` na branch atual — a mesma branch do PR aberto pela implementação, nunca uma branch
+   nova.
 
 ## Definição de pronto desta etapa
 
@@ -80,6 +87,7 @@ Ver `docs/QUALITY-GATES.md` (seção Segurança) para a lista completa. Resumo:
   ou justificativa de "não aplicável" — nunca implícito.
 - Nenhum segredo em texto claro encontrado sem ser reportado.
 - Nenhuma suposição não documentada — toda ambiguidade virou pergunta ou item VALIDAR DEPOIS.
+- `security-review.md` commitado e enviado (push) na branch do PR.
 
 Se aprovado, informe ao usuário que a próxima etapa é `/btt-sdd:sre` com o agente `sre`. Se reprovado,
 informe que a feature volta para `/btt-sdd:implement` com os achados listados.

@@ -104,6 +104,13 @@ está aberto nesta rodada, nunca a feature inteira de uma vez. Fatias anteriores
    com veredito geral (aprovado/aprovado com ressalvas/reprovado) e uma linha nova na seção
    "Histórico de aprovações por fatia" — nunca sobrescreva o veredito de uma fatia já aprovada e
    mergeada.
+7. **Commite e envie (push) o `code-review.md`** antes de devolver o resultado — não deixe essa
+   parte para quem chamou você: `git add specs/<slug>/code-review.md` (só esse arquivo; nunca
+   `git add -A`/`.` — outra trilha, ex. `backend-developer`/`frontend-developer` corrigindo um
+   achado, pode ter mudanças não commitadas em paralelo na mesma branch), uma mensagem de commit
+   descritiva com a fatia e o veredito geral (você já tem essa informação da própria rodada, não
+   precisa reformular), e `git push` na branch atual — a mesma branch do PR aberto pela
+   implementação, nunca uma branch nova.
 
 ## Definição de pronto desta etapa
 
@@ -114,6 +121,7 @@ Ver `docs/QUALITY-GATES.md` (seção Revisão de código) para a lista completa.
 - Nenhuma violação de fronteira ports & adapters aprovada sem ressalva.
 - Nenhuma suposição não documentada — toda ambiguidade de design virou pergunta ou item VALIDAR
   DEPOIS.
+- `code-review.md` commitado e enviado (push) na branch do PR.
 
 Se aprovado (ou aprovado com ressalvas não-bloqueantes explicitamente aceitas pelo usuário),
 informe que a próxima etapa é `/sdd-qa` com o agente `qa-engineer`. Se reprovado, informe que a
