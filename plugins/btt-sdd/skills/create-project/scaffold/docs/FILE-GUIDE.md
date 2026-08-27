@@ -44,9 +44,14 @@ onde este projeto foi criado, e funcionam aqui porque este repositório segue a 
 ## `specs/` — os artefatos do pipeline SDD, um diretório por feature
 
 - **`_template/`** — os modelos que os agentes preenchem (`prd`, `trd`, `code-review`,
-  `qa-report`, `security-review`, `sre-review`). Não é uma feature, é a fôrma usada por todas.
+  `qa-report`, `security-review`, `sre-review`, `coverage-summary`). Não é uma feature, é a fôrma
+  usada por todas. `coverage-summary` é diferente dos demais — não é um artefato de revisão com
+  veredito, é a evidência condensada de teste/cobertura que `backend-developer`/
+  `frontend-developer` geram e outras etapas reaproveitam em vez de re-executar a suíte
+  (`docs/TESTING.md`).
 - **Cada feature** ganha uma pasta `NNNN-slug-em-kebab-case/` com os artefatos que forem sendo
-  produzidos por cada etapa.
+  produzidos por cada etapa, incluindo uma subpasta `coverage/` com os resumos de cobertura por
+  fatia/trilha.
 
 ## `src/`, `frontend/`, `tests/` — ainda não existem
 

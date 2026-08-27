@@ -58,6 +58,37 @@ que sobe backend+frontend juntos é uma decisão do `architect` a registrar no T
   domínio/aplicação. A correção correta costuma ser revisar o TRD com o `architect`, não forçar
   um teste artificial.
 
+## Reaproveitamento do artefato de cobertura entre etapas
+
+Rodar a suíte completa com cobertura é caro (tempo e, quando uma sessão do Claude Code lê o
+resultado, tokens). Ela só precisa rodar **uma vez por commit**, não uma vez por etapa do
+pipeline:
+
+- `backend-developer`/`frontend-developer` rodam a suíte completa com cobertura ao final da
+  trilha (`.claude/agents/backend-developer.md`, `.claude/agents/frontend-developer.md`) e gravam
+  o resultado em `specs/<slug>/coverage/<fatia>-<trilha>.md`, a partir de
+  `specs/_template/coverage-summary.template.md`, com o commit SHA do momento da execução.
+- Qualquer etapa seguinte que precise de evidência de teste/cobertura (hoje, principalmente o
+  `qa-engineer`) **lê esse arquivo em vez de rodar a suíte de novo**, desde que o campo `Commit`
+  nele bata com o HEAD atual da branch do PR (`git rev-parse HEAD`). Isso é o próprio sinal de que
+  nada mudou desde a geração — a suíte completa já rodou contra exatamente esse código.
+- Se o arquivo não existe, ou o `Commit` gravado é diferente do HEAD atual (alguém commitou depois
+  — ex.: uma correção em resposta a um achado de code review), quem precisa da evidência roda a
+  suíte completa com cobertura e **regrava o arquivo** com o novo commit — para que a etapa
+  seguinte também possa reaproveitar, em vez de cada etapa refazer a mesma checagem de novo.
+- Isso não substitui os testes tocados por incremento durante o TDD (rápidos, parciais, rodados a
+  cada red-green-refactor) — só evita repetir a rodada completa final entre backend/frontend-
+  developer, `qa-engineer`, e qualquer etapa futura que também precise da evidência.
+
+**Nunca use o relatório bruto (HTML, especialmente) como fonte para preencher o resumo, e nunca
+cole o relatório bruto inteiro no artefato.** Gere o relatório num formato legível por máquina que
+a stack em uso ofereça (`term-missing`, XML, JSON, `lcov.info` — o que o comando de teste já
+produzir) e extraia dali só os números agregados por pacote e, quando abaixo do gate de 80%, a
+lista de arquivos/linhas não cobertas em faixas compactas (`42-47, 63`), nunca uma lista
+linha-a-linha de arquivo já coberto. Um relatório HTML custa muito mais para ler/parsear (visual,
+verboso, pensado para navegador) do que o texto/XML/JSON que a mesma ferramenta já gera junto —
+prefira sempre a saída estruturada.
+
 ## Comando de referência
 
 Este projeto ainda não tem stack definida — o comando exato de teste/cobertura (`pytest`,
