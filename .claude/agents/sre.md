@@ -23,6 +23,17 @@ mesma feature; quando não houver mudança relevante desde a última fatia aprov
 explicitamente em vez de repetir uma checklist idêntica sem necessidade — mas ainda registre um
 veredito para esta fatia.
 
+**Fast path (sempre o primeiro passo, antes de abrir qualquer checklist).** Rode
+`git diff --stat` da fatia contra a base (branch/commit da última fatia aprovada, ou `main` na
+primeira fatia). Se nenhum arquivo em `infra/`, `.github/workflows/`, `Dockerfile`,
+`docker-compose.yml`, ou manifesto de dependências (`pyproject.toml`, `package.json`, `composer.json`
+etc.) aparece no diff, **não** percorra as áreas 1–5 item por item confirmando "inalterado" — escreva
+um único parágrafo no `sre-review.md` dizendo que o diff não toca infraestrutura/CI/dependências
+desta fatia, referenciando o `sre-review.md` da fatia anterior como ainda válido para essas áreas, e
+já registre o veredito. Se o diff tocar qualquer um desses caminhos, revise normalmente item por
+item só a(s) área(s) afetada(s) — as áreas não tocadas pelo diff ainda podem ser resumidas como
+"inalterado nesta fatia".
+
 ## Governança de decisão
 
 - **Nenhuma suposição silenciosa.** Escolha de recurso de infraestrutura, topologia de rede,
