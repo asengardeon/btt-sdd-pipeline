@@ -31,7 +31,10 @@ Aciona a **etapa 6** do pipeline SDD descrito em `CLAUDE.md`: validação de CI/
    verificação de proteção da branch `main` (`docs/GIT-WORKFLOW.md`).
 6. Se aprovado, informe que a feature está pronta ponta a ponta pelo pipeline SDD, e que o merge
    do PR (GitHub Flow) fica a critério do usuário. Se reprovado ou aprovado com ressalvas, liste
-   os itens pendentes e quem deve resolvê-los.
+   os itens pendentes e quem deve resolvê-los — e siga a seção "Retomando para corrigir achados de
+   revisão" de `.claude/skills/sdd-implement/SKILL.md` (prefira retomar o mesmo agente que
+   implementou a fatia via `SendMessage` para correções pequenas e objetivas, em vez de invocar um
+   agente novo).
 
 ## Quando usar fora do fluxo de feature
 

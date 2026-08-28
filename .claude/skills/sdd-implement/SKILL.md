@@ -8,7 +8,30 @@ description: Etapa 3 do pipeline SDD. Use depois que um TRD existe e foi aprovad
 Aciona a **etapa 3** do pipeline SDD descrito em `CLAUDE.md`: implementação via TDD a partir do
 TRD, em uma branch GitHub Flow (`docs/GIT-WORKFLOW.md`).
 
-## Passos
+## Retomando para corrigir achados de revisão (não recomeçando do zero)
+
+Quando `/sdd-implement` é acionado porque `/sdd-code-review`, `/sdd-qa`, `/sdd-security` ou
+`/sdd-sre` reprovaram (ou levantaram achados sobre) uma fatia que um agente de implementação
+(`backend-developer`/`frontend-developer`) **acabou de entregar nesta mesma sessão**, este não é o
+fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
+
+1. Se a correção pedida é pequena e objetiva (ex.: ajustar um estado/atributo faltante, corrigir
+   um valor, adicionar um teste específico apontado pelo relatório — não uma decisão de design
+   nova nem redesenho de arquitetura), **prefira retomar o mesmo agente** que implementou a fatia,
+   via `SendMessage` (usando o `agentId`/nome dele), em vez de invocar um agente novo do zero.
+   Passe os achados do relatório de revisão (`code-review.md`/`qa-report.md`/
+   `security-review.md`/`sre-review.md`) diretamente na mensagem.
+2. Só prefira um agente **novo** (voltando aos passos 1-4 normais) quando: (a) a correção exige
+   julgamento/desenho novo, não só aplicar o que já foi apontado; (b) o agente original já não
+   está mais endereçável (sessão encerrada, `ListAgents` não o lista mais e uma tentativa de
+   `SendMessage` falha); ou (c) o achado está fora do escopo do que aquele agente tocou (ex.: uma
+   parte do sistema que ele nunca abriu).
+3. Retomar não abre mão de rigor: o agente retomado ainda segue TDD (teste antes da correção, red
+   → green → refactor) e ainda roda a suíte completa com cobertura ao final, como no passo 5
+   abaixo. A próxima rodada da mesma etapa de revisão que reprovou continua verificando o
+   resultado de forma independente.
+
+## Passos (implementação de uma fatia nova)
 
 1. Identifique o TRD: se `args` é um caminho de arquivo existente, use-o diretamente; senão,
    resolva pela convenção `specs/<slug>/trd.md` (mesma lógica de `/sdd-trd`: `args` como slug, ou

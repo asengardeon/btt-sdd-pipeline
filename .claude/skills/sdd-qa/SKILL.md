@@ -18,8 +18,11 @@ Aciona a **etapa 5** do pipeline SDD descrito em `CLAUDE.md`: validação de QA.
    e instrução para produzir `specs/<slug>/qa-report.md` a partir de
    `specs/_template/qa-report.template.md`, referenciando o PR.
 4. Mostre ao usuário o veredito geral (aprovado/reprovado) e os pontos principais do relatório.
-5. Se reprovado, informe que a feature volta para `/sdd-implement` com os achados listados. Se
-   aprovado, informe que a próxima etapa é `/sdd-security`.
+5. Se reprovado, informe que a feature volta para `/sdd-implement` com os achados listados — e
+   siga a seção "Retomando para corrigir achados de revisão" de
+   `.claude/skills/sdd-implement/SKILL.md` (prefira retomar o mesmo agente que implementou a
+   fatia via `SendMessage` para correções pequenas e objetivas, em vez de invocar um agente novo).
+   Se aprovado, informe que a próxima etapa é `/sdd-security`.
 
 ## Quando usar sem o agente
 
