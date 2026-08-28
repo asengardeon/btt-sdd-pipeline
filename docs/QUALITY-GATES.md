@@ -131,6 +131,10 @@ documento é a referência única para não duplicar a lista em cada um deles.
 - [ ] Dependências novas/alteradas checadas por vulnerabilidade conhecida, dentro do que as
   ferramentas disponíveis permitem verificar.
 - [ ] `security-review.md` referencia o PR e a fatia desta rodada.
+- [ ] Na fatia final que fecha o spec (nenhuma fatia pendente na decomposição de tarefas do TRD),
+  a revisão é sempre completa nas 6 áreas — nunca fast-path — cobrindo o diff acumulado desde a
+  última revisão registrada como `completo` na tabela "Histórico de aprovações por fatia", não só
+  o diff desta última fatia isolada.
 - [ ] `security-review.md` commitado (só esse arquivo, nunca `git add -A`/`.`) e enviado (push) na
   branch do PR pelo próprio `security-engineer` antes de devolver o resultado.
 
@@ -150,6 +154,10 @@ documento é a referência única para não duplicar a lista em cada um deles.
   qualquer processo iniciado fora do Docker durante a validação) ao final.
 - [ ] Terraform: estado remoto configurado, variáveis sensíveis marcadas `sensitive`.
 - [ ] Nenhum segredo em texto claro em código, workflow, Dockerfile ou arquivo Terraform.
+- [ ] Na fatia final que fecha o spec (nenhuma fatia pendente na decomposição de tarefas do TRD),
+  a revisão é sempre completa no checklist — nunca fast-path — cobrindo o diff acumulado desde a
+  última revisão registrada como `completo` na tabela "Histórico de aprovações por fatia", não só
+  o diff desta última fatia isolada.
 - [ ] `sre-review.md` (e qualquer ajuste de `infra/`/`.github/workflows/` desta rodada)
   commitados (arquivos explícitos, nunca `git add -A`/`.`) e enviados (push) na branch do PR pelo
   próprio `sre` antes de devolver o resultado.
