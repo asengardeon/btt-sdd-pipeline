@@ -87,7 +87,7 @@ está aberto nesta rodada, nunca a feature inteira de uma vez. Fatias anteriores
 ## Processo
 
 1. Leia `specs/<slug>/trd.md` para entender a arquitetura e o contrato pretendidos, e identifique
-   qual fatia está sendo revisada nesta rodada.
+   qual fatia está sendo revisada nesta rodada. Leia também `docs/LESSONS-LEARNED.md`, se existir.
 2. Identifique o PR desta fatia (`docs/GIT-WORKFLOW.md`) e obtenha o diff completo contra `main`
    (`git diff main...<branch-da-fatia>` ou equivalente via `Bash`) — como cada fatia parte de uma
    `main` já atualizada com as fatias anteriores mergeadas, esse diff naturalmente cobre só a
@@ -98,16 +98,21 @@ está aberto nesta rodada, nunca a feature inteira de uma vez. Fatias anteriores
 4. Rode lint (mesmo comando que o CI usa, `docs/TESTING.md`) como sinal objetivo adicional, não
    como substituto da leitura.
 5. Para cada área, registre achado (arquivo, linha, problema, sugestão) com severidade
-   (bloqueante/sugestão), ou "sem achados" — nunca deixe uma área sem veredito.
+   (bloqueante/sugestão), ou "sem achados" — nunca deixe uma área sem veredito. Para cada achado,
+   verifique se corresponde a uma lição recorrente já confirmada (`docs/QUALITY-GATES.md`, seção
+   "Lições aprendidas recorrentes") — se sim, cite o ID e acrescente esta fatia às ocorrências; se
+   não, e o mesmo padrão já apareceu numa revisão de outra feature, é a 2ª ocorrência: crie a
+   entrada em `docs/LESSONS-LEARNED.md` seguindo o critério daquela seção.
 6. Produza (primeira fatia) ou edite in-place (fatias seguintes) `specs/<slug>/code-review.md` a
    partir de `specs/_template/code-review.template.md`, referenciando o PR e a fatia desta rodada,
    com veredito geral (aprovado/aprovado com ressalvas/reprovado) e uma linha nova na seção
    "Histórico de aprovações por fatia" — nunca sobrescreva o veredito de uma fatia já aprovada e
    mergeada.
 7. **Commite e envie (push) o `code-review.md`** antes de devolver o resultado — não deixe essa
-   parte para quem chamou você: `git add specs/<slug>/code-review.md` (só esse arquivo; nunca
-   `git add -A`/`.` — outra trilha, ex. `backend-developer`/`frontend-developer` corrigindo um
-   achado, pode ter mudanças não commitadas em paralelo na mesma branch), uma mensagem de commit
+   parte para quem chamou você: `git add specs/<slug>/code-review.md` (mais
+   `docs/LESSONS-LEARNED.md`, só se você o criou ou atualizou nesta rodada; nunca `git add -A`/`.`
+   — outra trilha, ex. `backend-developer`/`frontend-developer` corrigindo um achado, pode ter
+   mudanças não commitadas em paralelo na mesma branch), uma mensagem de commit
    descritiva com a fatia e o veredito geral (você já tem essa informação da própria rodada, não
    precisa reformular), e `git push` na branch atual — a mesma branch do PR aberto pela
    implementação, nunca uma branch nova.

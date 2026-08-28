@@ -139,6 +139,13 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
   de nuvem local", quais adapters de saída falam com serviços de nuvem gerenciados (AWS/Azure/GCP/
   OCI) e que [floci](https://floci.io) é o padrão para emulá-los em dev/teste (ver
   `docs/TESTING.md`).
+- **`LESSONS-LEARNED.md`** — **gerado condicionalmente** pelos agentes de revisão (`code-reviewer`,
+  `qa-engineer`, `security-engineer`, `sre`): não existe por padrão, sua ausência já significa
+  "nenhum padrão recorrente confirmado ainda". Nasce na primeira vez que um achado se repete
+  (2ª ocorrência confirmada) numa revisão de feature diferente da que o levantou pela primeira
+  vez — critério completo em `docs/QUALITY-GATES.md`, seção "Lições aprendidas recorrentes". Cada
+  entrada vira uma restrição que `backend-developer`/`frontend-developer` aplicam na próxima
+  implementação, sem esperar a revisão apontar de novo.
 - **`FILE-GUIDE.md`** — este arquivo.
 - **`adr/`** — Architecture Decision Records. Cada arquivo numerado registra uma decisão técnica
   significativa (contexto, opções consideradas, decisão, consequências). `0001-...md` é o próprio

@@ -28,6 +28,37 @@ documento é a referência única para não duplicar a lista em cada um deles.
   aprovada usa `/sdd-amend`, que registra a mudança no "Log de revisões" e só reabre as etapas
   posteriores realmente afetadas — etapas anteriores aprovadas continuam válidas.
 
+## Lições aprendidas recorrentes (`docs/LESSONS-LEARNED.md`)
+
+Mecanismo de memória do próprio projeto: captura padrões de achados que já se repetiram entre
+features, para que `backend-developer`/`frontend-developer` os evitem desde o início da próxima
+implementação, em vez de descobri-los de novo numa rodada de revisão. `docs/LESSONS-LEARNED.md`
+não existe por padrão — só nasce na primeira vez que uma 2ª ocorrência é confirmada (mesmo padrão
+de `docs/STACK.md`/`docs/BASELINE.md`: ausência do arquivo já é sinal de "nenhum padrão recorrente
+confirmado ainda").
+
+- [ ] **Só vira entrada com 2 ocorrências confirmadas, nunca na primeira vez que aparece.** Antes
+  de registrar um achado, o agente de revisão (`code-reviewer`/`qa-engineer`/`security-engineer`/
+  `sre`) verifica se `docs/LESSONS-LEARNED.md` já existe e se alguma entrada da sua própria área
+  já descreve o mesmo padrão — se sim, cita o ID da entrada no achado desta rodada e acrescenta
+  esta feature/fatia à lista de ocorrências da entrada. Se não há entrada correspondente, verifica
+  se um achado essencialmente igual já apareceu numa revisão anterior de **outra** feature/fatia
+  (grep em `specs/*/<mesmo-tipo-de-artefato>.md`, excluindo a feature atual). Só ao confirmar essa
+  2ª ocorrência cria uma nova entrada (criando o arquivo se for a primeira entrada de sempre),
+  citando as duas ocorrências e uma recomendação objetiva de implementação. Achado isolado (1ª
+  ocorrência) nunca vira entrada — fica só no relatório da própria feature.
+- [ ] **Formato de entrada**: uma seção por área (Backend / Frontend / Segurança / Infra-SRE /
+  Testes-QA), com ID sequencial global (`L-001`, `L-002`, ...) e os campos "Detectado por",
+  "Ocorrências" (caminho do artefato + fatia, por feature), "Padrão observado" e "Recomendação
+  para implementação".
+- [ ] `docs/LESSONS-LEARNED.md`, quando criado ou atualizado, é commitado junto do artefato de
+  revisão da própria rodada (`code-review.md`/`qa-report.md`/`security-review.md`/
+  `sre-review.md`) — nunca num commit separado.
+- [ ] `backend-developer`/`frontend-developer` leem `docs/LESSONS-LEARNED.md`, se existir, na fase
+  de planejamento (antes de quebrar o TRD em incrementos) e aplicam as lições da(s) área(s)
+  relevante(s) à trilha como restrição adicional ao TRD, citando no plano apresentado ao usuário
+  qual lição foi aplicada e como.
+
 ## Baseline (condicional, `codebase-archaeologist`)
 
 - [ ] Só roda quando falta documentação base suficiente sobre código/sistema já existente — nunca

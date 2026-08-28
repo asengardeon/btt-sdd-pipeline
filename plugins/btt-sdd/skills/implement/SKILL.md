@@ -37,7 +37,9 @@ assim:
 1. Identifique o TRD: se `args` é um caminho de arquivo existente, use-o diretamente; senão,
    resolva pela convenção `specs/<slug>/trd.md` (mesma lógica de `/btt-sdd:trd`: `args` como slug, ou
    única spec com `trd.md` sem implementação concluída, ou perguntar). Confirme que existe. Se
-   não existir, sugira `/btt-sdd:trd` primeiro.
+   não existir, sugira `/btt-sdd:trd` primeiro. Verifique também se `docs/LESSONS-LEARNED.md`
+   existe (mesmo tratamento condicional de `docs/STACK.md`/`docs/BASELINE.md`) — se existir, é
+   passado como grounding adicional ao(s) agente(s) invocado(s) nos passos seguintes.
 2. Leia a tabela "Decomposição de tarefas e dependências (fatias verticais de entrega)" do TRD e
    veja quais trilhas aparecem (`backend`, `frontend`, `ambos`) e a que fatia (coluna "Fatia
    (PRD)") cada tarefa pertence.

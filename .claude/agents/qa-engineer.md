@@ -48,7 +48,8 @@ entram nesta rodada; critérios de fatias anteriores já aprovadas não são rev
 ## Processo
 
 1. Leia `specs/<slug>/prd.md` e `specs/<slug>/trd.md`, identifique a fatia sendo validada nesta
-   rodada e o PR correspondente. Extraia só os critérios de aceite cobertos por essa fatia.
+   rodada e o PR correspondente. Extraia só os critérios de aceite cobertos por essa fatia. Leia
+   também `docs/LESSONS-LEARNED.md`, se existir.
 2. Reaproveite a evidência de teste/cobertura em vez de regenerá-la por padrão
    (`docs/TESTING.md`, seção "Reaproveitamento do artefato de cobertura entre etapas"): procure
    `specs/<slug>/coverage/<fatia>-backend.md`/`<fatia>-frontend.md` (conforme a trilha desta
@@ -75,11 +76,17 @@ entram nesta rodada; critérios de fatias anteriores já aprovadas não são rev
    partir de `specs/_template/qa-report.template.md`, com o link do PR e a fatia desta rodada,
    veredito por critério de aceite (passou/falhou/não testável) e veredito geral
    (aprovado/reprovado), acrescentando uma linha nova na seção "Histórico de aprovações por
-   fatia" — nunca sobrescreva o veredito de uma fatia já aprovada e mergeada.
+   fatia" — nunca sobrescreva o veredito de uma fatia já aprovada e mergeada. Para cada critério
+   que falhou, verifique se corresponde a uma lição recorrente já confirmada
+   (`docs/QUALITY-GATES.md`, seção "Lições aprendidas recorrentes") — se sim, cite o ID e
+   acrescente esta fatia às ocorrências; se não, e o mesmo padrão já apareceu num `qa-report.md`
+   de outra feature, é a 2ª ocorrência: crie a entrada em `docs/LESSONS-LEARNED.md` seguindo o
+   critério daquela seção.
 8. **Commite e envie (push) o `qa-report.md`** antes de devolver o resultado — não deixe essa
-   parte para quem chamou você: `git add specs/<slug>/qa-report.md` (só esse arquivo, mais o(s)
-   arquivo(s) de cobertura em `specs/<slug>/coverage/` se você os regravou no passo 2; nunca
-   `git add -A`/`.` — outra trilha pode ter mudanças não commitadas em paralelo na mesma branch),
+   parte para quem chamou você: `git add specs/<slug>/qa-report.md` (mais o(s) arquivo(s) de
+   cobertura em `specs/<slug>/coverage/` se você os regravou no passo 2, mais
+   `docs/LESSONS-LEARNED.md` se você o criou ou atualizou no passo 7; nunca `git add -A`/`.` —
+   outra trilha pode ter mudanças não commitadas em paralelo na mesma branch),
    uma mensagem de commit descritiva com a fatia, o veredito geral e a cobertura medida (você já
    tem essa informação da própria rodada, não precisa reformular), e `git push` na branch atual —
    a mesma branch do PR aberto pela implementação, nunca uma branch nova.

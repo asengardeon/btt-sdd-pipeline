@@ -174,7 +174,9 @@ plugin", para o passo a passo completo (sincronizar as duas cópias antes de com
 - `infra/docker`, `infra/terraform` — containerização e infraestrutura como código.
 - `.github/workflows` — pipelines de CI (lint + testes + gate de cobertura) e CD (deploy via Terraform).
 - `docs/` — arquitetura, workflow SDD, política de testes, pilares de engenharia, gates críticos,
-  fluxo de Git e guia arquivo-a-arquivo.
+  fluxo de Git e guia arquivo-a-arquivo. Inclui `docs/LESSONS-LEARNED.md` (condicional): padrões
+  de achados já repetidos entre features, que `backend-developer`/`frontend-developer` aplicam
+  desde o início da implementação seguinte — critério de promoção em `docs/QUALITY-GATES.md`.
 
 ## Nota sobre a stack
 

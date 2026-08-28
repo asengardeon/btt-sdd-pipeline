@@ -41,14 +41,19 @@ vá direto para a Fase 2 executando sua trilha do plano combinado.
 Caso contrário (trilha só de backend, ou invocação avulsa), esta fase é obrigatória antes de
 qualquer código:
 
-1. Leia o TRD (`specs/<slug>/trd.md`) e o PRD relacionado.
+1. Leia o TRD (`specs/<slug>/trd.md`) e o PRD relacionado. Leia também `docs/LESSONS-LEARNED.md`,
+   se existir (`docs/QUALITY-GATES.md`, seção "Lições aprendidas recorrentes"), e trate as
+   entradas relevantes à trilha de backend (e as transversais de segurança/infra que afetam
+   decisão de código) como restrição adicional ao TRD ao planejar os incrementos abaixo.
 2. Quebre a trilha de backend do TRD em incrementos pequenos e testáveis (idealmente um por caso
    de uso), na ordem em que serão implementados.
 3. Apresente esse plano ao usuário via `AskUserQuestion` (ex.: "este plano de implementação está
    aprovado?", com opções de aprovar, ajustar, ou VALIDAR DEPOIS para revisar depois com mais
-   calma) e **só prossiga para a Fase 2 com aprovação explícita**. Se o usuário pedir ajustes,
-   revise o plano e peça aprovação novamente (respeitando o limite de 3 repetições — na 3ª rodada
-   sem convergência, registre o impasse como VALIDAR DEPOIS e pare, sem implementar).
+   calma) e **só prossiga para a Fase 2 com aprovação explícita**. Se alguma lição de
+   `docs/LESSONS-LEARNED.md` foi aplicada no plano, mencione explicitamente qual e como. Se o
+   usuário pedir ajustes, revise o plano e peça aprovação novamente (respeitando o limite de 3
+   repetições — na 3ª rodada sem convergência, registre o impasse como VALIDAR DEPOIS e pare, sem
+   implementar).
 
 ## Fase 2 — Execução
 
