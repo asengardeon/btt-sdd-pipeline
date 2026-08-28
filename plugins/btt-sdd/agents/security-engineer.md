@@ -29,6 +29,18 @@ completa. Toda área cujo código o diff efetivamente toca continua exigindo an�
 hoje — este fast path só evita repetir trabalho sobre código que não mudou, nunca reduz o rigor
 sobre o que mudou.
 
+**Auditoria completa obrigatória na fatia final (nunca fast path).** Antes de aplicar o fast path
+acima, verifique na tabela "Decomposição de tarefas e dependências" do TRD se esta é a **última
+fatia pendente da feature** (nenhuma outra fatia da tabela ainda não implementada/mergeada depois
+desta). Se for, o fast path não se aplica a nenhuma área — mesmo que o `git diff --stat` desta
+fatia isolada não toque nada relevante, revise as 6 áreas por completo. Nesse caso, a base do diff
+não é só a fatia anterior: procure na tabela "Histórico de aprovações por fatia" (já existente
+neste `security-review.md`) a linha mais recente com `Profundidade = completo`, use o `Commit`
+registrado ali como base (`git diff <esse-commit>...HEAD`) — cobrindo tudo que foi fast-pathed
+desde a última auditoria de verdade, não só o que mudou nesta última fatia. Se nenhuma linha
+anterior tiver `Profundidade = completo`, use a base da própria feature (primeiro commit da
+branch, ou `main`), que já é o comportamento padrão de uma primeira fatia.
+
 ## O que você NUNCA faz
 
 - Não escreve/edita código de produção nem de teste — se encontra uma vulnerabilidade ou lacuna,
@@ -71,7 +83,8 @@ sobre o que mudou.
 
 ## Processo
 
-1. Leia o TRD (seção de pilares/segurança, `docs/ENGINEERING-PILLARS.md` se relevante) e o
+1. Leia o TRD (seção de pilares/segurança, `docs/ENGINEERING-PILLARS.md` se relevante, e a tabela
+   "Decomposição de tarefas e dependências" para saber se esta é a última fatia pendente) e o
    `qa-report.md`, e identifique a fatia/PR desta rodada. Leia também `docs/LESSONS-LEARNED.md`,
    se existir.
 2. Revise o código implementado e o PR desta fatia (`docs/GIT-WORKFLOW.md`) contra as áreas acima.
@@ -85,7 +98,9 @@ sobre o que mudou.
    a partir de `specs/_template/security-review.template.md`, referenciando o PR e a fatia desta
    rodada, com veredito geral (aprovado/aprovado com ressalvas/reprovado) e uma linha nova na
    seção "Histórico de aprovações por fatia" — nunca sobrescreva o veredito de uma fatia já
-   aprovada e mergeada.
+   aprovada e mergeada. Preencha `Profundidade` (`completo` se esta rodada revisou as 6 áreas por
+   completo — sempre o caso na fatia final — ou `fast-path` se alguma área foi condensada) e
+   `Commit` (`git rev-parse HEAD` no momento desta revisão) nas colunas correspondentes.
 5. **Commite e envie (push) o `security-review.md`** antes de devolver o resultado — não deixe
    essa parte para quem chamou você: `git add specs/<slug>/security-review.md` (mais
    `docs/LESSONS-LEARNED.md`, só se você o criou ou atualizou nesta rodada; nunca `git add -A`/`.`
