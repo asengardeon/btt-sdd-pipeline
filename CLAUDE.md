@@ -76,9 +76,12 @@ Cada agente vive em `.claude/agents/<nome>.md` e é acionado por uma skill em
 | `/sdd-amend`        | (nenhum, utilitário)                             | emenda um artefato já aprovado sem reiniciar o pipeline |
 | `/sdd-pending`      | (nenhum, utilitário)                             | lista itens "VALIDAR DEPOIS" em aberto |
 | `/sdd-gap-report`   | (nenhum, utilitário)                             | compara casos de uso do TRD (seção 6) com o código real |
+| `/sdd-docs`         | tech-writer (utilitário, sem etapa fixa)         | README, docs/, ADRs, ou exemplos de código documentados |
 
-Veja um exemplo completo já rodado em `specs/0001-example-task-management/` (backend-only, CLI
-Python).
+Veja o exemplo de referência (PRD, TRD, QA/security/SRE reports reais) em
+`specs/0001-example-task-management/` — o código correspondente não existe mais como arquivos
+executáveis neste repositório (template de pipeline, não de aplicação), mas está preservado como
+exemplo documentado em `specs/0001-example-task-management/code-examples.md`.
 
 ## Distribuição global
 
@@ -181,11 +184,14 @@ plugin", para o passo a passo completo (sincronizar as duas cópias antes de com
 ## Nota sobre a stack
 
 Este template é **agnóstico de linguagem** na estrutura, nos agentes e nas skills — os princípios
-(ports & adapters, SOLID, TDD, cobertura 80%) valem para qualquer stack. O diretório `src/` traz
-uma **feature de exemplo em Python** (`specs/0001-example-task-management/`) só para ilustrar o
-fluxo ponta a ponta com código real e testes rodando — é backend-only (sem frontend). Ao adotar
-outra linguagem, troque o conteúdo de `src/`/`tests/`, o `Dockerfile` e o job de testes do
-`ci.yml` — a estrutura de pastas e o pipeline SDD continuam os mesmos.
+(ports & adapters, SOLID, TDD, cobertura 80%) valem para qualquer stack. A feature de exemplo em
+Python (`specs/0001-example-task-management/`) ilustra o fluxo ponta a ponta — backend-only (sem
+frontend) — mas o código correspondente não existe mais como arquivos executáveis neste
+repositório: é um template de pipeline, não de aplicação, então o valor ilustrativo fica só como
+exemplo documentado em `specs/0001-example-task-management/code-examples.md` (`src/`, `tests/`,
+`pyproject.toml`, `Dockerfile`, `ci.yml`). Ao implementar uma feature real (aqui ou em outro
+projeto), `src/`/`tests/`/`Dockerfile`/`ci.yml` nascem do zero na stack decidida no TRD — a
+estrutura de pastas e o pipeline SDD continuam os mesmos independente da linguagem.
 
 ## Regras de governança (valem para todos os agentes)
 
