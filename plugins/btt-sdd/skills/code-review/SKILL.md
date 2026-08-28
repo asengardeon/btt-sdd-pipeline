@@ -20,8 +20,11 @@ de software sênior, entre a implementação e o QA.
 4. Mostre ao usuário o veredito geral (aprovado/aprovado com ressalvas/reprovado) e os achados
    principais do relatório.
 5. Se reprovado, informe que a feature volta para `/btt-sdd:implement` com os achados
-   listados. Se aprovado (ou aprovado com ressalvas aceitas pelo usuário), informe que a próxima
-   etapa é `/btt-sdd:qa`.
+   listados — e siga a seção "Retomando para corrigir achados de revisão" da skill
+   `/btt-sdd:implement` (prefira retomar o mesmo agente que implementou a fatia via
+   `SendMessage` para correções pequenas e objetivas, em vez de invocar um agente novo). Se
+   aprovado (ou aprovado com ressalvas aceitas pelo usuário), informe que a próxima etapa é
+   `/btt-sdd:qa`.
 
 ## Quando usar sem o agente
 

@@ -18,8 +18,11 @@ Aciona a **etapa 5** do pipeline SDD descrito em `CLAUDE.md`: revisão de segura
    `specs/_template/security-review.template.md`.
 4. Mostre ao usuário o veredito geral e os achados por área (OWASP, segredos, autenticação,
    validação de entrada, dependências).
-5. Se reprovado, informe que a feature volta para `/sdd-implement` com os achados listados. Se
-   aprovado (ou aprovado com ressalvas não-bloqueantes), informe que a próxima etapa é
+5. Se reprovado, informe que a feature volta para `/sdd-implement` com os achados listados — e
+   siga a seção "Retomando para corrigir achados de revisão" de
+   `.claude/skills/sdd-implement/SKILL.md` (prefira retomar o mesmo agente que implementou a
+   fatia via `SendMessage` para correções pequenas e objetivas, em vez de invocar um agente novo).
+   Se aprovado (ou aprovado com ressalvas não-bloqueantes), informe que a próxima etapa é
    `/sdd-sre`.
 
 ## Quando usar sem o agente
