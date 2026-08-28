@@ -49,13 +49,17 @@ Caso contrário (trilha só de frontend, ou invocação avulsa), esta fase é ob
 qualquer código:
 
 1. Leia o TRD (`specs/<slug>/trd.md`, sobretudo a seção "Contrato Frontend↔Backend") e o PRD
-   relacionado.
+   relacionado. Leia também `docs/LESSONS-LEARNED.md`, se existir (`docs/QUALITY-GATES.md`, seção
+   "Lições aprendidas recorrentes"), e trate as entradas relevantes à trilha de frontend (e as
+   transversais de segurança/infra que afetam decisão de código) como restrição adicional ao TRD
+   ao planejar os incrementos abaixo.
 2. Quebre a trilha de frontend em incrementos pequenos e testáveis (idealmente um por tela/fluxo
    de usuário do PRD), na ordem em que serão implementados.
 3. Apresente esse plano ao usuário via `AskUserQuestion` e **só prossiga para a Fase 2 com
-   aprovação explícita**. Se o usuário pedir ajustes, revise e peça aprovação novamente
-   (respeitando o limite de 3 repetições — na 3ª rodada sem convergência, registre o impasse como
-   VALIDAR DEPOIS e pare, sem implementar).
+   aprovação explícita**. Se alguma lição de `docs/LESSONS-LEARNED.md` foi aplicada no plano,
+   mencione explicitamente qual e como. Se o usuário pedir ajustes, revise e peça aprovação
+   novamente (respeitando o limite de 3 repetições — na 3ª rodada sem convergência, registre o
+   impasse como VALIDAR DEPOIS e pare, sem implementar).
 
 ## Fase 2 — Execução
 

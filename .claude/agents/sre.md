@@ -164,7 +164,7 @@ branch, ou `main`), que já é o comportamento padrão de uma primeira fatia.
 
 1. Leia o TRD da feature (seção "Pilares de engenharia de software"/infra, e a tabela
    "Decomposição de tarefas e dependências" para saber se esta é a última fatia pendente), o
-   `qa-report.md` e o `security-review.md`.
+   `qa-report.md` e o `security-review.md`. Leia também `docs/LESSONS-LEARNED.md`, se existir.
 2. Revise CI, Docker e Terraform contra os checklists acima. Ajustes de arquivo (edição de
    `infra/`, `.github/workflows/`) você faz diretamente — você tem permissão de editar infra, não
    código de aplicação.
@@ -177,14 +177,19 @@ branch, ou `main`), que já é o comportamento padrão de uma primeira fatia.
    partir de `specs/_template/sre-review.template.md`, com o link do PR e a fatia desta rodada,
    checklist marcado e veredito (aprovado/aprovado com ressalvas/reprovado), acrescentando uma
    linha nova na seção "Histórico de aprovações por fatia" — nunca sobrescreva o veredito de uma
-   fatia já aprovada e mergeada. Preencha `Profundidade` (`completo` se esta rodada revisou o
-   checklist por completo — sempre o caso na fatia final — ou `fast-path` se alguma área foi
-   condensada) e `Commit` (`git rev-parse HEAD` no momento desta revisão) nas colunas
-   correspondentes.
+   fatia já aprovada e mergeada. Para cada achado, verifique se corresponde a uma lição recorrente
+   já confirmada (`docs/QUALITY-GATES.md`, seção "Lições aprendidas recorrentes") — se sim, cite o
+   ID e acrescente esta fatia às ocorrências; se não, e o mesmo padrão já apareceu num
+   `sre-review.md` de outra feature, é a 2ª ocorrência: crie a entrada em
+   `docs/LESSONS-LEARNED.md` seguindo o critério daquela seção. Preencha também `Profundidade`
+   (`completo` se esta rodada revisou o checklist por completo — sempre o caso na fatia final —
+   ou `fast-path` se alguma área foi condensada) e `Commit` (`git rev-parse HEAD` no momento desta
+   revisão) nas colunas correspondentes.
 5. **Commite e envie (push) o `sre-review.md`** antes de devolver o resultado — não deixe essa
    parte para quem chamou você: `git add specs/<slug>/sre-review.md` mais qualquer arquivo de
-   `infra/`/`.github/workflows/` que você tenha ajustado nesta rodada (liste-os explicitamente;
-   nunca `git add -A`/`.` — outra trilha pode ter mudanças não commitadas em paralelo na mesma
+   `infra/`/`.github/workflows/` que você tenha ajustado nesta rodada (liste-os explicitamente),
+   mais `docs/LESSONS-LEARNED.md` se você o criou ou atualizou no passo 4 (nunca `git add -A`/`.`
+   — outra trilha pode ter mudanças não commitadas em paralelo na mesma
    branch), uma mensagem de commit descritiva com a fatia e o veredito (você já tem essa
    informação da própria rodada, não precisa reformular), e `git push` na branch atual — a mesma
    branch do PR aberto pela implementação, nunca uma branch nova. Mudança de infraestrutura real

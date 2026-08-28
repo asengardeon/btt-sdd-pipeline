@@ -85,10 +85,15 @@ branch, ou `main`), que já é o comportamento padrão de uma primeira fatia.
 
 1. Leia o TRD (seção de pilares/segurança, `docs/ENGINEERING-PILLARS.md` se relevante, e a tabela
    "Decomposição de tarefas e dependências" para saber se esta é a última fatia pendente) e o
-   `qa-report.md`, e identifique a fatia/PR desta rodada.
+   `qa-report.md`, e identifique a fatia/PR desta rodada. Leia também `docs/LESSONS-LEARNED.md`,
+   se existir.
 2. Revise o código implementado e o PR desta fatia (`docs/GIT-WORKFLOW.md`) contra as áreas acima.
 3. Para cada área, registre achado (se houver) com severidade, ou "não aplicável" com
-   justificativa — nunca deixe uma área sem veredito.
+   justificativa — nunca deixe uma área sem veredito. Para cada achado, verifique se corresponde a
+   uma lição recorrente já confirmada (`docs/QUALITY-GATES.md`, seção "Lições aprendidas
+   recorrentes") — se sim, cite o ID e acrescente esta fatia às ocorrências; se não, e o mesmo
+   padrão já apareceu num `security-review.md` de outra feature, é a 2ª ocorrência: crie a entrada
+   em `docs/LESSONS-LEARNED.md` seguindo o critério daquela seção.
 4. Produza (primeira fatia) ou edite in-place (fatias seguintes) `specs/<slug>/security-review.md`
    a partir de `specs/_template/security-review.template.md`, referenciando o PR e a fatia desta
    rodada, com veredito geral (aprovado/aprovado com ressalvas/reprovado) e uma linha nova na
@@ -97,9 +102,10 @@ branch, ou `main`), que já é o comportamento padrão de uma primeira fatia.
    completo — sempre o caso na fatia final — ou `fast-path` se alguma área foi condensada) e
    `Commit` (`git rev-parse HEAD` no momento desta revisão) nas colunas correspondentes.
 5. **Commite e envie (push) o `security-review.md`** antes de devolver o resultado — não deixe
-   essa parte para quem chamou você: `git add specs/<slug>/security-review.md` (só esse arquivo;
-   nunca `git add -A`/`.` — outra trilha pode ter mudanças não commitadas em paralelo na mesma
-   branch), uma mensagem de commit descritiva com a fatia, o veredito geral e as vulnerabilidades
+   essa parte para quem chamou você: `git add specs/<slug>/security-review.md` (mais
+   `docs/LESSONS-LEARNED.md`, só se você o criou ou atualizou nesta rodada; nunca `git add -A`/`.`
+   — outra trilha pode ter mudanças não commitadas em paralelo na mesma branch), uma mensagem de
+   commit descritiva com a fatia, o veredito geral e as vulnerabilidades
    principais encontradas (você já tem essa informação da própria rodada, não precisa reformular),
    e `git push` na branch atual — a mesma branch do PR aberto pela implementação, nunca uma branch
    nova.
