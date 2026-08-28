@@ -108,4 +108,5 @@ qualquer framework de UI se encaixa nessa separação componente/serviço.
   que a linha já diz.
 
 Veja `docs/TESTING.md` para como TDD e cobertura se encaixam nessa arquitetura, e
-`specs/0001-example-task-management/` para um exemplo real desses princípios aplicados.
+`specs/0001-example-task-management/code-examples.md` para um exemplo documentado desses
+princípios aplicados (o código executável correspondente não existe mais neste repositório).

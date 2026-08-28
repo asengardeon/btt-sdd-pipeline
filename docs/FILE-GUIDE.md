@@ -76,6 +76,10 @@ DEPOIS" como opção quando cabível.
   `.github/workflows/` diretamente (commitando/enviando esses ajustes junto com `sre-review.md`
   antes de terminar); qualquer alteração real de infraestrutura passa por um plano aprovado antes
   de executar.
+- **`tech-writer.md`** — agente **utilitário** de documentação técnica (README, `docs/*.md`, ADRs,
+  exemplos de código documentados), sem posição fixa nas 7 etapas — convocável a qualquer momento,
+  no mesmo espírito do `codebase-archaeologist`. Nunca escreve/corrige código de produção, só
+  documenta o que existe de fato.
 
 ## `.claude/skills/` — os comandos que acionam o pipeline
 
@@ -105,6 +109,9 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
 - **`sdd-gap-report/`** → `/sdd-gap-report <slug> [caminho-busca ...]` — utilitário de leitura,
   não aciona nenhum agente; compara os casos de uso da seção 6 do TRD com o código real em `src/`
   (e `frontend/`, quando existir), reportando implementado sim/não por caso de uso.
+- **`sdd-docs/`** → `/sdd-docs` — aciona `tech-writer` (utilitário, sem posição fixa numa etapa);
+  escreve/atualiza README, um doc de `docs/`, um ADR, ou transforma código real em exemplo
+  documentado.
 - **`create-project/`** → `/create-project` — skill global (ver "Distribuição global" em
   `CLAUDE.md`): pergunta nome, diretório e requisitos, cria um projeto novo em diretório separado
   (fora deste repositório), copia o conteúdo genérico de `create-project/scaffold/` para lá, e
@@ -166,54 +173,48 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
   bruto) que `backend-developer`/`frontend-developer` geram e outras etapas reaproveitam em vez de
   re-executar a suíte (`docs/TESTING.md`).
 - **`0001-example-task-management/`** — exemplo real e completo do pipeline rodado do início ao
-  fim (PRD → TRD → código em `src/` → QA report → security review → SRE review), usado como
-  referência de nível de detalhe esperado.
+  fim (PRD → TRD → QA report → security review → SRE review), usado como referência de nível de
+  detalhe esperado. O código correspondente não existe mais como arquivos executáveis neste
+  repositório — está documentado em `0001-example-task-management/code-examples.md`.
 - **Cada feature nova** ganha uma pasta `NNNN-slug-em-kebab-case/` com os artefatos que forem
   sendo produzidos por cada etapa, incluindo uma subpasta `coverage/` com os resumos de cobertura
   por fatia/trilha.
 
-## `src/` — código de produção de backend, em ports & adapters
+## `src/`, `tests/`, `frontend/`, `infra/`, `.github/workflows/` — não existem neste repositório hoje
 
-- **`domain/`** — entidades e regras de negócio puras, sem dependência de framework ou infra.
-- **`application/ports/`** — interfaces que a aplicação exige da infraestrutura (definidas pelo
-  que o caso de uso precisa).
-- **`application/use_cases/`** — orquestram domínio + ports para cumprir um critério de aceite;
-  dependem só de abstrações.
-- **`adapters/inbound/`** — o que aciona os casos de uso (CLI, HTTP, eventos). Quando a feature
-  tem frontend, implementa exatamente o contrato definido no TRD.
-- **`adapters/outbound/`** — o que implementa os ports (persistência, serviços externos).
+Este é um template de **pipeline**, não de aplicação — depois que o app de exemplo
+(`specs/0001-example-task-management/`) cumpriu seu papel de ilustrar o fluxo ponta a ponta, o
+código executável foi removido (ver ADR `docs/adr/0002-remover-app-exemplo-manter-exemplos-documentados.md`)
+e o valor ilustrativo ficou preservado como exemplo documentado em
+`specs/0001-example-task-management/code-examples.md`. As convenções abaixo continuam sendo o que
+`backend-developer`/`frontend-developer`/`sre` criam do zero na stack decidida no TRD, seja neste
+repositório (se alguém implementar uma feature real aqui) ou em qualquer projeto que adote o
+template — nada aqui deixou de valer, só deixou de estar fisicamente presente sem uma feature real
+por trás.
 
-Detalhe completo em `docs/ARCHITECTURE.md`. Escrito pelo `backend-developer`.
+- **`src/domain/`** — entidades e regras de negócio puras, sem dependência de framework ou infra.
+- **`src/application/ports/`** — interfaces que a aplicação exige da infraestrutura (definidas
+  pelo que o caso de uso precisa).
+- **`src/application/use_cases/`** — orquestram domínio + ports para cumprir um critério de
+  aceite; dependem só de abstrações.
+- **`src/adapters/inbound/`** — o que aciona os casos de uso (CLI, HTTP, eventos). Quando a
+  feature tem frontend, implementa exatamente o contrato definido no TRD.
+- **`src/adapters/outbound/`** — o que implementa os ports (persistência, serviços externos).
+- **`frontend/src/components/`** — UI; não fala com rede diretamente. **`frontend/src/services/`**
+  — client da API, implementando o contrato do TRD. **`frontend/tests/`** — testes de
+  componente/serviço.
+- **`tests/unit/`** — testa `domain` e `application` isoladamente, com dublês dos ports.
+  **`tests/integration/`** — testa implementações reais de adapters de saída contra o contrato do
+  port. **`tests/e2e/`** — testa o fluxo completo através de um adapter de entrada real.
+- **`infra/docker/Dockerfile`**/**`docker-compose.yml`** — build multi-stage e como subir a
+  aplicação localmente. **`infra/terraform/`** — infraestrutura como código (`main.tf`,
+  `variables.tf` com `sensitive = true` onde aplicável, `outputs.tf`, `modules/`).
+- **`.github/workflows/ci.yml`**/**`cd.yml`** — lint + testes + gate de cobertura de 80% em todo
+  PR; deploy gated por CI verde e aprovação manual de `terraform apply`.
 
-## `frontend/` — código de produção de frontend (quando a feature tem UI)
-
-- **`src/components/`** — UI; não fala com rede diretamente.
-- **`src/services/`** — client da API, implementando o contrato do TRD; a camada que os
-  componentes usam para falar com o backend (ou com um dublê, em desenvolvimento paralelo).
-- **`tests/`** — testes de componente/serviço.
-
-Detalhe completo em `docs/ARCHITECTURE.md` (seção "Frontend"). Escrito pelo `frontend-developer`.
-Não existe neste repositório hoje — o exemplo (`specs/0001-example-task-management/`) é
-backend-only.
-
-## `tests/` — testes de backend, espelhando `src/`
-
-- **`unit/`** — testa `domain` e `application` isoladamente, com dublês dos ports.
-- **`integration/`** — testa implementações reais de adapters de saída contra o contrato do port.
-- **`e2e/`** — testa o fluxo completo através de um adapter de entrada real.
-
-Detalhe completo em `docs/TESTING.md`.
-
-## `infra/` — containerização e infraestrutura como código
-
-- **`docker/Dockerfile`** — build multi-stage da aplicação de exemplo, imagem final mínima,
-  usuário não-root.
-- **`docker/docker-compose.yml`** — como subir a aplicação (e dependências, se houver)
-  localmente, do jeito mais próximo possível de produção.
-- **`terraform/`** — infraestrutura como código: `main.tf` (recursos), `variables.tf` (entradas,
-  com `sensitive = true` onde aplicável), `outputs.tf` (saídas), `modules/` (componentes
-  reutilizáveis entre ambientes). É um esqueleto ilustrativo — adapte o provider/recursos ao
-  ambiente real de destino antes de aplicar.
+Detalhe completo de cada convenção em `docs/ARCHITECTURE.md` (backend/frontend) e `docs/TESTING.md`
+(testes/cobertura). Veja como cada peça ficava de fato em
+`specs/0001-example-task-management/code-examples.md`.
 
 ## `scripts/` dentro de cada skill — utilitários para reduzir uso de tokens no pipeline
 
@@ -246,17 +247,9 @@ Como qualquer outro arquivo de skill, mudar o script exige replicar a mudança n
 equivalente em `plugins/btt-sdd/skills/` (ver "⚠️ Isto é uma cópia, não um link" em
 `plugins/btt-sdd/README.md`).
 
-## `.github/workflows/` — pipelines de CI/CD
+## `.gitignore`
 
-- **`ci.yml`** — roda em todo push/PR: lint, suíte de testes, gate de cobertura de 80%. Se
-  qualquer um falhar, o PR não pode ser mergeado (configure a branch protection do GitHub para
-  exigir este check).
-- **`cd.yml`** — roda após CI verde em `main`: build/push da imagem Docker e
-  `terraform plan`/`apply` gated por ambiente protegido (aprovação manual antes de `apply`).
-
-## Arquivos de configuração da stack de exemplo
-
-- **`pyproject.toml`** — configuração do exemplo Python: dependências de dev (`pytest`,
-  `coverage`, `ruff`), e o gate de cobertura de 80% (`--cov-fail-under=80`).
-- **`.gitignore`** — padrões a ignorar (ambientes virtuais, caches, artefatos de build,
-  state do Terraform).
+Padrões a ignorar (ambientes virtuais, caches, artefatos de build, state do Terraform) — mantido
+mesmo sem o código de exemplo, já que qualquer feature real implementada neste repositório voltará
+a gerar esses artefatos. `pyproject.toml` (manifesto de dependências do exemplo Python removido)
+está documentado em `specs/0001-example-task-management/code-examples.md`.

@@ -192,6 +192,8 @@ usuário (nenhum agente mergeia sozinho), e dispara o CD — liberando a fatia s
 ## Exemplo completo
 
 `specs/0001-example-task-management/` contém um PRD, TRD, QA report, security review e SRE review
-reais, correspondentes ao código de exemplo em `src/` e `tests/`. Use como referência de nível de
-detalhe esperado em cada artefato. Essa feature não precisou da etapa 0 — nasceu 100% documentada
-por este próprio pipeline.
+reais. Use como referência de nível de detalhe esperado em cada artefato. O código correspondente
+a esses artefatos não existe mais como arquivos executáveis neste repositório (template de
+pipeline, não de aplicação) — está preservado como exemplo documentado em
+`specs/0001-example-task-management/code-examples.md`. Essa feature não precisou da etapa 0 —
+nasceu 100% documentada por este próprio pipeline.
