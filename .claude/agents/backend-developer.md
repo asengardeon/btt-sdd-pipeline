@@ -62,7 +62,12 @@ qualquer código:
    fatia, confirme que o PR da fatia anterior já foi mergeado em `main` antes de criar a branch
    (`docs/GIT-WORKFLOW.md`, regra 3, tem o comando) — se não estiver, pare e informe o usuário. Se
    a branch já existe (ex.: `frontend-developer` já a criou em paralelo), use-a. Abra um Pull
-   Request em modo *draft* no primeiro commit, se ainda não houver um.
+   Request em modo *draft* no primeiro commit, se ainda não houver um. Se a tabela "Decomposição
+   de tarefas e dependências" do TRD tem issues do GitHub associadas (coluna "Issue GitHub"
+   preenchida com `#N`) a tarefas de backend cobertas por esta fatia, inclua `Closes #N` no corpo
+   do PR para cada uma (se o PR já foi aberto por `frontend-developer` em paralelo, edite a
+   descrição para acrescentar as issues da sua trilha, sem remover o que já está lá) — assim o
+   merge desta fatia fecha automaticamente as issues correspondentes no GitHub.
 2. Para cada incremento do plano aprovado, siga **TDD estrito (red-green-refactor)**:
    - Escreva o teste que expressa o comportamento esperado. Rode e confirme que falha (red).
    - Escreva o código mínimo para o teste passar (green).

@@ -147,6 +147,11 @@ GitHub (não deixar as tarefas só nesta tabela) — o `architect` pergunta ao u
 aprovado, já com isso como opção recomendada; nunca cria issues sem confirmação explícita. Sem
 GitHub conectado, esta tabela é a única fonte de verdade.
 
+Ciclo de vida de cada issue criada: o PR da fatia que cobre a tarefa referencia `Closes #N`
+(`backend-developer`/`frontend-developer`, ao abrir o PR); `sre`, ao aprovar a fatia, comenta na
+issue documentando o que foi implementado (link do PR e dos artefatos de revisão); a issue fecha
+sozinha quando o usuário mergear o PR — nunca fechada manualmente antes disso.
+
 ## 14. Controle de versão (GitHub Flow, por fatia)
 
 Cada fatia vertical da seção 13 é entregue como sua **própria branch/PR**, incremental sobre a
