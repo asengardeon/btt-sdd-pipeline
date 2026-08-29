@@ -110,6 +110,9 @@ confirmado ainda").
 - [ ] Branch da fatia criada a partir de `main` atualizada (só depois do PR da fatia anterior já
   mergeado, se houver uma); PR aberto (única branch/PR por fatia, mesmo quando backend e frontend
   desenvolvem em paralelo dentro dela).
+- [ ] Se a fatia cobre tarefas com issue do GitHub associada (coluna "Issue GitHub" do TRD), o PR
+  referencia `Closes #N` para cada uma — issues ficam abertas até o merge de verdade, nunca
+  fechadas manualmente antes disso.
 - [ ] Plano de implementação foi aprovado pelo usuário antes do primeiro commit de código (plano
   combinado quando full-stack, orquestrado por `/sdd-implement`).
 - [ ] Resultado da suíte completa com cobertura gravado em
@@ -192,6 +195,10 @@ confirmado ainda").
 - [ ] `sre-review.md` (e qualquer ajuste de `infra/`/`.github/workflows/` desta rodada)
   commitados (arquivos explícitos, nunca `git add -A`/`.`) e enviados (push) na branch do PR pelo
   próprio `sre` antes de devolver o resultado.
+- [ ] Se a fatia foi aprovada e tem issues do GitHub associadas a tarefas cobertas por ela,
+  `sre` documentou a resolução em cada uma (`gh issue comment`, resumo + link do PR e dos
+  artefatos de revisão) antes de finalizar — a issue fecha sozinha quando a fatia mergear, via
+  `Closes #N` já incluído no PR pelo `backend-developer`/`frontend-developer`.
 
 ## Merge para `main` (por fatia)
 

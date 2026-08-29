@@ -186,6 +186,17 @@ branch, ou `main`), que já é o comportamento padrão de uma primeira fatia.
    (`completo` se esta rodada revisou o checklist por completo — sempre o caso na fatia final —
    ou `fast-path` se alguma área foi condensada) e `Commit` (`git rev-parse HEAD` no momento desta
    revisão) nas colunas correspondentes.
+4b. **Se você aprovou (ou aprovou com ressalvas) esta fatia** e a tabela "Decomposição de tarefas e
+   dependências" do TRD tem issues do GitHub associadas (coluna "Issue GitHub" preenchida com
+   `#N`) a tarefas cobertas por esta fatia, documente a resolução em cada uma antes de terminar:
+   `gh issue comment <N> --body "..."` resumindo o que foi implementado, com link do PR desta
+   fatia e dos artefatos de revisão (`code-review.md`/`qa-report.md`/`security-review.md`/
+   `sre-review.md`). Não feche a issue você mesmo — o PR já referencia `Closes #N` (responsabilidade
+   de `backend-developer`/`frontend-developer` ao abrir o PR) e o fechamento automático acontece
+   quando o usuário mergear; comentar antes disso garante que a issue fica documentada mesmo que o
+   merge demore. Se `gh` falhar, nunca tente mais de 3 vezes seguidas — relate o erro e siga sem
+   bloquear a aprovação da fatia por isso. Se a fatia foi reprovada, não comente nem documente
+   nada nas issues — elas continuam em aberto.
 5. **Commite e envie (push) o `sre-review.md`** antes de devolver o resultado — não deixe essa
    parte para quem chamou você: `git add specs/<slug>/sre-review.md` mais qualquer arquivo de
    `infra/`/`.github/workflows/` que você tenha ajustado nesta rodada (liste-os explicitamente),

@@ -142,9 +142,15 @@ que permite entregar e mostrar a spec completa aos poucos, em vez de só no fim.
 |------|------------------------------|------------------------------|--------------|---------------|------------------|
 | T-1  | <descrição da tarefa>         | backend / frontend / ambos    | F-1           | nenhuma        | `<#N ou "não espelhada">` |
 
-Se houver remote GitHub configurado e autenticado, o `architect` pergunta ao usuário (depois do
-TRD aprovado) se quer espelhar esta tabela como GitHub Issues — nunca cria issues sem confirmação
-explícita.
+Se houver remote GitHub configurado e autenticado, a preferência é criar Issues de verdade no
+GitHub (não deixar as tarefas só nesta tabela) — o `architect` pergunta ao usuário depois do TRD
+aprovado, já com isso como opção recomendada; nunca cria issues sem confirmação explícita. Sem
+GitHub conectado, esta tabela é a única fonte de verdade.
+
+Ciclo de vida de cada issue criada: o PR da fatia que cobre a tarefa referencia `Closes #N`
+(`backend-developer`/`frontend-developer`, ao abrir o PR); `sre`, ao aprovar a fatia, comenta na
+issue documentando o que foi implementado (link do PR e dos artefatos de revisão); a issue fecha
+sozinha quando o usuário mergear o PR — nunca fechada manualmente antes disso.
 
 ## 14. Controle de versão (GitHub Flow, por fatia)
 
