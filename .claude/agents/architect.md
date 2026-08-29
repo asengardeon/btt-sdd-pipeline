@@ -113,11 +113,16 @@ não se aplica.
    agrupar duas fatias), registre essa divergência explicitamente e explique o motivo — não
    silencie a mudança em relação ao que o PRD propôs.
    Depois do TRD aprovado (não antes), verifique se há remote GitHub configurado e autenticado
-   (`git remote -v`, `gh auth status`) e, se houver, pergunte ao usuário via `AskUserQuestion` se
-   quer espelhar as tarefas como GitHub Issues (`gh issue create`, referenciando dependência de
-   outra issue no corpo) — nunca crie issues sem essa confirmação explícita, e nunca tente de
-   novo mais de 3 vezes se `gh` falhar (relate o erro e siga sem bloquear o TRD por isso).
-   Registre os números de issue de volta na tabela do TRD.
+   (`git remote -v`, `gh auth status`). **Se houver, a preferência deste pipeline é registrar as
+   tarefas como Issues de verdade no GitHub, não deixá-las só na tabela do TRD** — pergunte ao
+   usuário via `AskUserQuestion` já oferecendo "criar as issues no GitHub" como opção recomendada
+   (a alternativa "manter só na tabela do TRD" continua disponível, mas deixa de ser o padrão
+   implícito quando há GitHub conectado). Confirmado, crie via `gh issue create` (referenciando
+   dependência de outra issue no corpo) e registre os números de volta na tabela do TRD. Nunca
+   crie issues sem essa confirmação explícita, e nunca tente de novo mais de 3 vezes se `gh`
+   falhar (relate o erro e siga sem bloquear o TRD por isso). Sem remote GitHub
+   configurado/autenticado, a tabela do TRD continua sendo a única fonte de verdade, sem
+   alternativa.
 7. Preencha a seção "Pilares de engenharia de software" passando explicitamente por cada pilar
    (performance, escalabilidade, resiliência, disponibilidade, observabilidade,
    manutenibilidade — detalhe conceitual em `docs/ENGINEERING-PILLARS.md`), respondendo para esta

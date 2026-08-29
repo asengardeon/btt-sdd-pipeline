@@ -52,8 +52,10 @@ validam objetivamente contra critérios escritos".
   observabilidade, manutenibilidade — detalhe em `docs/ENGINEERING-PILLARS.md`) respondida
   explicitamente para a feature, o "Contrato Frontend↔Backend" quando a feature tem UI (o que
   permite backend e frontend desenvolverem em paralelo), e a "Decomposição de tarefas e
-  dependências" (backend/frontend/ambos, com dependência técnica explícita — opcionalmente
-  espelhada como GitHub Issues). ADRs em `docs/adr/` para decisões técnicas significativas.
+  dependências" (backend/frontend/ambos, com dependência técnica explícita — preferencialmente
+  espelhada como Issues reais do GitHub quando há remote conectado e autenticado; a tabela do TRD
+  sozinha é o fallback só quando não há GitHub configurado). ADRs em `docs/adr/` para decisões
+  técnicas significativas.
 - **Gate de saída**: aprovação explícita do usuário.
 
 ### 3. Desenvolvimento → Código + Testes (backend e/ou frontend, em paralelo quando full-stack)
