@@ -110,6 +110,9 @@ gravada por quem causa a transição.
 - [ ] Seção "Fora de escopo" preenchida explicitamente.
 - [ ] Seção "Indicadores técnicos a observar" preenchida (volumetria, segurança, legal) — mesmo
   que a resposta seja "nenhum indicador relevante", isso precisa estar escrito, não implícito.
+- [ ] Se a feature tem UI, o usuário foi consultado (via `AskUserQuestion`, `/sdd-prd` passo 2b)
+  sobre ver opções de wireframe/protótipo antes do PRD — aceite ou recusa, nunca silenciado; seção
+  "Wireframes/Protótipos de tela" preenchida de acordo (ou "não aplicável" se a feature não tem UI).
 - [ ] Aprovação explícita do usuário registrada.
 
 ## TRD
