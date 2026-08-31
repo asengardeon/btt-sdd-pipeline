@@ -38,7 +38,10 @@ validam objetivamente contra critérios escritos".
 - **Saída**: `specs/<slug>/prd.md` — o quê e por quê, nunca o como técnico. Critérios de aceite
   em Gherkin, testáveis por um terceiro sem contexto adicional. Inclui "Indicadores técnicos a
   observar" (volumetria, segurança, legal) — sinalizados, não decididos — e "Ordem de valor /
-  dependências entre histórias", a visão de produto de quais histórias dependem de outras.
+  dependências entre histórias", a visão de produto de quais histórias dependem de outras. Se a
+  feature tem UI, `/sdd-prd` oferece ao usuário ver opções de wireframe/protótipo de baixa
+  fidelidade das telas principais (via skill `design`, publicado como Artifact) antes de escrever
+  as histórias em detalhe — seção "Wireframes/Protótipos de tela" do PRD.
 - **Gate de saída**: aprovação explícita do usuário.
 
 ### 2. Arquitetura → TRD

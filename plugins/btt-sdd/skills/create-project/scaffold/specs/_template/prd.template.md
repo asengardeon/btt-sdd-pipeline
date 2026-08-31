@@ -44,11 +44,24 @@ Cenário: <nome>
 (Repita para cada história. Cada critério de aceite deve ser verificável por um terceiro sem
 contexto adicional — isso vira o checklist literal do QA.)
 
-## 7. Métricas de sucesso
+## 7. Wireframes/Protótipos de tela (quando a feature tem UI)
+
+Preenchido só quando a feature tem tela(s) nova(s) ou mudança visual relevante em tela existente.
+Antes de escrever as histórias de usuário em detalhe, `/sdd-prd` oferece ao usuário ver 2-3 opções
+de wireframe/protótipo de baixa fidelidade das telas principais para escolher a direção que achar
+mais interessante — uma exploração visual rápida para alinhar direção cedo, não o desenho técnico
+de UI final (isso continua com `architect`/`frontend-developer` no TRD/implementação).
+
+- **Oferecido ao usuário?** `<sim / não aplicável (feature sem UI)>`
+- **Opções apresentadas**: `<link do Artifact com as opções, ou "nenhuma — usuário preferiu seguir
+  direto para o PRD">`
+- **Opção escolhida**: `<qual opção, e por quê, se o usuário comentou>`
+
+## 8. Métricas de sucesso
 
 Como saberemos que a feature funcionou depois de lançada.
 
-## 8. Indicadores técnicos a observar
+## 9. Indicadores técnicos a observar
 
 Não é papel do PRD decidir arquitetura, mas é papel do PRD **sinalizar** o que pode ter peso
 técnico significativo, para o `architect` endereçar no TRD. Preencha cada item mesmo que a
@@ -61,7 +74,7 @@ resposta seja "nenhum" — não deixe implícito.
 - **Legal/compliance**: implica LGPD/GDPR, retenção de dados, contrato com terceiro, ou
   regulação específica do domínio? `<preencher ou "nenhum indicador relevante">`
 
-## 9. Ordem de valor / dependências entre histórias (fatias verticais de entrega)
+## 10. Ordem de valor / dependências entre histórias (fatias verticais de entrega)
 
 Visão de produto (não técnica) de como a feature será entregue em **fatias verticais**: cada
 fatia é um incremento fino que atravessa toda a pilha necessária para ela (nunca "todo o backend
@@ -78,7 +91,7 @@ deve preservar o caráter demonstrável de cada fatia na implementação.
 |-------|-------------------------------|------------|--------|-------------------------------------------------|
 | F-1   | US-1 (cenário feliz)            | nenhuma     | ponto de entrada da feature | `<ex.: usuário consegue criar uma tarefa e vê-la na lista, de ponta a ponta>` |
 
-## 10. Pendências de validação (VALIDAR DEPOIS)
+## 11. Pendências de validação (VALIDAR DEPOIS)
 
 Toda ambiguidade que o usuário não soube/quis responder agora, registrada aqui em vez de virar
 suposição silenciosa. Resolvida via `/sdd-amend` quando o usuário pedir a revisão.
@@ -87,7 +100,7 @@ suposição silenciosa. Resolvida via `/sdd-amend` quando o usuário pedir a rev
 |--------|--------------------------------------|-------------------------------------------|------------------------|
 | PRD-1  | <pergunta que ficou sem resposta>     | <por que essa pergunta importa>            | pendente / validado |
 
-## 11. Log de revisões
+## 12. Log de revisões
 
 Preenchido pelo `/sdd-amend` a cada mudança neste PRD depois de aprovado — nunca recrie o
 documento do zero para registrar uma mudança.
@@ -95,6 +108,6 @@ documento do zero para registrar uma mudança.
 | Data | Autor | O que mudou | Motivo | Etapas revalidadas |
 |------|-------|--------------|--------|-----------------------|
 
-## 12. Aprovação
+## 13. Aprovação
 
 - [ ] Aprovado por: <usuário> em <data>

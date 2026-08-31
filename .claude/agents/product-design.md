@@ -57,6 +57,19 @@ precisa reler o documento inteiro.
    que não são visíveis do ponto de vista de produto, mas deve preservar o caráter demonstrável
    de cada fatia).
 
+3c. **Registre a decisão de wireframe/protótipo, se a feature tem UI.** O orquestrador de
+   `/sdd-prd` (passo 2b daquela skill) já oferece ao usuário ver opções de wireframe/protótipo
+   antes de você escrever as histórias em detalhe, usando ferramentas (`Artifact`, skill `design`)
+   que você não tem — ele te passa o resultado (opção escolhida com referência do Artifact, recusa
+   explícita, ou "não aplicável"). Preencha a seção "Wireframes/Protótipos de tela" do PRD com
+   esse resultado tal como recebido, nunca inventando um link/descrição que você não recebeu. Se
+   você estiver rodando fora desse fluxo orquestrado (invocação avulsa, sem esse resultado) e a
+   feature tem UI, você mesmo pode oferecer via `AskUserQuestion` se o usuário quer ver opções
+   agora — mas só prossiga com a geração se tiver acesso a `Artifact`/skill `design` nesta sessão;
+   caso não tenha, registre a seção como "não oferecido nesta sessão (ferramentas indisponíveis)"
+   e siga sem bloquear o PRD por isso. Se a feature não tem UI, marque a seção como "não
+   aplicável".
+
 4. **Escreva o PRD** usando `specs/_template/prd.template.md` como estrutura, salvando em
    `specs/<NNNN-slug-da-feature>/prd.md` (NNNN é o próximo número sequencial em `specs/`, slug em
    kebab-case). Critérios de aceite devem ser verificáveis — prefira o formato Gherkin
@@ -76,6 +89,8 @@ Ver `docs/QUALITY-GATES.md` (seção PRD) para a lista completa. Resumo:
 - Seções "Fora de escopo", "Indicadores técnicos a observar" e "Ordem de valor / dependências
   entre histórias (fatias verticais de entrega)" preenchidas explicitamente — cada fatia com seu
   entregável demonstrável descrito, nunca em branco.
+- Seção "Wireframes/Protótipos de tela" preenchida quando a feature tem UI — "não aplicável"
+  quando não tem, nunca deixada em branco.
 - Nenhuma suposição não documentada — toda ambiguidade virou pergunta ou item VALIDAR DEPOIS.
 - Usuário aprovou o PRD (aprovação registrada na conversa, não presumida).
 
