@@ -133,7 +133,9 @@ validam objetivamente contra critérios escritos".
 - **Spec finalizada**: se a fatia aprovada nesta rodada é a última pendente da feature,
   `/sdd-sre` também aciona `tech-writer` automaticamente para atualizar a documentação do
   repositório (README, `docs/`, ADRs) refletindo a feature completa, antes de informar o usuário
-  sobre o merge.
+  sobre o merge. Depois desse merge, `/sdd-implement` conduz o teste geral obrigatório de fim de
+  spec contra produção real (`docs/POST-MERGE-VALIDATION.md`) — a spec só é considerada concluída
+  com esse teste feito, não só com o merge.
 
 ## Governança de decisão (vale para todas as etapas, incluindo a condicional)
 

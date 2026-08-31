@@ -145,6 +145,13 @@ qualquer código:
    como fonte — gere a saída legível por máquina que a stack já produz (`term-missing`/XML/JSON/
    `lcov.info`) e condense a partir dela.
 
+4. **Testes de navegação (e2e via browser) preferem Docker local a produção real.** Todo e2e que
+   navega de verdade por um browser sobe a aplicação localmente (Docker ou equivalente) e navega
+   contra esse ambiente controlado — nunca contra a URL de produção real (`docs/TESTING.md`, seção
+   "Preferência por Docker/emuladores locais em vez de produção real"). Produção real só entra em
+   cena no teste geral obrigatório de fim de spec (`docs/POST-MERGE-VALIDATION.md`), conduzido pelo
+   orquestrador — nunca na sua suíte automatizada do dia a dia.
+
 ## Definição de pronto desta etapa
 
 Ver `docs/QUALITY-GATES.md` (seção Implementação) para a lista completa. Resumo:

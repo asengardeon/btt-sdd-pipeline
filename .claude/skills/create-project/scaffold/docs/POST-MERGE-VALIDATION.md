@@ -8,6 +8,26 @@ continua com as mesmas 7 etapas + 1 condicional) — é o procedimento a seguir 
 `infra`/`ambos (validação)` (`.claude/skills/sdd-implement/SKILL.md`, passo 2b-bis) ou um item
 "VALIDAR DEPOIS" pede confirmação contra o mundo real depois do merge.
 
+## Teste geral obrigatório ao finalizar uma spec
+
+Diferente das validações pontuais deste documento (um item VALIDAR DEPOIS específico), toda spec
+tem um **teste geral obrigatório contra produção real** quando a última fatia pendente é mergeada
+em `main` — cobrindo o fluxo ponta a ponta que a spec inteira entrega, não só o que a última fatia
+mudou.
+
+- **Escopo**: os principais critérios de aceite do PRD, exercitados de ponta a ponta contra o
+  ambiente real (não simulado) — navegação real via browser automation quando a spec tem UI,
+  chamadas reais de CLI/API quando é backend-only.
+- **Não substitui a suíte automatizada** (unit/integration/e2e via Docker/emuladores,
+  `docs/TESTING.md`, seção "Preferência por Docker/emuladores locais em vez de produção real") — é
+  a confirmação final de que o que já passou em ambiente controlado também funciona no ambiente
+  real de produção, com os dados/integrações reais que só existem lá.
+- **Não é opcional nem fica implícito**: o orquestrador (`.claude/skills/sdd-implement/SKILL.md`,
+  seção "Validação manual pós-merge contra produção real") é responsável por conduzir esse teste
+  assim que confirmar que a última fatia da spec foi mergeada.
+- Depois do teste, siga "Depois de validar" abaixo (fechar itens VALIDAR DEPOIS relacionados,
+  limpar dados de teste criados durante a validação).
+
 ## Antes de validar
 
 - Confirme que o deploy que você vai validar já aconteceu de verdade — não presuma que o merge

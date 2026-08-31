@@ -184,3 +184,8 @@ gravada por quem causa a transição.
 - [ ] Se houver fatia seguinte pendente na feature, ela só começa depois deste merge
   (`docs/GIT-WORKFLOW.md`).
 - [ ] Nenhum item "VALIDAR DEPOIS" bloqueante (marcado como tal pelo usuário) segue em aberto.
+- [ ] Se esta é a **última fatia pendente** da feature (spec finalizada): `tech-writer` foi
+  acionado para atualizar a documentação (`/sdd-sre`, passo 6b) **e** o teste geral obrigatório de
+  fim de spec contra produção real foi conduzido depois do merge
+  (`docs/POST-MERGE-VALIDATION.md`, seção "Teste geral obrigatório ao finalizar uma spec") — a
+  spec só é considerada de fato concluída com os dois.

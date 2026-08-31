@@ -44,7 +44,10 @@ Aciona a **etapa 6** do pipeline SDD descrito em `CLAUDE.md`: validação de CI/
    ADRs) refletindo o que esta feature introduziu de fato — não é um passo opcional a critério do
    usuário, roda automaticamente sempre que a última fatia é aprovada. Escopo da invocação: só o
    que a feature `<slug>` mudou de verdade (mecanismos novos, comportamento documentado alterado),
-   nunca uma reescrita geral não relacionada.
+   nunca uma reescrita geral não relacionada. Lembre também o usuário que, depois do merge desta
+   última fatia, `/sdd-implement` conduz o teste geral obrigatório de fim de spec contra produção
+   real (`docs/POST-MERGE-VALIDATION.md`) — não é algo que este agente `sre` faz agora, é o próximo
+   passo depois do merge.
 
 ## Auto-aprovação nunca é o gate real
 
