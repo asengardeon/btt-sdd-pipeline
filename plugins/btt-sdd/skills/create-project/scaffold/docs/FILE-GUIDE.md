@@ -55,7 +55,9 @@ onde este projeto foi criado, e funcionam aqui porque este repositório segue a 
   (`docs/TESTING.md`).
 - **Cada feature** ganha uma pasta `NNNN-slug-em-kebab-case/` com os artefatos que forem sendo
   produzidos por cada etapa, incluindo uma subpasta `coverage/` com os resumos de cobertura por
-  fatia/trilha.
+  fatia/trilha e, quando a feature tem UI e o usuário aceitou ver opções (`/sdd-prd`, passo 2b),
+  uma subpasta `wireframes/` com o(s) arquivo(s)-fonte `.dc.html` das opções geradas — salvos
+  junto da spec para conferência futura mesmo que o Artifact publicado não esteja mais acessível.
 
 ## `src/`, `frontend/`, `tests/` — ainda não existem
 
