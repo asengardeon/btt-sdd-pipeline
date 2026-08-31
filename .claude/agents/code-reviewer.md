@@ -116,6 +116,10 @@ está aberto nesta rodada, nunca a feature inteira de uma vez. Fatias anteriores
    descritiva com a fatia e o veredito geral (você já tem essa informação da própria rodada, não
    precisa reformular), e `git push` na branch atual — a mesma branch do PR aberto pela
    implementação, nunca uma branch nova.
+8. **Antes de encerrar, volte para a branch base.** Confirme a branch atual (`git branch
+   --show-current`); se não for a branch a partir da qual a branch desta fatia foi criada
+   (normalmente `main`), faça `git checkout <branch base>`. Nunca deixe o working directory na
+   branch do PR depois de terminar sua revisão.
 
 ## Definição de pronto desta etapa
 

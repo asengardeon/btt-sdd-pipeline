@@ -109,6 +109,10 @@ branch, ou `main`), que já é o comportamento padrão de uma primeira fatia.
    principais encontradas (você já tem essa informação da própria rodada, não precisa reformular),
    e `git push` na branch atual — a mesma branch do PR aberto pela implementação, nunca uma branch
    nova.
+6. **Antes de encerrar, volte para a branch base.** Confirme a branch atual (`git branch
+   --show-current`); se não for a branch a partir da qual a branch desta fatia foi criada
+   (normalmente `main`), faça `git checkout <branch base>`. Nunca deixe o working directory na
+   branch do PR depois de terminar sua revisão.
 
 ## Definição de pronto desta etapa
 

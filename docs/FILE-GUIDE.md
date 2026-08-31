@@ -155,6 +155,10 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
   vez — critério completo em `docs/QUALITY-GATES.md`, seção "Lições aprendidas recorrentes". Cada
   entrada vira uma restrição que `backend-developer`/`frontend-developer` aplicam na próxima
   implementação, sem esperar a revisão apontar de novo.
+- **`POST-MERGE-VALIDATION.md`** — checklist leve para validação manual contra produção real
+  depois de um merge (sessão autenticada real, confirmação de deploy efetivo, DNS/certificados,
+  limpeza de dados de teste, e o lembrete de fechar itens "VALIDAR DEPOIS" via `/sdd-amend`).
+  Referenciado por `.claude/skills/sdd-implement/SKILL.md`.
 - **`FILE-GUIDE.md`** — este arquivo.
 - **`adr/`** — Architecture Decision Records. Cada arquivo numerado registra uma decisão técnica
   significativa (contexto, opções consideradas, decisão, consequências). `0001-...md` é o próprio

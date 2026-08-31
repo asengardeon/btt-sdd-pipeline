@@ -51,6 +51,17 @@ assim:
    o plano combinado do passo 4. Isso vale tanto para full-stack quanto para trilha única. Só bata
    múltiplas fatias numa mesma rodada (mesma branch/PR) se o usuário pedir isso explicitamente,
    deixando claro que isso abre mão da entrega incremental fatia-a-fatia.
+2b-bis. **Fatias sem nenhuma trilha de código.** Antes de invocar qualquer agente, confira se
+   *alguma* tarefa da fatia escolhida tem trilha `backend`/`frontend`/`ambos` associada a mudança
+   de código real em `src/`/`frontend/`. Fatias inteiras podem ser só infraestrutura ou validação
+   (ex.: "provisionar um add-on + confirmar em produção", trilha `infra`, `ambos (ação do
+   usuário)` ou `ambos (validação)` na tabela) — sem nenhum arquivo de código a tocar. Se for o
+   caso desta fatia, **pule a invocação de `backend-developer`/`frontend-developer`** e informe ao
+   usuário que esta rodada será conduzida diretamente por você (o orquestrador), sem branch/PR —
+   a menos que, no meio do caminho, uma mudança de infraestrutura *versionada como código* seja
+   necessária (ex.: um ajuste em `cd.yml`, `Dockerfile`, `infra/terraform/`), caso em que essa
+   mudança pontual vira sua própria branch/PR e passa pelo pipeline completo (code review, QA,
+   segurança, SRE) normalmente, em vez de ser commitada solta.
 2c. **Antes de criar a branch desta rodada**, se a fatia não é a primeira, confirme que o PR da
    fatia anterior já foi mergeado em `main` (`docs/GIT-WORKFLOW.md`, regra 3, tem o comando). Se
    não estiver, **pare aqui** e informe o usuário — não invoque os agentes de desenvolvimento
@@ -85,6 +96,37 @@ assim:
    passar por code review, QA, segurança, SRE e ser mergeado em `main` (`docs/GIT-WORKFLOW.md`) —
    rodar `/btt-sdd:implement` de novo nesta feature depois do merge retoma a partir da próxima
    fatia.
+
+## Troca de provedor/serviço externo descoberta durante a implementação
+
+Se, durante a implementação (ou um ajuste de infra pontual conduzido por você, passo 2b-bis),
+surgir a necessidade de trocar um provedor/serviço externo que o TRD já desenhou com outra escolha
+(ex.: TRD desenhou storage no provedor A, na prática o provedor B foi usado; TRD não especificou
+provedor de e-mail transacional e um foi escolhido agora) — isso **sempre** exige, no mínimo, uma
+ADR nova registrada pelo `architect` (`docs/adr/`, mesmo que pequena) **antes** do `sre` ou do
+dev implementar a troca. Não é uma decisão que o orquestrador ou o `sre` tomam sozinhos caso a
+caso "se merece" ADR — troca de provedor já desenhado no TRD sempre merece. Acione `architect`
+(ou `/btt-sdd:trd` se a mudança também precisar refletir no corpo do TRD) antes de prosseguir.
+
+## Auto-aprovação nunca é o gate real
+
+Se você (o orquestrador) pediu a um agente implementador (`backend-developer`,
+`frontend-developer`, ou `sre` fazendo um ajuste pontual de infra) uma correção — mesmo pequena e
+objetiva — **nunca aceite um veredito escrito por esse mesmo agente na mesma rodada** como
+substituto do gate de revisão correspondente (`code-review.md`/`qa-report.md`/
+`security-review.md`/`sre-review.md`). Depois que a correção estiver pronta, invoque sempre uma
+instância **nova e independente** do agente de revisão apropriado — mesmo que a mudança pareça
+óbvia demais para "merecer" uma rodada de revisão inteira.
+
+## Validação manual pós-merge contra produção real
+
+Quando você (o orquestrador) faz uma validação manual pós-merge contra produção real (browser
+automation, CLI do provedor, checar DNS, tail de logs, etc. — checklist em
+`docs/POST-MERGE-VALIDATION.md`) para confirmar um item que `qa-report.md`/`trd.md` tinha marcado
+como "VALIDAR DEPOIS" (ex.: "confirmar isso contra produção depois do deploy"), **feche o ciclo**:
+rode `/btt-sdd:amend` para marcar o(s) item(ns) `QA-N`/`TRD-N` correspondente(s) como "validado"
+no artefato de origem. Não deixe isso implícito — sem esse passo, `/btt-sdd:pending` continua
+listando o item como pendente indefinidamente mesmo depois de validado de verdade.
 
 ## Quando usar sem o agente
 

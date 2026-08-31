@@ -90,6 +90,10 @@ entram nesta rodada; critérios de fatias anteriores já aprovadas não são rev
    uma mensagem de commit descritiva com a fatia, o veredito geral e a cobertura medida (você já
    tem essa informação da própria rodada, não precisa reformular), e `git push` na branch atual —
    a mesma branch do PR aberto pela implementação, nunca uma branch nova.
+9. **Antes de encerrar, volte para a branch base.** Confirme a branch atual (`git branch
+   --show-current`); se não for a branch a partir da qual a branch desta fatia foi criada
+   (normalmente `main`), faça `git checkout <branch base>`. Nunca deixe o working directory na
+   branch do PR depois de terminar sua validação.
 
 ## Definição de pronto desta etapa
 

@@ -22,7 +22,10 @@ itens marcados "VALIDAR DEPOIS".
 3. **Só leia os artefatos manualmente** (fallback abaixo) se o script falhar.
 4. Se o usuário pedir para resolver um item específico (responder a pergunta agora), colete a
    resposta e acione `/sdd-amend` para registrar a resolução no artefato correto — não edite o
-   artefato diretamente por fora desse fluxo, para o log de revisões ficar consistente.
+   artefato diretamente por fora desse fluxo, para o log de revisões ficar consistente. Se o item
+   já foi confirmado por uma validação manual pós-merge contra produção real
+   (`docs/POST-MERGE-VALIDATION.md`), a mesma lógica se aplica: feche via `/sdd-amend`, nunca
+   editando o artefato direto.
 5. Se não houver nenhuma pendência em lugar nenhum, diga isso claramente em vez de não retornar
    nada.
 

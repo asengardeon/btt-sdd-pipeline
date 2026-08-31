@@ -35,6 +35,16 @@ Aciona a **etapa 6** do pipeline SDD descrito em `CLAUDE.md`: validação de CI/
    revisão" da skill `/btt-sdd:implement` (prefira retomar o mesmo agente que implementou a fatia
    via `SendMessage` para correções pequenas e objetivas, em vez de invocar um agente novo).
 
+## Auto-aprovação nunca é o gate real
+
+Se o agente `sre` foi invocado fora deste fluxo normal só para *implementar* um ajuste pontual de
+infraestrutura (ex.: corrigir um `cd.yml` a pedido do orquestrador), essa invocação **não conta**
+como a revisão desta etapa, mesmo que o mesmo agente já esteja "na área" e tecnicamente pudesse
+escrever o veredito. Depois que o ajuste estiver pronto e code review/QA/segurança tiverem
+completado normalmente, invoque uma instância **nova e independente** do `sre` para produzir
+`sre-review.md` — nunca aceite um veredito escrito na mesma rodada em que o `sre` implementou a
+correção.
+
 ## Quando usar fora do fluxo de feature
 
 Se o usuário pedir "revisa nosso pipeline" ou "audita a infra" sem uma feature específica, aponte
