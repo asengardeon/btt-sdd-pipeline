@@ -113,6 +113,9 @@ gravada por quem causa a transição.
 - [ ] Se a feature tem UI, o usuário foi consultado (via `AskUserQuestion`, `/sdd-prd` passo 2b)
   sobre ver opções de wireframe/protótipo antes do PRD — aceite ou recusa, nunca silenciado; seção
   "Wireframes/Protótipos de tela" preenchida de acordo (ou "não aplicável" se a feature não tem UI).
+  Se opções foram geradas, o(s) arquivo(s)-fonte `.dc.html` estão salvos em
+  `specs/<slug>/wireframes/` (não só a URL do Artifact) — para conferência futura mesmo se o
+  Artifact publicado não estiver mais acessível.
 - [ ] Aprovação explícita do usuário registrada.
 
 ## TRD

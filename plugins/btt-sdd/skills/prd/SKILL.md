@@ -25,14 +25,21 @@ Aciona a **etapa 1** do pipeline SDD descrito em `CLAUDE.md`: geração do PRD.
    2-3 opções de layout/fluxo das telas principais descritas no pedido, publicadas como Artifact, e
    pergunte ao usuário qual prefere (ou se quer combinar elementos de mais de uma). Isso é uma
    exploração visual rápida para alinhar direção cedo — não substitui o desenho técnico de UI que
-   fica com `architect`/`frontend-developer` depois. Leve o resultado (opção escolhida, ou a
-   recusa) para o passo 3 abaixo. Se a feature não tem UI, pule este passo sem perguntar.
+   fica com `architect`/`frontend-developer` depois.
+   **Salve o(s) arquivo(s)-fonte `.dc.html` junto da spec**, não só a URL do Artifact (que pode
+   ficar indisponível depois): copie-o(s) para `specs/<NNNN-slug>/wireframes/` (crie o diretório se
+   não existir), com nome descritivo (ex.: `opcoes-tela-<nome>.dc.html`) — é esse arquivo local que
+   garante a conferência futura mesmo sem acesso ao Artifact publicado; para ver de novo mais
+   tarde, republique esse mesmo arquivo via Artifact em vez de recriar do zero. Leve o resultado
+   (opção escolhida, URL do Artifact, e caminho do arquivo salvo — ou a recusa) para o passo 3
+   abaixo. Se a feature não tem UI, pule este passo sem perguntar.
 3. Invoque o agente `product-design` (Agent tool, `subagent_type: "product-design"`) passando:
    o pedido do usuário, o número/slug decidido, o resultado do passo 2b (opção de wireframe
-   escolhida com a referência do Artifact, recusa explícita do usuário, ou "não aplicável" se a
-   feature não tem UI), e instrução explícita para salvar o PRD em `specs/<NNNN-slug>/prd.md`
-   usando `specs/_template/prd.template.md` como estrutura — incluindo a seção "Wireframes/
-   Protótipos de tela".
+   escolhida com a referência do Artifact e o caminho do arquivo salvo em
+   `specs/<NNNN-slug>/wireframes/`, recusa explícita do usuário, ou "não aplicável" se a feature
+   não tem UI), e instrução explícita para salvar o PRD em `specs/<NNNN-slug>/prd.md` usando
+   `specs/_template/prd.template.md` como estrutura — incluindo a seção "Wireframes/Protótipos de
+   tela".
 4. Depois que o agente retornar, mostre ao usuário um resumo do PRD gerado (não o arquivo
    inteiro) e pergunte se aprova ou quer ajustes.
 5. Se pedir ajustes, repasse o feedback ao agente `product-design` (ou edite diretamente se for

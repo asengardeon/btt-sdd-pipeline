@@ -56,6 +56,10 @@ de UI final (isso continua com `architect`/`frontend-developer` no TRD/implement
 - **Opções apresentadas**: `<link do Artifact com as opções, ou "nenhuma — usuário preferiu seguir
   direto para o PRD">`
 - **Opção escolhida**: `<qual opção, e por quê, se o usuário comentou>`
+- **Arquivo salvo**: `specs/<slug>/wireframes/<nome-descritivo>.dc.html` — a fonte local das
+  opções geradas, salva junto da spec para conferência futura mesmo se o Artifact publicado não
+  estiver mais acessível (republique esse arquivo via Artifact para ver de novo). `<preencher ou
+  "não aplicável">`
 
 ## 8. Métricas de sucesso
 

@@ -184,7 +184,10 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
   repositório — está documentado em `0001-example-task-management/code-examples.md`.
 - **Cada feature nova** ganha uma pasta `NNNN-slug-em-kebab-case/` com os artefatos que forem
   sendo produzidos por cada etapa, incluindo uma subpasta `coverage/` com os resumos de cobertura
-  por fatia/trilha.
+  por fatia/trilha e, quando a feature tem UI e o usuário aceitou ver opções (`/sdd-prd`, passo
+  2b), uma subpasta `wireframes/` com o(s) arquivo(s)-fonte `.dc.html` das opções geradas —
+  salvos junto da spec para conferência futura mesmo que o Artifact publicado não esteja mais
+  acessível.
 
 ## `src/`, `tests/`, `frontend/`, `infra/`, `.github/workflows/` — não existem neste repositório hoje
 
