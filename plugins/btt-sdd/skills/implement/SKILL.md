@@ -54,7 +54,8 @@ assim:
 2c. **Antes de criar a branch desta rodada**, se a fatia não é a primeira, confirme que o PR da
    fatia anterior já foi mergeado em `main` (`docs/GIT-WORKFLOW.md`, regra 3, tem o comando). Se
    não estiver, **pare aqui** e informe o usuário — não invoque os agentes de desenvolvimento
-   sobre uma `main` desatualizada.
+   sobre uma `main` desatualizada. Ao confirmar o merge, atualize (se ainda não estiver) a coluna
+   Status das tarefas dessa fatia anterior no TRD para `concluído (mergeado)`.
 3. **Se só uma trilha aparece** (só backend ou só frontend): invoque o agente correspondente
    (`backend-developer` ou `frontend-developer`, Agent tool) passando os caminhos do TRD e do
    PRD. O agente segue seu próprio processo em duas fases (plano aprovado via `AskUserQuestion`
@@ -80,6 +81,10 @@ assim:
    fatia** foram de fato criados (uma única branch/PR por fatia, mesmo com as duas trilhas).
 6. Mostre ao usuário um resumo do que foi implementado nesta fatia (por trilha, se full-stack), o
    link/nome do PR, os comandos usados para rodar os testes, e a cobertura obtida por pacote.
+   **Inclua também uma tabela resumo do Status atual de todas as tarefas da spec** (não só desta
+   fatia), extraída da coluna Status da tabela "Decomposição de tarefas e dependências" do TRD
+   (colunas ID | Tarefa | Fatia | Status) — visão de progresso ponta a ponta da spec, não só do
+   incremento mais recente (`docs/QUALITY-GATES.md`, seção "Status de tarefas").
 7. Ao final, informe que a próxima etapa é `/btt-sdd:code-review`, referenciando o PR desta
    fatia. Se houver fatias seguintes pendentes, informe também que elas só começam depois deste PR
    passar por code review, QA, segurança, SRE e ser mergeado em `main` (`docs/GIT-WORKFLOW.md`) —

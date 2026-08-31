@@ -34,6 +34,16 @@ Aciona a **etapa 6** do pipeline SDD descrito em `CLAUDE.md`: validação de CI/
    os itens pendentes e quem deve resolvê-los — e siga a seção "Retomando para corrigir achados de
    revisão" da skill `/btt-sdd:implement` (prefira retomar o mesmo agente que implementou a fatia
    via `SendMessage` para correções pequenas e objetivas, em vez de invocar um agente novo).
+6b. **Spec finalizada → aciona `tech-writer` automaticamente.** Se a fatia aprovada (ou aprovada
+   com ressalvas) nesta rodada for a **última fatia pendente da feature** (verifique a tabela
+   "Decomposição de tarefas e dependências" do TRD: nenhuma outra fatia ainda não
+   implementada/mergeada depois desta), a spec está completa ponta a ponta pelo pipeline. Antes de
+   informar o usuário sobre o merge, invoque o agente `tech-writer` (Agent tool, `subagent_type:
+   "tech-writer"`, ou `/btt-sdd:docs`) para atualizar a documentação do repositório (README,
+   `docs/`, ADRs) refletindo o que esta feature introduziu de fato — não é um passo opcional a
+   critério do usuário, roda automaticamente sempre que a última fatia é aprovada. Escopo da
+   invocação: só o que a feature `<slug>` mudou de verdade (mecanismos novos, comportamento
+   documentado alterado), nunca uma reescrita geral não relacionada.
 
 ## Quando usar fora do fluxo de feature
 

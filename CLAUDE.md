@@ -76,7 +76,7 @@ Cada agente vive em `.claude/agents/<nome>.md` e é acionado por uma skill em
 | `/sdd-amend`        | (nenhum, utilitário)                             | emenda um artefato já aprovado sem reiniciar o pipeline |
 | `/sdd-pending`      | (nenhum, utilitário)                             | lista itens "VALIDAR DEPOIS" em aberto |
 | `/sdd-gap-report`   | (nenhum, utilitário)                             | compara casos de uso do TRD (seção 6) com o código real |
-| `/sdd-docs`         | tech-writer (utilitário, sem etapa fixa)         | README, docs/, ADRs, ou exemplos de código documentados |
+| `/sdd-docs`         | tech-writer (utilitário, sem etapa fixa; também acionado automaticamente por `/sdd-sre` ao aprovar a última fatia pendente de uma spec) | README, docs/, ADRs, ou exemplos de código documentados |
 
 Veja o exemplo de referência (PRD, TRD, QA/security/SRE reports reais) em
 `specs/0001-example-task-management/` — o código correspondente não existe mais como arquivos

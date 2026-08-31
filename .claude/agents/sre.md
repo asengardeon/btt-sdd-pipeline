@@ -184,7 +184,9 @@ branch, ou `main`), que já é o comportamento padrão de uma primeira fatia.
    `docs/LESSONS-LEARNED.md` seguindo o critério daquela seção. Preencha também `Profundidade`
    (`completo` se esta rodada revisou o checklist por completo — sempre o caso na fatia final —
    ou `fast-path` se alguma área foi condensada) e `Commit` (`git rev-parse HEAD` no momento desta
-   revisão) nas colunas correspondentes.
+   revisão) nas colunas correspondentes. Atualize também, no TRD, a coluna Status das tarefas
+   desta fatia: `aprovado` se o veredito geral for aprovado (ou aprovado com ressalvas), ou
+   `bloqueado` (com o motivo em uma linha) se reprovado.
 4b. **Se você aprovou (ou aprovou com ressalvas) esta fatia** e a tabela "Decomposição de tarefas e
    dependências" do TRD tem issues do GitHub associadas (coluna "Issue GitHub" preenchida com
    `#N`) a tarefas cobertas por esta fatia, documente a resolução em cada uma antes de terminar:

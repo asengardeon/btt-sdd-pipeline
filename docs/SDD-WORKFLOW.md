@@ -52,10 +52,11 @@ validam objetivamente contra critérios escritos".
   observabilidade, manutenibilidade — detalhe em `docs/ENGINEERING-PILLARS.md`) respondida
   explicitamente para a feature, o "Contrato Frontend↔Backend" quando a feature tem UI (o que
   permite backend e frontend desenvolverem em paralelo), e a "Decomposição de tarefas e
-  dependências" (backend/frontend/ambos, com dependência técnica explícita — preferencialmente
-  espelhada como Issues reais do GitHub quando há remote conectado e autenticado; a tabela do TRD
-  sozinha é o fallback só quando não há GitHub configurado). ADRs em `docs/adr/` para decisões
-  técnicas significativas.
+  dependências" (backend/frontend/ambos, com dependência técnica explícita, e uma coluna Status
+  que o pipeline mantém atualizada ponta a ponta conforme a spec avança — detalhe em
+  `docs/QUALITY-GATES.md`, seção "Status de tarefas" — preferencialmente espelhada como Issues
+  reais do GitHub quando há remote conectado e autenticado; a tabela do TRD sozinha é o fallback
+  só quando não há GitHub configurado). ADRs em `docs/adr/` para decisões técnicas significativas.
 - **Gate de saída**: aprovação explícita do usuário.
 
 ### 3. Desenvolvimento → Código + Testes (backend e/ou frontend, em paralelo quando full-stack)
@@ -129,6 +130,10 @@ validam objetivamente contra critérios escritos".
 - **Gate de saída**: aprovado (ou aprovado com ressalvas registradas). Depois disso, o merge do PR
   desta fatia para `main` é decisão do usuário — nenhum agente mergeia sozinho. Se houver fatia
   seguinte pendente na feature, ela só começa depois desse merge (`docs/GIT-WORKFLOW.md`).
+- **Spec finalizada**: se a fatia aprovada nesta rodada é a última pendente da feature,
+  `/sdd-sre` também aciona `tech-writer` automaticamente para atualizar a documentação do
+  repositório (README, `docs/`, ADRs) refletindo a feature completa, antes de informar o usuário
+  sobre o merge.
 
 ## Governança de decisão (vale para todas as etapas, incluindo a condicional)
 

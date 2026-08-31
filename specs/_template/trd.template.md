@@ -138,9 +138,16 @@ resultado continue demonstrável de ponta a ponta** (quando full-stack: backend 
 mesma fatia concluídos juntos, nunca "todo o backend primeiro, todo o frontend depois"). É isso
 que permite entregar e mostrar a spec completa aos poucos, em vez de só no fim.
 
-| ID   | Tarefa                    | Trilha                    | Fatia (PRD) | Depende de | Issue GitHub |
-|------|------------------------------|------------------------------|--------------|---------------|------------------|
-| T-1  | <descrição da tarefa>         | backend / frontend / ambos    | F-1           | nenhuma        | `<#N ou "não espelhada">` |
+| ID   | Tarefa                    | Trilha                    | Fatia (PRD) | Depende de | Status | Issue GitHub |
+|------|------------------------------|------------------------------|--------------|---------------|-----------|------------------|
+| T-1  | <descrição da tarefa>         | backend / frontend / ambos    | F-1           | nenhuma        | pendente  | `<#N ou "não espelhada">` |
+
+A coluna **Status** é a fonte de verdade de onde cada tarefa está, mantida **in-place** por quem
+causa cada transição — nunca inferida depois por outra etapa. `architect` inicializa toda tarefa
+nova como `pendente`. Ciclo de vida completo e responsabilidade de cada transição em
+`docs/QUALITY-GATES.md`, seção "Status de tarefas": `pendente` → `em andamento` → `implementado`
+→ `aprovado` → `concluído (mergeado)`, com `bloqueado` como estado de exceção (uma revisão
+reprovou; volta a `em andamento` quando a correção começa).
 
 Se houver remote GitHub configurado e autenticado, a preferência é criar Issues de verdade no
 GitHub (não deixar as tarefas só nesta tabela) — o `architect` pergunta ao usuário depois do TRD
@@ -150,7 +157,9 @@ GitHub conectado, esta tabela é a única fonte de verdade.
 Ciclo de vida de cada issue criada: o PR da fatia que cobre a tarefa referencia `Closes #N`
 (`backend-developer`/`frontend-developer`, ao abrir o PR); `sre`, ao aprovar a fatia, comenta na
 issue documentando o que foi implementado (link do PR e dos artefatos de revisão); a issue fecha
-sozinha quando o usuário mergear o PR — nunca fechada manualmente antes disso.
+sozinha quando o usuário mergear o PR — nunca fechada manualmente antes disso. Sempre que a coluna
+Status de uma tarefa muda, o mesmo agente/skill responsável por essa transição comenta a mudança
+na issue associada (`gh issue comment`), para o TRD e o GitHub nunca divergirem.
 
 ## 14. Controle de versão (GitHub Flow, por fatia)
 

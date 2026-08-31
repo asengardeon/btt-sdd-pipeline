@@ -59,6 +59,30 @@ confirmado ainda").
   relevante(s) à trilha como restrição adicional ao TRD, citando no plano apresentado ao usuário
   qual lição foi aplicada e como.
 
+## Status de tarefas (coluna "Status" da decomposição do TRD)
+
+Toda tarefa da tabela "Decomposição de tarefas e dependências" do TRD tem uma coluna **Status**,
+fonte de verdade de onde cada atividade da spec está — nunca inferida depois por outra etapa, só
+gravada por quem causa a transição.
+
+- [ ] `architect` inicializa toda tarefa nova como `pendente`.
+- [ ] `backend-developer`/`frontend-developer` atualizam, in-place no TRD, para `em andamento` ao
+  começar a Fase 2 (execução) das tarefas da fatia — inclusive ao retomar uma tarefa que estava
+  `bloqueado` — e para `implementado` ao concluir sua trilha.
+- [ ] `code-reviewer`/`qa-engineer`/`security-engineer`/`sre` atualizam para `bloqueado` (com o
+  motivo em uma linha) as tarefas da fatia cujo veredito desta rodada foi reprovado.
+- [ ] `sre` atualiza para `aprovado` as tarefas da fatia ao aprová-la (ou aprovar com ressalvas) —
+  o último gate antes do merge.
+- [ ] `/sdd-implement`, ao confirmar (pré-condição antes de iniciar a fatia seguinte) que o PR de
+  uma fatia já foi mergeado em `main`, atualiza essa fatia para `concluído (mergeado)`.
+- [ ] Se a tarefa tem Issue GitHub associada (coluna "Issue GitHub" preenchida), a mesma transição
+  é comentada na issue (`gh issue comment`) pelo mesmo agente/skill que a causou — mesma
+  tolerância de falha de 3 tentativas das demais interações com `gh` no pipeline (relate o erro e
+  siga sem bloquear a transição por isso).
+- [ ] `/sdd-implement`, ao final de cada rodada de implementação, apresenta ao usuário uma tabela
+  com o Status atual de **todas** as tarefas da spec (não só as desta fatia) — visão de progresso
+  ponta a ponta, não só do incremento mais recente.
+
 ## Baseline (condicional, `codebase-archaeologist`)
 
 - [ ] Só roda quando falta documentação base suficiente sobre código/sistema já existente — nunca
@@ -91,7 +115,8 @@ confirmado ainda").
 - [ ] Se a feature inclui frontend, "Contrato Frontend↔Backend" está definido (no TRD ou num ADR
   referenciado) — nunca "a definir depois".
 - [ ] "Decomposição de tarefas e dependências" preenchida, com trilha (backend/frontend/ambos) e
-  dependências técnicas explícitas para cada tarefa.
+  dependências técnicas explícitas para cada tarefa, e a coluna Status inicializada como
+  `pendente` para cada tarefa nova (ciclo de vida completo na seção "Status de tarefas" abaixo).
 - [ ] Se o TRD depende de código pré-existente sem documentação suficiente, `/sdd-baseline` rodou
   antes (ou a documentação já era suficiente, explicitamente constatado).
 - [ ] Nome de branch GitHub Flow definido **por fatia** (`docs/GIT-WORKFLOW.md`) — uma branch/PR
