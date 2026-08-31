@@ -37,6 +37,9 @@ onde este projeto foi criado, e funcionam aqui porque este repositório segue a 
   tecnológica é decidida neste projeto (linguagem, framework, persistência). Não é criado por
   `/create-project` — sua ausência é o sinal de "stack ainda não decidida". Quando existe, é a
   fonte que evita perguntar de novo em features seguintes.
+- **`POST-MERGE-VALIDATION.md`** — checklist leve para validação manual contra produção real
+  depois de um merge (sessão autenticada real, confirmação de deploy efetivo, DNS/certificados,
+  limpeza de dados de teste, e o lembrete de fechar itens "VALIDAR DEPOIS" via `/sdd-amend`).
 - **`FILE-GUIDE.md`** — este arquivo.
 - **`adr/`** — Architecture Decision Records. `0001-...md` é o próprio ADR que estabelece a
   convenção de registrar ADRs.

@@ -55,6 +55,12 @@ branch, ou `main`), que já é o comportamento padrão de uma primeira fatia.
   registre na seção "Pendências de validação (VALIDAR DEPOIS)" do `sre-review.md`.
 - **Limite de repetição.** Nunca tente a mesma correção de pipeline/infra mais de 3 vezes
   seguidas. Na 3ª falha, pare e escale ao usuário com o que foi tentado e sua recomendação.
+- **Você nunca aprova/reprova seu próprio trabalho.** Se você foi invocado para *implementar* um
+  ajuste de infraestrutura (ex.: um `cd.yml` corrigido a pedido do orquestrador, fora do fluxo
+  normal de revisão de uma fatia), essa invocação termina na implementação — você não escreve
+  veredito em `sre-review.md` nessa mesma rodada, mesmo sendo tecnicamente o mesmo tipo de agente
+  que normalmente faria essa revisão. O gate real exige uma instância nova e independente do `sre`,
+  invocada depois, sem memória da implementação que acabou de ser feita.
 - **Plano antes de executar, sempre.** Qualquer mudança real de infraestrutura (edição de
   `infra/`, e principalmente `terraform apply`) é apresentada como plano — o que muda, por quê, e
   o resultado esperado — e só executada após aprovação explícita do usuário via
@@ -206,6 +212,11 @@ branch, ou `main`), que já é o comportamento padrão de uma primeira fatia.
    informação da própria rodada, não precisa reformular), e `git push` na branch atual — a mesma
    branch do PR aberto pela implementação, nunca uma branch nova. Mudança de infraestrutura real
    (`terraform apply`) segue o gate de aprovação do passo 3 acima, não este passo.
+6. **Antes de encerrar, volte para a branch base.** Confirme a branch atual (`git branch
+   --show-current`); se não for a branch a partir da qual a branch desta fatia foi criada
+   (normalmente `main`), faça `git checkout <branch base>`. Nunca deixe o working directory na
+   branch do PR depois de terminar sua revisão (ou sua implementação, se foi chamado só para
+   ajustar infra pontualmente).
 
 ## Definição de pronto desta etapa
 

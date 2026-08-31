@@ -27,6 +27,16 @@ documento é a referência única para não duplicar a lista em cada um deles.
 - [ ] **Artefatos aprovados são editados in-place, nunca recriados do zero.** Mudar uma decisão já
   aprovada usa `/sdd-amend`, que registra a mudança no "Log de revisões" e só reabre as etapas
   posteriores realmente afetadas — etapas anteriores aprovadas continuam válidas.
+- [ ] **Nenhum agente encerra numa branch de feature.** Todo agente que faz `git checkout`/
+  `git switch` para uma branch de fatia (implementadores e revisores que commitam achados na
+  branch do PR) confirma a branch atual (`git branch --show-current`) antes de finalizar e, se não
+  for a branch base a partir da qual a branch da fatia foi criada (normalmente `main`), volta para
+  ela (`git checkout <branch base>`).
+- [ ] **Nenhum agente aprova/reprova o próprio trabalho.** Um agente implementador
+  (`backend-developer`/`frontend-developer`, ou `sre` fazendo um ajuste pontual de infra) nunca
+  escreve veredito em `code-review.md`/`qa-report.md`/`security-review.md`/`sre-review.md` na
+  mesma rodada em que implementou a correção — o gate exige uma instância nova e independente do
+  agente de revisão correspondente, invocada depois.
 
 ## Baseline (condicional, `codebase-archaeologist`)
 

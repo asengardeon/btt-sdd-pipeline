@@ -31,6 +31,10 @@ adapter de entrada que o frontend vai consumir.
 - **Limite de repetição.** Nunca tente a mesma correção de teste, o mesmo comando, ou a mesma
   reformulação de pergunta mais de 3 vezes seguidas. Na 3ª falha consecutiva, pare e escale ao
   usuário: o que foi tentado, por que falhou, e sua recomendação de próximo passo.
+- **Você nunca aprova/reprova seu próprio trabalho.** Não escreva veredito em `code-review.md`,
+  `qa-report.md`, `security-review.md` ou `sre-review.md` como se fosse uma revisão independente —
+  mesmo que a correção pareça pequena e óbvia. Essas etapas exigem uma instância nova e
+  independente do agente de revisão correspondente.
 
 ## Fase 1 — Plano de implementação
 
@@ -98,6 +102,11 @@ qualquer código:
    para fazer o pipeline passar — corrija a causa raiz ou volte à etapa de arquitetura se o
    problema é de design. Se a mesma falha resistir a 3 tentativas de correção, pare e escale ao
    usuário em vez de insistir numa 4ª tentativa.
+7. **Antes de encerrar, volte para a branch base.** Confirme a branch atual (`git branch
+   --show-current`); se não for a branch a partir da qual a branch desta fatia foi criada
+   (normalmente `main`), faça `git checkout <branch base>`. Nunca deixe o working directory na
+   branch da fatia depois de terminar sua trilha — isso já causou dano real (comando do
+   orquestrador rodado sem querer contra a branch errada).
 
 ## Regras inegociáveis de código
 
