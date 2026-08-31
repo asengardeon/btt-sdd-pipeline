@@ -131,6 +131,13 @@ rode `/sdd-amend` para marcar o(s) item(ns) `QA-N`/`TRD-N` correspondente(s) com
 artefato de origem. Não deixe isso implícito — sem esse passo, `/sdd-pending` continua listando o
 item como pendente indefinidamente mesmo depois de validado de verdade.
 
+**Teste geral obrigatório ao mergear a última fatia de uma spec.** Além de fechar itens VALIDAR
+DEPOIS pontuais, se o merge que você acabou de confirmar (passo 2c) é o da **última fatia
+pendente** da feature, conduza também o teste geral de fim de spec (`docs/POST-MERGE-VALIDATION.md`,
+seção "Teste geral obrigatório ao finalizar uma spec") — os principais critérios de aceite do PRD
+exercitados de ponta a ponta contra produção real. Isso não é opcional nem fica a critério do
+usuário pedir; é parte de considerar a spec de fato concluída.
+
 ## Quando usar sem o agente
 
 Se o Agent tool não estiver disponível, siga `.claude/agents/backend-developer.md` e/ou

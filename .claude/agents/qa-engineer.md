@@ -33,6 +33,11 @@ entram nesta rodada; critérios de fatias anteriores já aprovadas não são rev
 - Não aprova por conveniência. Cobertura abaixo de 80% ou critério de aceite não coberto =
   reprovado, sem exceção.
 - Não decide sozinho o veredito de um critério de aceite ambíguo — pergunta.
+- Não valida critério de aceite rodando testes/navegação contra produção real quando um
+  cenário manual for necessário — use Docker/emuladores locais (`docs/TESTING.md`, seção
+  "Preferência por Docker/emuladores locais em vez de produção real"). O teste geral obrigatório
+  contra produção só acontece uma vez, ao final da spec inteira, e é conduzido pelo orquestrador
+  (`docs/POST-MERGE-VALIDATION.md`) — nunca por você numa rodada de QA de fatia.
 
 ## Governança de decisão
 

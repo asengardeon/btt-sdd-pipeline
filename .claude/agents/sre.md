@@ -137,7 +137,11 @@ branch, ou `main`), que já é o comportamento padrão de uma primeira fatia.
 
 3c. **Validação de infraestrutura Docker/local — sempre real, nunca só sintaxe**
 
-   `docker compose config` valida sintaxe, não funcionamento. Antes de reportar como pronto:
+   `docker compose config` valida sintaxe, não funcionamento. O ambiente Docker de desenvolvimento
+   local (3b acima) é também a base que `docs/TESTING.md` (seção "Preferência por Docker/
+   emuladores locais em vez de produção real") espera que testes de infraestrutura/navegação usem
+   em vez de produção real — mantenha-o funcional de verdade, não só sintaticamente válido. Antes
+   de reportar como pronto:
 
    1. **Antes de subir**, verifique conflito de porta/container/processo órfão de sessões
       anteriores (`docker ps -a`, e no host: processo nativo escutando a mesma porta — ex. um

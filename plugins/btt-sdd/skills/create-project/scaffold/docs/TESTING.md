@@ -42,6 +42,29 @@ dublê do contrato de API (`docs/ARCHITECTURE.md`, seção Frontend) no lugar de
 camada de e2e "de verdade" cross-stack obrigatória por padrão; se a feature justificar, um e2e
 que sobe backend+frontend juntos é uma decisão do `architect` a registrar no TRD.
 
+## Preferência por Docker/emuladores locais em vez de produção real
+
+Todo teste automatizado que depende de infraestrutura (banco, filas, storage, serviço de nuvem
+gerenciado) ou de navegação (e2e via browser automation) roda, sempre que possível, contra
+Docker/emuladores locais — nunca contra o ambiente de produção real:
+
+- **Serviço de nuvem gerenciado** (S3, filas, etc.): emulador local (`docs/STACK.md`, seção
+  "Simulação de nuvem local") — nunca a conta real de produção.
+- **Banco/filas/dependências próprias do projeto**: container de teste (`docker-compose.yml`,
+  `infra/docker/`, `.claude/agents/sre.md`, seção "Docker de desenvolvimento local") — nunca o
+  banco de produção.
+- **Testes de navegação** (e2e via browser automation): sobem a aplicação localmente (Docker ou
+  equivalente) e navegam contra esse ambiente controlado — nunca contra a URL de produção real, o
+  que arrisca poluir dados reais e torna o resultado do teste dependente de rede/disponibilidade
+  externa.
+
+Produção real é reservada para o **teste geral obrigatório ao final de cada spec**
+(`docs/POST-MERGE-VALIDATION.md`) e para validações pontuais que genuinamente não podem ser
+simuladas (ex.: confirmar que um add-on de terceiro foi provisionado de verdade, DNS propagou) —
+nunca para a suíte automatizada do dia a dia. Se um teste "precisa" de produção para passar de
+forma repetível, isso é sinal de que falta um emulador/container equivalente, não motivo para
+apontar o teste para produção.
+
 ## O gate de cobertura de 80%
 
 - **Por pacote**: `src/` e, se existir, `frontend/` têm cada um seu próprio gate de 80% — não é
