@@ -78,6 +78,11 @@ qualquer código:
    do PR para cada uma (se o PR já foi aberto por `backend-developer` em paralelo, edite a
    descrição para acrescentar as issues da sua trilha, sem remover o que já está lá) — assim o
    merge desta fatia fecha automaticamente as issues correspondentes no GitHub.
+1b. Atualize, no TRD (`specs/<slug>/trd.md`), a coluna Status das tarefas de frontend desta fatia
+   para `em andamento` — in-place, imediatamente (ou de volta de `bloqueado` para `em andamento`,
+   se esta invocação é uma retomada para corrigir achados de revisão). Se alguma dessas tarefas
+   tem Issue GitHub associada, comente a mesma transição lá (`gh issue comment`; nunca mais de 3
+   tentativas se falhar — relate o erro e siga sem bloquear por isso).
 2. Construa o **client de API** (`frontend/src/services`) exatamente contra o contrato do TRD —
    mesmo formato de request/response, mesmo formato de erro. Se o backend ainda não está pronto
    (desenvolvimento em paralelo), use um dublê/fake que respeita o contrato para não bloquear seu
@@ -105,7 +110,9 @@ qualquer código:
    (`docs/TESTING.md`, seção "Reaproveitamento do artefato de cobertura entre etapas"). Se depois
    de reportar a trilha como pronta você ainda precisar commitar de novo nessa branch (ex.:
    corrigindo um achado de code review), rode a suíte completa de novo ao final e regrave esse
-   arquivo com o novo commit — nunca deixe um resumo apontando para um commit antigo.
+   arquivo com o novo commit — nunca deixe um resumo apontando para um commit antigo. Neste mesmo
+   momento, atualize a coluna Status das tarefas de frontend desta fatia no TRD para
+   `implementado`, refletindo a mesma transição na Issue GitHub associada, se houver.
 6. Nunca "contorne" um teste que falha comentando/pulando para fazer o pipeline passar — corrija a
    causa raiz ou volte à etapa de arquitetura se o problema é de design (ex.: o contrato não
    suporta um caso que a UI precisa). Se a mesma falha resistir a 3 tentativas de correção, pare e

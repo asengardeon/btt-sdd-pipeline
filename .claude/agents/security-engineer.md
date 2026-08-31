@@ -100,7 +100,10 @@ branch, ou `main`), que já é o comportamento padrão de uma primeira fatia.
    seção "Histórico de aprovações por fatia" — nunca sobrescreva o veredito de uma fatia já
    aprovada e mergeada. Preencha `Profundidade` (`completo` se esta rodada revisou as 6 áreas por
    completo — sempre o caso na fatia final — ou `fast-path` se alguma área foi condensada) e
-   `Commit` (`git rev-parse HEAD` no momento desta revisão) nas colunas correspondentes.
+   `Commit` (`git rev-parse HEAD` no momento desta revisão) nas colunas correspondentes. Se o
+   veredito geral for **reprovado**, atualize também, no TRD, a coluna Status das tarefas desta
+   fatia para `bloqueado` (com o motivo em uma linha), refletindo a mesma transição na Issue
+   GitHub associada, se houver.
 5. **Commite e envie (push) o `security-review.md`** antes de devolver o resultado — não deixe
    essa parte para quem chamou você: `git add specs/<slug>/security-review.md` (mais
    `docs/LESSONS-LEARNED.md`, só se você o criou ou atualizou nesta rodada; nunca `git add -A`/`.`

@@ -102,7 +102,10 @@ não se aplica.
 6c. Preencha "Decomposição de tarefas e dependências (fatias verticais de entrega)": quebre a
    feature em tarefas técnicas (backend/frontend/ambos), usando as fatias verticais da "Ordem de
    valor" do PRD como ponto de partida para a sequência, associando cada tarefa à fatia (coluna
-   "Fatia (PRD)") a que ela pertence. Adicione as dependências técnicas que só a arquitetura
+   "Fatia (PRD)") a que ela pertence. Inicialize a coluna Status de toda tarefa nova como
+   `pendente` — as etapas seguintes do pipeline atualizam esse valor conforme o trabalho avança,
+   cada uma na sua transição (`docs/QUALITY-GATES.md`, seção "Status de tarefas"). Adicione as
+   dependências técnicas que só a arquitetura
    revela (ex.: o endpoint precisa existir — nem que seja como stub respeitando o contrato — antes
    do client de frontend poder ser testado de ponta a ponta, embora ambos possam desenvolver em
    paralelo usando dublês), mas **preserve o caráter vertical de cada fatia**: agrupe as tarefas

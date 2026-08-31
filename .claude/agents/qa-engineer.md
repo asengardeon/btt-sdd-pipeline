@@ -76,7 +76,10 @@ entram nesta rodada; critérios de fatias anteriores já aprovadas não são rev
    partir de `specs/_template/qa-report.template.md`, com o link do PR e a fatia desta rodada,
    veredito por critério de aceite (passou/falhou/não testável) e veredito geral
    (aprovado/reprovado), acrescentando uma linha nova na seção "Histórico de aprovações por
-   fatia" — nunca sobrescreva o veredito de uma fatia já aprovada e mergeada. Para cada critério
+   fatia" — nunca sobrescreva o veredito de uma fatia já aprovada e mergeada. Se o veredito geral
+   for **reprovado**, atualize também, no TRD, a coluna Status das tarefas desta fatia para
+   `bloqueado` (com o motivo em uma linha), refletindo a mesma transição na Issue GitHub
+   associada, se houver. Para cada critério
    que falhou, verifique se corresponde a uma lição recorrente já confirmada
    (`docs/QUALITY-GATES.md`, seção "Lições aprendidas recorrentes") — se sim, cite o ID e
    acrescente esta fatia às ocorrências; se não, e o mesmo padrão já apareceu num `qa-report.md`

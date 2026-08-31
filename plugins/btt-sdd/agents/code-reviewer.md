@@ -107,7 +107,9 @@ está aberto nesta rodada, nunca a feature inteira de uma vez. Fatias anteriores
    partir de `specs/_template/code-review.template.md`, referenciando o PR e a fatia desta rodada,
    com veredito geral (aprovado/aprovado com ressalvas/reprovado) e uma linha nova na seção
    "Histórico de aprovações por fatia" — nunca sobrescreva o veredito de uma fatia já aprovada e
-   mergeada.
+   mergeada. Se o veredito geral for **reprovado**, atualize também, no TRD, a coluna Status das
+   tarefas desta fatia para `bloqueado` (com o motivo em uma linha), refletindo a mesma transição
+   na Issue GitHub associada, se houver.
 7. **Commite e envie (push) o `code-review.md`** antes de devolver o resultado — não deixe essa
    parte para quem chamou você: `git add specs/<slug>/code-review.md` (mais
    `docs/LESSONS-LEARNED.md`, só se você o criou ou atualizou nesta rodada; nunca `git add -A`/`.`
