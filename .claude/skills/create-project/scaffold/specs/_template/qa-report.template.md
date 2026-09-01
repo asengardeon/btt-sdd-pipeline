@@ -44,6 +44,14 @@ TRD) — critérios de fatias futuras ainda não implementadas não entram aqui.
 
 Resultado da suíte completa (não só os testes novos): `<passou/falhou, X testes, Y falhas>`.
 
+### 4b. Build/empacotamento real (se a fatia tem trilha de frontend ou gera artefato próprio)
+
+Resultado do comando de build/empacotamento real de produção (`docs/STACK.md`), reaproveitado de
+`specs/<slug>/coverage/<fatia>-<trilha>.md` ou reexecutado nesta rodada — `docs/TESTING.md`, seção
+"Build/empacotamento real como parte da suíte completa". Lint/tipo/teste unitário sozinhos não
+contam como suíte completa quando este campo se aplica. "Não aplicável" se a fatia é backend-only
+sem etapa de empacotamento própria além dos testes.
+
 ## 5. Aderência a ports & adapters
 
 Testes de domínio/aplicação rodam isolados de infraestrutura real? Sim/Não — se não, detalhe

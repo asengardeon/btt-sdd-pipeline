@@ -16,7 +16,10 @@ Aciona a **etapa 5** do pipeline SDD descrito em `CLAUDE.md`: validação de QA.
 3. Invoque o agente `qa-engineer` (Agent tool, `subagent_type: "qa-engineer"`) passando os
    caminhos do PRD e TRD e o PR/branch da feature (`feature/<slug>`, ver `docs/GIT-WORKFLOW.md`),
    e instrução para produzir `specs/<slug>/qa-report.md` a partir de
-   `specs/_template/qa-report.template.md`, referenciando o PR.
+   `specs/_template/qa-report.template.md`, referenciando o PR. **Se outra tarefa desta sessão
+   ainda pode estar ativa na mesma branch**, passe `isolation: "worktree"` nesta chamada — nunca
+   deixe dois agentes dividirem o mesmo diretório de trabalho (`docs/GIT-WORKFLOW.md`, seção
+   "Isolamento de working tree entre agentes concorrentes").
 4. Mostre ao usuário o veredito geral (aprovado/reprovado) e os pontos principais do relatório.
 5. Se reprovado, informe que a feature volta para `/sdd-implement` com os achados listados — e
    siga a seção "Retomando para corrigir achados de revisão" de

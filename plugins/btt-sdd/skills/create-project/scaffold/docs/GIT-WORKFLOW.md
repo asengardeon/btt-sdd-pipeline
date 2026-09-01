@@ -50,6 +50,60 @@ todas as fatias de uma vez para revisar depois.
 | `/sdd-sre`              | CI/CD/infra impactados por esta fatia; aprovado = PR pronto para merge; commita e envia (push) `sre-review.md` (e qualquer ajuste de infra desta rodada) na mesma branch. |
 | Merge do PR             | Decisão do usuário, nunca automática. Dispara CD e libera a fatia seguinte.   |
 
+## Isolamento de working tree entre agentes concorrentes
+
+`checkout`/`commit`/`push`/`reset` são operações **globais ao repositório**, não escopadas a um
+diretório — dois agentes tocando pastas diferentes (`src/` vs. `frontend/`) ainda competem pelo
+mesmo `HEAD`, pelo mesmo índice do Git, e pela mesma branch remota se dividirem o mesmo diretório
+de trabalho. Já aconteceu de verdade: dois agentes fazendo `checkout`/`commit`/`push` no mesmo
+diretório em paralelo perderam edição não commitada, um commit caiu na branch errada, e um
+`reset` de um agente desfez trabalho do outro. Os agentes se recuperaram sozinhos via rebase
+não-destrutivo naquela ocasião, mas isso **não é garantido** — não é uma corrida aceitável de se
+repetir só porque "geralmente dá certo".
+
+**Regra: sempre que dois agentes/tarefas puderem tocar `checkout`/`commit`/`push`/`reset` no mesmo
+repositório dentro da mesma janela de tempo, cada um trabalha num working tree isolado — nunca
+dividem o mesmo diretório de trabalho.** Isso vale tanto para invocação paralela deliberada (ex.:
+`backend-developer` + `frontend-developer` na mesma fatia, `/sdd-implement` passo 4d) quanto para
+qualquer agente de revisão fazendo sua própria verificação independente (rodar suíte de testes,
+`git diff`, lint) enquanto outra tarefa desta sessão pode ainda estar ativa na mesma branch (ex.:
+uma correção retomada via `SendMessage`, `.claude/skills/sdd-implement/SKILL.md`, seção
+"Retomando", ainda em andamento quando uma nova rodada de revisão é disparada). Não fica a
+critério do orquestrador perceber isso depois de um incidente — é decisão obrigatória antes de
+disparar a segunda invocação concorrente.
+
+**Mecanismo preferido — Agent tool do Claude Code**: ao invocar um agente cuja execução pode
+sobrepor outra tarefa no mesmo repositório, passe `isolation: "worktree"` na chamada da Agent
+tool — o harness cria um worktree temporário isolado (diretório + branch próprios) para aquele
+agente, eliminando a disputa de `HEAD`/índice com qualquer outra tarefa ativa.
+
+**Mecanismo equivalente manual** (Agent tool sem essa opção, ou um agente seguindo sua própria
+definição `.md` diretamente fora do harness): crie um worktree próprio antes de começar a
+trabalhar, num diretório separado do worktree principal —
+
+```bash
+git worktree add <caminho-separado> -b <branch-temporária-do-agente> <branch-da-fatia-ou-base>
+# ... trabalhe e commite normalmente dentro de <caminho-separado> ...
+git worktree remove <caminho-separado>   # ao terminar — nunca deixe worktree órfão
+```
+
+**Reconciliação para a branch compartilhada da fatia.** Como o design deste pipeline é uma única
+branch/PR por fatia (regra 2 acima), o trabalho feito num worktree isolado ainda precisa chegar
+nessa branch compartilhada. Antes de cada `push` para ela, sincronize primeiro — nunca assuma que
+é o único a mexer na branch remota:
+
+```bash
+git fetch origin <branch-da-fatia>
+git rebase origin/<branch-da-fatia>
+git push origin HEAD:<branch-da-fatia>
+```
+
+Se o `push` for rejeitado (non-fast-forward, sinal de que outro agente publicou nesse intervalo),
+repita `fetch` + `rebase` — mesmo limite de 3 tentativas de `docs/QUALITY-GATES.md` antes de parar
+e escalar ao usuário. Essa sincronização é o que garante que múltiplos agentes isolados ainda
+produzem uma única branch/PR coerente por fatia, sem que a isolação de working tree vire duas
+branches divergentes por engano.
+
 ## Por que `/sdd-amend` não reescreve histórico
 
 Uma emenda a um artefato já aprovado (`/sdd-amend`, ver `docs/SDD-WORKFLOW.md`) nunca reescreve

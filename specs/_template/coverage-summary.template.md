@@ -17,10 +17,11 @@ número desatualizado.
 
 ## Resultado da suíte
 
-| Métrica  | Resultado |
-|----------|-----------|
-| Testes   | `<N passaram, M falharam, K pulados>` |
-| Lint     | `<sem erros / N erros>` |
+| Métrica              | Resultado |
+|-----------------------|-----------|
+| Testes                | `<N passaram, M falharam, K pulados>` |
+| Lint                  | `<sem erros / N erros>` |
+| Build/empacotamento   | `<sucesso / falhou — comando: <comando real de build/produção da stack, docs/STACK.md> | "não aplicável — trilha sem artefato de build/empacotamento próprio">` |
 
 ## Cobertura agregada (por pacote)
 

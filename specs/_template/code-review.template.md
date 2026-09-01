@@ -58,22 +58,29 @@ Erros esperados tratados explicitamente, exceções não silenciadas sem motivo,
 Atalhos, TODOs, simplificações deliberadas — sinalizados pelo dev ou identificados aqui. Débito
 não documentado é achado bloqueante; débito documentado com justificativa é ressalva.
 
-## 9. Achados (se reprovado ou aprovado com ressalvas)
+## 9. Build/empacotamento real (se a fatia tem trilha de frontend ou gera artefato próprio)
+
+Resultado do comando de build/empacotamento real de produção (`docs/STACK.md`), reaproveitado de
+`specs/<slug>/coverage/<fatia>-<trilha>.md` ou reexecutado nesta rodada — `docs/TESTING.md`, seção
+"Build/empacotamento real como parte da suíte completa". "Não aplicável" se a fatia é backend-only
+sem etapa de empacotamento própria além dos testes.
+
+## 10. Achados (se reprovado ou aprovado com ressalvas)
 
 | # | Arquivo:linha | Problema | Sugestão | Severidade |
 |---|-----------------|----------|----------|------------|
 
-## 10. Pendências de validação (VALIDAR DEPOIS)
+## 11. Pendências de validação (VALIDAR DEPOIS)
 
 | ID    | Pergunta                          | Contexto                              | Status              |
 |-------|--------------------------------------|-------------------------------------------|------------------------|
 | CR-1  | <pergunta que ficou sem resposta>     | <por que essa pergunta importa>            | pendente / validado |
 
-## 11. Log de revisões
+## 12. Log de revisões
 
 | Data | Autor | O que mudou | Motivo | Etapas revalidadas |
 |------|-------|--------------|--------|-----------------------|
 
-## 12. Próximo passo
+## 13. Próximo passo
 
 `/sdd-qa` (se aprovado, para esta fatia) ou `/sdd-implement` (se reprovado, com os achados acima).

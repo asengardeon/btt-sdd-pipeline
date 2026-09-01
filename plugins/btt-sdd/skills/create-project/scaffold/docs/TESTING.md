@@ -112,6 +112,27 @@ linha-a-linha de arquivo já coberto. Um relatório HTML custa muito mais para l
 verboso, pensado para navegador) do que o texto/XML/JSON que a mesma ferramenta já gera junto —
 prefira sempre a saída estruturada.
 
+## Build/empacotamento real como parte da suíte completa (quando há trilha de frontend/artefato de build)
+
+Lint, checagem de tipos e teste automatizado não são a suíte completa quando a fatia tem uma
+trilha que produz um **artefato de build/empacotamento real** (frontend compilado, pacote
+distribuível, imagem — o que a stack decidida no TRD/`docs/STACK.md` gerar para produção). Um
+defeito que só esse passo pega pode passar despercebido por revisão de código e QA se nenhuma das
+duas etapas reproduzir o comando de build/empacotamento real, sendo pego só muito depois (ex. pelo
+`sre`, ou em produção).
+
+- **O que roda**: o comando que reproduz o artefato de build/produção real desta stack — nunca um
+  "modo dev"/watch, nem só checagem de tipos isolada. Qual comando é esse nunca é hardcoded neste
+  template — é o que `docs/STACK.md` deste projeto documentar como comando de build/empacotamento
+  de produção (definido pelo `architect` ao decidir a stack).
+- **Quando é obrigatório**: toda fatia cuja trilha inclui frontend, ou qualquer trilha que gera um
+  artefato de build/empacotamento distinto do código-fonte.
+- **Quem roda e onde fica registrado**: `backend-developer`/`frontend-developer` rodam esse
+  comando junto da suíte completa ao final da trilha e registram o resultado em
+  `specs/<slug>/coverage/<fatia>-<trilha>.md` (campo "Build/empacotamento" do template) —
+  `code-reviewer`/`qa-engineer` reaproveitam essa evidência (ou rodam o comando eles mesmos se o
+  arquivo faltar/estiver desatualizado) antes de aprovar uma fatia com essa trilha.
+
 ## Comando de referência
 
 Este projeto ainda não tem stack definida — o comando exato de teste/cobertura (`pytest`,

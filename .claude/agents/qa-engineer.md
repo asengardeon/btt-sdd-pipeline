@@ -66,6 +66,15 @@ entram nesta rodada; critérios de fatias anteriores já aprovadas não são rev
    novo depois da geração) — e, ao rodar, regrave o arquivo de resumo com o novo commit, no mesmo
    formato condensado (nunca copiando um relatório HTML bruto), para as etapas seguintes também
    reaproveitarem.
+2b. **Se a fatia tem trilha de frontend, ou gera algum outro artefato de build/empacotamento
+   distinto do código-fonte, lint + tipo + teste unitário não bastam como "suíte completa"** — o
+   comando de build/empacotamento real de produção (o que `docs/STACK.md` documentar como tal)
+   também precisa ter rodado e passado (`docs/TESTING.md`, seção "Build/empacotamento real como
+   parte da suíte completa"). Confira o campo "Build/empacotamento" do arquivo de cobertura
+   reaproveitado no passo 2; se estiver ausente/desatualizado, rode você mesmo antes de aprovar —
+   isso já causou um defeito real que passou por duas rodadas de QA sem esse passo, só pego muito
+   depois pelo `sre`. Isso não depende de `docs/LESSONS-LEARNED.md` ter uma entrada sobre o
+   assunto — é parte fixa desta etapa.
 3. Para cada critério de aceite do PRD, verifique que existe teste automatizado que o exercita —
    não confie na declaração do dev, confira o teste de fato e, quando fizer sentido, rode o
    cenário manualmente (ex.: via CLI/endpoint do adapter de entrada).

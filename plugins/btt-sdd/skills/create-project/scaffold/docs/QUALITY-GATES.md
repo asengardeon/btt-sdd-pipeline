@@ -113,6 +113,11 @@ gravada por quem causa a transição.
   `specs/<slug>/coverage/<fatia>-<trilha>.md` (`docs/TESTING.md`), com o commit SHA da execução —
   formato condensado, nunca o relatório bruto (HTML) colado — para as etapas seguintes
   reaproveitarem em vez de re-executar a suíte.
+- [ ] Se a fatia tem trilha de frontend, ou gera qualquer outro artefato de build/empacotamento
+  distinto do código-fonte, o comando de build/empacotamento real de produção (`docs/STACK.md`)
+  também rodou e passou, registrado no mesmo arquivo de cobertura (`docs/TESTING.md`, seção
+  "Build/empacotamento real como parte da suíte completa") — lint/tipo/teste unitário sozinhos não
+  bastam como "suíte completa" nesse caso.
 
 ## Revisão de código (`code-reviewer`)
 
@@ -125,6 +130,11 @@ gravada por quem causa a transição.
   dois lados.
 - [ ] Débito técnico introduzido está sinalizado explicitamente (pelo dev ou pela revisão) — débito
   silencioso não documentado é achado bloqueante.
+- [ ] Se a fatia tem trilha de frontend, ou gera qualquer outro artefato de build/empacotamento
+  distinto do código-fonte, o comando de build/empacotamento real de produção (`docs/STACK.md`)
+  foi verificado (reaproveitado do arquivo de cobertura da fatia ou reexecutado nesta rodada) antes
+  de aprovar — nunca aprovado só com base em lint/tipo/teste unitário nesse caso
+  (`docs/TESTING.md`, seção "Build/empacotamento real como parte da suíte completa").
 - [ ] `code-review.md` existe, referencia o PR e a fatia desta rodada, e cada área de revisão tem
   veredito com evidência (arquivo/linha) ou "sem achados".
 - [ ] `code-review.md` commitado (só esse arquivo, nunca `git add -A`/`.`) e enviado (push) na
@@ -136,6 +146,10 @@ gravada por quem causa a transição.
   sem isso, o QA não começa.
 - [ ] Cobertura medida e comparada ao gate de 80% — sem relatório de cobertura confiável, não há
   aprovação possível.
+- [ ] Se a fatia tem trilha de frontend, ou gera qualquer outro artefato de build/empacotamento
+  distinto do código-fonte, o comando de build/empacotamento real de produção (`docs/STACK.md`)
+  foi verificado antes de aprovar — lint/tipo/teste unitário sozinhos não são "suíte completa"
+  nesse caso (`docs/TESTING.md`, seção "Build/empacotamento real como parte da suíte completa").
 - [ ] Todo critério de aceite coberto pela fatia desta rodada tem veredito individual com
   evidência (teste ou passo manual).
 - [ ] Suíte completa rodou (regressão, inclui fatias anteriores já mergeadas), não só os testes
@@ -149,6 +163,13 @@ gravada por quem causa a transição.
 
 ## Segurança (`security-engineer`)
 
+- [ ] **Critério objetivo para segurança obrigatória, mesmo numa correção pontual pequena** (fora
+  do fluxo normal de fatia — ex. `/sdd-hotfix`): `security-engineer` roda sempre que o diff
+  tocar **qualquer um** dos itens abaixo, independente do tamanho da mudança — nunca uma decisão
+  de "merece ou não" reavaliada caso a caso: autenticação; autorização; gestão de sessão; dados
+  pessoais/sensíveis; ou qualquer ponto de entrada que aceita um identificador externo (e-mail,
+  identidade de SSO, token, ID de usuário de terceiro). Fora desses casos, a decisão continua a
+  critério do orquestrador, mas registrada, nunca implícita.
 - [ ] Superfície de ataque/fronteiras de confiança identificadas para a feature.
 - [ ] Cada categoria do OWASP Top 10 tem avaliação (aplicável com achado, ou não aplicável com
   justificativa) — nunca em branco.

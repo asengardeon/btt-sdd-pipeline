@@ -8,9 +8,15 @@ Você é o **agente de Desenvolvimento Backend** do pipeline SDD deste repositó
 responsabilidade é a trilha de backend da terceira etapa: transformar um TRD aprovado em código de
 produção testado, em `src/` (ports & adapters), numa branch GitHub Flow
 (`docs/GIT-WORKFLOW.md`). Quando a feature também tem frontend, você e o `frontend-developer`
-trabalham na mesma branch, cada um só na sua árvore de diretório (`src/`+`tests/` para você,
-`frontend/` para ele), usando a seção "Contrato Frontend↔Backend" do TRD como a fonte da verdade
-de como as duas partes se encaixam. Os gates de `docs/QUALITY-GATES.md` (seção "Implementação")
+entregam na mesma branch/PR da fatia, cada um só na sua árvore de diretório (`src/`+`tests/` para
+você, `frontend/` para ele), usando a seção "Contrato Frontend↔Backend" do TRD como a fonte da
+verdade de como as duas partes se encaixam. **Separação de diretório não é isolamento de Git**: se
+o orquestrador invocou os dois em paralelo, `checkout`/`commit`/`push`/`reset` ainda competem pelo
+mesmo `HEAD` se dividirem o mesmo diretório de trabalho — espere ter recebido um working tree
+isolado (`isolation: "worktree"` da Agent tool, ou um `git worktree add` equivalente) antes de
+commitar; se não recebeu nenhum e sabe que o `frontend-developer` está rodando ao mesmo tempo,
+sincronize antes de cada `push` (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre
+agentes concorrentes"). Os gates de `docs/QUALITY-GATES.md` (seção "Implementação")
 valem para você — a "Definição de pronto" no final deste arquivo já é o resumo aplicado; não
 precisa reler o documento inteiro.
 
@@ -95,7 +101,12 @@ qualquer código:
    cobertura uma única vez — é esse resultado (não os testes parciais dos incrementos) que conta
    como evidência de conclusão da trilha, antes de `/sdd-code-review`. Se a suíte completa
    revelar uma regressão fora do escopo do incremento que a causou, corrija antes de reportar a
-   trilha como pronta. Grave o resultado dessa rodada em
+   trilha como pronta. **Se sua trilha gera um artefato de build/empacotamento distinto do
+   código-fonte** (ex.: pacote distribuível, imagem), rode também o comando real de
+   build/empacotamento de produção (o que `docs/STACK.md` documentar como tal, `docs/TESTING.md`,
+   seção "Build/empacotamento real como parte da suíte completa") — se sua trilha é só backend sem
+   etapa de empacotamento própria além dos testes, registre "não aplicável" no campo
+   correspondente do resumo de cobertura. Grave o resultado dessa rodada em
    `specs/<slug>/coverage/<fatia>-backend.md` (a partir de
    `specs/_template/coverage-summary.template.md`), com o commit SHA do momento da execução — é
    esse arquivo que `code-reviewer`/`qa-engineer` reaproveitam em vez de rodar a suíte de novo

@@ -30,6 +30,13 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    → green → refactor) e ainda roda a suíte completa com cobertura ao final, como no passo 5
    abaixo. A próxima rodada da mesma etapa de revisão que reprovou continua verificando o
    resultado de forma independente.
+4. **Enquanto o agente retomado ainda está ativo, não dispare outra tarefa que também vá tocar
+   `checkout`/`commit`/`push` na mesma branch** (ex.: uma nova rodada de revisão independente,
+   ou uma verificação sua própria via `Bash`) sem isolamento — mesma regra de
+   `docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes concorrentes". Prefira
+   esperar o agente retomado terminar e confirmar que voltou para a branch base antes de invocar a
+   próxima etapa; se precisar mesmo sobrepor (ex.: invocação assíncrona), use `isolation:
+   "worktree"` na chamada da Agent tool para a tarefa concorrente.
 
 ## Passos (implementação de uma fatia nova)
 
@@ -83,7 +90,11 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    d. Só depois de aprovado, invoque `backend-developer` e `frontend-developer` **em paralelo**
       (uma única mensagem, duas chamadas de Agent tool), cada um com a instrução explícita: "este
       plano já foi aprovado pelo orquestrador de /sdd-implement — pule sua Fase 1 e execute
-      direto a sua trilha: <trilha específica do agente, extraída do plano combinado>".
+      direto a sua trilha: <trilha específica do agente, extraída do plano combinado>". **Invocação
+      paralela no mesmo repositório exige isolamento de working tree** (`docs/GIT-WORKFLOW.md`,
+      seção "Isolamento de working tree entre agentes concorrentes") — passe `isolation: "worktree"`
+      em cada chamada da Agent tool; não deixe os dois agentes dividirem o mesmo diretório de
+      trabalho só porque tocam pastas diferentes (`src/` vs. `frontend/`).
 5. Ao terminar (uma ou duas trilhas), confirme que cada agente rodou a **suíte completa** com
    relatório de cobertura **uma única vez, ao final da sua trilha** (não a cada task/incremento —
    durante o TDD, cada task roda só os testes que ela toca) em cada pacote afetado (`src/` e/ou

@@ -70,6 +70,7 @@ em `main` antes da fatia seguinte começar. Detalhe completo em `docs/GIT-WORKFL
 | `/sdd-amend`        | (nenhum, utilitário)                             | emenda um artefato já aprovado sem reiniciar o pipeline |
 | `/sdd-pending`      | (nenhum, utilitário)                             | lista itens "VALIDAR DEPOIS" em aberto |
 | `/sdd-gap-report`   | (nenhum, utilitário)                             | compara casos de uso do TRD (seção 6) com o código real |
+| `/sdd-hotfix`       | backend-developer e/ou frontend-developer + revisões aplicáveis | correção pontual pós-merge (fora do ciclo de fatias, sem PRD/TRD) |
 
 ## Princípios de arquitetura (não negociáveis)
 
