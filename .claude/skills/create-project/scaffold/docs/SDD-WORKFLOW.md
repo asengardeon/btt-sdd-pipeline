@@ -192,6 +192,20 @@ texto no PRD que não muda critério de aceite não invalida o TRD; mudar um cri
 invalida TRD, implementação, revisão de código, QA e segurança, mas não obriga a refazer a
 conversa toda do PRD.
 
+## Correção pontual pós-merge: `/sdd-hotfix`
+
+Um bug encontrado em produção (ou numa validação manual) depois que a spec relacionada já
+concluiu as 7 etapas e foi mergeada — ou uma melhoria pontual sem spec de origem nenhuma — não
+reabre o pipeline completo do zero. `/sdd-hotfix` formaliza esse caminho fora de banda: sem
+PRD/TRD, mas com o mesmo rigor de TDD, branch/PR (GitHub Flow, `docs/GIT-WORKFLOW.md`) e as
+revisões que se aplicarem — code review sempre; QA se há critério de aceite concreto a validar;
+segurança sempre que o diff tocar autenticação, autorização, sessão, dado sensível, ou entrada de
+identificador externo (critério objetivo em `docs/QUALITY-GATES.md`, seção "Segurança"); SRE só
+com impacto de infraestrutura/CI/dependência. O resultado é registrado na spec relacionada
+(in-place, linha `hotfix-<data>` no histórico de aprovações) ou num diretório de spec dedicado sem
+`prd.md`/`trd.md` quando não há spec de origem. Não confunda com uma feature nova pequena — se o
+escopo crescer (critério de aceite novo, decisão de arquitetura relevante), migre para `/sdd-prd`.
+
 ## GitHub Flow no pipeline
 
 Detalhe completo em `docs/GIT-WORKFLOW.md`. Resumo: a etapa 0 e o PRD/TRD não têm branch (são

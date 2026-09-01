@@ -136,6 +136,37 @@ linha-a-linha de arquivo já coberto. Um relatório HTML custa muito mais para l
 verboso, pensado para navegador) do que o texto/XML/JSON que a mesma ferramenta já gera junto —
 prefira sempre a saída estruturada.
 
+## Build/empacotamento real como parte da suíte completa (quando há trilha de frontend/artefato de build)
+
+Lint, checagem de tipos e teste automatizado não são a suíte completa quando a fatia tem uma
+trilha que produz um **artefato de build/empacotamento real** (frontend compilado, pacote
+distribuível, imagem — o que a stack decidida no TRD/`docs/STACK.md` gerar para produção). Já
+aconteceu de um defeito passar por duas rodadas de `code-reviewer` e duas de `qa-engineer` — só
+lint/tipo/teste unitário rodaram — e só ser pego depois pelo `sre`, várias execuções de CI
+adiante, porque nenhuma das etapas anteriores reproduziu o **comando de build/empacotamento real**
+da stack em uso.
+
+- **O que roda**: o comando que reproduz o artefato de build/produção real desta stack — não um
+  "modo dev"/watch, não só `tsc --noEmit`/checagem de tipos isolada. Qual comando é esse nunca é
+  hardcoded neste template — é o que `docs/STACK.md` do projeto documentar como comando de
+  build/empacotamento de produção (definido pelo `architect` ao decidir a stack, mesma lógica do
+  comando de teste/cobertura acima).
+- **Quando é obrigatório**: toda fatia cuja trilha inclui frontend, ou qualquer trilha que gera um
+  artefato de build/empacotamento distinto do código-fonte (não é o caso de uma trilha
+  backend-only sem etapa de build/empacotamento própria além dos testes).
+- **Quem roda e onde fica registrado**: `backend-developer`/`frontend-developer` rodam esse
+  comando junto da suíte completa ao final da trilha (mesmo momento da seção acima) e registram o
+  resultado em `specs/<slug>/coverage/<fatia>-<trilha>.md` (campo "Build/empacotamento" do
+  template) — evidência reaproveitada por `code-reviewer`/`qa-engineer` do mesmo jeito que a
+  cobertura, contanto que o `Commit` gravado bata com o HEAD atual da branch. Se o arquivo não
+  existe, ou o commit está desatualizado, quem precisar da evidência (`code-reviewer`/
+  `qa-engineer`) roda o comando de build/empacotamento você mesmo antes de aprovar — nunca aprova
+  uma fatia com trilha de frontend/build sem essa evidência (atual ou reexecutada).
+- **Isso é definição do agente, não depende de lições aprendidas.** `docs/QUALITY-GATES.md`
+  (seções "Implementação", "Revisão de código" e "QA") e `.claude/agents/code-reviewer.md`/
+  `.claude/agents/qa-engineer.md` já exigem isso diretamente — não fica condicionado a
+  `docs/LESSONS-LEARNED.md` ter uma entrada sobre o assunto numa sessão futura.
+
 ## Comando de referência (exemplo Python deste repositório)
 
 O exemplo em `src/`/`tests/` é backend-only (sem `frontend/`) e usa `pytest` + `coverage`:

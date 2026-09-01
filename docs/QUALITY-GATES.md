@@ -61,9 +61,16 @@ confirmado ainda").
   citando as duas ocorrências e uma recomendação objetiva de implementação. Achado isolado (1ª
   ocorrência) nunca vira entrada — fica só no relatório da própria feature.
 - [ ] **Formato de entrada**: uma seção por área (Backend / Frontend / Segurança / Infra-SRE /
-  Testes-QA), com ID sequencial global (`L-001`, `L-002`, ...) e os campos "Detectado por",
-  "Ocorrências" (caminho do artefato + fatia, por feature), "Padrão observado" e "Recomendação
-  para implementação".
+  Testes-QA), com ID no formato `L-<AAAA-MM-DD>-<slug-curto>` (data da criação da entrada +
+  slug curto em kebab-case do próprio achado, ex.: `L-2026-08-25-timeout-http-nao-configuravel`)
+  e os campos "Detectado por", "Ocorrências" (caminho do artefato + fatia, por feature), "Padrão
+  observado" e "Recomendação para implementação". **Nunca use um contador sequencial simples
+  (`L-001`, `L-002`, ...)**: duas branches de fatia diferentes, cada uma calculando o "próximo
+  ID" a partir da sua própria cópia local do arquivo, já geraram colisão real de ID em merge —
+  exigiu renumeração manual e correção de autorreferências. Data + slug do achado é
+  suficientemente único entre branches paralelas sem precisar coordenar um contador global; na
+  rara colisão de duas entradas com data e slug idênticos, acrescente um sufixo numérico ao
+  segundo (`-2`, `-3`, ...) no momento do merge.
 - [ ] `docs/LESSONS-LEARNED.md`, quando criado ou atualizado, é commitado junto do artefato de
   revisão da própria rodada (`code-review.md`/`qa-report.md`/`security-review.md`/
   `sre-review.md`) — nunca num commit separado.
@@ -163,6 +170,11 @@ gravada por quem causa a transição.
   `specs/<slug>/coverage/<fatia>-<trilha>.md` (`docs/TESTING.md`), com o commit SHA da execução —
   formato condensado, nunca o relatório bruto (HTML) colado — para as etapas seguintes
   reaproveitarem em vez de re-executar a suíte.
+- [ ] Se a fatia tem trilha de frontend, ou gera qualquer outro artefato de build/empacotamento
+  distinto do código-fonte, o comando de build/empacotamento real de produção (`docs/STACK.md`)
+  também rodou e passou, registrado no mesmo arquivo de cobertura (`docs/TESTING.md`, seção
+  "Build/empacotamento real como parte da suíte completa") — lint/tipo/teste unitário sozinhos não
+  bastam como "suíte completa" nesse caso.
 
 ## Revisão de código (`code-reviewer`)
 
@@ -175,6 +187,11 @@ gravada por quem causa a transição.
   dois lados.
 - [ ] Débito técnico introduzido está sinalizado explicitamente (pelo dev ou pela revisão) — débito
   silencioso não documentado é achado bloqueante.
+- [ ] Se a fatia tem trilha de frontend, ou gera qualquer outro artefato de build/empacotamento
+  distinto do código-fonte, o comando de build/empacotamento real de produção (`docs/STACK.md`)
+  foi verificado (reaproveitado do arquivo de cobertura da fatia ou reexecutado nesta rodada) antes
+  de aprovar — nunca aprovado só com base em lint/tipo/teste unitário nesse caso
+  (`docs/TESTING.md`, seção "Build/empacotamento real como parte da suíte completa").
 - [ ] `code-review.md` existe, referencia o PR e a fatia desta rodada, e cada área de revisão tem
   veredito com evidência (arquivo/linha) ou "sem achados".
 - [ ] `code-review.md` commitado (só esse arquivo, nunca `git add -A`/`.`) e enviado (push) na
@@ -186,6 +203,10 @@ gravada por quem causa a transição.
   sem isso, o QA não começa.
 - [ ] Cobertura medida e comparada ao gate de 80% — sem relatório de cobertura confiável, não há
   aprovação possível.
+- [ ] Se a fatia tem trilha de frontend, ou gera qualquer outro artefato de build/empacotamento
+  distinto do código-fonte, o comando de build/empacotamento real de produção (`docs/STACK.md`)
+  foi verificado antes de aprovar — lint/tipo/teste unitário sozinhos não são "suíte completa"
+  nesse caso (`docs/TESTING.md`, seção "Build/empacotamento real como parte da suíte completa").
 - [ ] Todo critério de aceite coberto pela fatia desta rodada tem veredito individual com
   evidência (teste ou passo manual).
 - [ ] Suíte completa rodou (regressão, inclui fatias anteriores já mergeadas), não só os testes
@@ -199,6 +220,20 @@ gravada por quem causa a transição.
 
 ## Segurança (`security-engineer`)
 
+- [ ] **Critério objetivo para segurança obrigatória, mesmo numa correção pontual pequena** (fora
+  do fluxo normal de fatia — ex. `/sdd-hotfix`, `docs/POST-MERGE-VALIDATION.md`, ou qualquer ajuste
+  que o orquestrador considerou "pequeno demais" para o pipeline completo): `security-engineer`
+  roda sempre que o diff tocar **qualquer um** dos itens abaixo, independente do tamanho da
+  mudança — nunca uma decisão de "merece ou não" reavaliada caso a caso pelo orquestrador:
+  - Autenticação (login, criação/validação de sessão, emissão/verificação de token/credencial).
+  - Autorização (checagem de permissão/papel, controle de acesso a recurso).
+  - Gestão de sessão (criação, expiração, invalidação, armazenamento de sessão).
+  - Dados pessoais/sensíveis (PII, credencial, dado financeiro/saúde, qualquer campo que já exija
+    tratamento especial em `security-review.md` de outra feature).
+  - Qualquer ponto de entrada que aceita um identificador externo (e-mail, identidade de SSO,
+    token, ID de usuário de terceiro) vindo de fora do sistema.
+  Fora desses casos, a decisão de acionar segurança numa correção pontual pequena continua a
+  critério do orquestrador (mas registrada, nunca implícita).
 - [ ] Superfície de ataque/fronteiras de confiança identificadas para a feature.
 - [ ] Cada categoria do OWASP Top 10 tem avaliação (aplicável com achado, ou não aplicável com
   justificativa) — nunca em branco.

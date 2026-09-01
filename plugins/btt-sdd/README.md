@@ -91,14 +91,14 @@ dentro dos arquivos deste plugin já vem adaptada para esse namespace, diferente
 **Convenção de nomes das skills deste plugin — sem o prefixo `sdd-` redundante.** Os diretórios
 em `.claude/skills/` mantêm o nome completo (`sdd-prd`, `sdd-trd`, `sdd-implement`,
 `sdd-code-review`, `sdd-qa`, `sdd-security`, `sdd-sre`, `sdd-status`, `sdd-amend`,
-`sdd-pending`, `sdd-baseline`) porque, sem namespace de plugin, o prefixo `sdd-` é o que evita
-colisão com skills de outros projetos (`/sdd-trd`, não `/trd`). Dentro deste plugin o namespace
-`btt-sdd:` já cumpre esse papel sozinho, então o `sdd-` seria redundante — por isso os diretórios
-equivalentes aqui **removem** esse prefixo: `skills/prd/`, `skills/trd/`, `skills/implement/`,
-`skills/code-review/`, `skills/qa/`, `skills/security/`, `skills/sre/`, `skills/status/`,
-`skills/amend/`, `skills/pending/`, `skills/baseline/` — resultando em `/btt-sdd:trd` em vez de
-`/btt-sdd:sdd-trd`. `create-project` já não tinha o prefixo `sdd-`, então seu diretório não muda
-(`skills/create-project/` nos dois lados).
+`sdd-pending`, `sdd-baseline`, `sdd-hotfix`) porque, sem namespace de plugin, o prefixo `sdd-` é o
+que evita colisão com skills de outros projetos (`/sdd-trd`, não `/trd`). Dentro deste plugin o
+namespace `btt-sdd:` já cumpre esse papel sozinho, então o `sdd-` seria redundante — por isso os
+diretórios equivalentes aqui **removem** esse prefixo: `skills/prd/`, `skills/trd/`,
+`skills/implement/`, `skills/code-review/`, `skills/qa/`, `skills/security/`, `skills/sre/`,
+`skills/status/`, `skills/amend/`, `skills/pending/`, `skills/baseline/`, `skills/hotfix/` —
+resultando em `/btt-sdd:trd` em vez de `/btt-sdd:sdd-trd`. `create-project` já não tinha o
+prefixo `sdd-`, então seu diretório não muda (`skills/create-project/` nos dois lados).
 
 **Isso significa que editar `.claude/agents/*.md` ou `.claude/skills/*` na raiz do repositório não
 atualiza este plugin automaticamente.** Ao mudar algo relevante lá, replique aqui:

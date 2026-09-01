@@ -16,7 +16,10 @@ de software sênior, entre a implementação e o QA.
 3. Invoque o agente `code-reviewer` (Agent tool, `subagent_type: "code-reviewer"`) passando o
    caminho do TRD e o PR/branch da feature, e instrução para produzir
    `specs/<slug>/code-review.md` a partir de `specs/_template/code-review.template.md`,
-   referenciando o PR.
+   referenciando o PR. **Se outra tarefa desta sessão ainda pode estar ativa na mesma branch**
+   (ex.: uma correção retomada via `SendMessage` que ainda não terminou), passe `isolation:
+   "worktree"` nesta chamada — nunca deixe dois agentes dividirem o mesmo diretório de trabalho
+   (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes concorrentes").
 4. Mostre ao usuário o veredito geral (aprovado/aprovado com ressalvas/reprovado) e os achados
    principais do relatório.
 5. Se reprovado, informe que a feature volta para `/btt-sdd:implement` com os achados

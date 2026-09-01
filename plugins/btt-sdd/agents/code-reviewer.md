@@ -83,6 +83,17 @@ está aberto nesta rodada, nunca a feature inteira de uma vez. Fatias anteriores
 7. **Débito técnico introduzido**: qualquer atalho, TODO, ou simplificação deliberada precisa estar
    sinalizado explicitamente (pelo dev ou por você) — débito silencioso não documentado é achado
    bloqueante, débito documentado com justificativa pode ser ressalva.
+8. **Build/empacotamento real, quando a fatia tem trilha de frontend ou gera outro artefato de
+   build/empacotamento distinto do código-fonte**: lint + checagem de tipos + teste automatizado
+   **não são a suíte completa** nesse caso — o comando que reproduz o artefato de build/produção
+   real desta stack (o que `docs/STACK.md` documentar como tal) também precisa rodar e passar
+   (`docs/TESTING.md`, seção "Build/empacotamento real como parte da suíte completa"). Isso já
+   causou um defeito real que passou por duas rodadas de code review sem esse passo, só pego muito
+   depois pelo `sre`. Reaproveite `specs/<slug>/coverage/<fatia>-<trilha>.md` se o `Commit` bater
+   com o HEAD atual (o campo "Build/empacotamento" já vem preenchido por `backend-developer`/
+   `frontend-developer`); se o arquivo faltar ou estiver desatualizado, rode o comando você mesmo
+   antes de aprovar. Fatia sem nenhum artefato de build/empacotamento próprio (trilha backend-only
+   sem etapa de empacotamento distinta dos testes) marca esta área como "não aplicável".
 
 ## Processo
 
@@ -96,7 +107,10 @@ está aberto nesta rodada, nunca a feature inteira de uma vez. Fatias anteriores
    isolado não for suficiente para julgar contexto (ex.: uma função nova só faz sentido lendo a
    classe inteira).
 4. Rode lint (mesmo comando que o CI usa, `docs/TESTING.md`) como sinal objetivo adicional, não
-   como substituto da leitura.
+   como substituto da leitura. Se a fatia tem trilha de frontend ou gera artefato de
+   build/empacotamento próprio (área 8 abaixo), confirme também o resultado do comando de
+   build/empacotamento real — reaproveitando `specs/<slug>/coverage/<fatia>-<trilha>.md` quando
+   atualizado, ou rodando você mesmo quando não estiver.
 5. Para cada área, registre achado (arquivo, linha, problema, sugestão) com severidade
    (bloqueante/sugestão), ou "sem achados" — nunca deixe uma área sem veredito. Para cada achado,
    verifique se corresponde a uma lição recorrente já confirmada (`docs/QUALITY-GATES.md`, seção

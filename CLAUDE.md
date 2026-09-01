@@ -72,6 +72,7 @@ Cada agente vive em `.claude/agents/<nome>.md` e é acionado por uma skill em
 | `/sdd-qa`           | qa-engineer                                      | `specs/<slug>/qa-report.md`    |
 | `/sdd-security`     | security-engineer                                | `specs/<slug>/security-review.md` |
 | `/sdd-sre`          | sre                                              | `specs/<slug>/sre-review.md`   |
+| `/sdd-hotfix`       | backend-developer e/ou frontend-developer + revisões aplicáveis | correção pontual pós-merge (fora do ciclo de fatias, sem PRD/TRD) |
 | `/sdd-status`       | (nenhum, utilitário)                             | resumo do estágio da feature |
 | `/sdd-amend`        | (nenhum, utilitário)                             | emenda um artefato já aprovado sem reiniciar o pipeline |
 | `/sdd-pending`      | (nenhum, utilitário)                             | lista itens "VALIDAR DEPOIS" em aberto |

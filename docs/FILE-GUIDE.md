@@ -114,6 +114,10 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
 - **`sdd-docs/`** → `/sdd-docs` — aciona `tech-writer` (utilitário, sem posição fixa numa etapa);
   escreve/atualiza README, um doc de `docs/`, um ADR, ou transforma código real em exemplo
   documentado.
+- **`sdd-hotfix/`** → `/sdd-hotfix` — utilitário fora das 7 etapas fixas; formaliza uma correção
+  pontual pós-merge (bug em produção, ou melhoria pontual sem spec de origem), sem PRD/TRD mas com
+  TDD e as revisões aplicáveis (code review sempre; QA/segurança/SRE por critério objetivo —
+  `docs/SDD-WORKFLOW.md`, seção "Correção pontual pós-merge").
 - **`create-project/`** → `/create-project` — skill global (ver "Distribuição global" em
   `CLAUDE.md`): pergunta nome, diretório e requisitos, cria um projeto novo em diretório separado
   (fora deste repositório), copia o conteúdo genérico de `create-project/scaffold/` para lá, e
