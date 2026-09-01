@@ -87,6 +87,31 @@ git worktree add <caminho-separado> -b <branch-temporária-do-agente> <branch-da
 git worktree remove <caminho-separado>   # ao terminar — nunca deixe worktree órfão
 ```
 
+**Reaproveite o cache de dependências entre worktrees do mesmo repositório.** Isolamento de
+working tree separa árvore de arquivos e estado de Git — não precisa (e não deve) forçar
+reinstalação de dependências do zero a cada worktree novo. Aponte a instalação de dependências
+desta stack para um diretório de cache compartilhado entre worktrees do mesmo repositório (o
+equivalente, na stack do projeto, a um cache de pacotes/módulos reaproveitável — a maioria dos
+gerenciadores de dependências já suporta isso nativamente via variável de ambiente ou flag de
+cache global; o que estiver documentado em `docs/STACK.md` deste projeto), em vez do padrão de
+instalar tudo isolado dentro de cada worktree novo. Se outro agente já resolveu as dependências
+deste repositório há pouco, um worktree novo deve conseguir reaproveitar esse cache quase
+instantaneamente em vez de reinstalar tudo do zero — isolamento é sobre arquivos de código e
+estado de Git, nunca precisa se estender ao cache de dependências.
+
+**Isolamento resolve a corrida de Git — não substitui dependência lógica entre etapas.** Com
+isolamento garantido (mecanismo acima), duas tarefas que não dependem do resultado uma da outra
+podem — e devem, por padrão — ser invocadas em paralelo, sem a cautela de serializar tudo "por via
+das dúvidas" que fazia sentido antes do isolamento existir. O caso mais comum no pipeline é a
+trilha de backend e a trilha de frontend de uma fatia full-stack, quando o contrato entre elas já
+está totalmente especificado no TRD (`/sdd-implement`, passo 4d) — o frontend não precisa esperar
+o backend terminar, desde que trabalhe contra um dublê do contrato até o endpoint existir de
+verdade. Isso **não** se aplica a etapas com dependência real de aprovação — revisão de código →
+QA → segurança → SRE continuam estritamente sequenciais independente de isolamento (cada uma exige
+o veredito aprovado da anterior como pré-condição, `docs/SDD-WORKFLOW.md`); isolamento nunca é
+motivo para pular essa pré-condição, só elimina o risco de corrida quando duas tarefas *sem* essa
+dependência de fato rodam ao mesmo tempo.
+
 **Reconciliação para a branch compartilhada da fatia.** Como o design deste pipeline é uma única
 branch/PR por fatia (regra 2 acima), o trabalho feito num worktree isolado ainda precisa chegar
 nessa branch compartilhada. Antes de cada `push` para ela, sincronize primeiro — nunca assuma que
@@ -103,6 +128,18 @@ repita `fetch` + `rebase` — mesmo limite de 3 tentativas de `docs/QUALITY-GATE
 e escalar ao usuário. Essa sincronização é o que garante que múltiplos agentes isolados ainda
 produzem uma única branch/PR coerente por fatia, sem que a isolação de working tree vire duas
 branches divergentes por engano.
+
+## Aguardando CI antes do merge
+
+Quem aguarda o CI (`ci.yml`) terminar antes de confirmar que um PR está pronto para merge (regra
+6 acima) não precisa checar o status a cada poucos segundos desde o início — a maioria dos
+workflows de CI leva um tempo mínimo perceptível só para começar a rodar (fila do runner,
+checkout, setup do ambiente) antes de produzir qualquer sinal novo. Prefira uma primeira espera
+mais longa antes da primeira checagem de status, em vez de várias checagens curtas logo no
+início — o valor exato dessa espera fica a critério de quem aplica esta instrução (varia por
+projeto e provedor de CI), não é hardcoded neste template. Depois da primeira checagem, ajuste o
+intervalo das checagens seguintes pelo que já se observou (workflow ainda na fila vs. já rodando),
+em vez de manter o mesmo intervalo curto do início até o fim.
 
 ## Por que `/sdd-amend` não reescreve histórico
 

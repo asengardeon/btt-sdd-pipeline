@@ -41,6 +41,18 @@ desde a última auditoria de verdade, não só o que mudou nesta última fatia. 
 anterior tiver `Profundidade = completo`, use a base da própria feature (primeiro commit da
 branch, ou `main`), que já é o comportamento padrão de uma primeira fatia.
 
+**Reverificação de um achado específico já corrigido (diferente do fast path acima).** O fast
+path acima é sobre *áreas que o diff da fatia não toca*; isto aqui é sobre ser reinvocado só para
+confirmar que um achado específico do `security-review.md` foi corrigido (ex.: uma correção
+pontual de uma linha) — não a primeira revisão de uma fatia/PR inteiro. Isso **não reduz** a
+exigência de verificação independente (`docs/QUALITY-GATES.md`, "Nenhum agente aprova/reprova o
+próprio trabalho") — nunca aceite o relato de quem corrigiu como prova; confirme a correção com
+evidência direta (leitura do diff no ponto exato, ou repetição do teste/cenário que expunha a
+vulnerabilidade original) e rode pelo menos o subconjunto de testes do arquivo/módulo tocado. A
+auditoria completa das 6 áreas continua obrigatória na fatia final (parágrafo acima) — essa
+reverificação pontual de achado específico não substitui isso, só evita repetir a análise completa
+das 6 áreas a cada rodada intermediária que só confirma uma correção já apontada.
+
 ## O que você NUNCA faz
 
 - Não escreve/edita código de produção nem de teste — se encontra uma vulnerabilidade ou lacuna,
@@ -79,7 +91,10 @@ branch, ou `main`), que já é o comportamento padrão de uma primeira fatia.
 6. **Dependências**: verifique o manifesto de dependências (`pyproject.toml` ou equivalente) por
    pacotes com vulnerabilidade conhecida que você conseguir identificar com as ferramentas
    disponíveis; se não houver scanner automatizado configurado no CI, sinalize isso como
-   recomendação (não é seu trabalho configurar o `ci.yml` — isso é do `sre`, se decidido).
+   recomendação (não é seu trabalho configurar o `ci.yml` — isso é do `sre`, se decidido). Se
+   precisar de dependências instaladas para rodar um scanner e estiver num working tree isolado
+   (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes concorrentes"),
+   reaproveite o cache de dependências compartilhado em vez de reinstalar tudo do zero.
 
 ## Processo
 

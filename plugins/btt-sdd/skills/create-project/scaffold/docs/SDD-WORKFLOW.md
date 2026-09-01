@@ -146,7 +146,11 @@ Detalhe completo em `docs/QUALITY-GATES.md`. Resumo: nenhum agente faz suposiç�
 toda ambiguidade vira pergunta ao usuário, com **"VALIDAR DEPOIS"** sempre disponível como opção
 quando o usuário não souber responder agora (o item fica registrado na seção "Pendências de
 validação" do artefato). Nenhuma ação ou pergunta se repete mais de 3 vezes sem escalar. Use
-`/sdd-pending` para ver todos os itens VALIDAR DEPOIS em aberto em qualquer momento.
+`/sdd-pending` para ver todos os itens VALIDAR DEPOIS em aberto em qualquer momento. Quem
+orquestra qualquer etapa (você, seguindo `/sdd-implement` ou outra skill) prefere delegar
+investigação de causa raiz somente-leitura (ler vários arquivos, histórico de Git, logs) a uma
+sub-tarefa isolada que devolva só a conclusão, em vez de reter esse conteúdo no próprio contexto
+de orquestração, quando ele não precisa continuar disponível depois da decisão tomada.
 
 ## Utilitários: `/sdd-status` e `/sdd-pending`
 

@@ -16,7 +16,9 @@ mesmo `HEAD` se dividirem o mesmo diretório de trabalho — espere ter recebido
 isolado (`isolation: "worktree"` da Agent tool, ou um `git worktree add` equivalente) antes de
 commitar; se não recebeu nenhum e sabe que o `frontend-developer` está rodando ao mesmo tempo,
 sincronize antes de cada `push` (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre
-agentes concorrentes"). Os gates de `docs/QUALITY-GATES.md` (seção "Implementação")
+agentes concorrentes") — e, se estiver instalando dependências nesse worktree isolado,
+reaproveite o cache compartilhado entre worktrees do mesmo repositório em vez de reinstalar tudo
+do zero (mesma seção). Os gates de `docs/QUALITY-GATES.md` (seção "Implementação")
 valem para você — a "Definição de pronto" no final deste arquivo já é o resumo aplicado; não
 precisa reler o documento inteiro.
 

@@ -29,17 +29,52 @@ print_rows() {
   ' "$2"
 }
 
-printf '%-28s | %-16s | %-6s | %-42s | %s\n' "Feature" "Artefato" "ID" "Pergunta" "Contexto"
-printf -- '-%.0s' $(seq 1 130); echo
+# Colapsa linhas que só remetem a uma rodada anterior sem conteúdo novo — mantém
+# só a ocorrência mais informativa por (feature, pergunta). Lê tab-separated
+# feature\tartefato\tid\tpergunta\tcontexto da entrada e devolve o mesmo formato,
+# deduplicado, na ordem de primeira aparição de cada chave.
+dedupe_rows() {
+  awk -F'\t' '
+    function is_referencial(s) {
+      return (s ~ /ver rodada|ver acima|mesma pend|repetid|sem novidade|inalterad|ja citad|já citad/)
+    }
+    {
+      key = $1 SUBSEP $4
+      if (!(key in seen)) {
+        seen[key] = 1
+        order[++n] = key
+        kept[key] = $0
+        keptctx[key] = $5
+      } else {
+        cur_ref = is_referencial(keptctx[key])
+        new_ref = is_referencial($5)
+        # Só substitui a linha guardada quando a nova traz conteúdo novo
+        # (não-referencial) e a guardada era só uma referência à rodada
+        # anterior; nos demais casos mantém a primeira ocorrência.
+        if (cur_ref && !new_ref) {
+          kept[key] = $0
+          keptctx[key] = $5
+        }
+      }
+    }
+    END {
+      for (i = 1; i <= n; i++) print kept[order[i]]
+    }
+  '
+}
 
-found=0
+ROWS=""
 
-if [ -f "docs/BASELINE.md" ]; then
+collect_rows() {
+  # $1 = feature exibida, $2 = artefato, $3 = arquivo
   while IFS=$'\t' read -r artefato id pergunta contexto; do
     [ -z "$id" ] && continue
-    found=1
-    printf '%-28s | %-16s | %-6s | %-42s | %s\n' "(baseline)" "$artefato" "$id" "$pergunta" "$contexto"
-  done < <(print_rows "BASELINE" "docs/BASELINE.md")
+    ROWS="${ROWS}${1}"$'\t'"${artefato}"$'\t'"${id}"$'\t'"${pergunta}"$'\t'"${contexto}"$'\n'
+  done < <(print_rows "$2" "$3")
+}
+
+if [ -f "docs/BASELINE.md" ]; then
+  collect_rows "(baseline)" "BASELINE" "docs/BASELINE.md"
 fi
 
 if [ -d "$SPECS_DIR" ]; then
@@ -52,13 +87,21 @@ if [ -d "$SPECS_DIR" ]; then
     for f in "${FILES[@]}"; do
       file="${dir}${f}"
       [ -f "$file" ] || continue
-      while IFS=$'\t' read -r artefato id pergunta contexto; do
-        [ -z "$id" ] && continue
-        found=1
-        printf '%-28s | %-16s | %-6s | %-42s | %s\n' "$slug" "$artefato" "$id" "$pergunta" "$contexto"
-      done < <(print_rows "$f" "$file")
+      collect_rows "$slug" "$f" "$file"
     done
   done
+fi
+
+printf '%-28s | %-16s | %-6s | %-42s | %s\n' "Feature" "Artefato" "ID" "Pergunta" "Contexto"
+printf -- '-%.0s' $(seq 1 130); echo
+
+found=0
+if [ -n "$ROWS" ]; then
+  while IFS=$'\t' read -r feature artefato id pergunta contexto; do
+    [ -z "$feature" ] && continue
+    found=1
+    printf '%-28s | %-16s | %-6s | %-42s | %s\n' "$feature" "$artefato" "$id" "$pergunta" "$contexto"
+  done < <(printf '%s' "$ROWS" | dedupe_rows)
 fi
 
 if [ "$found" = "0" ]; then

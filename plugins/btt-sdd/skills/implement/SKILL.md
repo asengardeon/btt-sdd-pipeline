@@ -27,6 +27,14 @@ assim:
    está mais endereçável (sessão encerrada, `ListAgents` não o lista mais e uma tentativa de
    `SendMessage` falha); ou (c) o achado está fora do escopo do que aquele agente tocou (ex.: uma
    parte do sistema que ele nunca abriu).
+2a. **Investigação de causa raiz somente-leitura, antes de decidir o que pedir ao agente, prefere
+   uma sub-tarefa isolada a inflar o seu próprio contexto.** Se decidir o que pedir na correção
+   exige ler vários arquivos de código, histórico de Git, ou logs — e esse conteúdo não precisa
+   ficar retido depois de você chegar à conclusão do que pedir — prefira delegar essa leitura a uma
+   sub-tarefa isolada que devolva só a conclusão destilada, em vez de investigar diretamente no seu
+   próprio contexto de orquestrador (`docs/QUALITY-GATES.md`, seção "Governança de decisão",
+   bullet sobre investigação de causa raiz). O mecanismo concreto fica a critério de qual
+   ferramenta de sub-tarefa isolada está disponível no seu ambiente.
 3. Retomar não abre mão de rigor: o agente retomado ainda segue TDD (teste antes da correção, red
    → green → refactor) e ainda roda a suíte completa com cobertura ao final, como no passo 5
    abaixo. A próxima rodada da mesma etapa de revisão que reprovou continua verificando o
@@ -72,14 +80,20 @@ assim:
 2c. **Antes de criar a branch desta rodada**, se a fatia não é a primeira, confirme que o PR da
    fatia anterior já foi mergeado em `main` (`docs/GIT-WORKFLOW.md`, regra 3, tem o comando). Se
    não estiver, **pare aqui** e informe o usuário — não invoque os agentes de desenvolvimento
-   sobre uma `main` desatualizada. Ao confirmar o merge, atualize (se ainda não estiver) a coluna
-   Status das tarefas dessa fatia anterior no TRD para `concluído (mergeado)`.
+   sobre uma `main` desatualizada. Se você (ou o usuário) estiver aguardando o CI daquele PR
+   terminar antes do merge, siga `docs/GIT-WORKFLOW.md`, seção "Aguardando CI antes do merge" —
+   prefira uma primeira espera maior antes da primeira checagem, em vez de checagens curtas desde
+   o início. Ao confirmar o merge, atualize (se ainda não estiver) a coluna Status das tarefas
+   dessa fatia anterior no TRD para `concluído (mergeado)`.
 3. **Se só uma trilha aparece** (só backend ou só frontend): invoque o agente correspondente
    (`backend-developer` ou `frontend-developer`, Agent tool) passando os caminhos do TRD e do
    PRD. O agente segue seu próprio processo em duas fases (plano aprovado via `AskUserQuestion`
    antes de codar) — você não precisa orquestrar isso manualmente.
 4. **Se as duas trilhas aparecem** (feature full-stack): você orquestra o plano combinado antes
-   de invocar os agentes:
+   de invocar os agentes. **Invocar as duas trilhas em paralelo é o padrão, não uma exceção
+   cautelosa** — com isolamento de working tree garantido (passo "d" abaixo), não há mais motivo
+   para serializar backend e frontend só por precaução de corrida de Git (`docs/GIT-WORKFLOW.md`,
+   seção "Isolamento resolve a corrida de Git — não substitui dependência lógica entre etapas"):
    a. Leia o TRD (contrato "Frontend↔Backend" e a decomposição de tarefas) e o PRD.
    b. Monte um plano combinado: incrementos de backend + incrementos de frontend, e como cada um
       se encaixa no contrato (ex.: "backend implementa o endpoint X no incremento 2; frontend
@@ -133,6 +147,13 @@ substituto do gate de revisão correspondente (`code-review.md`/`qa-report.md`/
 `security-review.md`/`sre-review.md`). Depois que a correção estiver pronta, invoque sempre uma
 instância **nova e independente** do agente de revisão apropriado — mesmo que a mudança pareça
 óbvia demais para "merecer" uma rodada de revisão inteira.
+
+**Independência não exige reexecutar tudo do zero em cada rodada intermediária.** A instância
+nova e independente ainda é obrigatória (parágrafo acima não muda), mas o escopo do que ela
+reexecuta pode ser proporcional ao tamanho da correção quando não é a primeira revisão da fatia —
+ver `docs/QUALITY-GATES.md`, seção "Governança de decisão", bullet sobre reverificação de achado
+específico. A suíte 100% completa só precisa rodar de novo, do zero, uma vez, na última rodada
+antes do merge efetivo — não em toda reverificação pontual intermediária.
 
 ## Validação manual pós-merge contra produção real
 

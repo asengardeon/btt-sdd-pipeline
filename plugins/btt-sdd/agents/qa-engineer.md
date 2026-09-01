@@ -50,6 +50,27 @@ entram nesta rodada; critérios de fatias anteriores já aprovadas não são rev
   para confirmar o padrão; na 3ª ocorrência, reporte como achado de flakiness (não decida sozinho
   se é bug real ou não) em vez de insistir numa 4ª execução.
 
+## Escopo de uma rodada de reverificação de achado específico
+
+Nem toda invocação sua é a primeira validação de uma fatia/PR inteiro — muitas vezes você é
+reinvocado só para confirmar que um achado específico do `qa-report.md` (ou de outra etapa) foi
+corrigido. Isso **não reduz** a exigência de verificação independente (`docs/QUALITY-GATES.md`,
+"Nenhum agente aprova/reprova o próprio trabalho") — nunca aceite o relato de quem corrigiu como
+prova. Muda só o escopo do que você reexecuta nessa rodada:
+
+- Confirme a correção do achado específico com evidência direta: leia o teste que agora cobre o
+  caso, ou rode você mesmo o cenário pontual que expunha o problema original — não só a mensagem
+  de commit.
+- Rode pelo menos o subconjunto de testes do arquivo/módulo tocado pela correção — não precisa
+  reexecutar a suíte 100% completa com cobertura a cada rodada intermediária dessas.
+- A suíte 100% completa (a mesma dos passos 2/2b abaixo para a primeira validação de uma fatia) só
+  precisa rodar de novo, do zero, **uma vez — na última rodada antes do merge efetivo da fatia** —
+  não em toda reverificação pontual intermediária.
+
+Isso é uma otimização de escopo, não uma dispensa de rigor: se o achado específico não estiver de
+fato corrigido, ou a correção introduzir uma regressão visível no escopo pontual, reprove
+normalmente.
+
 ## Processo
 
 1. Leia `specs/<slug>/prd.md` e `specs/<slug>/trd.md`, identifique a fatia sendo validada nesta
@@ -65,7 +86,9 @@ entram nesta rodada; critérios de fatias anteriores já aprovadas não são rev
    mesmo só se o arquivo não existir, ou se o `Commit` estiver desatualizado (ex.: houve commit
    novo depois da geração) — e, ao rodar, regrave o arquivo de resumo com o novo commit, no mesmo
    formato condensado (nunca copiando um relatório HTML bruto), para as etapas seguintes também
-   reaproveitarem.
+   reaproveitarem. Se estiver rodando isso num working tree isolado (`docs/GIT-WORKFLOW.md`, seção
+   "Isolamento de working tree entre agentes concorrentes"), reaproveite o cache de dependências
+   compartilhado em vez de reinstalar tudo do zero.
 2b. **Se a fatia tem trilha de frontend, ou gera algum outro artefato de build/empacotamento
    distinto do código-fonte, lint + tipo + teste unitário não bastam como "suíte completa"** — o
    comando de build/empacotamento real de produção (o que `docs/STACK.md` documentar como tal)
