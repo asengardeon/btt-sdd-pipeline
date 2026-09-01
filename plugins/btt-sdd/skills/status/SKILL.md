@@ -26,6 +26,15 @@ Não aciona nenhum agente — é um utilitário de leitura.
    que não interessam); senão, rode sem argumento para ver todas.
 5. Para o detalhe de uma pendência específica, aponte o usuário para `/btt-sdd:pending` em
    vez de listar tudo aqui.
+6. **Docs desatualizados em relação à versão instalada do plugin** (útil em projetos criados há um
+   tempo, depois que o plugin evoluiu — `docs/GIT-WORKFLOW.md`/`QUALITY-GATES.md`/etc. podem ter
+   ganhado seções novas que este projeto nunca recebeu): rode com a flag `--check-docs` (bash) /
+   `-CheckDocs` (PowerShell). Compara cada `docs/<arquivo>.md` do projeto contra o equivalente no
+   scaffold de `/btt-sdd:create-project` da versão instalada e só sinaliza divergência (arquivo +
+   versão do scaffold usada na comparação) — nunca aplica merge automático; cabe ao usuário revisar
+   e decidir se quer atualizar manualmente. Não é o comportamento padrão (custo extra de I/O) — só
+   rode com essa flag quando o usuário perguntar especificamente sobre isso, ou quando uma sessão
+   notar algo que parece um gap de instrução ausente no projeto.
 
 ### Fallback sem o script (comportamento anterior)
 

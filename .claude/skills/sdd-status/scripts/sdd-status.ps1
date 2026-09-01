@@ -1,8 +1,10 @@
 # Resumo do estagio de cada feature em specs/, sem precisar ler cada artefato
 # inteiro no contexto do agente. Usado por .claude/skills/sdd-status.
 #
-# Uso: powershell -File scripts/sdd-status.ps1 [-Slug <slug>]
+# Uso: powershell -File scripts/sdd-status.ps1 [-Slug <slug>] [-CheckDocs]
 #   -Slug (opcional) - mostra so aquela feature.
+#   -CheckDocs (opcional) - compara docs/*.md deste projeto contra o scaffold
+#     da versao instalada do plugin, sinalizando divergencia.
 #
 # Saida: aproximacao best-effort via regex sobre a convencao de formatacao dos
 # templates em specs/_template/. Se um artefato fugir muito do formato padrao
@@ -13,7 +15,47 @@
 # lido pela codepage do sistema no Windows PowerShell 5.1, e caracteres
 # multibyte podem quebrar o parser.
 
-param([string]$Slug)
+param([string]$Slug, [switch]$CheckDocs)
+
+# Compara docs/*.md deste projeto contra o scaffold de /create-project (siblings
+# de scripts/ sob skills/, tanto na junction quanto no pacote do plugin) - so
+# sinaliza divergencia, nunca aplica merge automatico (issue #23: projetos
+# criados antes de uma melhoria de processo no plugin nunca se beneficiam dela
+# ate alguem perceber a divergencia manualmente).
+function Get-DocsDrift {
+  $ScaffoldDocs = Join-Path $PSScriptRoot "..\..\create-project\scaffold\docs"
+  if (-not (Test-Path $ScaffoldDocs)) {
+    Write-Host ""
+    Write-Host "Checagem de docs desatualizados: scaffold nao encontrado em '$ScaffoldDocs' - pulando."
+    return
+  }
+  $PluginJson = Join-Path $PSScriptRoot "..\..\..\.claude-plugin\plugin.json"
+  $Version = "desconhecida"
+  if (Test-Path $PluginJson) {
+    $jsonContent = Get-Content $PluginJson -Raw
+    if ($jsonContent -match '"version"\s*:\s*"([^"]+)"') {
+      $Version = $Matches[1]
+    }
+  }
+
+  Write-Host ""
+  Write-Host "Checagem de docs desatualizados (docs/*.md deste projeto vs. scaffold da versao $Version):"
+  $anyDiff = $false
+  foreach ($f in (Get-ChildItem -Path $ScaffoldDocs -Filter "*.md")) {
+    $projectFile = Join-Path "docs" $f.Name
+    if (Test-Path $projectFile) {
+      $a = Get-Content $projectFile -Raw
+      $b = Get-Content $f.FullName -Raw
+      if ($a -ne $b) {
+        $anyDiff = $true
+        Write-Host "  - docs/$($f.Name) diverge do scaffold da versao $Version - revise manualmente ou peca pra atualizar."
+      }
+    }
+  }
+  if (-not $anyDiff) {
+    Write-Host "  Nenhuma divergencia encontrada."
+  }
+}
 
 $SpecsDir = "specs"
 $Stages = @("prd", "trd", "code-review", "qa-report", "security-review", "sre-review")
@@ -37,6 +79,7 @@ $NextCmds = @{
 
 if (-not (Test-Path $SpecsDir)) {
   Write-Host "Nenhum diretorio '$SpecsDir/' encontrado a partir do diretorio atual."
+  if ($CheckDocs) { Get-DocsDrift }
   exit 0
 }
 
@@ -49,6 +92,7 @@ if ($Slug) { $dirs = $dirs | Where-Object { $_.Name -eq $Slug } }
 if (-not $dirs) {
   if ($Slug) { Write-Host "Nenhuma feature '$Slug' encontrada em $SpecsDir/." }
   else { Write-Host "Nenhuma feature encontrada em $SpecsDir/ (fora de _template)." }
+  if ($CheckDocs) { Get-DocsDrift }
   exit 0
 }
 
@@ -138,3 +182,5 @@ foreach ($d in $dirs) {
 
   "{0,-32} | {1,-30} | {2,-26} | {3,-4} | {4}" -f $slugName, $current, $next, $pending, $revalidate
 }
+
+if ($CheckDocs) { Get-DocsDrift }
