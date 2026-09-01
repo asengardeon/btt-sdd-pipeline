@@ -127,6 +127,19 @@ fixa do momento do clone, precisa de `claude plugin update btt-sdd@btt-sdd-pipel
 local reflete sozinha na próxima sessão). Ver `plugins/btt-sdd/README.md`, seção "Atualizar o
 plugin", para o passo a passo completo (sincronizar as duas cópias antes de commitar/dar push).
 
+## Manutenção deste repositório: `/repo-issues`
+
+Diferente de tudo acima, `/repo-issues` (`.claude/skills/repo-issues/SKILL.md`) é uma skill
+**exclusiva deste repositório** — deliberadamente **não** replicada em `plugins/btt-sdd/` (não faz
+sentido rodando em outro projeto). Ela lê as issues abertas em `asengardeon/btt-sdd-pipeline`,
+aplica as que fizerem sentido como mudança no pipeline (agente, skill, doc, template), e abre um
+PR por issue aplicada (`Closes #N`), ajustando a versão de `plugins/btt-sdd/.claude-plugin/
+plugin.json` quando a mudança tocar conteúdo empacotado. É o lado "entrada" de um ciclo cujo lado
+"saída" é a retrospectiva automática de fatia (`.claude/agents/sre.md`/`.claude/skills/sdd-sre/
+SKILL.md`, seção "Retrospectiva da fatia"): cada fatia implementada em qualquer projeto que usa o
+plugin pode gerar issues de melhoria/aprendizado de volta neste repositório, e `/repo-issues`
+fecha o ciclo aplicando-as aqui.
+
 ## Princípios de arquitetura (não negociáveis)
 
 1. **Ports & Adapters (arquitetura hexagonal).** `src/domain` não importa nada de fora. `src/application`
