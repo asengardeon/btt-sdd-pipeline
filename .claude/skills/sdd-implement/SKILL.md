@@ -21,6 +21,16 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    via `SendMessage` (usando o `agentId`/nome dele), em vez de invocar um agente novo do zero.
    Passe os achados do relatório de revisão (`code-review.md`/`qa-report.md`/
    `security-review.md`/`sre-review.md`) diretamente na mensagem.
+1b. **Dose o contexto que você inclui na mensagem pela complexidade real da correção — não pelo
+   hábito de sempre anexar tudo.** Para uma correção mecânica/pequena (ex.: um teste faltante, um
+   valor incorreto, uma validação faltando), aponte o agente para o trecho específico do artefato
+   relevante (a linha/seção do achado) e o(s) arquivo(s) alvo — não para o PRD/TRD inteiros nem
+   para os relatórios de revisão completos. Reserve a releitura completa (PRD/TRD/relatórios
+   inteiros) para quando a correção genuinamente exige julgamento/desenho novo (mesmo critério do
+   passo 2 abaixo para decidir entre retomar o agente vs. acionar um novo). O custo de reler tudo é
+   praticamente fixo por invocação, independente do tamanho da correção — dosar isso tem efeito
+   multiplicativo em qualquer fatia que feche achados não-bloqueantes antes do merge (o caso mais
+   comum de "retomar para corrigir").
 2. Só prefira um agente **novo** (voltando aos passos 1-4 normais) quando: (a) a correção exige
    julgamento/desenho novo, não só aplicar o que já foi apontado; (b) o agente original já não
    está mais endereçável (sessão encerrada, `ListAgents` não o lista mais e uma tentativa de
