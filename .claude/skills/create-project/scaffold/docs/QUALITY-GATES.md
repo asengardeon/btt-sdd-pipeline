@@ -37,6 +37,23 @@ documento é a referência única para não duplicar a lista em cada um deles.
   escreve veredito em `code-review.md`/`qa-report.md`/`security-review.md`/`sre-review.md` na
   mesma rodada em que implementou a correção — o gate exige uma instância nova e independente do
   agente de revisão correspondente, invocada depois.
+- [ ] **Reverificação de um achado específico já corrigido tem escopo proporcional — não repete a
+  suíte inteira do zero a cada rodada.** Isso não relaxa o bullet anterior (a verificação
+  independente continua obrigatória, nunca aceita o relato de quem corrigiu como prova); muda só o
+  que essa verificação reexecuta. Numa rodada que confirma só a correção de um achado específico já
+  apontado (não a primeira revisão de uma fatia/PR inteiro), a verificação independente: (a) sempre
+  confirma a correção com evidência direta (leitura do diff no ponto exato, teste manual/pontual,
+  ou equivalente) — nunca só a palavra de quem corrigiu; (b) roda pelo menos o subconjunto de
+  testes do arquivo/módulo tocado pela correção. A suíte 100% completa do zero só precisa rodar de
+  novo **uma vez — na última rodada de verificação antes do merge efetivo da fatia** — não em cada
+  rodada intermediária de reverificação pontual.
+- [ ] **Investigação de causa raiz somente-leitura prefere uma sub-tarefa isolada a inflar o
+  contexto principal.** Quando quem orquestra uma etapa precisa ler vários arquivos de código,
+  histórico de Git, ou logs só para chegar a uma conclusão — e o conteúdo lido não precisa ficar
+  retido depois de decidir o próximo passo — prefira delegar essa leitura a uma sub-tarefa isolada
+  que devolva só a conclusão destilada, em vez de fazer a investigação diretamente no contexto da
+  sessão que está orquestrando o pipeline. O mecanismo concreto (o que o operador do plugin tiver
+  disponível para isolar uma sub-tarefa) não é definido por este template.
 
 ## Status de tarefas (coluna "Status" da decomposição do TRD)
 

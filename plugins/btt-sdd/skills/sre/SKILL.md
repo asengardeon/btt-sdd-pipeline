@@ -33,7 +33,10 @@ Aciona a **etapa 6** do pipeline SDD descrito em `CLAUDE.md`: validação de CI/
 5. Mostre ao usuário o veredito e os checklists de CI, Docker e Terraform — incluindo a
    verificação de proteção da branch `main` (`docs/GIT-WORKFLOW.md`).
 6. Se aprovado, informe que a feature está pronta ponta a ponta pelo pipeline SDD, e que o merge
-   do PR (GitHub Flow) fica a critério do usuário. Se reprovado ou aprovado com ressalvas, liste
+   do PR (GitHub Flow) fica a critério do usuário. Se você (ou o usuário) for aguardar o CI
+   terminar antes desse merge, siga `docs/GIT-WORKFLOW.md`, seção "Aguardando CI antes do merge" —
+   prefira uma primeira espera maior antes da primeira checagem, em vez de checagens curtas desde
+   o início. Se reprovado ou aprovado com ressalvas, liste
    os itens pendentes e quem deve resolvê-los — e siga a seção "Retomando para corrigir achados de
    revisão" da skill `/btt-sdd:implement` (prefira retomar o mesmo agente que implementou a fatia
    via `SendMessage` para correções pequenas e objetivas, em vez de invocar um agente novo).

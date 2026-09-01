@@ -14,6 +14,7 @@ param([string]$Slug)
 
 $SpecsDir = "specs"
 $Files = @("prd.md", "trd.md", "code-review.md", "qa-report.md", "security-review.md", "sre-review.md")
+$ReferentialPattern = 'ver rodada|ver acima|mesma pend|repetid|sem novidade|inalterad|ja citad'
 
 function Get-PendingRows {
   param([string]$Content)
@@ -33,16 +34,35 @@ function Get-PendingRows {
   return $rows
 }
 
-"{0,-28} | {1,-16} | {2,-6} | {3,-42} | {4}" -f "Feature", "Artefato", "ID", "Pergunta", "Contexto"
-"-" * 130
+# Colapsa linhas que so remetem a uma rodada anterior sem conteudo novo -
+# mantem so a ocorrencia mais informativa por (feature, pergunta), na ordem
+# de primeira aparicao de cada chave.
+function Get-DedupedRows {
+  param([array]$AllRows)
+  $order = @()
+  $kept = @{}
+  foreach ($r in $AllRows) {
+    $key = "$($r.Feature)|$($r.Pergunta)"
+    if (-not $kept.ContainsKey($key)) {
+      $kept[$key] = $r
+      $order += $key
+    } else {
+      $curRef = $kept[$key].Contexto -match $ReferentialPattern
+      $newRef = $r.Contexto -match $ReferentialPattern
+      if ($curRef -and -not $newRef) {
+        $kept[$key] = $r
+      }
+    }
+  }
+  return $order | ForEach-Object { $kept[$_] }
+}
 
-$found = $false
+$allRows = @()
 
 if (Test-Path "docs/BASELINE.md") {
   $content = Get-Content "docs/BASELINE.md" -Raw
   foreach ($row in (Get-PendingRows -Content $content)) {
-    $found = $true
-    "{0,-28} | {1,-16} | {2,-6} | {3,-42} | {4}" -f "(baseline)", "BASELINE", $row.Id, $row.Pergunta, $row.Contexto
+    $allRows += [PSCustomObject]@{ Feature = "(baseline)"; Artefato = "BASELINE"; Id = $row.Id; Pergunta = $row.Pergunta; Contexto = $row.Contexto }
   }
 }
 
@@ -56,11 +76,20 @@ if (Test-Path $SpecsDir) {
       if (-not (Test-Path $file)) { continue }
       $content = Get-Content $file -Raw
       foreach ($row in (Get-PendingRows -Content $content)) {
-        $found = $true
-        "{0,-28} | {1,-16} | {2,-6} | {3,-42} | {4}" -f $d.Name, $f, $row.Id, $row.Pergunta, $row.Contexto
+        $allRows += [PSCustomObject]@{ Feature = $d.Name; Artefato = $f; Id = $row.Id; Pergunta = $row.Pergunta; Contexto = $row.Contexto }
       }
     }
   }
+}
+
+"{0,-28} | {1,-16} | {2,-6} | {3,-42} | {4}" -f "Feature", "Artefato", "ID", "Pergunta", "Contexto"
+"-" * 130
+
+$deduped = Get-DedupedRows -AllRows $allRows
+$found = $false
+foreach ($row in $deduped) {
+  $found = $true
+  "{0,-28} | {1,-16} | {2,-6} | {3,-42} | {4}" -f $row.Feature, $row.Artefato, $row.Id, $row.Pergunta, $row.Contexto
 }
 
 if (-not $found) {

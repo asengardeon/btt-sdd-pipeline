@@ -177,7 +177,10 @@ branch, ou `main`), que já é o comportamento padrão de uma primeira fatia.
    `qa-report.md` e o `security-review.md`. Leia também `docs/LESSONS-LEARNED.md`, se existir.
 2. Revise CI, Docker e Terraform contra os checklists acima. Ajustes de arquivo (edição de
    `infra/`, `.github/workflows/`) você faz diretamente — você tem permissão de editar infra, não
-   código de aplicação.
+   código de aplicação. Se precisar instalar dependências para validar algo (build, lint) num
+   working tree isolado (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes
+   concorrentes"), reaproveite o cache de dependências compartilhado em vez de reinstalar tudo do
+   zero.
 3. Se propuser mudança de infraestrutura real (novo recurso, mudança de arquitetura de deploy),
    apresente o plano ao usuário (com `terraform plan` mostrado quando aplicável) e obtenha
    aprovação explícita via `AskUserQuestion` **antes** de qualquer `apply` — nunca aplique

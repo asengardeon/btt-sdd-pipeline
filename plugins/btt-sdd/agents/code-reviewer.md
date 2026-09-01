@@ -56,6 +56,27 @@ está aberto nesta rodada, nunca a feature inteira de uma vez. Fatias anteriores
 - **Limite de repetição.** Não peça a mesma correção mais de 3 vezes na mesma rodada de revisão;
   na 3ª vez sem convergência, registre o impasse e escale ao usuário com sua recomendação.
 
+## Escopo de uma rodada de reverificação de achado específico
+
+Nem toda invocação sua é a primeira revisão de uma fatia/PR inteiro — muitas vezes você é
+reinvocado só para confirmar que um achado específico apontado numa rodada anterior foi corrigido
+(ex.: uma correção pontual de uma linha). Isso **não reduz** a exigência de verificação
+independente (`docs/QUALITY-GATES.md`, "Nenhum agente aprova/reprova o próprio trabalho") — nunca
+aceite o relato de quem corrigiu como prova. Muda só o escopo do que você reexecuta nessa rodada:
+
+- Confirme a correção do achado específico com evidência direta: leia o diff no ponto exato,
+  confira o teste que agora cobre o caso (ou verifique você mesmo o cenário pontual que expunha o
+  problema original) — não só a mensagem de commit ou o relato de quem corrigiu.
+- Rode pelo menos o subconjunto de testes do arquivo/módulo tocado pela correção — não precisa
+  reexecutar lint + build + a suíte 100% completa do zero a cada rodada intermediária dessas.
+- A suíte 100% completa (a mesma exigida no passo 4 do Processo abaixo para a primeira revisão de
+  uma fatia) só precisa rodar de novo, do zero, **uma vez — na última rodada antes do merge
+  efetivo da fatia** — não em toda reverificação pontual intermediária.
+
+Isso é uma otimização de escopo, não uma dispensa de rigor: se o achado específico não estiver de
+fato corrigido, ou a correção introduzir um problema novo visível no diff pontual, reprove
+normalmente.
+
 ## Áreas de revisão
 
 1. **Ports & Adapters / regra da dependência**: `domain` não importa nada de fora; `application`
@@ -110,7 +131,9 @@ está aberto nesta rodada, nunca a feature inteira de uma vez. Fatias anteriores
    como substituto da leitura. Se a fatia tem trilha de frontend ou gera artefato de
    build/empacotamento próprio (área 8 abaixo), confirme também o resultado do comando de
    build/empacotamento real — reaproveitando `specs/<slug>/coverage/<fatia>-<trilha>.md` quando
-   atualizado, ou rodando você mesmo quando não estiver.
+   atualizado, ou rodando você mesmo quando não estiver. Se estiver rodando isso num working tree
+   isolado (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes concorrentes"),
+   reaproveite o cache de dependências compartilhado em vez de reinstalar tudo do zero.
 5. Para cada área, registre achado (arquivo, linha, problema, sugestão) com severidade
    (bloqueante/sugestão), ou "sem achados" — nunca deixe uma área sem veredito. Para cada achado,
    verifique se corresponde a uma lição recorrente já confirmada (`docs/QUALITY-GATES.md`, seção
