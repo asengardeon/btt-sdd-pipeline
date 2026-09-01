@@ -54,6 +54,33 @@ Aciona a **etapa 6** do pipeline SDD descrito em `CLAUDE.md`: validação de CI/
    última fatia, `/sdd-implement` conduz o teste geral obrigatório de fim de spec contra produção
    real (`docs/POST-MERGE-VALIDATION.md`) — não é algo que este agente `sre` faz agora, é o próximo
    passo depois do merge.
+6c. **Retrospectiva da fatia → abre issues de melhoria no repositório do plugin.** Depois de
+   aprovar (ou aprovar com ressalvas) esta fatia — em **toda** fatia, não só a última — avalie a
+   execução desta rodada (implementação → revisão de código → QA → segurança → SRE, incluindo
+   quantas rodadas de correção pontual foram necessárias) e identifique, com evidência concreta
+   dos artefatos desta rodada (não especulação genérica): pontos de melhoria de fluxo do próprio
+   pipeline (etapa redundante, instrução ambígua que gerou retrabalho, gate que bloqueou sem
+   necessidade), otimizações de performance, e otimizações de custo de token (invocação repetida
+   do que já existia, contexto inflado sem necessidade). Essa avaliação é investigação
+   somente-leitura que não precisa ficar retida no seu contexto depois de concluída — prefira
+   delegar a uma sub-tarefa isolada que devolva só as sugestões destiladas (`docs/QUALITY-GATES.md`,
+   seção "Governança de decisão", bullet sobre investigação de causa raiz).
+
+   Para cada sugestão concreta e acionável (não "poderia ser melhor" genérico), abra uma issue
+   nova em `asengardeon/btt-sdd-pipeline` — o repositório de origem deste plugin, **sempre esse
+   repositório, independente de qual projeto está rodando o pipeline agora**: `gh issue create
+   --repo asengardeon/btt-sdd-pipeline --title "..." --body "..."`, com contexto suficiente (o que
+   aconteceu nesta fatia, por que a sugestão faz sentido, qual arquivo do plugin mudaria). Prefixe
+   o título com "Melhoria:". Se `gh` falhar (comum quando o plugin está instalado num projeto de
+   outro operador sem acesso a este repositório específico), não tente mais de 3 vezes — relate as
+   sugestões como texto ao usuário em vez de bloquear a aprovação da fatia por isso.
+
+   **Abra também, separadamente, uma issue de aprendizado** (prefixo "Aprendizado:" no título, mesmo
+   mecanismo) para todo padrão de comportamento observado nesta fatia que faça sentido generalizar
+   para o plugin — não algo específico deste projeto, mas algo que outro projeto usando o pipeline
+   também se beneficiaria de ter documentado/instruído nos agentes ou skills. Se nenhuma sugestão
+   ou aprendizado concreto surgir desta fatia, não abra issue artificial só para cumprir o passo —
+   siga sem abrir nada.
 
 ## Auto-aprovação nunca é o gate real
 

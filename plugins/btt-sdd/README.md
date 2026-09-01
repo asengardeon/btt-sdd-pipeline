@@ -119,3 +119,9 @@ atualiza este plugin automaticamente.** Ao mudar algo relevante lá, replique aq
 tal como está, sem menção a comandos deste plugin (usa a convenção `/sdd-*` sem namespace, igual
 à raiz deste repositório), então uma cópia direta de
 `.claude/skills/create-project/scaffold/` sempre basta.
+
+**`.claude/skills/repo-issues/` é a segunda exceção — deliberadamente nunca replicada aqui.** É
+manutenção deste repositório sobre si mesmo (lê/aplica issues de `asengardeon/btt-sdd-pipeline`,
+abre PR e ajusta a versão deste `plugin.json`) — não faz sentido rodando em outro projeto, e não é
+uma etapa do pipeline SDD que um usuário do plugin precise. Fica só na raiz, disponível nesta
+máquina via junction (`~/.claude/skills`), fora do pacote instalável.

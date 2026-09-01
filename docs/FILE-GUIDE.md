@@ -118,6 +118,11 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
   pontual pós-merge (bug em produção, ou melhoria pontual sem spec de origem), sem PRD/TRD mas com
   TDD e as revisões aplicáveis (code review sempre; QA/segurança/SRE por critério objetivo —
   `docs/SDD-WORKFLOW.md`, seção "Correção pontual pós-merge").
+- **`repo-issues/`** → `/repo-issues` — utilitário **exclusivo deste repositório**, nunca
+  replicado em `plugins/btt-sdd/` (`plugins/btt-sdd/README.md`, seção "⚠️ Isto é uma cópia, não um
+  link"): lê as issues abertas em `asengardeon/btt-sdd-pipeline`, aplica as que fizerem sentido
+  como mudança no pipeline, e abre um PR (com `Closes #N`) por issue aplicada, ajustando a versão
+  do plugin quando a mudança tocar conteúdo empacotado.
 - **`create-project/`** → `/create-project` — skill global (ver "Distribuição global" em
   `CLAUDE.md`): pergunta nome, diretório e requisitos, cria um projeto novo em diretório separado
   (fora deste repositório), copia o conteúdo genérico de `create-project/scaffold/` para lá, e
