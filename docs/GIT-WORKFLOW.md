@@ -141,6 +141,16 @@ projeto e provedor de CI), não é hardcoded neste template. Depois da primeira 
 intervalo das checagens seguintes pelo que já se observou (workflow ainda na fila vs. já rodando),
 em vez de manter o mesmo intervalo curto do início até o fim.
 
+**Prefira o `--jq` embutido do `gh` a depender de um binário `jq` externo.** Ao extrair campos de
+`gh pr checks`/`gh run view`/etc. para decidir quando parar de esperar (ex.:
+`gh pr checks <PR> --json name,bucket --jq 'all(.bucket != "pending")'`), use a flag `--jq`
+embutida do próprio `gh` (lib Go interna) em vez de fazer *pipe* para um binário `jq` externo
+(`gh ... --json ... | jq '...'`). `jq` não vem instalado por padrão em vários ambientes (Windows/
+Git-Bash é um caso comum) — quando ausente, o `pipe` falha silenciosamente (erro vai para stderr,
+sem sinal visível), a condição de parada do loop nunca vira verdadeira, e o script só dorme até o
+timeout achando que "o CI está demorando" quando na verdade é a própria ferramenta de checagem que
+está quebrada — um desperdício de tempo/tokens investigando o lugar errado.
+
 ## Por que `/sdd-amend` não reescreve histórico
 
 Uma emenda a um artefato já aprovado (`/sdd-amend`, ver `docs/SDD-WORKFLOW.md`) nunca reescreve
