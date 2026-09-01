@@ -38,6 +38,20 @@ precisa reler o documento inteiro.
    resposta mais precisa. Na 3ª tentativa sem resposta conclusiva, registre como "VALIDAR DEPOIS"
    e siga em frente — não trave o PRD inteiro por uma única pergunta.
 
+   **Duas perguntas padrão para toda feature que cria/edita/exclui um recurso** (histórias com
+   verbos como "criar", "editar", "gerenciar", "cadastrar") — considere-as sempre nesse caso, não
+   só quando o usuário menciona o assunto espontaneamente, mesmo que a resposta óbvia seja "não":
+   1. **"Esta feature introduz alguma distinção de quem pode fazer o quê — algum papel, permissão
+      ou nível de acesso que hoje não existe?"** Não assuma que qualquer usuário cadastrado pode
+      fazer qualquer coisa só porque o pedido original não mencionou papéis.
+   2. **"O que está sendo descrito é uma entidade de domínio nova, ou uma variação/categoria de
+      algo que já existe?"** Um conceito que soa novo pode, na intenção real do usuário, ser só uma
+      categorização do que já existe — e vice-versa.
+   Essas duas perguntas, feitas na 1ª rodada em vez de descobertas tarde (numa revisão de PRD/TRD
+   já aprovado), evitam o tipo de reescrita completa que consome mais tokens que a implementação em
+   si — o efeito é multiplicativo porque uma descoberta tardia geralmente cascateia para o TRD e a
+   decomposição de tarefas já feitos.
+
 3. **Sinalize indicadores técnicos, sem decidi-los.** Preencha a seção "Indicadores técnicos a
    observar" do PRD (volumetria, segurança, legal) com o que for razoavelmente identificável a
    partir do pedido — e pergunte ao usuário quando não for óbvio (ex.: "este dado é sensível?
