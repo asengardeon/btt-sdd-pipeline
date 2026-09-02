@@ -54,6 +54,24 @@ documento é a referência única para não duplicar a lista em cada um deles.
   que devolva só a conclusão destilada, em vez de fazer a investigação diretamente no contexto da
   sessão que está orquestrando o pipeline. O mecanismo concreto (o que o operador do plugin tiver
   disponível para isolar uma sub-tarefa) não é definido por este template.
+- [ ] **Todo feedback real sobre o próprio plugin vira issue — em qualquer momento de qualquer
+  sessão, não só no fim de uma fatia.** Quando o usuário dá um retorno direto sobre o plugin (algo
+  que não funcionou como esperado, uma limitação real, uma sugestão concreta) ou você mesmo
+  identifica, durante a sessão, um problema real de instrução/comportamento do pipeline — desde
+  que generalizável (não específico deste projeto) e acionável (não "poderia ser melhor" genérico)
+  — abra uma issue em `asengardeon/btt-sdd-pipeline`: `gh issue create --repo
+  asengardeon/btt-sdd-pipeline --title "..." --body "..."`, sempre esse repositório, independente
+  de qual projeto está rodando o pipeline agora. Prefixe o título conforme o caso ("Bug:" para
+  comportamento incorreto, "Melhoria:" para otimização de fluxo/performance/custo de token,
+  "Aprendizado:" para um padrão observado que vale generalizar). Isso **não substitui** a
+  retrospectiva garantida ao final de toda fatia aprovada (`.claude/skills/sdd-sre/SKILL.md`,
+  seção "Retrospectiva da fatia") — estende a mesma obrigação para qualquer ponto da sessão em que
+  o feedback já estiver claro, em vez de represá-lo até aquele checkpoint específico (uma sessão
+  que nunca chega a rodar `/sdd-sre` — ex. `/sdd-prd` isolado, uma investigação, um `/repo-issues`
+  — não fica sem esse mecanismo só por não ter atingido o fim de uma fatia). Se `gh` falhar (comum
+  sem acesso a este repositório específico, ex. plugin instalado por outro operador), relate o
+  feedback como texto ao usuário em vez de bloquear o que estava fazendo — mesma tolerância de
+  falha do restante do pipeline com `gh` (no máximo 3 tentativas).
 
 ## Status de tarefas (coluna "Status" da decomposição do TRD)
 
