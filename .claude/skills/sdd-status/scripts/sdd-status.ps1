@@ -57,6 +57,84 @@ function Get-DocsDrift {
   }
 }
 
+# Devolve o veredito da RODADA MAIS RECENTE de um artefato de revisao: prefere a
+# ultima linha da tabela "### Historico de aprovacoes por fatia" (append-only por
+# design - nunca sobrescrita, sempre reflete a fatia mais recente) e so cai para o
+# texto em negrito da secao "## 1. Veredito geral" se nao houver tabela preenchida
+# (issue #37: pegar a 1a ocorrencia da palavra "reprovado" no arquivo inteiro
+# reportava REPROVADO mesmo quando uma reverificacao posterior ja tinha aprovado).
+function Get-LatestVerdict {
+  param([string]$Content)
+  $inSec = $false
+  $lastRow = $null
+  foreach ($line in ($Content -split "`r?`n")) {
+    if ($line -match '^### .*Hist.rico de aprova') { $inSec = $true; continue }
+    if ($inSec -and $line -match '^##') { $inSec = $false }
+    if ($inSec -and $line -match '^\|') { $lastRow = $line }
+  }
+  if ($lastRow -and $lastRow -notmatch '^\|[-|\s]+\|?$') {
+    return $lastRow
+  }
+  if ($Content -match '(?ms)##.*Veredito geral\s*?\r?\n+.*?\*\*(.+?)\*\*') {
+    return $Matches[1]
+  }
+  return ""
+}
+
+# Conta so pendencias reais de "## ... VALIDAR DEPOIS" (mesmo escopo de
+# sdd-pending.ps1) - issue #38: contar qualquer ocorrencia da palavra "pendente" no
+# arquivo inteiro tambem pegava linhas da tabela "Decomposicao de tarefas e
+# dependencias" do TRD (Status=pendente de uma fatia futura ainda nao implementada),
+# inflando a contagem de VALIDAR DEPOIS com algo que nao e uma pendencia de validacao.
+function Get-ValidarDepoisPendentesCount {
+  param([string]$Content)
+  $inSec = $false
+  $count = 0
+  foreach ($line in ($Content -split "`r?`n")) {
+    if ($line -match '^## .*VALIDAR DEPOIS') { $inSec = $true; continue }
+    if ($inSec -and $line -match '^## ') { $inSec = $false }
+    if ($inSec -and $line -match '^\|') {
+      $trimmed = $line.Trim().Trim('|')
+      $cols = $trimmed -split '\|' | ForEach-Object { $_.Trim() }
+      if ($cols.Count -ge 4 -and $cols[0] -ne 'ID' -and $cols[0] -notmatch '^-+$' -and $cols[3] -match 'pendente') {
+        $count++
+      }
+    }
+  }
+  return $count
+}
+
+# Verifica se a tabela "Decomposicao de tarefas e dependencias" do TRD tem alguma
+# tarefa cujo Status ainda nao e "concluido (mergeado)" - issue #38: SRE aprovado
+# nao significa "pipeline concluido" se existe uma fatia 2+ com tarefas ainda nao
+# implementadas; o script reportava "(pipeline concluido)" so com base no veredito
+# de SRE, sem cruzar com a decomposicao de tarefas do TRD. So considera o sinal
+# quando a tabela realmente tem uma coluna Status (TRDs de formato antigo, sem essa
+# coluna, nao geram falso positivo).
+function Test-FatiaPendente {
+  param([string]$TrdPath)
+  if (-not (Test-Path $TrdPath)) { return $false }
+  $content = Get-Content $TrdPath -Raw
+  $inSec = $false
+  $headerSeen = $false
+  $hasStatusCol = $false
+  $found = $false
+  foreach ($line in ($content -split "`r?`n")) {
+    if ($line -match '^## .*Decomposi.{3} de tarefas') { $inSec = $true; continue }
+    if ($inSec -and $line -match '^## ') { $inSec = $false }
+    if ($inSec -and $line -match '^\|') {
+      if (-not $headerSeen) {
+        $headerSeen = $true
+        if ($line -match 'Status') { $hasStatusCol = $true }
+        continue
+      }
+      if ($line -match '^\|[-|\s]+\|?$') { continue }
+      if ($hasStatusCol -and $line -notmatch '(?i)conclu.do') { $found = $true }
+    }
+  }
+  return $found
+}
+
 $SpecsDir = "specs"
 $Stages = @("prd", "trd", "code-review", "qa-report", "security-review", "sre-review")
 
@@ -102,6 +180,7 @@ foreach ($d in $dirs) {
   $next = "/sdd-prd"
   $pending = 0
   $revalidate = "nao"
+  $fatiaPendente = Test-FatiaPendente (Join-Path $d.FullName "trd.md")
 
   foreach ($stage in $Stages) {
     $file = Join-Path $d.FullName "$stage.md"
@@ -117,10 +196,7 @@ foreach ($d in $dirs) {
         $next = "(aprovar $($Labels[$stage]) antes de continuar)"
       }
     } else {
-      $verdict = ""
-      if ($content -match '(?ms)##.*Veredito geral\s*?\r?\n+.*?\*\*(.+?)\*\*') {
-        $verdict = $Matches[1]
-      }
+      $verdict = Get-LatestVerdict $content
       if ($verdict -match '(?i)reprovado') {
         $current = "$($Labels[$stage]) - REPROVADO"
         $next = "/sdd-implement (corrigir achados)"
@@ -128,7 +204,11 @@ foreach ($d in $dirs) {
         $extra = ""
         if ($verdict -match '(?i)ressalvas') { $extra = " (com ressalvas)" }
         $current = "$($Labels[$stage])$extra"
-        $next = $NextCmds[$stage]
+        if ($stage -eq "sre-review" -and $fatiaPendente) {
+          $next = "/sdd-implement (retomar proxima fatia)"
+        } else {
+          $next = $NextCmds[$stage]
+        }
       } else {
         $current = "$($Labels[$stage]) (veredito nao identificado - leia o arquivo)"
       }
@@ -177,7 +257,7 @@ foreach ($d in $dirs) {
       }
     }
 
-    $pending += [regex]::Matches($content, '\|\s*pendente\s*\|').Count
+    $pending += Get-ValidarDepoisPendentesCount $content
   }
 
   "{0,-32} | {1,-30} | {2,-26} | {3,-4} | {4}" -f $slugName, $current, $next, $pending, $revalidate

@@ -60,6 +60,77 @@ check_docs_drift() {
   fi
 }
 
+# Devolve o veredito da RODADA MAIS RECENTE de um artefato de revisão: prefere a
+# última linha da tabela "### Histórico de aprovações por fatia" (append-only por
+# design — nunca sobrescrita, sempre reflete a fatia mais recente) e só cai para o
+# texto em negrito da seção "## 1. Veredito geral" se não houver tabela preenchida
+# (issue #37: pegar a 1ª ocorrência da palavra "reprovado" no arquivo inteiro
+# reportava REPROVADO mesmo quando uma reverificação posterior já tinha aprovado).
+latest_verdict() {
+  local file="$1"
+  local hist_last
+  hist_last="$(awk '
+    /^### .*Histórico de aprovações por fatia/ { insec = 1; next }
+    insec && /^##/ { insec = 0 }
+    insec && /^\|/ { line = $0 }
+    END { print line }
+  ' "$file" 2>/dev/null)"
+  if [ -n "$hist_last" ] && ! echo "$hist_last" | grep -qE '^\|[-|[:space:]]+\|?$'; then
+    echo "$hist_last"
+    return
+  fi
+  grep -A2 -iE '##.*Veredito geral' "$file" 2>/dev/null \
+    | grep -E '\*\*.+\*\*' | head -1 \
+    | sed -E 's/.*\*\*(.+)\*\*.*/\1/'
+}
+
+# Conta só pendências reais de "## ... VALIDAR DEPOIS" (mesmo escopo de
+# sdd-pending.sh) — issue #38: contar qualquer ocorrência da palavra "pendente" no
+# arquivo inteiro também pegava linhas da tabela "Decomposição de tarefas e
+# dependências" do TRD (Status=pendente de uma fatia futura ainda não implementada),
+# inflando a contagem de VALIDAR DEPOIS com algo que não é uma pendência de validação.
+count_validar_depois_pendentes() {
+  awk '
+    BEGIN { insec = 0; count = 0 }
+    /^## .*VALIDAR DEPOIS/ { insec = 1; next }
+    /^## / && insec == 1 { insec = 0 }
+    insec == 1 && /^\|/ {
+      line = $0
+      gsub(/^\| */, "", line); gsub(/ *\|$/, "", line)
+      n = split(line, cols, "|")
+      for (i = 1; i <= n; i++) { gsub(/^ +| +$/, "", cols[i]) }
+      if (n >= 4 && cols[1] != "ID" && cols[1] !~ /^-+$/ && cols[4] ~ /pendente/) count++
+    }
+    END { print count }
+  ' "$1" 2>/dev/null
+}
+
+# Verifica se a tabela "Decomposição de tarefas e dependências" do TRD tem alguma
+# tarefa cujo Status ainda não é "concluído (mergeado)" — issue #38: SRE aprovado
+# não significa "pipeline concluído" se existe uma fatia 2+ com tarefas ainda não
+# implementadas; o script reportava "(pipeline concluído)" só com base no veredito
+# de SRE, sem cruzar com a decomposição de tarefas do TRD.
+has_fatia_pendente() {
+  local trd_file="$1"
+  [ -f "$trd_file" ] || { echo "0"; return; }
+  awk '
+    BEGIN { insec = 0; found = 0; has_status_col = 0; header_seen = 0 }
+    /^## .*Decomposição de tarefas/ { insec = 1; next }
+    /^## / && insec == 1 { insec = 0 }
+    insec == 1 && /^\|/ {
+      line = $0
+      if (!header_seen) {
+        header_seen = 1
+        if (line ~ /Status/) has_status_col = 1
+        next
+      }
+      if (line ~ /^\|[-|[:space:]]+\|?$/) next
+      if (has_status_col && tolower(line) !~ /conclu[ií]do/) { found = 1 }
+    }
+    END { print (found ? 1 : 0) }
+  ' "$trd_file" 2>/dev/null
+}
+
 STAGES=(prd trd code-review qa-report security-review sre-review)
 
 label() {
@@ -104,6 +175,7 @@ for dir in "$SPECS_DIR"/*/; do
   next="/btt-sdd:prd"
   pending=0
   revalidate="não"
+  fatia_pendente="$(has_fatia_pendente "${dir}trd.md")"
 
   for stage in "${STAGES[@]}"; do
     file="${dir}${stage}.md"
@@ -118,9 +190,7 @@ for dir in "$SPECS_DIR"/*/; do
         next="(aprovar $(label "$stage") antes de continuar)"
       fi
     else
-      verdict="$(grep -A2 -iE '##.*Veredito geral' "$file" 2>/dev/null \
-        | grep -E '\*\*.+\*\*' | head -1 \
-        | sed -E 's/.*\*\*(.+)\*\*.*/\1/')"
+      verdict="$(latest_verdict "$file")"
       case "$verdict" in
         *[Rr]eprovado*)
           current="$(label "$stage") — REPROVADO"
@@ -130,7 +200,11 @@ for dir in "$SPECS_DIR"/*/; do
           extra=""
           case "$verdict" in *[Rr]essalvas*) extra=" (com ressalvas)";; esac
           current="$(label "$stage")${extra}"
-          next="$(next_cmd "$stage")"
+          if [ "$stage" = "sre-review" ] && [ "$fatia_pendente" = "1" ]; then
+            next="/btt-sdd:implement (retomar próxima fatia)"
+          else
+            next="$(next_cmd "$stage")"
+          fi
           ;;
         *)
           current="$(label "$stage") (veredito não identificado — leia o arquivo)"
@@ -171,7 +245,7 @@ for dir in "$SPECS_DIR"/*/; do
       [ "$unresolved" = "1" ] && revalidate="sim ($(label "$stage"))"
     fi
 
-    p="$(grep -cE '\|[[:space:]]*pendente[[:space:]]*\|' "$file" 2>/dev/null)"
+    p="$(count_validar_depois_pendentes "$file")"
     pending=$((pending + ${p:-0}))
   done
 
