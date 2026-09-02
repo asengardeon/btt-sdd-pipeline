@@ -150,7 +150,10 @@ validação" do artefato). Nenhuma ação ou pergunta se repete mais de 3 vezes 
 orquestra qualquer etapa (você, seguindo `/sdd-implement` ou outra skill) prefere delegar
 investigação de causa raiz somente-leitura (ler vários arquivos, histórico de Git, logs) a uma
 sub-tarefa isolada que devolva só a conclusão, em vez de reter esse conteúdo no próprio contexto
-de orquestração, quando ele não precisa continuar disponível depois da decisão tomada.
+de orquestração, quando ele não precisa continuar disponível depois da decisão tomada. Todo
+feedback real sobre o próprio plugin — generalizável, não específico deste projeto — vira issue em
+`asengardeon/btt-sdd-pipeline` assim que fica claro, em qualquer momento de qualquer sessão, não
+só ao final de uma fatia.
 
 ## Utilitários: `/sdd-status` e `/sdd-pending`
 

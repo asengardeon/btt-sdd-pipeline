@@ -135,10 +135,13 @@ sentido rodando em outro projeto). Ela lê as issues abertas em `asengardeon/btt
 aplica as que fizerem sentido como mudança no pipeline (agente, skill, doc, template), e abre um
 PR por issue aplicada (`Closes #N`), ajustando a versão de `plugins/btt-sdd/.claude-plugin/
 plugin.json` quando a mudança tocar conteúdo empacotado. É o lado "entrada" de um ciclo cujo lado
-"saída" é a retrospectiva automática de fatia (`.claude/agents/sre.md`/`.claude/skills/sdd-sre/
-SKILL.md`, seção "Retrospectiva da fatia"): cada fatia implementada em qualquer projeto que usa o
-plugin pode gerar issues de melhoria/aprendizado de volta neste repositório, e `/repo-issues`
-fecha o ciclo aplicando-as aqui.
+"saída" é qualquer sessão usando o plugin em qualquer projeto — não só a retrospectiva garantida
+ao final de toda fatia aprovada (`.claude/agents/sre.md`/`.claude/skills/sdd-sre/SKILL.md`, seção
+"Retrospectiva da fatia"), mas **todo feedback real sobre o plugin, em qualquer momento de
+qualquer sessão** (`docs/QUALITY-GATES.md`, seção "Governança de decisão"): um retorno direto do
+usuário, ou algo que a própria sessão percebeu de errado no comportamento do pipeline, vira issue
+em `asengardeon/btt-sdd-pipeline` assim que fica claro, não só quando uma fatia inteira termina.
+`/repo-issues` fecha o ciclo aplicando essas issues aqui.
 
 ## Princípios de arquitetura (não negociáveis)
 
