@@ -103,14 +103,23 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    cautelosa** — com isolamento de working tree garantido (passo "d" abaixo), não há mais motivo
    para serializar backend e frontend só por precaução de corrida de Git (`docs/GIT-WORKFLOW.md`,
    seção "Isolamento resolve a corrida de Git — não substitui dependência lógica entre etapas"):
-   a. Leia o TRD (contrato "Frontend↔Backend" e a decomposição de tarefas) e o PRD.
+   a. Leia o TRD (contrato "Frontend↔Backend" e a decomposição de tarefas), o PRD, e também
+      `docs/LESSONS-LEARNED.md` se existir (mesmo tratamento condicional do passo 1) — **isto é
+      necessário mesmo já tendo verificado a existência do arquivo no passo 1**, porque ao pular a
+      Fase 1 dos dois agentes no passo "d" abaixo (plano já aprovado pelo orquestrador), nenhum
+      deles vai ler esse arquivo por conta própria: a leitura das lições aplicáveis ao planejar
+      passa a ser sua responsabilidade, não deles.
    b. Monte um plano combinado: incrementos de backend + incrementos de frontend, e como cada um
       se encaixa no contrato (ex.: "backend implementa o endpoint X no incremento 2; frontend
       constrói o client contra esse mesmo contrato, em paralelo, desde o incremento 1, usando um
-      dublê até o endpoint existir de verdade").
-   c. Apresente esse plano combinado ao usuário via `AskUserQuestion` e só prossiga com aprovação
-      explícita (mesmo limite de 3 repetições dos outros agentes — na 3ª rodada sem convergência,
-      registre como VALIDAR DEPOIS no TRD e pare).
+      dublê até o endpoint existir de verdade") — aplicando como restrição adicional qualquer
+      lição de `docs/LESSONS-LEARNED.md` relevante às trilhas de backend/frontend (mesmo critério
+      que cada agente aplicaria na própria Fase 1, `docs/QUALITY-GATES.md`, seção "Lições
+      aprendidas recorrentes").
+   c. Apresente esse plano combinado ao usuário via `AskUserQuestion`, citando explicitamente qual
+      lição de `docs/LESSONS-LEARNED.md` foi aplicada e como (se alguma foi), e só prossiga com
+      aprovação explícita (mesmo limite de 3 repetições dos outros agentes — na 3ª rodada sem
+      convergência, registre como VALIDAR DEPOIS no TRD e pare).
    d. Só depois de aprovado, invoque `backend-developer` e `frontend-developer` **em paralelo**
       (uma única mensagem, duas chamadas de Agent tool), cada um com a instrução explícita: "este
       plano já foi aprovado pelo orquestrador de /sdd-implement — pule sua Fase 1 e execute
