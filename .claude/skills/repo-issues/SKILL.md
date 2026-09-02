@@ -1,6 +1,6 @@
 ---
 name: repo-issues
-description: Utilitário exclusivo deste repositório (btt-sdd-pipeline) — nunca replicado no pacote do plugin. Lê as issues abertas em asengardeon/btt-sdd-pipeline, aplica as que fizerem sentido como mudança no pipeline, e abre um PR (com Closes #N) por issue aplicada, incluindo bump de versão do plugin quando a mudança tocar conteúdo empacotado. Use quando o usuário pedir para "processar issues do repositório", "aplicar as issues abertas", ou revisar o backlog de melhorias do próprio pipeline.
+description: Utilitário exclusivo deste repositório (btt-sdd-pipeline) — nunca replicado no pacote do plugin. Lê as issues abertas em asengardeon/btt-sdd-pipeline, aplica as que fizerem sentido como mudança no pipeline, abre um PR (com Closes #N) por issue aplicada, incluindo bump de versão do plugin quando a mudança tocar conteúdo empacotado — e, depois de aprovado o lote, mergeia cada PR e confirma o fechamento da issue associada. Use quando o usuário pedir para "processar issues do repositório", "aplicar as issues abertas", ou revisar o backlog de melhorias do próprio pipeline.
 ---
 
 # /repo-issues
@@ -14,6 +14,14 @@ quais fazem sentido aplicar como mudança no pipeline (agentes, skills, docs, te
 cada uma aplicada abre uma branch + PR (`docs/GIT-WORKFLOW.md`, seção "Mudanças no próprio
 pipeline" — mesmo processo que qualquer outra mudança de manutenção deste repositório: sem
 PRD/TRD, sem gate de QA/segurança/SRE automático, PR como mecanismo de revisão antes do merge).
+
+**Diferente do resto do pipeline, esta skill mergeia os próprios PRs que abre** (mesmo squash +
+delete-branch já usado neste repositório) e confirma o fechamento da issue associada, em vez de
+parar no PR e deixar o merge para o usuário. Essa é uma exceção deliberada e explícita à regra
+geral de "merge é sempre decisão do usuário" (`docs/GIT-WORKFLOW.md`) — vale só para esta skill,
+só depois da aprovação do lote no passo 3 abaixo (essa aprovação já cobre o merge, não é uma
+confirmação separada por PR), e só quando o PR está de fato limpo (sem conflito, CI verde se
+houver). Nunca force um merge sobre um PR que não está limpo.
 
 ## Pré-condição
 
@@ -43,17 +51,20 @@ outra tarefa, pare e informe o usuário em vez de misturar.
 3. **Apresente o plano de triagem ao usuário via `AskUserQuestion`** antes de tocar em qualquer
    arquivo: lista de issues "aplicável" com o resumo da mudança proposta para cada uma, lista de
    "precisa de esclarecimento" com a pergunta específica, e lista de "não aplicável" com o motivo.
-   Só prossiga para o passo 4 com aprovação explícita do conjunto a aplicar — o usuário pode
-   remover issues da lista ou pedir para tratar uma de forma diferente do que você propôs.
-4. **Para cada issue aprovada, processe uma de cada vez** (sequencial por padrão — evita duas
-   branches tocando o mesmo arquivo ao mesmo tempo; só rode em paralelo, com isolamento de working
-   tree, `docs/GIT-WORKFLOW.md`, se as issues desta rodada forem claramente independentes em
-   arquivos e o usuário pedir velocidade):
-   a. Confirme `main`/`master` atualizada e crie a branch a partir dela, com o prefixo certo da
-      tabela de `docs/GIT-WORKFLOW.md` (seção "Mudanças no próprio pipeline") — `fix/issue-<N>-
-      <slug>` para correção de comportamento incorreto, `perf/issue-<N>-<slug>` para otimização de
-      performance/token, `docs/issue-<N>-<slug>` para mudança só de documentação, `chore/issue-<N>-
-      <slug>` nos demais casos.
+   Deixe claro que aprovar o lote também autoriza o merge de cada PR depois de limpo (não é uma
+   confirmação separada por PR — ver nota no topo deste arquivo). Só prossiga para o passo 4 com
+   aprovação explícita do conjunto a aplicar — o usuário pode remover issues da lista ou pedir para
+   tratar uma de forma diferente do que você propôs.
+4. **Para cada issue aprovada, processe uma de cada vez, do início ao fim (branch → PR → merge →
+   confirmação de fechamento) antes de começar a próxima** — nunca processe duas issues desta
+   skill em paralelo, mesmo com isolamento de working tree: manter `main`/`master` sempre
+   atualizada entre uma issue e a próxima evita qualquer disputa de versão no `plugin.json` entre
+   branches paralelas, e é o que permite mergear cada PR sem esperar coordenação manual.
+   a. Confirme `main`/`master` atualizada (`git pull`) e crie a branch a partir dela, com o prefixo
+      certo da tabela de `docs/GIT-WORKFLOW.md` (seção "Mudanças no próprio pipeline") —
+      `fix/issue-<N>-<slug>` para correção de comportamento incorreto, `perf/issue-<N>-<slug>` para
+      otimização de performance/token, `docs/issue-<N>-<slug>` para mudança só de documentação,
+      `chore/issue-<N>-<slug>` nos demais casos.
    b. Aplique a mudança seguindo as convenções já estabelecidas deste repositório — inclusive
       replicando para `.claude/skills/create-project/scaffold/` e `plugins/btt-sdd/` (agentes,
       skills, scaffold) quando o conteúdo alterado tiver equivalente lá (`plugins/btt-sdd/README.md`,
@@ -65,15 +76,26 @@ outra tarefa, pare e informe o usuário em vez de misturar.
       escolha entre patch/minor não for óbvia) como parte do mesmo commit/PR. Se a mudança não
       tocou nada em `plugins/btt-sdd/`, não bata a versão.
    d. Commit, `git push -u origin <branch>`, e abra o PR (`gh pr create`) com `Closes #<N>` no
-      corpo, resumindo o que mudou e por quê (cite a issue). **Nunca mergeie o PR você mesmo** —
-      fica a critério do usuário, mesma regra de qualquer PR deste pipeline
-      (`docs/GIT-WORKFLOW.md`). O fechamento da issue acontece automaticamente quando o usuário
-      mergear (`Closes #N`), não antes.
-   e. Volte para a branch base (`main`/`master`) antes de começar a próxima issue.
-5. **Ao final, resuma ao usuário**: PRs abertos (com link e a issue que cada um fecha), issues que
-   ficaram pendentes de esclarecimento (com a pergunta feita), e issues marcadas como não
-   aplicáveis (com o comentário deixado). Nenhuma issue "desaparece" silenciosamente desta rodada
-   sem estar numa dessas três categorias.
+      corpo, resumindo o que mudou e por quê (cite a issue).
+   e. **Aguarde o PR ficar limpo para merge**: `gh pr view <PR> --repo asengardeon/btt-sdd-pipeline
+      --json mergeable,mergeStateStatus`. Se este repositório tiver CI configurado, siga
+      `docs/GIT-WORKFLOW.md`, seção "Aguardando CI antes do merge" (espera inicial maior, não
+      checagens curtas desde o início). Se depois de checar até 3 vezes o PR ainda não estiver
+      `MERGEABLE`/`CLEAN` (conflito real, CI vermelho), **não force o merge** — pare, relate o
+      problema nesta issue específica ao usuário no resumo do passo 5, e siga para a próxima issue
+      aprovada em vez de travar o lote inteiro.
+   f. **Mergeie o PR**: `gh pr merge <PR> --repo asengardeon/btt-sdd-pipeline --squash
+      --delete-branch` (mesmo padrão squash + delete-branch já usado neste repositório). O
+      fechamento da issue (`Closes #N`) acontece automaticamente no merge — confirme
+      (`gh issue view <N> --repo asengardeon/btt-sdd-pipeline --json state`) e, no caso raro de não
+      ter fechado sozinho, feche explicitamente (`gh issue close <N> --repo
+      asengardeon/btt-sdd-pipeline --comment "Fechada por #<PR>"`).
+   g. Volte para a branch base (`main`/`master`) e `git pull` antes de começar a próxima issue.
+5. **Ao final, resuma ao usuário**: issues fechadas nesta rodada (com o PR que cada uma mergeou),
+   issues aprovadas que não puderam ser mergeadas (conflito/CI vermelho — PR continua aberto,
+   nenhum merge forçado), issues que ficaram pendentes de esclarecimento (com a pergunta feita), e
+   issues marcadas como não aplicáveis (com o comentário deixado). Nenhuma issue "desaparece"
+   silenciosamente desta rodada sem estar numa dessas quatro categorias.
 
 ## Quando usar sem o agente
 
