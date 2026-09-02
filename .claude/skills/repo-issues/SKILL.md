@@ -84,9 +84,13 @@ outra tarefa, pare e informe o usuário em vez de misturar.
       `MERGEABLE`/`CLEAN` (conflito real, CI vermelho), **não force o merge** — pare, relate o
       problema nesta issue específica ao usuário no resumo do passo 5, e siga para a próxima issue
       aprovada em vez de travar o lote inteiro.
-   f. **Mergeie o PR**: `gh pr merge <PR> --repo asengardeon/btt-sdd-pipeline --squash
-      --delete-branch` (mesmo padrão squash + delete-branch já usado neste repositório). O
-      fechamento da issue (`Closes #N`) acontece automaticamente no merge — confirme
+   f. **Se a mudança usou isolamento de worktree**, remova-o antes do merge (`git worktree remove
+      --force <caminho>`, sem erro se já não existir) — `--delete-branch` falha se um worktree
+      ainda estiver associado à branch (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree
+      entre agentes concorrentes"). **Mergeie o PR**: `gh pr merge <PR> --repo
+      asengardeon/btt-sdd-pipeline --squash --delete-branch` (mesmo padrão squash + delete-branch
+      já usado neste repositório). O fechamento da issue (`Closes #N`) acontece automaticamente no
+      merge — confirme
       (`gh issue view <N> --repo asengardeon/btt-sdd-pipeline --json state`) e, no caso raro de não
       ter fechado sozinho, feche explicitamente (`gh issue close <N> --repo
       asengardeon/btt-sdd-pipeline --comment "Fechada por #<PR>"`).
