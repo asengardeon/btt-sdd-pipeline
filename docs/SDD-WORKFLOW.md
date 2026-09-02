@@ -139,6 +139,13 @@ validam objetivamente contra critérios escritos".
   sobre o merge. Depois desse merge, `/sdd-implement` conduz o teste geral obrigatório de fim de
   spec contra produção real (`docs/POST-MERGE-VALIDATION.md`) — a spec só é considerada concluída
   com esse teste feito, não só com o merge.
+- **Retrospectiva da fatia (toda fatia, não só a última)**: antes de informar o usuário sobre o
+  merge, `/sdd-sre` também avalia a execução da rodada e abre issues de melhoria de fluxo/
+  performance/custo de token e de aprendizado generalizável em `asengardeon/btt-sdd-pipeline` — o
+  repositório de origem do plugin, sempre esse, independente de qual projeto está rodando o
+  pipeline (`.claude/skills/sdd-sre/SKILL.md`, seção "Retrospectiva da fatia"). Não é opcional nem
+  condicionado a achar algo — "nenhuma sugestão concreta desta fatia" é uma conclusão válida da
+  avaliação, pular a própria avaliação não é.
 
 ## Governança de decisão (vale para todas as etapas, incluindo a condicional)
 
