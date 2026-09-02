@@ -129,6 +129,20 @@ e escalar ao usuário. Essa sincronização é o que garante que múltiplos agen
 produzem uma única branch/PR coerente por fatia, sem que a isolação de working tree vire duas
 branches divergentes por engano.
 
+**Limpe o worktree antes de apagar a branch associada.** Se um worktree isolado da fatia (criado
+pelo mecanismo acima, ou reaproveitado por agentes de revisão subsequentes na mesma fatia — QA,
+segurança, SRE reusando o worktree que o `backend-developer`/`frontend-developer` já tinha criado)
+ainda existir no momento do merge, `git branch -d`/`gh pr merge --delete-branch` falha (`git`
+recusa apagar uma branch em uso por um worktree). Isso já aconteceu de verdade: um worktree
+reaproveitado por várias rodadas de revisão da mesma fatia nunca foi removido por nenhuma delas —
+cada agente assumia que não era "dono" do worktree, já que não foi quem o criou — bloqueando a
+exclusão da branch depois do merge, com um erro só descoberto na hora (`error: cannot delete
+branch '...' used by worktree at '...'`). Antes de tentar `gh pr merge --delete-branch` (ou
+qualquer exclusão de branch) para uma fatia que usou isolamento de worktree, remova o worktree
+primeiro — `git worktree remove --force <caminho>` (sem erro se ele já não existir mais) — como
+parte padrão do fluxo de merge, sem depender de nenhum agente individual ter lembrado de limpar ao
+terminar sua própria etapa.
+
 ## Aguardando CI antes do merge
 
 Quem aguarda o CI (`ci.yml`) terminar antes de confirmar que um PR está pronto para merge (regra
