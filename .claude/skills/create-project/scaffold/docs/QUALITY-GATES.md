@@ -222,8 +222,13 @@ gravada por quem causa a transição.
 - [ ] Se houver fatia seguinte pendente na feature, ela só começa depois deste merge
   (`docs/GIT-WORKFLOW.md`).
 - [ ] Nenhum item "VALIDAR DEPOIS" bloqueante (marcado como tal pelo usuário) segue em aberto.
+- [ ] **Retrospectiva da fatia conduzida — em toda fatia aprovada, não só a última.** `/sdd-sre`
+  (`.claude/skills/sdd-sre/SKILL.md`, passo 5c) avalia a execução da rodada e abre issues de
+  melhoria/aprendizado em `asengardeon/btt-sdd-pipeline` **antes** de informar o resultado ao
+  usuário (passo 6) — nunca depois, e nunca pulado só porque a fatia já foi aprovada. "Nenhuma
+  sugestão/aprendizado concreto desta fatia" é uma conclusão válida do passo; "não avaliei" não é.
 - [ ] Se esta é a **última fatia pendente** da feature (spec finalizada): `tech-writer` foi
-  acionado para atualizar a documentação (`/sdd-sre`, passo 6b) **e** o teste geral obrigatório de
+  acionado para atualizar a documentação (`/sdd-sre`, passo 5b) **e** o teste geral obrigatório de
   fim de spec contra produção real foi conduzido depois do merge
   (`docs/POST-MERGE-VALIDATION.md`, seção "Teste geral obrigatório ao finalizar uma spec") — a
   spec só é considerada de fato concluída com os dois.
