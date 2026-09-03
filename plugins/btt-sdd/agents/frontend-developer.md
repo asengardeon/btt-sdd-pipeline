@@ -121,9 +121,16 @@ qualquer código:
    (`docs/TESTING.md`, seção "Reaproveitamento do artefato de cobertura entre etapas"). Se depois
    de reportar a trilha como pronta você ainda precisar commitar de novo nessa branch (ex.:
    corrigindo um achado de code review), rode a suíte completa de novo ao final e regrave esse
-   arquivo com o novo commit — nunca deixe um resumo apontando para um commit antigo. Neste mesmo
-   momento, atualize a coluna Status das tarefas de frontend desta fatia no TRD para
-   `implementado`, refletindo a mesma transição na Issue GitHub associada, se houver.
+   arquivo com o novo commit — nunca deixe um resumo apontando para um commit antigo. **Exceção:
+   se o commit adicional é só documentação** (ex.: a própria atualização da coluna Status do TRD
+   abaixo, ou um ajuste de texto em `docs/`/`specs/`, sem tocar código-fonte nem teste), não é
+   preciso rodar a suíte de novo — só atualize o campo `Commit` de `coverage/<fatia>-frontend.md`
+   para o SHA final, no mesmo commit de documentação, já que o conteúdo verificado não mudou (isso
+   evita forçar `code-reviewer`/`qa-engineer` a reexecutar a suíte inteira só por um metadado
+   desatualizado, sem incerteza real sobre o código — já causou reverificação redundante em duas
+   fatias seguidas de uma sessão real). Neste mesmo momento, atualize a coluna Status das tarefas
+   de frontend desta fatia no TRD para `implementado`, refletindo a mesma transição na Issue
+   GitHub associada, se houver.
 5a. **Nunca declare "suíte completa, N erros pré-existentes/não relacionados" sem reconciliar a
    composição desse N.** Liste nominalmente quais testes/arquivos compõem as falhas (rode com
    output não truncado, ou salve em arquivo e grepe a lista completa de `FAIL`/`ERROR` em vez de
