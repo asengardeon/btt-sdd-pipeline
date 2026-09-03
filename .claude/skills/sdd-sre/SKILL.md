@@ -7,6 +7,13 @@ description: Etapa 6 (final) do pipeline SDD. Use depois que QA e segurança apr
 
 Aciona a **etapa 6** do pipeline SDD descrito em `CLAUDE.md`: validação de CI/CD e infraestrutura.
 
+**Sempre passe por esta skill — nunca invoque o agente `sre` diretamente via Agent tool fora
+dela** (diferente da etapa 3, onde invocar `backend-developer`/`frontend-developer` direto é o
+padrão correto). Isso importa mais aqui do que nas outras etapas de revisão: os passos 5b
+(tech-writer automático na última fatia) e 5c (retrospectiva obrigatória de toda fatia, abrindo
+issues em `asengardeon/btt-sdd-pipeline`) vivem **nesta skill**, não no agente `sre` — invocar o
+agente direto já pulou os dois silenciosamente numa sessão real, só percebido depois do merge.
+
 ## Passos
 
 1. Identifique o slug da feature (mesma lógica das skills anteriores).
