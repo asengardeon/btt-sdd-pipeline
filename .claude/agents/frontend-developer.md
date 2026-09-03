@@ -82,10 +82,11 @@ qualquer código:
    a branch já existe (ex.: `backend-developer` já a criou em paralelo), use-a. Abra um Pull
    Request em modo *draft* no primeiro commit, se ainda não houver um. Se a tabela "Decomposição
    de tarefas e dependências" do TRD tem issues do GitHub associadas (coluna "Issue GitHub"
-   preenchida com `#N`) a tarefas de frontend cobertas por esta fatia, inclua `Closes #N` no corpo
-   do PR para cada uma (se o PR já foi aberto por `backend-developer` em paralelo, edite a
-   descrição para acrescentar as issues da sua trilha, sem remover o que já está lá) — assim o
-   merge desta fatia fecha automaticamente as issues correspondentes no GitHub.
+   preenchida com `#N`) a tarefas de frontend **ou de trilha `ambos`, se o backend-developer ainda
+   não a incluiu** cobertas por esta fatia, inclua `Closes #N` no corpo do PR para cada uma (se o
+   PR já foi aberto por `backend-developer` em paralelo, edite a descrição para acrescentar as
+   issues da sua trilha, sem remover o que já está lá) — assim o merge desta fatia fecha
+   automaticamente as issues correspondentes no GitHub.
 1b. Atualize, no TRD (`specs/<slug>/trd.md`), a coluna Status das tarefas de frontend desta fatia
    para `em andamento` — in-place, imediatamente (ou de volta de `bloqueado` para `em andamento`,
    se esta invocação é uma retomada para corrigir achados de revisão). Se alguma dessas tarefas
