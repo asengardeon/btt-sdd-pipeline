@@ -42,6 +42,31 @@ dublê do contrato de API (`docs/ARCHITECTURE.md`, seção Frontend) no lugar de
 camada de e2e "de verdade" cross-stack obrigatória por padrão; se a feature justificar, um e2e
 que sobe backend+frontend juntos é uma decisão do `architect` a registrar no TRD.
 
+### Armadilha conhecida: `testPathIgnorePatterns` do Jest com `<rootDir>` e path com segmento iniciado por ponto
+
+Se o TRD decidir Jest como test runner do frontend (`docs/STACK.md`), evite usar `<rootDir>` como
+prefixo literal em padrões regex de exclusão de path (`testPathIgnorePatterns`,
+`modulePathIgnorePatterns`) — ex. `['<rootDir>/e2e/']` ou a variante com classe de caractere
+agnóstica de SO (`'<rootDir>[\/]e2e[\/]'`). No Windows, quando o caminho absoluto de `rootDir`
+contém um segmento de diretório iniciado por ponto logo após um separador (ex.:
+`.claude/worktrees/<id>/...`, a convenção deste pipeline para isolamento de working tree entre
+agentes concorrentes — `docs/GIT-WORKFLOW.md`), a função que o `jest-config` usa para normalizar
+esses padrões como regex mal-escapa o separador que antecede esse segmento, quebrando o casamento
+do restante do caminho — o arquivo que deveria estar excluído é carregado mesmo assim, **falha
+silenciosa** (sem erro, sem warning). Não reproduz em Linux (onde o CI normalmente roda), então
+passa despercebido no CI e só quebra localmente para devs Windows e para agentes de revisão deste
+pipeline rodando isolados em `.claude/worktrees/<id>`.
+
+Prefira casar só o nome do segmento de diretório, em qualquer posição do caminho, sem `<rootDir>`
+como prefixo:
+
+```js
+testPathIgnorePatterns: ['[\/]\.next[\/]', '[\/]node_modules[\/]', '[\/]e2e[\/]'],
+```
+
+(sem caminho absoluto literal na entrada, não há o que a normalização interna do Jest
+mal-interprete).
+
 ## Preferência por Docker/emuladores locais em vez de produção real
 
 Todo teste automatizado que depende de infraestrutura (banco, filas, storage, serviço de nuvem
