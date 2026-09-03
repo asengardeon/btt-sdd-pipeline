@@ -60,17 +60,22 @@ check_docs_drift() {
 }
 
 # Devolve o veredito da RODADA MAIS RECENTE de um artefato de revisão: prefere a
-# última linha da tabela "### Histórico de aprovações por fatia" (append-only por
+# última linha da tabela "Histórico de aprovações por fatia" (append-only por
 # design — nunca sobrescrita, sempre reflete a fatia mais recente) e só cai para o
-# texto em negrito da seção "## 1. Veredito geral" se não houver tabela preenchida
+# texto em negrito da seção "Veredito geral" se não houver tabela preenchida
 # (issue #37: pegar a 1ª ocorrência da palavra "reprovado" no arquivo inteiro
 # reportava REPROVADO mesmo quando uma reverificação posterior já tinha aprovado).
+# O nível de cabeçalho (#/##/###/####) varia entre artefatos reais gerados em
+# versões diferentes do pipeline — o template usa "###", mas issue #44 confirmou
+# artefatos reais com "##" e até "#" para o mesmo cabeçalho, o que fazia a detecção
+# nunca disparar e cair sempre no fallback (reintroduzindo o bug da #37). Aceita
+# 1 a 4 "#" em vez de exigir um nível fixo.
 latest_verdict() {
   local file="$1"
   local hist_last
   hist_last="$(awk '
-    /^### .*Histórico de aprovações por fatia/ { insec = 1; next }
-    insec && /^##/ { insec = 0 }
+    /^#{1,4}[[:space:]].*Histórico de aprovações por fatia/ { insec = 1; next }
+    insec && /^#{1,4}[[:space:]]/ { insec = 0 }
     insec && /^\|/ { line = $0 }
     END { print line }
   ' "$file" 2>/dev/null)"
@@ -78,8 +83,8 @@ latest_verdict() {
     echo "$hist_last"
     return
   fi
-  grep -A2 -iE '##.*Veredito geral' "$file" 2>/dev/null \
-    | grep -E '\*\*.+\*\*' | head -1 \
+  grep -A2 -iE '#{1,4}.*Veredito geral' "$file" 2>/dev/null \
+    | grep -E '\*\*.+\*\*' | tail -1 \
     | sed -E 's/.*\*\*(.+)\*\*.*/\1/'
 }
 
@@ -109,22 +114,33 @@ count_validar_depois_pendentes() {
 # não significa "pipeline concluído" se existe uma fatia 2+ com tarefas ainda não
 # implementadas; o script reportava "(pipeline concluído)" só com base no veredito
 # de SRE, sem cruzar com a decomposição de tarefas do TRD.
+# issue #44 corrigiu dois problemas adicionais aqui: (a) aceita 1 a 4 "#" no
+# cabeçalho da seção, mesma razão de latest_verdict() acima; (b) `conclu[ií]do`
+# é uma expressão multibyte que não casa em locale C/POSIX (LANG/LC_ALL vazios) —
+# trocado por `conclu.*do`, que não depende de reconhecer o byte do acento; (c)
+# isola o valor da coluna Status pelo cabeçalho (mesma técnica de
+# count_validar_depois_pendentes() acima) em vez de checar a linha inteira, para
+# não confundir texto livre de outra coluna mencionando "concluído" com o status
+# real da tarefa.
 has_fatia_pendente() {
   local trd_file="$1"
   [ -f "$trd_file" ] || { echo "0"; return; }
   awk '
-    BEGIN { insec = 0; found = 0; has_status_col = 0; header_seen = 0 }
-    /^## .*Decomposição de tarefas/ { insec = 1; next }
-    /^## / && insec == 1 { insec = 0 }
+    BEGIN { insec = 0; found = 0; status_idx = 0; header_seen = 0 }
+    /^#{1,4}[[:space:]].*Decomposição de tarefas/ { insec = 1; next }
+    insec == 1 && /^#{1,4}[[:space:]]/ { insec = 0 }
     insec == 1 && /^\|/ {
+      if ($0 ~ /^\|[-|[:space:]]+\|?$/) next
       line = $0
+      gsub(/^\| */, "", line); gsub(/ *\|$/, "", line)
+      n = split(line, cols, "|")
+      for (i = 1; i <= n; i++) { gsub(/^ +| +$/, "", cols[i]) }
       if (!header_seen) {
         header_seen = 1
-        if (line ~ /Status/) has_status_col = 1
+        for (i = 1; i <= n; i++) { if (cols[i] == "Status") status_idx = i }
         next
       }
-      if (line ~ /^\|[-|[:space:]]+\|?$/) next
-      if (has_status_col && tolower(line) !~ /conclu[ií]do/) { found = 1 }
+      if (status_idx > 0 && tolower(cols[status_idx]) !~ /conclu.*do/) { found = 1 }
     }
     END { print (found ? 1 : 0) }
   ' "$trd_file" 2>/dev/null
