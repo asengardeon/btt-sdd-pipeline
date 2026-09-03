@@ -96,7 +96,14 @@ normalmente.
    passa independente do código (falso positivo)?
 5. **Consistência com o contrato Frontend↔Backend do TRD**, quando a feature é full-stack: o
    adapter de entrada do backend implementa exatamente o que o TRD prometeu; o client do frontend
-   consome exatamente isso, sem campo/rota inventado por qualquer um dos dois lados.
+   consome exatamente isso, sem campo/rota inventado por qualquer um dos dois lados. **Quando a UI
+   condiciona visibilidade/habilitação de algo a papel/permissão/capacidade** (botão, opção de
+   formulário, rota client-side condicionada por `role`/flag), não basta confirmar que existe uma
+   checagem equivalente no backend — confirme que a **lista de valores aceitos bate 1:1** dos dois
+   lados (ex.: grep do array/enum de papéis aceitos no frontend contra a condição real do backend).
+   Frontend liberando um valor que o backend sempre rejeita é um achado bloqueante aqui, não algo
+   a deixar passar como "é só proteção de UX, a autorização real é do backend" — a autorização
+   real estar correta no backend não significa que a UI correspondente é consistente com ela.
 6. **Tratamento de erros e casos de borda no nível do código** (complementa, sem repetir, a
    validação de critério de aceite do QA): erros esperados são tratados explicitamente, exceções
    não são silenciadas sem motivo, e casos de borda óbvios (coleção vazia, valor nulo/ausente,
