@@ -16,6 +16,14 @@ de todas as versões passadas). Projetos scaffolded antes de `1.14.0` que quiser
 mais antigas precisam comparar manualmente contra a versão atual do template uma única vez, antes
 que `/sdd-sync-docs` passe a cobrir o resto a partir daqui em diante.
 
+## 1.14.1 — 2026-09-03
+
+- `docs/TESTING.md`: nova subseção "Armadilha conhecida: `testPathIgnorePatterns` do Jest com
+  `<rootDir>` e path com segmento iniciado por ponto" (dentro de "Frontend (quando aplicável)") —
+  documenta uma falha silenciosa do Jest no Windows quando `rootDir` contém um segmento iniciado
+  por ponto (ex. `.claude/worktrees/<id>`, a convenção deste pipeline para isolamento de working
+  tree), e o padrão seguro recomendado para `testPathIgnorePatterns`/`modulePathIgnorePatterns`.
+
 ## 1.14.0 — 2026-09-03
 
 - `docs/DOCS-SYNC.md` (arquivo novo): introduz o marcador `docs/.sdd-plugin-version` e o
