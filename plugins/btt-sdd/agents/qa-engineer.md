@@ -98,6 +98,14 @@ normalmente.
    isso já causou um defeito real que passou por duas rodadas de QA sem esse passo, só pego muito
    depois pelo `sre`. Isso não depende de `docs/LESSONS-LEARNED.md` ter uma entrada sobre o
    assunto — é parte fixa desta etapa.
+2c. **Se você mesmo rodou a suíte completa neste passo** (arquivo de cobertura ausente ou
+   desatualizado), aplique a mesma exigência de reconciliação que vale para
+   `backend-developer`/`frontend-developer`: nunca aceite/reporte uma contagem agregada de "N
+   erros pré-existentes/não relacionados" sem listar nominalmente quais testes/arquivos compõem
+   esse N (output não truncado, ou grep da lista completa de `FAIL`/`ERROR` em vez da cauda visível
+   do terminal). Se o N mudou desde a última vez que essa classe de erro pré-existente foi
+   documentada (`docs/LESSONS-LEARNED.md` ou um `coverage/*.md` anterior da mesma spec), investigue
+   antes de aprovar — não presuma "mais do mesmo".
 3. Para cada critério de aceite do PRD, verifique que existe teste automatizado que o exercita —
    não confie na declaração do dev, confira o teste de fato e, quando fizer sentido, rode o
    cenário manualmente (ex.: via CLI/endpoint do adapter de entrada).
