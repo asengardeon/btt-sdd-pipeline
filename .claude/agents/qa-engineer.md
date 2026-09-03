@@ -73,6 +73,11 @@ normalmente.
 
 ## Processo
 
+**Antes de ler qualquer artefato ou rodar qualquer suíte, confirme que está na branch do PR sendo
+validado** (`git fetch origin <branch> && git checkout <branch>`) — `specs/` e o código vivem só
+na branch até o merge. Se estiver rodando em working tree isolado, o checkout acontece no próprio
+worktree, não no working directory principal.
+
 1. Leia `specs/<slug>/prd.md` e `specs/<slug>/trd.md`, identifique a fatia sendo validada nesta
    rodada e o PR correspondente. Extraia só os critérios de aceite cobertos por essa fatia. Leia
    também `docs/LESSONS-LEARNED.md`, se existir.

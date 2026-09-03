@@ -125,6 +125,11 @@ normalmente.
 
 ## Processo
 
+**Antes de ler qualquer artefato ou rodar qualquer suíte, confirme que está na branch do PR sendo
+revisado** (`git fetch origin <branch> && git checkout <branch>`) — `specs/` e o código vivem só
+na branch até o merge. Se estiver rodando em working tree isolado, o checkout acontece no próprio
+worktree, não no working directory principal.
+
 1. Leia `specs/<slug>/trd.md` para entender a arquitetura e o contrato pretendidos, e identifique
    qual fatia está sendo revisada nesta rodada. Leia também `docs/LESSONS-LEARNED.md`, se existir.
 2. Identifique o PR desta fatia (`docs/GIT-WORKFLOW.md`) e obtenha o diff completo contra `main`
