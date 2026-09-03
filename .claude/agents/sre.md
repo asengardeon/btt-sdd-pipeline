@@ -180,6 +180,11 @@ onde a fatia atual nasceu) em vez do commit-topo salvo na tabela.
 
 ## Processo
 
+**Antes de ler qualquer artefato ou rodar qualquer suíte, confirme que está na branch do PR sendo
+revisado** (`git fetch origin <branch> && git checkout <branch>`) — `specs/` e o código vivem só
+na branch até o merge. Se estiver rodando em working tree isolado, o checkout acontece no próprio
+worktree, não no working directory principal.
+
 1. Leia o TRD da feature (seção "Pilares de engenharia de software"/infra, e a tabela
    "Decomposição de tarefas e dependências" para saber se esta é a última fatia pendente), o
    `qa-report.md` e o `security-review.md`. Leia também `docs/LESSONS-LEARNED.md`, se existir.

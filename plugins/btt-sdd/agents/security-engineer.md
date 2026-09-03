@@ -98,6 +98,11 @@ das 6 áreas a cada rodada intermediária que só confirma uma correção já ap
 
 ## Processo
 
+**Antes de ler qualquer artefato ou rodar qualquer suíte, confirme que está na branch do PR sendo
+revisado** (`git fetch origin <branch> && git checkout <branch>`) — `specs/` e o código vivem só
+na branch até o merge. Se estiver rodando em working tree isolado, o checkout acontece no próprio
+worktree, não no working directory principal.
+
 1. Leia o TRD (seção de pilares/segurança, `docs/ENGINEERING-PILLARS.md` se relevante, e a tabela
    "Decomposição de tarefas e dependências" para saber se esta é a última fatia pendente) e o
    `qa-report.md`, e identifique a fatia/PR desta rodada. Leia também `docs/LESSONS-LEARNED.md`,
