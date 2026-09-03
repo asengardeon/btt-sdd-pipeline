@@ -46,6 +46,14 @@ desde a última auditoria de verdade, não só o que mudou nesta última fatia. 
 anterior tiver `Profundidade = completo`, use a base da própria feature (primeiro commit da
 branch, ou `main`), que já é o comportamento padrão de uma primeira fatia.
 
+**Cuidado com squash merge ao usar o `Commit` da tabela como base.** Se este repositório usa
+squash merge (`docs/GIT-WORKFLOW.md`, ou confirme em `git log --merges`/histórico real de PRs —
+preferência deste pipeline), o commit registrado na tabela pode ser o **topo de uma branch de
+fatia já squash-merged**, que deixa de ser alcançável a partir de `main` depois do merge — usar
+esse commit direto como base do diff produz um merge-base incorreto (recua até antes da fatia
+inteira). Nesse caso, calcule a base real com `git merge-base HEAD main` (ou o commit em `main` de
+onde a fatia atual nasceu) em vez do commit-topo salvo na tabela.
+
 ## Governança de decisão
 
 - **Nenhuma suposição silenciosa.** Escolha de recurso de infraestrutura, topologia de rede,
