@@ -22,15 +22,25 @@ informe isso ao usuário se for o caso, sem prosseguir com os passos abaixo.
    instalado, pare e informe — não há o que sincronizar.
 2. Leia `docs/.sdd-plugin-version` do projeto atual (raiz do projeto, não do plugin). Se não
    existir, trate como "nunca sincronizado" — toda entrada do changelog do plugin conta como
-   pendente.
+   pendente, e o passo 2b abaixo também roda.
+2b. **Só quando "nunca sincronizado" (passo 2)**: além do changelog, faça uma comparação
+   estrutural completa — `plugins/btt-sdd/CHANGELOG.md` só rastreia mudanças de scaffold a partir
+   da versão 1.14.0 (documentado no próprio changelog), então projetos scaffolded antes disso têm
+   lacunas que o changelog sozinho nunca enxerga. Para cada `docs/<arquivo>.md`/`CLAUDE.md` do
+   projeto atual que tem equivalente no scaffold instalado (mesmo caminho relativo), liste os
+   títulos de seção (`## `/`### `) de cada lado e identifique os que existem só no scaffold.
+   Acrescente cada um como seção candidata, junto das do passo 4 — mesma lista, mesma aprovação no
+   passo 5. Pule arquivos do projeto que não têm equivalente direto no scaffold atual (arquivo
+   renomeado ou específico do projeto) — comparação estrutural só faz sentido par a par.
 3. Localize o `CHANGELOG.md` do plugin instalado (mesmo caminho relativo que
    `plugins/btt-sdd/CHANGELOG.md` tem neste repositório, dentro da instalação real do plugin no
    sistema do usuário — o caminho exato depende de onde `claude plugin details` apontou no passo
    1) e liste as entradas com versão maior que a marcada no passo 2, até a versão instalada
    (inclusive).
-   - Se não houver entrada nenhuma nesse intervalo, informe "docs já sincronizados, nada a fazer",
-     atualize `docs/.sdd-plugin-version` para a versão instalada de qualquer forma (evita reler o
-     changelog inteiro de novo na próxima checagem) e pare aqui.
+   - Se não houver entrada nenhuma nesse intervalo **e o passo 2b não achou nenhuma seção
+     candidata**, informe "docs já sincronizados, nada a fazer", atualize
+     `docs/.sdd-plugin-version` para a versão instalada de qualquer forma (evita reler o changelog
+     inteiro de novo na próxima checagem) e pare aqui.
 4. Para cada entrada do changelog no intervalo, e para cada arquivo que ela cita: abra o arquivo
    correspondente do projeto atual (`docs/<arquivo>.md` ou `CLAUDE.md`) e o arquivo equivalente do
    scaffold instalado (mesmo caminho relativo dentro da instalação do plugin). Verifique se a

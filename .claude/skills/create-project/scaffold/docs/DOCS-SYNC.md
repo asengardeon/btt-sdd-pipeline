@@ -30,6 +30,13 @@ manualmente.
 - **`/sdd-sync-docs`** (`.claude/skills/sdd-sync-docs/SKILL.md`) compara as duas coisas acima e
   oferece aplicar, uma a uma, as seções novas que o projeto ainda não tem — nunca sobrescrevendo
   conteúdo que o projeto já customizou.
+- **Comparação estrutural na primeira sincronização.** O changelog só rastreia mudanças de
+  scaffold a partir da versão 1.14.0 — um projeto scaffolded antes disso (ou que nunca rodou
+  `/sdd-sync-docs`) pode ter lacunas anteriores a esse ponto que o changelog sozinho nunca
+  enxerga. Na primeira sincronização de um projeto (`docs/.sdd-plugin-version` ausente),
+  `/sdd-sync-docs` complementa o changelog com uma comparação direta de títulos de seção entre
+  cada doc do projeto e o equivalente no scaffold atual, cobrindo esse ponto cego — mesma
+  aprovação por seção do fluxo normal.
 
 ## Quando `/sdd-sync-docs` roda
 
@@ -50,7 +57,8 @@ Ver `.claude/skills/sdd-sync-docs/SKILL.md` para o passo a passo completo. Resum
 do changelog entre a versão marcada e a instalada, localiza a seção nova/alterada correspondente no
 scaffold atual do plugin, verifica se ela já existe no arquivo real do projeto (por título de
 seção) e, se não existir, propõe adicionar — sempre com aprovação explícita do usuário antes de
-tocar em qualquer arquivo (`docs/QUALITY-GATES.md`, "Nenhuma suposição silenciosa"). Ao final,
+tocar em qualquer arquivo (`docs/QUALITY-GATES.md`, "Nenhuma suposição silenciosa"). Na primeira
+sincronização de um projeto, complementa isso com a comparação estrutural descrita acima. Ao final,
 atualiza `docs/.sdd-plugin-version` para a versão instalada, mesmo que o usuário tenha recusado
 alguma seção específica — o marcador significa "esta versão já foi verificada", não "tudo foi
 aplicado"; seções recusadas ficam registradas no resumo final para o usuário revisitar manualmente

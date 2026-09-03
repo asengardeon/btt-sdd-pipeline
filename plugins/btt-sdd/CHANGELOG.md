@@ -16,6 +16,14 @@ de todas as versões passadas). Projetos scaffolded antes de `1.14.0` que quiser
 mais antigas precisam comparar manualmente contra a versão atual do template uma única vez, antes
 que `/sdd-sync-docs` passe a cobrir o resto a partir daqui em diante.
 
+## 1.15.0 — 2026-09-03
+
+- `docs/DOCS-SYNC.md`: nova subseção "Comparação estrutural na primeira sincronização" — cobre a
+  lacuna de projetos scaffolded antes do início do rastreamento deste changelog (`1.14.0`):
+  `/sdd-sync-docs`, na primeira sincronização de um projeto (`docs/.sdd-plugin-version` ausente),
+  agora também compara títulos de seção entre os docs do projeto e o scaffold atual, além de ler
+  este changelog.
+
 ## 1.14.1 — 2026-09-03
 
 - `docs/TESTING.md`: nova subseção "Armadilha conhecida: `testPathIgnorePatterns` do Jest com
