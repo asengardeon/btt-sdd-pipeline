@@ -78,6 +78,13 @@ Cada agente vive em `.claude/agents/<nome>.md` e é acionado por uma skill em
 | `/sdd-pending`      | (nenhum, utilitário)                             | lista itens "VALIDAR DEPOIS" em aberto |
 | `/sdd-gap-report`   | (nenhum, utilitário)                             | compara casos de uso do TRD (seção 6) com o código real |
 | `/sdd-docs`         | tech-writer (utilitário, sem etapa fixa; também acionado automaticamente por `/sdd-sre` ao aprovar a última fatia pendente de uma spec) | README, docs/, ADRs, ou exemplos de código documentados |
+| `/sdd-sync-docs`    | (nenhum, utilitário; só relevante em projetos com o plugin instalado, ver `docs/DOCS-SYNC.md`) | aplica em `docs/`/`CLAUDE.md` do projeto as seções novas que o template do plugin ganhou depois do scaffold |
+
+**Se este projeto usa o plugin instalado** (`plugins/btt-sdd/`, não a distribuição via junction),
+verifique `docs/DOCS-SYNC.md` **uma vez por sessão**, na primeira vez que qualquer comando `/sdd-*`
+ou `/btt-sdd:*` for chamado: se `docs/.sdd-plugin-version` estiver atrás da versão instalada do
+plugin, rode `/sdd-sync-docs` antes de prosseguir com o comando original. Não repita essa checagem
+a cada comando subsequente na mesma sessão.
 
 **As etapas 4-7 (revisão) sempre passam pela skill própria — nunca invoque `code-reviewer`,
 `qa-engineer`, `security-engineer` ou `sre` diretamente via Agent tool fora de

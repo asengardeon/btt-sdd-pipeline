@@ -74,7 +74,11 @@ outra tarefa, pare e informe o usuário em vez de misturar.
       `plugins/btt-sdd/.claude-plugin/plugin.json` (patch por padrão — `1.X.Y` → `1.X.(Y+1)`; minor
       se a issue introduziu uma capacidade nova, não só um ajuste; pergunte ao usuário só se a
       escolha entre patch/minor não for óbvia) como parte do mesmo commit/PR. Se a mudança não
-      tocou nada em `plugins/btt-sdd/`, não bata a versão.
+      tocou nada em `plugins/btt-sdd/`, não bata a versão. **Se a mudança tocou especificamente
+      `skills/create-project/scaffold/docs/` ou `skills/create-project/scaffold/CLAUDE.md`**,
+      acrescente também uma entrada em `plugins/btt-sdd/CHANGELOG.md` no mesmo commit — é o que
+      permite a projetos já scaffolded em versões antigas descobrir e aplicar essa melhoria depois
+      (`docs/DOCS-SYNC.md`).
    d. Commit, `git push -u origin <branch>`, e abra o PR (`gh pr create`) com `Closes #<N>` no
       corpo, resumindo o que mudou e por quê (cite a issue).
    e. **Aguarde o PR ficar limpo para merge**: `gh pr view <PR> --repo asengardeon/btt-sdd-pipeline
