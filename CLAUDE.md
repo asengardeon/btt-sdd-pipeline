@@ -79,6 +79,16 @@ Cada agente vive em `.claude/agents/<nome>.md` e é acionado por uma skill em
 | `/sdd-gap-report`   | (nenhum, utilitário)                             | compara casos de uso do TRD (seção 6) com o código real |
 | `/sdd-docs`         | tech-writer (utilitário, sem etapa fixa; também acionado automaticamente por `/sdd-sre` ao aprovar a última fatia pendente de uma spec) | README, docs/, ADRs, ou exemplos de código documentados |
 
+**As etapas 4-7 (revisão) sempre passam pela skill própria — nunca invoque `code-reviewer`,
+`qa-engineer`, `security-engineer` ou `sre` diretamente via Agent tool fora de
+`/sdd-code-review`/`/sdd-qa`/`/sdd-security`/`/sdd-sre`.** Isso é diferente da etapa 3
+(`backend-developer`/`frontend-developer`), onde a invocação direta via Agent tool **é** o padrão
+correto (`/sdd-implement` não tem um agente intermediário). Nas etapas de revisão, a skill carrega
+lógica própria que o agente sozinho não replica — ex. `/sdd-sre` aciona `tech-writer`
+automaticamente na última fatia e conduz a retrospectiva obrigatória de toda fatia (seção
+"Manutenção deste repositório" abaixo). Pular a skill e chamar o agente direto já fez essas duas
+coisas serem puladas silenciosamente numa sessão real, só percebido depois do merge.
+
 Veja o exemplo de referência (PRD, TRD, QA/security/SRE reports reais) em
 `specs/0001-example-task-management/` — o código correspondente não existe mais como arquivos
 executáveis neste repositório (template de pipeline, não de aplicação), mas está preservado como

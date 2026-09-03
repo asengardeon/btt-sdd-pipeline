@@ -8,6 +8,12 @@ description: Etapa 4 do pipeline SDD. Use depois que a implementação de uma fe
 Aciona a **etapa 4** do pipeline SDD descrito em `CLAUDE.md`: revisão de código por um engenheiro
 de software sênior, entre a implementação e o QA.
 
+**Sempre passe por esta skill — nunca invoque o agente `code-reviewer` diretamente via Agent tool**
+(diferente da etapa 3, onde invocar `backend-developer`/`frontend-developer` direto é o padrão
+correto). Esta skill em si não carrega lógica extra além de acionar o agente, mas o hábito de
+pular a skill nas etapas 4-7 já causou passos de outras skills de revisão (`/sdd-sre`) serem
+pulados silenciosamente numa sessão real — ver `CLAUDE.md`, seção do pipeline.
+
 ## Passos
 
 1. Identifique o slug da feature (mesma lógica das skills anteriores).

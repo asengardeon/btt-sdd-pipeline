@@ -71,6 +71,14 @@ em `main` antes da fatia seguinte começar. Detalhe completo em `docs/GIT-WORKFL
 | `/sdd-amend`        | (nenhum, utilitário)                             | emenda um artefato já aprovado sem reiniciar o pipeline |
 | `/sdd-pending`      | (nenhum, utilitário)                             | lista itens "VALIDAR DEPOIS" em aberto |
 
+**As etapas 4-7 (revisão) sempre passam pela skill própria — nunca invoque `code-reviewer`,
+`qa-engineer`, `security-engineer` ou `sre` diretamente via Agent tool fora de
+`/sdd-code-review`/`/sdd-qa`/`/sdd-security`/`/sdd-sre`.** Isso é diferente da etapa 3
+(`backend-developer`/`frontend-developer`), onde a invocação direta via Agent tool **é** o padrão
+correto (`/sdd-implement` não tem um agente intermediário). Nas etapas de revisão, a skill carrega
+lógica própria que o agente sozinho não replica — ex. `/sdd-sre` aciona `tech-writer`
+automaticamente na última fatia e conduz a retrospectiva obrigatória de toda fatia.
+
 ## Princípios de arquitetura (não negociáveis)
 
 1. **Ports & Adapters (arquitetura hexagonal).** `src/domain` não importa nada de fora.
