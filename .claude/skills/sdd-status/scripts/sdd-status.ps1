@@ -58,25 +58,31 @@ function Get-DocsDrift {
 }
 
 # Devolve o veredito da RODADA MAIS RECENTE de um artefato de revisao: prefere a
-# ultima linha da tabela "### Historico de aprovacoes por fatia" (append-only por
+# ultima linha da tabela "Historico de aprovacoes por fatia" (append-only por
 # design - nunca sobrescrita, sempre reflete a fatia mais recente) e so cai para o
-# texto em negrito da secao "## 1. Veredito geral" se nao houver tabela preenchida
+# texto em negrito da secao "Veredito geral" se nao houver tabela preenchida
 # (issue #37: pegar a 1a ocorrencia da palavra "reprovado" no arquivo inteiro
 # reportava REPROVADO mesmo quando uma reverificacao posterior ja tinha aprovado).
+# O nivel de cabecalho (#/##/###/####) varia entre artefatos reais gerados em
+# versoes diferentes do pipeline - o template usa "###", mas issue #44 confirmou
+# artefatos reais com "##" e ate "#" para o mesmo cabecalho, o que fazia a deteccao
+# nunca disparar e cair sempre no fallback (reintroduzindo o bug da #37). Aceita
+# 1 a 4 "#" em vez de exigir um nivel fixo.
 function Get-LatestVerdict {
   param([string]$Content)
   $inSec = $false
   $lastRow = $null
   foreach ($line in ($Content -split "`r?`n")) {
-    if ($line -match '^### .*Hist.rico de aprova') { $inSec = $true; continue }
-    if ($inSec -and $line -match '^##') { $inSec = $false }
+    if ($line -match '^#{1,4}\s.*Hist.rico de aprova') { $inSec = $true; continue }
+    if ($inSec -and $line -match '^#{1,4}\s') { $inSec = $false }
     if ($inSec -and $line -match '^\|') { $lastRow = $line }
   }
   if ($lastRow -and $lastRow -notmatch '^\|[-|\s]+\|?$') {
     return $lastRow
   }
-  if ($Content -match '(?ms)##.*Veredito geral\s*?\r?\n+.*?\*\*(.+?)\*\*') {
-    return $Matches[1]
+  $verdictMatches = [regex]::Matches($Content, '(?ms)#{1,4}.*Veredito geral\s*?\r?\n+.*?\*\*(.+?)\*\*')
+  if ($verdictMatches.Count -gt 0) {
+    return $verdictMatches[$verdictMatches.Count - 1].Groups[1].Value
   }
   return ""
 }
@@ -110,26 +116,35 @@ function Get-ValidarDepoisPendentesCount {
 # implementadas; o script reportava "(pipeline concluido)" so com base no veredito
 # de SRE, sem cruzar com a decomposicao de tarefas do TRD. So considera o sinal
 # quando a tabela realmente tem uma coluna Status (TRDs de formato antigo, sem essa
-# coluna, nao geram falso positivo).
+# coluna, nao geram falso positivo). issue #44 corrigiu dois problemas adicionais:
+# (a) aceita 1 a 4 "#" no cabecalho da secao, mesma razao de Get-LatestVerdict
+# acima; (b) isola o valor da coluna Status pelo cabecalho (mesma tecnica de
+# Get-ValidarDepoisPendentesCount acima) em vez de checar a linha inteira, para
+# nao confundir texto livre de outra coluna mencionando "concluido" com o status
+# real da tarefa.
 function Test-FatiaPendente {
   param([string]$TrdPath)
   if (-not (Test-Path $TrdPath)) { return $false }
   $content = Get-Content $TrdPath -Raw
   $inSec = $false
   $headerSeen = $false
-  $hasStatusCol = $false
+  $statusIdx = -1
   $found = $false
   foreach ($line in ($content -split "`r?`n")) {
-    if ($line -match '^## .*Decomposi.{3} de tarefas') { $inSec = $true; continue }
-    if ($inSec -and $line -match '^## ') { $inSec = $false }
+    if ($line -match '^#{1,4}\s.*Decomposi.{3} de tarefas') { $inSec = $true; continue }
+    if ($inSec -and $line -match '^#{1,4}\s') { $inSec = $false }
     if ($inSec -and $line -match '^\|') {
+      if ($line -match '^\|[-|\s]+\|?$') { continue }
+      $trimmed = $line.Trim().Trim('|')
+      $cols = $trimmed -split '\|' | ForEach-Object { $_.Trim() }
       if (-not $headerSeen) {
         $headerSeen = $true
-        if ($line -match 'Status') { $hasStatusCol = $true }
+        for ($i = 0; $i -lt $cols.Count; $i++) { if ($cols[$i] -eq 'Status') { $statusIdx = $i } }
         continue
       }
-      if ($line -match '^\|[-|\s]+\|?$') { continue }
-      if ($hasStatusCol -and $line -notmatch '(?i)conclu.do') { $found = $true }
+      if ($statusIdx -ge 0 -and $statusIdx -lt $cols.Count -and $cols[$statusIdx] -notmatch '(?i)conclu.do') {
+        $found = $true
+      }
     }
   }
   return $found
