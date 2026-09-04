@@ -165,6 +165,18 @@ sem sinal visível), a condição de parada do loop nunca vira verdadeira, e o s
 timeout achando que "o CI está demorando" quando na verdade é a própria ferramenta de checagem que
 está quebrada — um desperdício de tempo/tokens investigando o lugar errado.
 
+**Timeout de job de CI sob alta concorrência do próprio pipeline é um falso-negativo conhecido.**
+Quando `/sdd-implement` (ou o orquestrador de uma sessão) dispara múltiplas fatias/PRs em paralelo
+no mesmo projeto, os runners/rede do provedor de CI ficam sob contenção real — passos normalmente
+rápidos (`npm ci`, `npm audit`, instalação de dependências em geral) podem levar bem mais tempo que
+o observado isoladamente, estourando `timeout-minutes` do job sem nenhum teste vermelho. Já
+aconteceu de verdade: um job cancelado só por timeout, sob 3+ branches rodando CI ao mesmo tempo
+pela mesma sessão, sem nenhum defeito de código — confirmado comparando com um run de CI
+concorrente da mesma janela. Antes de investigar isso como bug de código, tente `gh run rerun
+--failed` uma vez — se o rerun passar limpo sem qualquer mudança de código, a causa era contenção
+de CI, não a feature. Só escale como achado bloqueante se o rerun também falhar, ou se falhar com
+teste vermelho (não só timeout).
+
 ## Por que `/sdd-amend` não reescreve histórico
 
 Uma emenda a um artefato já aprovado (`/sdd-amend`, ver `docs/SDD-WORKFLOW.md`) nunca reescreve
