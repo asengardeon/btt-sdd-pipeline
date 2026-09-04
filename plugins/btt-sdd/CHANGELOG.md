@@ -16,6 +16,14 @@ de todas as versões passadas). Projetos scaffolded antes de `1.14.0` que quiser
 mais antigas precisam comparar manualmente contra a versão atual do template uma única vez, antes
 que `/sdd-sync-docs` passe a cobrir o resto a partir daqui em diante.
 
+## 1.15.2 — 2026-09-04
+
+- `docs/GIT-WORKFLOW.md`: nova subseção em "Isolamento de working tree entre agentes concorrentes"
+  — isolamento de `git worktree` cobre arquivos/estado de Git, não serviços com estado
+  compartilhados no host (banco de teste, emulador de nuvem local); cada agente/worktree que roda
+  testes de integração contra um desses serviços precisa de instância/banco/schema isolado por
+  execução.
+
 ## 1.15.1 — 2026-09-04
 
 - `docs/GIT-WORKFLOW.md`: nova subseção em "Aguardando CI antes do merge" — timeout de job de CI

@@ -99,6 +99,21 @@ deste repositório há pouco, um worktree novo deve conseguir reaproveitar esse 
 instantaneamente em vez de reinstalar tudo do zero — isolamento é sobre arquivos de código e
 estado de Git, nunca precisa se estender ao cache de dependências.
 
+**Isolamento de arquivos não é isolamento de serviços com estado.** `git worktree` separa árvore
+de arquivos e estado de Git — não separa serviços com estado compartilhados no host, como um banco
+de dados de teste ou um emulador de nuvem local (LocalStack, floci) reaproveitado entre worktrees.
+Já aconteceu de verdade: dois agentes rodando suíte de teste de integração em paralelo, cada um no
+seu próprio worktree, contra o **mesmo** banco Postgres de teste — um deles rodou uma migração
+destrutiva (`migrate:fresh`, que dropa e recria todo o schema) enquanto o outro ainda lia esse
+schema, produzindo erros espúrios de "coluna/tabela não existe" que pareciam bug de produto e só
+foram identificados como corrupção cruzada depois de investigação adicional (comparando o schema
+via `\d <tabela>` entre tentativas). Sempre que mais de um agente/worktree puder rodar testes de
+integração contra um serviço com estado na mesma janela de tempo, cada execução usa uma
+instância/banco/schema isolado — ex.: nome de banco derivado do worktree ou da branch
+(`<projeto>_test_<id-do-worktree>`), ou um container efêmero por execução — nunca um único serviço
+compartilhado reaproveitado por agentes concorrentes. O mecanismo exato (nome de schema, container
+por execução, etc.) é decisão de `docs/STACK.md` deste projeto, não hardcoded neste template.
+
 **Isolamento resolve a corrida de Git — não substitui dependência lógica entre etapas.** Com
 isolamento garantido (mecanismo acima), duas tarefas que não dependem do resultado uma da outra
 podem — e devem, por padrão — ser invocadas em paralelo, sem a cautela de serializar tudo "por via
