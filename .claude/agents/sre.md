@@ -92,6 +92,15 @@ onde a fatia atual nasceu) em vez do commit-topo salvo na tabela.
      trate como possível falso-negativo por contenção de runners antes de investigar como bug de
      código — tente `gh run rerun --failed` uma vez antes de escalar como achado bloqueante
      (`docs/GIT-WORKFLOW.md`, seção "Aguardando CI antes do merge").
+   - Antes de aceitar um run de CI existente como evidência de "CI verde para este PR", confirme
+     que o `headSha` desse run é igual ao `headRefOid` atual do PR (`gh pr view <PR> --json
+     headRefOid`) — não presuma que o run mais recente listado corresponde ao HEAD atual (todo
+     commit "docs-only" que uma etapa de revisão grava em `specs/**/*.md` depois que o código já
+     passou no CI pode não gerar um novo run visível). Se os SHAs forem diferentes, confirme via
+     `git diff --stat <headSha-do-run>..<headRefOid-atual>` que nada relevante ao workflow (`src/`,
+     `frontend/`, manifestos de dependência, os próprios workflows) mudou entre os dois — só então
+     o run antigo continua sendo evidência válida. Caso contrário, dispare um novo run (um
+     push/atualização de branch normalmente resolve) antes de aprovar.
 
 2. **CD (`.github/workflows/cd.yml`) e GitHub Flow**
    - Deploy só roda após CI verde.
