@@ -87,6 +87,11 @@ onde a fatia atual nasceu) em vez do commit-topo salvo na tabela.
    - Lint, testes e gate de cobertura 80% rodam em todo PR/push relevante.
    - Pipeline falha de forma clara e rápida (fail fast) — não deixa warning virar erro silencioso.
    - Cache de dependências configurado para não deixar o pipeline lento sem necessidade.
+   - Se um job falhar/for cancelado só por estourar `timeout-minutes` (sem nenhum teste vermelho),
+     principalmente quando múltiplas fatias/PRs desta mesma sessão estão rodando CI em paralelo,
+     trate como possível falso-negativo por contenção de runners antes de investigar como bug de
+     código — tente `gh run rerun --failed` uma vez antes de escalar como achado bloqueante
+     (`docs/GIT-WORKFLOW.md`, seção "Aguardando CI antes do merge").
 
 2. **CD (`.github/workflows/cd.yml`) e GitHub Flow**
    - Deploy só roda após CI verde.

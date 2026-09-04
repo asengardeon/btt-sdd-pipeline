@@ -16,6 +16,12 @@ de todas as versões passadas). Projetos scaffolded antes de `1.14.0` que quiser
 mais antigas precisam comparar manualmente contra a versão atual do template uma única vez, antes
 que `/sdd-sync-docs` passe a cobrir o resto a partir daqui em diante.
 
+## 1.15.1 — 2026-09-04
+
+- `docs/GIT-WORKFLOW.md`: nova subseção em "Aguardando CI antes do merge" — timeout de job de CI
+  sob alta concorrência do próprio pipeline (múltiplas fatias/PRs rodando CI em paralelo) é um
+  falso-negativo conhecido; tentar `gh run rerun --failed` antes de investigar como bug de código.
+
 ## 1.15.0 — 2026-09-03
 
 - `docs/DOCS-SYNC.md`: nova subseção "Comparação estrutural na primeira sincronização" — cobre a
