@@ -111,6 +111,13 @@ onde a fatia atual nasceu) em vez do commit-topo salvo na tabela.
    - `main` protegida (`docs/GIT-WORKFLOW.md`): push direto bloqueado, PR obrigatório, status
      checks do CI obrigatórios. Você **verifica** isso (e sinaliza se não estiver configurado);
      configurar de fato é responsabilidade de quem administra o repositório no GitHub.
+   - Se o PR que você está revisando/aprovando aparecer como `CONFLICTING` (`gh pr view --json
+     mergeable`), nunca presuma que é só defasagem de `main` sem investigar — rode `git merge-tree`
+     (ou equivalente, um merge de três vias sem tocar o working tree) para confirmar se é conflito
+     real de conteúdo (duas edições sobrepostas no mesmo trecho, ex.: `specs/<slug>/prd.md` editado
+     por um hotfix/`/sdd-amend` concorrente) ou só um merge trivial que `gh` ainda não recalculou.
+     Nunca resolva um conflito real de conteúdo sozinho — pare e relate ao usuário com o diagnóstico
+     (quais branches/commits colidem, no quê).
 
 3. **Docker (`infra/docker/`)**
    - Build multi-stage, imagem final mínima (sem toolchain de build na imagem de execução).
