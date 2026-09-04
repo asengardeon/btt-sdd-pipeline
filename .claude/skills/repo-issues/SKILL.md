@@ -93,8 +93,13 @@ outra tarefa, pare e informe o usuário em vez de misturar.
       ainda estiver associado à branch (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree
       entre agentes concorrentes"). **Mergeie o PR**: `gh pr merge <PR> --repo
       asengardeon/btt-sdd-pipeline --squash --delete-branch` (mesmo padrão squash + delete-branch
-      já usado neste repositório). O fechamento da issue (`Closes #N`) acontece automaticamente no
-      merge — confirme
+      já usado neste repositório). Se essa chamada em si for **negada por uma restrição de
+      permissão do harness** (ex.: "Blocked by classifier" — distinto de qualquer erro de Git/
+      GitHub, e o PR já confirmado `MERGEABLE`/`CLEAN` no passo anterior), isso não é um PR
+      não-limpo: peça ao usuário para rodar o comando idêntico via prefixo `!` (executa fora do
+      controle desse classificador) e aguarde a resposta antes de prosseguir — não trate como
+      conflito/CI vermelho nem pule para a próxima issue. O fechamento da issue (`Closes #N`)
+      acontece automaticamente no merge — confirme
       (`gh issue view <N> --repo asengardeon/btt-sdd-pipeline --json state`) e, no caso raro de não
       ter fechado sozinho, feche explicitamente (`gh issue close <N> --repo
       asengardeon/btt-sdd-pipeline --comment "Fechada por #<PR>"`).
