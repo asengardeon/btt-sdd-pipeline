@@ -77,19 +77,36 @@ desperdiçada.
    Para cada sugestão concreta e acionável (não "poderia ser melhor" genérico), abra uma issue
    nova em `asengardeon/btt-sdd-pipeline` — o repositório de origem deste plugin, **sempre esse
    repositório, independente de qual projeto está rodando o pipeline agora**: `gh issue create
-   --repo asengardeon/btt-sdd-pipeline --title "..." --body "..."`, com contexto suficiente (o que
-   aconteceu nesta fatia, por que a sugestão faz sentido, qual arquivo do plugin mudaria). Prefixe
-   o título com "Melhoria:". Se `gh` falhar (comum quando o plugin está instalado num projeto de
-   outro operador sem acesso a este repositório específico), não tente mais de 3 vezes — relate as
-   sugestões como texto ao usuário em vez de bloquear a aprovação da fatia por isso.
+   --repo asengardeon/btt-sdd-pipeline --title "..." --body "..." --label melhoria --label
+   "spec:<projeto>/<slug>"`, com contexto suficiente (o que aconteceu nesta fatia, por que a
+   sugestão faz sentido, qual arquivo do plugin mudaria). Prefixe o título com "Melhoria:". Se
+   `gh` falhar (comum quando o plugin está instalado num projeto de outro operador sem acesso a
+   este repositório específico), não tente mais de 3 vezes — relate as sugestões como texto ao
+   usuário em vez de bloquear a aprovação da fatia por isso.
 
-   **Abra também, separadamente, uma issue de aprendizado** (prefixo "Aprendizado:" no título, mesmo
-   mecanismo) para todo padrão de comportamento observado nesta fatia que faça sentido generalizar
-   para o plugin — não algo específico deste projeto, mas algo que outro projeto usando o pipeline
-   também se beneficiaria de ter documentado/instruído nos agentes ou skills. Se nenhuma sugestão
-   ou aprendizado concreto surgir desta fatia, não abra issue artificial só para cumprir o passo —
-   siga sem abrir nada, mas ainda assim não pule a própria avaliação: "nada digno de issue" é uma
-   conclusão válida, "não avaliei" não é.
+   **Abra também, separadamente, uma issue de aprendizado** (prefixo "Aprendizado:" no título,
+   label `aprendizado` em vez de `melhoria`, mesmo mecanismo) para todo padrão de comportamento
+   observado nesta fatia que faça sentido generalizar para o plugin — não algo específico deste
+   projeto, mas algo que outro projeto usando o pipeline também se beneficiaria de ter
+   documentado/instruído nos agentes ou skills. Se nenhuma sugestão ou aprendizado concreto surgir
+   desta fatia, não abra issue artificial só para cumprir o passo — siga sem abrir nada, mas ainda
+   assim não pule a própria avaliação: "nada digno de issue" é uma conclusão válida, "não avaliei"
+   não é.
+
+   **Toda issue criada aqui leva dois labels, para ficar identificável contra a implementação que
+   a originou:**
+   - **Tipo**: `melhoria` ou `aprendizado`, conforme acima.
+   - **Origem**: `spec:<projeto>/<slug>`, onde `<projeto>` é o nome do repositório onde esta
+     sessão está rodando agora (`basename "$(git remote get-url origin)" .git`, ou o nome do
+     diretório de trabalho se não houver remote configurado) e `<slug>` é a feature desta fatia —
+     permite filtrar depois, no `asengardeon/btt-sdd-pipeline`, todas as issues originadas da
+     mesma spec/projeto.
+
+   Antes de usar qualquer um desses labels pela primeira vez neste repositório, confirme que
+   existe (`gh label list --repo asengardeon/btt-sdd-pipeline --json name`); se não existir, crie
+   com `gh label create <nome> --repo asengardeon/btt-sdd-pipeline --color <hex> --description
+   "<descrição curta>"` antes do `gh issue create` — `gh issue create --label` falha se o label
+   ainda não existir no repositório de destino.
 6. **Só escreva esta mensagem depois de completar 5b (se aplicável) e 5c acima.** Se aprovado,
    informe que a feature está pronta ponta a ponta pelo pipeline SDD, e que o merge do PR (GitHub
    Flow) fica a critério do usuário. Se você (ou o usuário) for aguardar o CI terminar antes desse
