@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Lista os itens "VALIDAR DEPOIS" com status "pendente" em todas as features de
-# specs/ e em docs/BASELINE.md, sem precisar ler cada artefato inteiro no
-# contexto do agente. Usado por .claude/skills/sdd-pending.
+# Lista os itens "VALIDAR DEPOIS" com status "pendente" e as tarefas ainda não
+# implementadas (tabela "Decomposição de tarefas e dependências" do TRD) em
+# todas as features de specs/ e em docs/BASELINE.md, sem precisar ler cada
+# artefato inteiro no contexto do agente. Usado por .claude/skills/sdd-pending.
 #
 # Uso: scripts/sdd-pending.sh [slug]
 #   slug (opcional) — mostra só aquela feature.
@@ -62,7 +63,34 @@ dedupe_rows() {
   '
 }
 
+# Extrai da tabela "Decomposição de tarefas e dependências" do TRD as linhas
+# cujo Status ainda não chegou a "implementado" (pendente/em andamento/
+# bloqueado) — colunas: ID | Tarefa | Trilha | Fatia (PRD) | Depende de |
+# Status | Issue GitHub.
+print_task_rows() {
+  awk '
+    BEGIN { insec = 0 }
+    /^## .*Decomposição de tarefas e dependências/ { insec = 1; next }
+    /^## / && insec == 1 { insec = 0 }
+    insec == 1 && /^\|/ {
+      line = $0
+      gsub(/^\| */, "", line); gsub(/ *\|$/, "", line)
+      n = split(line, cols, "|")
+      for (i = 1; i <= n; i++) { gsub(/^ +| +$/, "", cols[i]) }
+      if (n >= 6 && cols[1] != "ID" && cols[1] !~ /^-+$/) {
+        status = tolower(cols[6])
+        if (status ~ /pendente|em andamento|bloqueado/) {
+          issue = (n >= 7) ? cols[7] : ""
+          printf("%s\t%s\t%s\t%s\t%s\n", cols[1], cols[2], cols[3], cols[6], issue)
+        }
+      }
+    }
+  ' "$1"
+}
+
 ROWS=""
+TASK_ROWS=""
+SPECS_SEM_TRD=""
 
 collect_rows() {
   # $1 = feature exibida, $2 = artefato, $3 = arquivo
@@ -70,6 +98,14 @@ collect_rows() {
     [ -z "$id" ] && continue
     ROWS="${ROWS}${1}"$'\t'"${artefato}"$'\t'"${id}"$'\t'"${pergunta}"$'\t'"${contexto}"$'\n'
   done < <(print_rows "$2" "$3")
+}
+
+collect_task_rows() {
+  # $1 = feature exibida, $2 = arquivo trd.md
+  while IFS=$'\t' read -r id tarefa trilha status issue; do
+    [ -z "$id" ] && continue
+    TASK_ROWS="${TASK_ROWS}${1}"$'\t'"${id}"$'\t'"${tarefa}"$'\t'"${trilha}"$'\t'"${status}"$'\t'"${issue}"$'\n'
+  done < <(print_task_rows "$2")
 }
 
 if [ -f "docs/BASELINE.md" ]; then
@@ -88,6 +124,13 @@ if [ -d "$SPECS_DIR" ]; then
       [ -f "$file" ] || continue
       collect_rows "$slug" "$f" "$file"
     done
+
+    trd_file="${dir}trd.md"
+    if [ -f "$trd_file" ]; then
+      collect_task_rows "$slug" "$trd_file"
+    elif [ -f "${dir}prd.md" ]; then
+      SPECS_SEM_TRD="${SPECS_SEM_TRD}${slug}"$'\n'
+    fi
   done
 fi
 
@@ -105,4 +148,27 @@ fi
 
 if [ "$found" = "0" ]; then
   echo "Nenhuma pendência VALIDAR DEPOIS em aberto."
+fi
+
+echo
+echo "Tarefas ainda não implementadas (tabela de decomposição do TRD):"
+printf '%-28s | %-6s | %-42s | %-14s | %-14s | %s\n' "Feature" "ID" "Tarefa" "Trilha" "Status" "Issue"
+printf -- '-%.0s' $(seq 1 130); echo
+
+found_task=0
+if [ -n "$TASK_ROWS" ]; then
+  while IFS=$'\t' read -r feature id tarefa trilha status issue; do
+    [ -z "$feature" ] && continue
+    found_task=1
+    printf '%-28s | %-6s | %-42s | %-14s | %-14s | %s\n' "$feature" "$id" "$tarefa" "$trilha" "$status" "$issue"
+  done < <(printf '%s' "$TASK_ROWS")
+fi
+
+if [ "$found_task" = "0" ]; then
+  echo "Nenhuma tarefa pendente de implementação nos TRDs existentes."
+fi
+
+if [ -n "$SPECS_SEM_TRD" ]; then
+  echo
+  echo "Specs com PRD aprovado mas sem TRD ainda (tarefas não decompostas): $(printf '%s' "$SPECS_SEM_TRD" | paste -sd ', ' -)"
 fi
