@@ -95,6 +95,15 @@ das 6 áreas a cada rodada intermediária que só confirma uma correção já ap
    precisar de dependências instaladas para rodar um scanner e estiver num working tree isolado
    (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes concorrentes"),
    reaproveite o cache de dependências compartilhado em vez de reinstalar tudo do zero.
+7. **Campo de controle de acesso/estado perdido em reconstrução de agregado**: se esta fatia (ou
+   qualquer fatia anterior) adicionou à entidade de domínio um campo com implicação de segurança
+   (ex.: `deletedAt`, flag de bloqueio, papel/permissão embutida no agregado), confirme que **todo**
+   caso de uso de escrita que reconstrói esse agregado (`new <Entidade>(...)`) repassa esse campo —
+   não só os que o TRD desta fatia listou. Um caso de uso de escrita fora do escopo que reconstrói
+   o agregado sem o campo o reseta silenciosamente (ex.: uma edição bem-sucedida "ressuscitando" um
+   registro excluído, contornando o guard de autorização de exclusão sem precisar quebrá-lo
+   diretamente) — acompanha o item equivalente do `code-reviewer`, mas aqui o foco é
+   especificamente a implicação de autorização/estado de segurança, não a correção geral do dado.
 
 ## Processo
 
