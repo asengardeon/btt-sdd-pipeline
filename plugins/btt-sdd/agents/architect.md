@@ -121,11 +121,15 @@ não se aplica.
    usuário via `AskUserQuestion` já oferecendo "criar as issues no GitHub" como opção recomendada
    (a alternativa "manter só na tabela do TRD" continua disponível, mas deixa de ser o padrão
    implícito quando há GitHub conectado). Confirmado, crie via `gh issue create` (referenciando
-   dependência de outra issue no corpo) e registre os números de volta na tabela do TRD. Nunca
-   crie issues sem essa confirmação explícita, e nunca tente de novo mais de 3 vezes se `gh`
-   falhar (relate o erro e siga sem bloquear o TRD por isso). Sem remote GitHub
-   configurado/autenticado, a tabela do TRD continua sendo a única fonte de verdade, sem
-   alternativa.
+   dependência de outra issue no corpo) e registre os números de volta na tabela do TRD.
+   **Toda issue criada leva um milestone (uma por spec, nomeado com o `<slug>` — crie com `gh api
+   repos/<owner>/<repo>/milestones` se ainda não existir) e dois labels: tipo (`enhancement`/
+   `bug`/`documentation`, labels padrão do GitHub) e trilha (`backend`/`frontend`/`ambos`,
+   espelhando a coluna Trilha — crie com `gh label create` se faltar)** — detalhe completo em
+   `specs/_template/trd.template.md`, seção 13. Nunca crie issues sem essa confirmação explícita,
+   e nunca tente de novo mais de 3 vezes se `gh` falhar (relate o erro e siga sem bloquear o TRD
+   por isso). Sem remote GitHub configurado/autenticado, a tabela do TRD continua sendo a única
+   fonte de verdade, sem alternativa.
 7. Preencha a seção "Pilares de engenharia de software" passando explicitamente por cada pilar
    (performance, escalabilidade, resiliência, disponibilidade, observabilidade,
    manutenibilidade — detalhe conceitual em `docs/ENGINEERING-PILLARS.md`), respondendo para esta
