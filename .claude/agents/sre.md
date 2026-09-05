@@ -23,16 +23,42 @@ mesma feature; quando não houver mudança relevante desde a última fatia aprov
 explicitamente em vez de repetir uma checklist idêntica sem necessidade — mas ainda registre um
 veredito para esta fatia.
 
+**Como calcular a base de qualquer diff de fatia (fast path ou auditoria completa) — nunca um SHA
+salvo direto.** Este repositório prefere *squash merge* (`docs/GIT-WORKFLOW.md`): o merge de uma
+fatia vira um único commit novo em `main`, diferente de qualquer commit que existia na branch da
+fatia antes do merge. Isso significa que o SHA registrado na coluna `Commit` da tabela "Histórico
+de aprovações por fatia" (capturado como "HEAD no momento da revisão", ou seja **antes** do merge)
+deixa de ser ancestral de `main` depois do squash — usá-lo direto como base de `git diff` produz
+uma base incorreta (recua até antes da fatia inteira, mostrando um diff gigante e errado). Já
+aconteceu numa sessão real: o agente só percebeu porque `git merge-base --is-ancestor` deu falso,
+exigindo uma investigação extra não prevista.
+- Para o **fast path** (só precisa da fatia imediatamente anterior), **sempre** use `git
+  merge-base HEAD main` como base — nunca o SHA salvo em nenhuma tabela. `merge-base HEAD main`
+  já calcula a divergência real entre a branch atual e `main` sem depender de nenhum commit salvo
+  em texto, então é sempre correto independente de squash, e mais simples do que checar
+  ancestralidade de um SHA que nem precisa ser lido.
+- Para a **auditoria completa** (precisa acumular tudo que foi fast-pathed desde a última
+  auditoria de verdade, que pode ser várias fatias atrás — ver abaixo), o SHA salvo na tabela
+  *pode* ser necessário (é o único jeito de alcançar uma fatia mais antiga que a imediatamente
+  anterior). Antes de usá-lo, confirme a ancestralidade (`git merge-base --is-ancestor <commit>
+  main`, código de saída 0 = ainda ancestral, pode usar direto como base). Se não for mais
+  ancestral (caso comum, já que esse SHA é capturado antes do merge), localize o commit de squash
+  correspondente em `main` a partir do PR daquela mesma linha da tabela (coluna `PR`): `git log
+  --oneline --grep "#<N>" main` (ou `gh pr view <N> --json mergeCommit -q .mergeCommit.oid` se o
+  remote GitHub estiver acessível), e use esse commit de squash como base. Se nenhuma das duas
+  formas encontrar o commit (histórico reescrito, PR de outro repositório), trate como se nenhuma
+  fatia anterior tivesse `Profundidade = completo` (próximo parágrafo).
+
 **Fast path (sempre o primeiro passo, antes de abrir qualquer checklist).** Rode
-`git diff --stat` da fatia contra a base (branch/commit da última fatia aprovada, ou `main` na
-primeira fatia). Se nenhum arquivo em `infra/`, `.github/workflows/`, `Dockerfile`,
-`docker-compose.yml`, ou manifesto de dependências (`pyproject.toml`, `package.json`, `composer.json`
-etc.) aparece no diff, **não** percorra as áreas 1–5 item por item confirmando "inalterado" — escreva
-um único parágrafo no `sre-review.md` dizendo que o diff não toca infraestrutura/CI/dependências
-desta fatia, referenciando o `sre-review.md` da fatia anterior como ainda válido para essas áreas, e
-já registre o veredito. Se o diff tocar qualquer um desses caminhos, revise normalmente item por
-item só a(s) área(s) afetada(s) — as áreas não tocadas pelo diff ainda podem ser resumidas como
-"inalterado nesta fatia".
+`git diff --stat` da fatia contra a base calculada acima. Se nenhum arquivo em `infra/`,
+`.github/workflows/`, `Dockerfile`, `docker-compose.yml`, ou manifesto de dependências
+(`pyproject.toml`, `package.json`, `composer.json` etc.) aparece no diff, **não** percorra as
+áreas 1–5 item por item confirmando "inalterado" — escreva um único parágrafo no `sre-review.md`
+dizendo que o diff não toca infraestrutura/CI/dependências desta fatia, referenciando o
+`sre-review.md` da fatia anterior como ainda válido para essas áreas, e já registre o veredito. Se
+o diff tocar qualquer um desses caminhos, revise normalmente item por item só a(s) área(s)
+afetada(s) — as áreas não tocadas pelo diff ainda podem ser resumidas como "inalterado nesta
+fatia".
 
 **Auditoria completa obrigatória na fatia final (nunca fast path).** Antes de aplicar o fast path
 acima, verifique na tabela "Decomposição de tarefas e dependências" do TRD se esta é a **última
@@ -40,19 +66,12 @@ fatia pendente da feature** (nenhuma outra fatia da tabela ainda não implementa
 desta). Se for, o fast path não se aplica — mesmo que o `git diff --stat` desta fatia isolada não
 toque infraestrutura/CI/dependências, revise as 5 áreas por completo. Nesse caso, a base do diff
 não é só a fatia anterior: procure na tabela "Histórico de aprovações por fatia" (já existente
-neste `sre-review.md`) a linha mais recente com `Profundidade = completo`, use o `Commit`
-registrado ali como base (`git diff <esse-commit>...HEAD`) — cobrindo tudo que foi fast-pathed
-desde a última auditoria de verdade, não só o que mudou nesta última fatia. Se nenhuma linha
-anterior tiver `Profundidade = completo`, use a base da própria feature (primeiro commit da
-branch, ou `main`), que já é o comportamento padrão de uma primeira fatia.
-
-**Cuidado com squash merge ao usar o `Commit` da tabela como base.** Se este repositório usa
-squash merge (`docs/GIT-WORKFLOW.md`, ou confirme em `git log --merges`/histórico real de PRs —
-preferência deste pipeline), o commit registrado na tabela pode ser o **topo de uma branch de
-fatia já squash-merged**, que deixa de ser alcançável a partir de `main` depois do merge — usar
-esse commit direto como base do diff produz um merge-base incorreto (recua até antes da fatia
-inteira). Nesse caso, calcule a base real com `git merge-base HEAD main` (ou o commit em `main` de
-onde a fatia atual nasceu) em vez do commit-topo salvo na tabela.
+neste `sre-review.md`) a linha mais recente com `Profundidade = completo`, e calcule a base a
+partir do `Commit` registrado ali seguindo a regra acima (`git diff <base-calculada>...HEAD`) —
+cobrindo tudo que foi fast-pathed desde a última auditoria de verdade, não só o que mudou nesta
+última fatia. Se nenhuma linha anterior tiver `Profundidade = completo`, use a base da própria
+feature (primeiro commit da branch, ou `main`), que já é o comportamento padrão de uma primeira
+fatia.
 
 ## Governança de decisão
 
