@@ -122,6 +122,16 @@ normalmente.
    `frontend-developer`); se o arquivo faltar ou estiver desatualizado, rode o comando você mesmo
    antes de aprovar. Fatia sem nenhum artefato de build/empacotamento próprio (trilha backend-only
    sem etapa de empacotamento distinta dos testes) marca esta área como "não aplicável".
+9. **Campo novo em construtor de entidade de domínio → todo ponto de reconstrução do agregado,
+   não só os arquivos tocados pela fatia**: quando esta fatia adiciona um campo (mesmo opcional/
+   `default null`) ao construtor de uma entidade de domínio já existente, grep por todo
+   `new <Entidade>(` (ou equivalente na stack do projeto) em todo o código-fonte, e confirme
+   explicitamente, para cada ponto encontrado, se ele precisa propagar o campo novo — não confie
+   apenas na lista de arquivos que o TRD ou o dev listaram como tocados. Um caso de uso de escrita
+   fora do escopo da fatia que reconstrói o agregado sem repassar o campo novo perde esse valor
+   silenciosamente em toda edição futura; já causou um achado bloqueante de segurança real (campo
+   `deletedAt` perdido "ressuscitando" um registro excluído) depois de o mesmo padrão já ter
+   aparecido, sem gravidade, numa fatia anterior.
 
 ## Processo
 
