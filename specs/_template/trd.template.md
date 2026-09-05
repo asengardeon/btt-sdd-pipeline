@@ -154,6 +154,23 @@ GitHub (não deixar as tarefas só nesta tabela) — o `architect` pergunta ao u
 aprovado, já com isso como opção recomendada; nunca cria issues sem confirmação explícita. Sem
 GitHub conectado, esta tabela é a única fonte de verdade.
 
+Toda issue de tarefa criada aqui é identificável contra a spec e o tipo de trabalho que
+representa:
+- **Milestone**: um milestone por spec, nomeado com o `<slug>` da feature (ex.:
+  `0012-excluir-eventos-cancelados`) — cria o milestone no repositório do projeto se ainda não
+  existir (`gh api repos/<owner>/<repo>/milestones -f title="<slug>" -f state="open"`, verificando
+  antes com `gh api repos/<owner>/<repo>/milestones --jq '.[].title'` para não duplicar) e associa
+  toda issue de tarefa desta spec a ele (`gh issue create --milestone "<slug>" ...`). Agrupa todas
+  as tarefas da mesma spec com acompanhamento nativo de % concluído no GitHub.
+- **Label de tipo**: `enhancement` para a imensa maioria das tarefas (implementação nova, o caso
+  padrão de uma tarefa de TRD), `bug` só se a tarefa for uma correção de defeito já existente, e
+  `documentation` se a tarefa for só de documentação — todos labels padrão do GitHub, presentes na
+  maioria dos repositórios; confirme que existem (`gh label list --repo <owner>/<repo> --json
+  name`) e crie se faltar antes de usar.
+- **Label de trilha**: `backend`, `frontend` ou `ambos`, espelhando a coluna **Trilha** da tabela
+  acima — crie o label no repositório do projeto se ainda não existir (`gh label create`, mesma
+  mecânica acima).
+
 Ciclo de vida de cada issue criada: o PR da fatia que cobre a tarefa referencia `Closes #N`
 (`backend-developer`/`frontend-developer`, ao abrir o PR); `sre`, ao aprovar a fatia, comenta na
 issue documentando o que foi implementado (link do PR e dos artefatos de revisão); a issue fecha
