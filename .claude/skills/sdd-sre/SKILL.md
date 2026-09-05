@@ -13,6 +13,12 @@ padrão correto). Isso importa mais aqui do que nas outras etapas de revisão: o
 (tech-writer automático na última fatia) e 5c (retrospectiva obrigatória de toda fatia, abrindo
 issues em `asengardeon/btt-sdd-pipeline`) vivem **nesta skill**, não no agente `sre` — invocar o
 agente direto já pulou os dois silenciosamente numa sessão real, só percebido depois do merge.
+**"Vivem nesta skill" quer dizer que você, o orquestrador, os executa depois que o agente `sre`
+devolver o veredito no passo 3 — nunca inclua as instruções de 5b/5c no prompt passado ao agente
+`sre` via Agent tool.** O agente `sre` roda a partir da própria definição de agente, que não
+conhece esses dois passos, e vai (corretamente) recusar executá-los ou ignorá-los silenciosamente
+se você tentar delegá-los ali — já aconteceu numa sessão real, custando uma invocação
+desperdiçada.
 
 ## Passos
 
