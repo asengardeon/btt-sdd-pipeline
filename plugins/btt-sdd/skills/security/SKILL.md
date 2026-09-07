@@ -18,6 +18,15 @@ serem pulados silenciosamente numa sessão real — ver `CLAUDE.md`, seção do 
 1. Identifique o slug da feature (mesma lógica das skills anteriores).
 2. Confirme que `specs/<slug>/qa-report.md` existe com veredito aprovado. Se não, sugira
    `/btt-sdd:qa` primeiro — não pule QA.
+2b. **Confirme que a branch está sincronizada com `main` antes de revisar.** Rode `git fetch origin
+   main` e `git rev-list --count HEAD..origin/main` — se houver commits novos em `main` desde que
+   esta branch nasceu (ex.: merge de um hotfix concorrente da mesma spec enquanto esta fatia ainda
+   estava em revisão), rebaseie a branch da fatia sobre `origin/main` antes de prosseguir,
+   resolvendo eventuais conflitos nos arquivos de artefato da spec (`code-review.md`/
+   `qa-report.md`/`security-review.md`/`sre-review.md`/`trd.md`) preservando o conteúdo de ambos os
+   lados quando tocarem os mesmos arquivos, e envie (push) o resultado. Isso evita que esta e a
+   etapa seguinte (SRE) commitem "às cegas" sobre uma base que já vai gerar conflito — descoberto só
+   na última etapa, exigindo uma correção retroativa.
 3. Invoque o agente `security-engineer` (Agent tool, `subagent_type: "security-engineer"`)
    passando os caminhos do TRD e do `qa-report.md`, e o PR da feature, com instrução para
    produzir `specs/<slug>/security-review.md` a partir de
