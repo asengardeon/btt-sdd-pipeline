@@ -16,6 +16,14 @@ de todas as versões passadas). Projetos scaffolded antes de `1.14.0` que quiser
 mais antigas precisam comparar manualmente contra a versão atual do template uma única vez, antes
 que `/sdd-sync-docs` passe a cobrir o resto a partir daqui em diante.
 
+## 1.20.2 — 2026-09-07
+
+- `docs/QUALITY-GATES.md`: gate novo na seção "Governança de decisão" — merge de PR nunca é ação
+  de um agente, mesmo o próprio agente que implementou o ajuste sendo revisado; documenta como
+  risco conhecido de agentes autônomos com escrita em sistemas compartilhados, a partir de um
+  incidente real em que o agente `sre` mergeou um PR sozinho apesar de instrução explícita em
+  contrário. Exceção deliberada continua sendo a skill `/repo-issues`.
+
 ## 1.20.0 — 2026-09-07
 
 - `docs/QUALITY-GATES.md`: gate novo na seção "PRD" — se a feature tem UI e wireframes são
