@@ -167,6 +167,21 @@ fetch estiver atrasado. Sempre, antes de rebasear manualmente uma branch nessas 
    confirme que nenhum commit da branch original desapareceu. Não basta confirmar que o conflito foi
    resolvido; confirme também que nada foi perdido no processo.
 
+**Operando diretamente sobre uma branch que um worktree isolado ainda segura.** Quando o
+orquestrador (não um agente novo) precisa tocar diretamente uma branch de fatia que um subagente
+com `isolation: "worktree"` tocou por último — ex.: para resolver um conflito de rebase
+manualmente — um `git checkout <branch-da-fatia>` no worktree principal pode falhar com `fatal:
+'<branch>' is already used by worktree at '<caminho>'`, mesmo que o agente já tenha terminado e
+relatado ter "devolvido" seu working directory. Isso já aconteceu de verdade: o agente relatou ter
+devolvido, mas voltou para uma branch de estacionamento própria do worktree, não a branch da fatia
+— porque `main` e a branch da fatia já estavam ocupadas por outros worktrees concorrentes no
+momento em que ele tentou voltar, então a branch da fatia continuou presa àquele worktree.
+
+Antes de assumir que o `checkout` vai funcionar no worktree principal, rode `git worktree list`
+para descobrir se algum worktree isolado ainda segura aquela branch. Se sim, opere diretamente no
+diretório desse worktree (`cd`/caminho absoluto nos comandos seguintes) em vez de tentar liberá-la
+no worktree principal.
+
 **Limpe o worktree antes de apagar a branch associada.** Se um worktree isolado da fatia (criado
 pelo mecanismo acima, ou reaproveitado por agentes de revisão subsequentes na mesma fatia — QA,
 segurança, SRE reusando o worktree que o `backend-developer`/`frontend-developer` já tinha criado)
