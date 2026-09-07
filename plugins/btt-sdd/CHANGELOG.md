@@ -16,6 +16,14 @@ de todas as versões passadas). Projetos scaffolded antes de `1.14.0` que quiser
 mais antigas precisam comparar manualmente contra a versão atual do template uma única vez, antes
 que `/sdd-sync-docs` passe a cobrir o resto a partir daqui em diante.
 
+## 1.19.2 — 2026-09-07
+
+- `docs/QUALITY-GATES.md`: toda issue GitHub que o pipeline cria no repositório do projeto-alvo
+  passa a exigir identificação estruturada da spec de origem, não só as de tarefa do TRD —
+  reaproveitar o milestone da spec quando existir, ou aplicar um label `spec:<slug>` quando não
+  houver milestone ainda (ex.: issue de `/sdd-hotfix` associada a uma spec sem decomposição de
+  tarefas em issues).
+
 ## 1.19.0 — 2026-09-07
 
 - `docs/QUALITY-GATES.md`: criar Issue GitHub para toda tarefa do TRD deixa de ser opcional —

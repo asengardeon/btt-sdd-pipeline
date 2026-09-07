@@ -40,7 +40,14 @@ saída para pular rigor: TDD, code review, e as revisões que se aplicarem conti
    - **Se houver**: se o bug/ajuste já tem uma issue aberta (o usuário citou o número, ou ela
      existe no repositório), use-a; senão crie uma via `gh issue create` descrevendo o
      bug/ajuste, com o label de tipo apropriado (`bug` ou `enhancement`). Nenhum hotfix começa
-     sem essa issue — sem exceção, mesmo para uma correção de uma linha.
+     sem essa issue — sem exceção, mesmo para uma correção de uma linha. **Se o passo 1 identificou
+     uma spec relacionada**, identifique essa issue estruturadamente contra ela
+     (`docs/QUALITY-GATES.md`, seção "TRD"): reaproveite o milestone da spec se ele já existir (`gh
+     api repos/<owner>/<repo>/milestones` filtrando por título `<slug>` — o mesmo milestone que o
+     agente `architect` cria por spec); se ainda não existir nenhum milestone para essa
+     spec/projeto (spec sem decomposição de tarefas em issues), aplique em vez disso um label
+     `spec:<slug>` (crie com `gh label create` se faltar). Sem spec relacionada (melhoria pontual
+     sem origem), não há identificação de spec a aplicar.
    - **Se não houver** remote GitHub configurado/autenticado: **pare aqui**, não crie a branch —
      peça ao usuário para configurar `git remote` + `gh auth login` antes de prosseguir. Não há
      alternativa "sem GitHub" para hotfix (diferente do PRD, que dispensa GitHub).
