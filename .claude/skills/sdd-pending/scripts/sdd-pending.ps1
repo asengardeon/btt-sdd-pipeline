@@ -15,7 +15,7 @@ param([string]$Slug)
 $SpecsDir = "specs"
 $Files = @("prd.md", "trd.md", "code-review.md", "qa-report.md", "security-review.md", "sre-review.md")
 $ReferentialPattern = 'ver rodada|ver acima|mesma pend|repetid|sem novidade|inalterad|ja citad'
-$OpenTaskStatusPattern = 'pendente|em andamento|bloqueado'
+$OpenTaskStatusPattern = '^(pendente|em andamento|bloqueado)'
 
 function Get-PendingRows {
   param([string]$Content)
@@ -27,7 +27,8 @@ function Get-PendingRows {
     if ($inSection -and $line -match '^\|') {
       $trimmed = $line.Trim().Trim('|')
       $cols = $trimmed -split '\|' | ForEach-Object { $_.Trim() }
-      if ($cols.Count -ge 4 -and $cols[0] -ne 'ID' -and $cols[0] -notmatch '^-+$' -and $cols[3] -match 'pendente') {
+      $status4 = $cols[3] -replace '^\*+', ''
+      if ($cols.Count -ge 4 -and $cols[0] -ne 'ID' -and $cols[0] -notmatch '^-+$' -and $status4 -match '^pendente') {
         $rows += [PSCustomObject]@{ Id = $cols[0]; Pergunta = $cols[1]; Contexto = $cols[2] }
       }
     }
@@ -52,7 +53,8 @@ function Get-OpenTaskRows {
     if ($inSection -and $line -match '^\|') {
       $trimmed = $line.Trim().Trim('|')
       $cols = $trimmed -split '\|' | ForEach-Object { $_.Trim() }
-      if ($cols.Count -ge 6 -and $cols[0] -ne 'ID' -and $cols[0] -notmatch '^-+$' -and $cols[5] -match $OpenTaskStatusPattern) {
+      $status6 = $cols[5] -replace '^\*+', ''
+      if ($cols.Count -ge 6 -and $cols[0] -ne 'ID' -and $cols[0] -notmatch '^-+$' -and $status6 -match $OpenTaskStatusPattern) {
         $issue = if ($cols.Count -ge 7) { $cols[6] } else { "" }
         $rows += [PSCustomObject]@{ Id = $cols[0]; Tarefa = $cols[1]; Trilha = $cols[2]; Status = $cols[5]; Issue = $issue }
       }

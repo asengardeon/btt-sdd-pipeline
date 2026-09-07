@@ -22,7 +22,8 @@ print_rows() {
       gsub(/^\| */, "", line); gsub(/ *\|$/, "", line)
       n = split(line, cols, "|")
       for (i = 1; i <= n; i++) { gsub(/^ +| +$/, "", cols[i]) }
-      if (n >= 4 && cols[1] != "ID" && cols[1] !~ /^-+$/ && cols[4] ~ /pendente/) {
+      status4 = cols[4]; gsub(/^\*+/, "", status4)
+      if (n >= 4 && cols[1] != "ID" && cols[1] !~ /^-+$/ && status4 ~ /^[Pp]endente/) {
         printf("%s\t%s\t%s\t%s\n", artefato, cols[1], cols[2], cols[3])
       }
     }
@@ -79,7 +80,8 @@ print_task_rows() {
       for (i = 1; i <= n; i++) { gsub(/^ +| +$/, "", cols[i]) }
       if (n >= 6 && cols[1] != "ID" && cols[1] !~ /^-+$/) {
         status = tolower(cols[6])
-        if (status ~ /pendente|em andamento|bloqueado/) {
+        gsub(/^\*+/, "", status)
+        if (status ~ /^(pendente|em andamento|bloqueado)/) {
           issue = (n >= 7) ? cols[7] : ""
           printf("%s\t%s\t%s\t%s\t%s\n", cols[1], cols[2], cols[3], cols[6], issue)
         }
