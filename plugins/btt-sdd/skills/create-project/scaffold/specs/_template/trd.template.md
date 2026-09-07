@@ -149,10 +149,13 @@ nova como `pendente`. Ciclo de vida completo e responsabilidade de cada transiç
 → `aprovado` → `concluído (mergeado)`, com `bloqueado` como estado de exceção (uma revisão
 reprovou; volta a `em andamento` quando a correção começa).
 
-Se houver remote GitHub configurado e autenticado, a preferência é criar Issues de verdade no
-GitHub (não deixar as tarefas só nesta tabela) — o `architect` pergunta ao usuário depois do TRD
-aprovado, já com isso como opção recomendada; nunca cria issues sem confirmação explícita. Sem
-GitHub conectado, esta tabela é a única fonte de verdade.
+**Toda tarefa desta tabela precisa de uma Issue GitHub associada antes do TRD ser considerado
+pronto para aprovação — obrigatório, não mais uma preferência.** O `architect` verifica remote
+GitHub configurado e autenticado ao preencher esta tabela: se houver, cria as issues via `gh issue
+create` (informando o usuário, sem perguntar se ele quer); se não houver, o TRD não pode ser
+finalizado até o usuário configurar `git remote` + `gh auth login` — diferente do PRD, que não
+exige GitHub, a decomposição de tarefas exige. Nenhuma fatia desta spec pode ser iniciada por
+`/sdd-implement` sem que todas as suas tarefas tenham a coluna "Issue GitHub" preenchida.
 
 Toda issue de tarefa criada aqui é identificável contra a spec e o tipo de trabalho que
 representa:

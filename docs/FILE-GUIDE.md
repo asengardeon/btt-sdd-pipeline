@@ -46,10 +46,10 @@ DEPOIS" como opção quando cabível.
   existir), incluindo a decisão de stack tecnológica (reaproveitando `docs/STACK.md` ou
   `~/.claude/stack-defaults.md` quando existirem, perguntando só se nenhum dos dois existir), os
   pilares de engenharia (`docs/ENGINEERING-PILLARS.md`), o contrato frontend↔backend e a
-  decomposição de tarefas com dependências — preferindo Issues reais do GitHub como fonte de
-  verdade quando há remote conectado e autenticado (a tabela do TRD sozinha é só o fallback sem
-  GitHub). Tem `Bash` para checar `docs/STACK.md`/remote GitHub/`gh auth status` e, com
-  confirmação do usuário, criar essas issues.
+  decomposição de tarefas com dependências — toda tarefa precisa de uma Issue real do GitHub
+  associada antes do TRD ser aprovado, obrigatório sempre que há remote conectado e autenticado; se
+  não há, o TRD não pode ser finalizado (só o PRD dispensa GitHub). Tem `Bash` para checar
+  `docs/STACK.md`/remote GitHub/`gh auth status` e criar essas issues.
 - **`backend-developer.md`** — implementa a trilha de backend via TDD a partir do TRD, em `src/`,
   dentro de uma branch GitHub Flow. Tem acesso a `Bash` porque precisa rodar testes/lint/git
   durante o ciclo red-green-refactor. Apresenta um plano de implementação e pede aprovação antes
