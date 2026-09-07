@@ -30,13 +30,24 @@ manualmente.
 - **`/sdd-sync-docs`** (`.claude/skills/sdd-sync-docs/SKILL.md`) compara as duas coisas acima e
   oferece aplicar, uma a uma, as seções novas que o projeto ainda não tem — nunca sobrescrevendo
   conteúdo que o projeto já customizou.
-- **Comparação estrutural na primeira sincronização.** O changelog só rastreia mudanças de
-  scaffold a partir da versão 1.14.0 — um projeto scaffolded antes disso (ou que nunca rodou
-  `/sdd-sync-docs`) pode ter lacunas anteriores a esse ponto que o changelog sozinho nunca
-  enxerga. Na primeira sincronização de um projeto (`docs/.sdd-plugin-version` ausente),
-  `/sdd-sync-docs` complementa o changelog com uma comparação direta de títulos de seção entre
-  cada doc do projeto e o equivalente no scaffold atual, cobrindo esse ponto cego — mesma
-  aprovação por seção do fluxo normal.
+- **Comparação estrutural para cobrir o que o changelog não rastreia.** O changelog só rastreia
+  mudanças de scaffold a partir da versão 1.14.0, e a comparação estrutural que cobre o que ficou
+  antes disso só existe a partir da 1.15.0 — um projeto cujo marcador foi gravado antes da 1.15.0
+  existir (marcador ausente, ou já presente mas com uma versão anterior a ela) nunca passou por
+  essa varredura. `/sdd-sync-docs` roda a comparação estrutural completa (títulos de seção — e
+  arquivos inteiros ausentes — entre cada doc do projeto e o equivalente no scaffold atual) sempre
+  que o marcador está ausente **ou** está presente mas anterior a `1.15.0`, não só na ausência
+  total do marcador — um marcador só "ausente" nunca detecta o caso comum de um projeto que já
+  sincronizou uma vez há muito tempo, antes dessa comparação existir, e por isso nunca mais a
+  receberia sob a condição antiga. A condição por versão se autolimita: depois que o marcador é
+  atualizado para a versão instalada (sempre ≥ 1.15.0 a partir de agora), sincronizações
+  seguintes do mesmo projeto não repetem essa varredura. A comparação também passou a checar a
+  direção inversa (scaffold → projeto): um arquivo que o scaffold ganhou e o projeto nunca teve
+  chance de receber (não só seções dentro de arquivos que já existem nos dois lados) — mesma
+  aprovação por seção/arquivo do fluxo normal. Já aconteceu de verdade um projeto com marcador
+  numa versão recente (muito depois da 1.15.0) ficar sem 30 seções/arquivos do scaffold atual,
+  todas anteriores à 1.14.0, porque seu marcador nunca esteve "ausente" desde que a comparação
+  passou a existir.
 
 ## Quando `/sdd-sync-docs` roda
 
