@@ -61,7 +61,14 @@ saída para pular rigor: TDD, code review, e as revisões que se aplicarem conti
    invoque o agente correspondente à trilha afetada (Agent tool) passando esta instrução: sem
    TRD/PRD desta vez, o "plano" é a descrição do bug/ajuste desta rodada e o escopo do passo 1;
    ainda assim, apresente esse plano mínimo ao usuário via `AskUserQuestion` antes do primeiro
-   commit (mesmo gate de aprovação de sempre, só que sobre um escopo bem menor). Abra o PR cedo,
+   commit (mesmo gate de aprovação de sempre, só que sobre um escopo bem menor). **Se o plano
+   envolve mutação real de infraestrutura/config vars de produção ou geração deliberada de
+   tráfego/carga** (ex.: múltiplos logins concorrentes para validar esgotamento de conexão),
+   sinalize isso no próprio texto apresentado nesta `AskUserQuestion` — essas duas categorias são
+   tipicamente bloqueadas pelo classificador de modo automático desta sessão para orquestrador e
+   subagentes, exigindo execução manual do usuário ou uma regra de permissão explícita; já
+   aconteceu de um hotfix de infra só descobrir esse bloqueio durante a execução, depois de
+   comandos já terem falhado, em vez de antecipado no plano. Abra o PR cedo,
    em modo draft, com `Closes #N` referenciando a issue do passo 1b (sempre existe, é o gate
    obrigatório). **Se outra tarefa
    desta sessão pode estar ativa no mesmo repositório**, use isolamento de working tree
