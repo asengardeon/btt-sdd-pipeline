@@ -53,6 +53,9 @@ mais interessante — uma exploração visual rápida para alinhar direção ced
 de UI final (isso continua com `architect`/`frontend-developer` no TRD/implementação).
 
 - **Oferecido ao usuário?** `<sim / não aplicável (feature sem UI)>`
+- **Sistema de design usado**: `<"docs/DESIGN-SYSTEM.md" (já existia) / "docs/DESIGN-SYSTEM.md"
+  (estabelecido nesta rodada) / "paleta neutra padrão — usuário optou por não estabelecer um
+  sistema de design agora" / "não aplicável (wireframes não oferecidos)">`
 - **Opções apresentadas**: `<link do Artifact com as opções, ou "nenhuma — usuário preferiu seguir
   direto para o PRD">`
 - **Opção escolhida**: `<qual opção, e por quê, se o usuário comentou>`

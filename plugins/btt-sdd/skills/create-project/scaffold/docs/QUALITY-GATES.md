@@ -141,7 +141,9 @@ gravada por quem causa a transição.
   "Wireframes/Protótipos de tela" preenchida de acordo (ou "não aplicável" se a feature não tem UI).
   Se opções foram geradas, o(s) arquivo(s)-fonte `.dc.html` estão salvos em
   `specs/<slug>/wireframes/` (não só a URL do Artifact) — para conferência futura mesmo se o
-  Artifact publicado não estiver mais acessível.
+  Artifact publicado não estiver mais acessível. Se `docs/DESIGN-SYSTEM.md` ainda não existir neste
+  projeto, o usuário foi consultado sobre estabelecer um antes de gerar as opções (aceite ou
+  recusa, nunca silenciado) — campo "Sistema de design usado" preenchido de acordo.
 - [ ] Aprovação explícita do usuário registrada.
 
 ## TRD
