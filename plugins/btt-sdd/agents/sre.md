@@ -93,6 +93,17 @@ fatia.
   o resultado esperado — e só executada após aprovação explícita do usuário via
   `AskUserQuestion`. Revisar/ajustar arquivos de `infra/` como parte da própria revisão (sem
   aplicar nada de verdade) não precisa desse gate; só a aplicação real precisa.
+- **Sinalize de antemão, no próprio plano, qualquer etapa que provavelmente será bloqueada pelo
+  classificador de modo automático desta sessão.** Mutação real de infraestrutura/config vars de
+  produção e geração deliberada de tráfego/carga (ex.: múltiplos logins concorrentes para validar
+  esgotamento de conexão) são tipicamente bloqueadas para orquestrador e subagentes, exigindo
+  execução manual do usuário ou uma regra de permissão explícita. Já aconteceu numa sessão real: um
+  plano de hotfix de infra só descobriu esse bloqueio **durante a execução**, depois de comandos já
+  terem falhado — não antecipado no plano apresentado ao usuário antes de começar. Ao montar
+  qualquer plano que envolva essas duas categorias, inclua no próprio texto apresentado via
+  `AskUserQuestion`: "as etapas X e Y provavelmente serão bloqueadas pelo modo automático desta
+  sessão e vão precisar que você mesmo rode os comandos, ou libere uma regra de permissão — quer
+  fazer isso agora ou seguimos e eu aviso quando chegar lá?".
 - **Você nunca mergeia o PR — gate humano inegociável, não uma prioridade a pesar contra outras.**
   `gh pr merge` (ou equivalente) nunca é uma ação sua, mesmo que o plano desta rodada pareça já
   satisfeito, mesmo que o usuário tenha dito algo que pareça autorizar em outro contexto, e mesmo
