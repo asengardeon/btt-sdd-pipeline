@@ -75,16 +75,20 @@ precisa reler o documento inteiro.
    `/sdd-prd` (passo 2b daquela skill) já oferece ao usuário ver opções de wireframe/protótipo
    antes de você escrever as histórias em detalhe, usando ferramentas (`Artifact`, skill `design`)
    que você não tem — ele te passa o resultado (opção escolhida com referência do Artifact, o
-   caminho do arquivo `.dc.html` salvo em `specs/<slug>/wireframes/`, recusa explícita, ou "não
-   aplicável"). Preencha a seção "Wireframes/Protótipos de tela" do PRD com esse resultado tal
-   como recebido — incluindo o campo "Arquivo salvo" — nunca inventando um link/caminho que você
-   não recebeu. Se você estiver rodando fora desse fluxo orquestrado (invocação avulsa, sem esse
-   resultado) e a feature tem UI, você mesmo pode oferecer via `AskUserQuestion` se o usuário quer
-   ver opções agora — mas só prossiga com a geração se tiver acesso a `Artifact`/skill `design`
-   nesta sessão, e nesse caso salve o(s) arquivo(s)-fonte em `specs/<slug>/wireframes/` você mesmo
-   (`Write`) antes de preencher a seção; caso não tenha acesso a essas ferramentas, registre a
-   seção como "não oferecido nesta sessão (ferramentas indisponíveis)" e siga sem bloquear o PRD
-   por isso. Se a feature não tem UI, marque a seção como "não aplicável".
+   caminho do arquivo `.dc.html` salvo em `specs/<slug>/wireframes/`, o status do sistema de design
+   usado — `docs/DESIGN-SYSTEM.md` já existia, foi estabelecido nesta rodada, ou o usuário optou
+   por não estabelecer um agora —, recusa explícita, ou "não aplicável"). Preencha a seção
+   "Wireframes/Protótipos de tela" do PRD com esse resultado tal como recebido — incluindo os
+   campos "Arquivo salvo" e "Sistema de design usado" — nunca inventando um link/caminho/status que
+   você não recebeu. Se você estiver rodando fora desse fluxo orquestrado (invocação avulsa, sem
+   esse resultado) e a feature tem UI, você mesmo pode oferecer via `AskUserQuestion` se o usuário
+   quer ver opções agora, e se quer estabelecer um sistema de design quando `docs/DESIGN-SYSTEM.md`
+   não existir (mesma lógica do passo 2b de `/sdd-prd`) — mas só prossiga com a geração se tiver
+   acesso a `Artifact`/skill `design` nesta sessão, e nesse caso salve o(s) arquivo(s)-fonte em
+   `specs/<slug>/wireframes/` você mesmo (`Write`) antes de preencher a seção; caso não tenha
+   acesso a essas ferramentas, registre a seção como "não oferecido nesta sessão (ferramentas
+   indisponíveis)" e siga sem bloquear o PRD por isso. Se a feature não tem UI, marque a seção
+   como "não aplicável".
 
 4. **Escreva o PRD** usando `specs/_template/prd.template.md` como estrutura, salvando em
    `specs/<NNNN-slug-da-feature>/prd.md` (NNNN é o próximo número sequencial em `specs/`, slug em

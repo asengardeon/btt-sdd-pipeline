@@ -16,6 +16,15 @@ de todas as versões passadas). Projetos scaffolded antes de `1.14.0` que quiser
 mais antigas precisam comparar manualmente contra a versão atual do template uma única vez, antes
 que `/sdd-sync-docs` passe a cobrir o resto a partir daqui em diante.
 
+## 1.20.0 — 2026-09-07
+
+- `docs/QUALITY-GATES.md`: gate novo na seção "PRD" — se a feature tem UI e wireframes são
+  oferecidos, mas `docs/DESIGN-SYSTEM.md` ainda não existir no projeto, o usuário precisa ser
+  consultado sobre estabelecer um sistema de design (paleta de cores, tipografia, tom visual,
+  referências) antes de gerar as opções de wireframe, com recusa explícita sempre disponível
+  (`/sdd-prd` passo 2b). Uma vez estabelecido, `docs/DESIGN-SYSTEM.md` é reaproveitado pelas
+  próximas features com UI sem perguntar de novo — mesmo padrão de `docs/STACK.md`.
+
 ## 1.19.2 — 2026-09-07
 
 - `docs/QUALITY-GATES.md`: toda issue GitHub que o pipeline cria no repositório do projeto-alvo
