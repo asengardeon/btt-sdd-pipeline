@@ -137,6 +137,15 @@ fatia.
    - Mudança de infraestrutura (`terraform apply`) é gated — nunca aplica direto sem `plan`
      revisável, idealmente com aprovação manual em ambiente protegido.
    - Estratégia de rollback existe e está documentada (o que fazer se o deploy quebrar produção).
+   - **Novo proxy/sidecar/cache local entre a aplicação e um serviço antes remoto (ex.: PgBouncer
+     na frente de um Postgres gerenciado, um sidecar de service mesh, um Redis local na frente de
+     um Redis gerenciado) exige reavaliar toda configuração de segurança de transporte que assumia
+     esse serviço como remoto** — TLS/SSL (`sslmode`/equivalente), autenticação, timeouts.
+     Normalmente essa configuração precisa ficar condicional ao destino real da conexão (local vs.
+     remoto), não um valor fixo herdado de quando só existia o hop remoto. Já aconteceu numa sessão
+     real: introduzir PgBouncer via buildpack manteve `sslmode=require` fixo, correto para o
+     Postgres remoto mas incompatível com a nova conexão loopback local ao PgBouncer — só
+     descoberto depois do merge, em produção, com ~20 minutos de outage.
    - `main` protegida (`docs/GIT-WORKFLOW.md`): push direto bloqueado, PR obrigatório, status
      checks do CI obrigatórios. Você **verifica** isso (e sinaliza se não estiver configurado);
      configurar de fato é responsabilidade de quem administra o repositório no GitHub.
