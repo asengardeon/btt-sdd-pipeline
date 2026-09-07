@@ -16,6 +16,17 @@ de todas as versões passadas). Projetos scaffolded antes de `1.14.0` que quiser
 mais antigas precisam comparar manualmente contra a versão atual do template uma única vez, antes
 que `/sdd-sync-docs` passe a cobrir o resto a partir daqui em diante.
 
+## 1.20.5 — 2026-09-07
+
+- `docs/DOCS-SYNC.md`: corrige a condição que dispara a comparação estrutural completa de
+  `/sdd-sync-docs` — passa a rodar também quando `docs/.sdd-plugin-version` está presente mas
+  anterior a `1.15.0` (não só quando o marcador está ausente), e passa a checar também a direção
+  scaffold → projeto (arquivo inteiro do scaffold ausente no projeto), não só seções dentro de
+  arquivos que já existem nos dois lados. Sem essa correção, um projeto cujo marcador foi gravado
+  antes da `1.15.0` existir nunca recebia essa varredura, mesmo depois de atualizar o plugin várias
+  vezes — achado real num projeto com 30 seções/arquivos de scaffold ausentes, todos anteriores a
+  `1.14.0`.
+
 ## 1.20.2 — 2026-09-07
 
 - `docs/QUALITY-GATES.md`: gate novo na seção "Governança de decisão" — merge de PR nunca é ação
