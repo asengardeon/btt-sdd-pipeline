@@ -115,21 +115,26 @@ não se aplica.
    incremento vertical isolado (ex.: uma dependência de infraestrutura compartilhada obriga
    agrupar duas fatias), registre essa divergência explicitamente e explique o motivo — não
    silencie a mudança em relação ao que o PRD propôs.
-   Depois do TRD aprovado (não antes), verifique se há remote GitHub configurado e autenticado
-   (`git remote -v`, `gh auth status`). **Se houver, a preferência deste pipeline é registrar as
-   tarefas como Issues de verdade no GitHub, não deixá-las só na tabela do TRD** — pergunte ao
-   usuário via `AskUserQuestion` já oferecendo "criar as issues no GitHub" como opção recomendada
-   (a alternativa "manter só na tabela do TRD" continua disponível, mas deixa de ser o padrão
-   implícito quando há GitHub conectado). Confirmado, crie via `gh issue create` (referenciando
-   dependência de outra issue no corpo) e registre os números de volta na tabela do TRD.
-   **Toda issue criada leva um milestone (uma por spec, nomeado com o `<slug>` — crie com `gh api
-   repos/<owner>/<repo>/milestones` se ainda não existir) e dois labels: tipo (`enhancement`/
-   `bug`/`documentation`, labels padrão do GitHub) e trilha (`backend`/`frontend`/`ambos`,
-   espelhando a coluna Trilha — crie com `gh label create` se faltar)** — detalhe completo em
-   `specs/_template/trd.template.md`, seção 13. Nunca crie issues sem essa confirmação explícita,
-   e nunca tente de novo mais de 3 vezes se `gh` falhar (relate o erro e siga sem bloquear o TRD
-   por isso). Sem remote GitHub configurado/autenticado, a tabela do TRD continua sendo a única
-   fonte de verdade, sem alternativa.
+   **O TRD só é considerado pronto para aprovação depois que toda tarefa desta tabela tem uma
+   Issue GitHub associada — isso deixou de ser opcional.** Diferente do PRD (que não exige GitHub),
+   a partir da decomposição de tarefas o pipeline exige GitHub configurado. Depois de preencher a
+   tabela (não antes), verifique se há remote GitHub configurado e autenticado (`git remote -v`,
+   `gh auth status`):
+   - **Se houver**: crie a issue de cada tarefa via `gh issue create` (referenciando dependência de
+     outra issue no corpo) e registre os números de volta na coluna "Issue GitHub" da tabela —
+     informe o usuário que isso vai acontecer, não pergunte se ele quer (não é mais uma escolha).
+     **Toda issue criada leva um milestone (uma por spec, nomeado com o `<slug>` — crie com `gh api
+     repos/<owner>/<repo>/milestones` se ainda não existir) e dois labels: tipo (`enhancement`/
+     `bug`/`documentation`, labels padrão do GitHub) e trilha (`backend`/`frontend`/`ambos`,
+     espelhando a coluna Trilha — crie com `gh label create` se faltar)** — detalhe completo em
+     `specs/_template/trd.template.md`, seção 13. Se `gh` falhar, tente de novo (mesmo limite de 3
+     tentativas de sempre); na 3ª falha sem sucesso, **pare e escale ao usuário** — não aprove nem
+     entregue o TRD com tarefas sem issue.
+   - **Se não houver** remote GitHub configurado/autenticado: **pare aqui**, sem aprovar o TRD.
+     Explique ao usuário que, a partir desta etapa, criar as issues é obrigatório (o PRD é a única
+     etapa deste pipeline que dispensa GitHub) e peça para configurar `git remote` + `gh auth
+     login` antes de prosseguir — sem esse pré-requisito, `/sdd-implement` não consegue iniciar
+     nenhuma fatia desta spec (`docs/QUALITY-GATES.md`, seção "TRD").
 7. Preencha a seção "Pilares de engenharia de software" passando explicitamente por cada pilar
    (performance, escalabilidade, resiliência, disponibilidade, observabilidade,
    manutenibilidade — detalhe conceitual em `docs/ENGINEERING-PILLARS.md`), respondendo para esta

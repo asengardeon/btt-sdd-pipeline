@@ -16,6 +16,13 @@ de todas as versões passadas). Projetos scaffolded antes de `1.14.0` que quiser
 mais antigas precisam comparar manualmente contra a versão atual do template uma única vez, antes
 que `/sdd-sync-docs` passe a cobrir o resto a partir daqui em diante.
 
+## 1.19.0 — 2026-09-07
+
+- `docs/QUALITY-GATES.md`: criar Issue GitHub para toda tarefa do TRD deixa de ser opcional —
+  sem remote GitHub configurado/autenticado, o TRD não pode ser aprovado (só o PRD dispensa
+  GitHub); `/sdd-implement`/`/sdd-hotfix` não iniciam nenhuma fatia/correção sem a issue já
+  existir.
+
 ## 1.15.2 — 2026-09-04
 
 - `docs/GIT-WORKFLOW.md`: nova subseção em "Isolamento de working tree entre agentes concorrentes"

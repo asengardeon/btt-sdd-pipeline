@@ -182,6 +182,9 @@ gravada por quem causa a transição.
 - [ ] "Decomposição de tarefas e dependências" preenchida, com trilha (backend/frontend/ambos) e
   dependências técnicas explícitas para cada tarefa, e a coluna Status inicializada como
   `pendente` para cada tarefa nova (ciclo de vida completo na seção "Status de tarefas" abaixo).
+- [ ] **Toda tarefa tem a coluna "Issue GitHub" preenchida — obrigatório, não mais opcional.** Se
+  não há remote GitHub configurado/autenticado, o TRD não pode ser aprovado ainda (`architect`
+  para e pede para configurar `git remote`/`gh auth login` primeiro); só o PRD dispensa GitHub.
 - [ ] Se o TRD depende de código pré-existente sem documentação suficiente, `/sdd-baseline` rodou
   antes (ou a documentação já era suficiente, explicitamente constatado).
 - [ ] Nome de branch GitHub Flow definido **por fatia** (`docs/GIT-WORKFLOW.md`) — uma branch/PR
@@ -197,12 +200,16 @@ gravada por quem causa a transição.
 - [ ] Nenhuma violação de fronteira ports & adapters (domain/application sem import de infra).
 - [ ] Se a feature é full-stack: todo adapter de entrada que o frontend consome implementa
   exatamente o contrato do TRD — nenhum campo/rota inventado por qualquer um dos dois lados.
+- [ ] **Antes de criar a branch, `/sdd-implement` confirmou que toda tarefa desta fatia tem a
+  coluna "Issue GitHub" preenchida no TRD — nenhuma fatia começa sem isso** (gate obrigatório,
+  `.claude/skills/sdd-implement/SKILL.md`, passo 2c-ter). O mesmo vale para `/sdd-hotfix`: a issue
+  do bug/ajuste existe antes da branch ser criada.
 - [ ] Branch da fatia criada a partir de `main` atualizada (só depois do PR da fatia anterior já
   mergeado, se houver uma); PR aberto (única branch/PR por fatia, mesmo quando backend e frontend
   desenvolvem em paralelo dentro dela).
-- [ ] Se a fatia cobre tarefas com issue do GitHub associada (coluna "Issue GitHub" do TRD), o PR
-  referencia `Closes #N` para cada uma — issues ficam abertas até o merge de verdade, nunca
-  fechadas manualmente antes disso.
+- [ ] O PR referencia `Closes #N` para cada issue do GitHub associada às tarefas desta fatia
+  (coluna "Issue GitHub" do TRD) — issues ficam abertas até o merge de verdade, nunca fechadas
+  manualmente antes disso.
 - [ ] Plano de implementação foi aprovado pelo usuário antes do primeiro commit de código (plano
   combinado quando full-stack, orquestrado por `/sdd-implement`).
 - [ ] Resultado da suíte completa com cobertura gravado em

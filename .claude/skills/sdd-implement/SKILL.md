@@ -94,6 +94,15 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    prefira uma primeira espera maior antes da primeira checagem, em vez de checagens curtas desde
    o início. Ao confirmar o merge, atualize (se ainda não estiver) a coluna Status das tarefas
    dessa fatia anterior no TRD para `concluído (mergeado)`.
+2c-ter. **Gate obrigatório: toda tarefa da fatia escolhida precisa ter Issue GitHub associada.**
+   Confira a coluna "Issue GitHub" da tabela de decomposição do TRD para cada tarefa desta fatia
+   (excluindo fatias sem trilha de código, passo 2b-bis, que não passam por este gate). Se alguma
+   estiver vazia/`não espelhada`, **pare aqui, não crie a branch nem invoque nenhum agente de
+   implementação** — isso não deveria acontecer se o TRD foi aprovado depois desta regra existir
+   (`.claude/agents/architect.md`, passo 6c), mas pode ocorrer em TRDs aprovados antes dela, ou se
+   uma issue foi apagada/perdida depois. Informe o usuário e ofereça, via `AskUserQuestion`,
+   acionar `architect` para criar as issues faltantes desta fatia (opção recomendada) antes de
+   prosseguir — nunca inicie a fatia sem elas, mesmo que o usuário peça para pular o gate.
 3. **Se só uma trilha aparece** (só backend ou só frontend): invoque o agente correspondente
    (`backend-developer` ou `frontend-developer`, Agent tool) passando os caminhos do TRD e do
    PRD. O agente segue seu próprio processo em duas fases (plano aprovado via `AskUserQuestion`

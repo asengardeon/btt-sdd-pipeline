@@ -35,6 +35,15 @@ saída para pular rigor: TDD, code review, e as revisões que se aplicarem conti
    (`F-N`). Se não há nenhuma spec relacionada (melhoria pontual sem origem), crie um diretório
    dedicado `specs/<NNNN>-<slug-curto>/` (próximo número sequencial livre em `specs/`) contendo só
    os artefatos de revisão que se aplicarem — sem `prd.md`/`trd.md`.
+1b. **Gate obrigatório: confirme/crie a Issue GitHub deste hotfix antes de criar a branch.**
+   Verifique remote GitHub configurado e autenticado (`git remote -v`, `gh auth status`).
+   - **Se houver**: se o bug/ajuste já tem uma issue aberta (o usuário citou o número, ou ela
+     existe no repositório), use-a; senão crie uma via `gh issue create` descrevendo o
+     bug/ajuste, com o label de tipo apropriado (`bug` ou `enhancement`). Nenhum hotfix começa
+     sem essa issue — sem exceção, mesmo para uma correção de uma linha.
+   - **Se não houver** remote GitHub configurado/autenticado: **pare aqui**, não crie a branch —
+     peça ao usuário para configurar `git remote` + `gh auth login` antes de prosseguir. Não há
+     alternativa "sem GitHub" para hotfix (diferente do PRD, que dispensa GitHub).
 2. **Nomeie a branch** seguindo a tabela de prefixos de `docs/GIT-WORKFLOW.md` (seção "Mudanças no
    próprio pipeline", mesma tabela vale para hotfix de qualquer projeto): `hotfix/<slug>` se algo
    já quebrado em produção/`main` precisa de correção urgente; `fix/<slug>` se é uma correção sem
@@ -45,8 +54,9 @@ saída para pular rigor: TDD, code review, e as revisões que se aplicarem conti
    afetada (Agent tool) passando esta instrução: sem TRD/PRD desta vez, o "plano" é a descrição do
    bug/ajuste desta rodada e o escopo do passo 1; ainda assim, apresente esse plano mínimo ao
    usuário via `AskUserQuestion` antes do primeiro commit (mesmo gate de aprovação de sempre, só
-   que sobre um escopo bem menor). Abra o PR cedo, em modo draft, com `Closes #N` se houver issue
-   do GitHub associada ao bug. **Se outra tarefa desta sessão pode estar ativa no mesmo
+   que sobre um escopo bem menor). Abra o PR cedo, em modo draft, com `Closes #N` referenciando a
+   issue do passo 1b (sempre existe, é o gate obrigatório). **Se outra tarefa desta sessão pode
+   estar ativa no mesmo
    repositório**, use isolamento de working tree (`docs/GIT-WORKFLOW.md`, seção "Isolamento de
    working tree entre agentes concorrentes").
 4. **Rode a suíte completa com cobertura** (e o comando de build/empacotamento real, se a trilha
