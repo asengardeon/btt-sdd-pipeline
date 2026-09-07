@@ -185,6 +185,14 @@ gravada por quem causa a transição.
 - [ ] **Toda tarefa tem a coluna "Issue GitHub" preenchida — obrigatório, não mais opcional.** Se
   não há remote GitHub configurado/autenticado, o TRD não pode ser aprovado ainda (`architect`
   para e pede para configurar `git remote`/`gh auth login` primeiro); só o PRD dispensa GitHub.
+- [ ] **Toda issue GitHub que o pipeline cria no repositório do projeto-alvo carrega identificação
+  estruturada da spec de origem** — não só as de tarefa do TRD. `architect` já garante isso para as
+  issues de tarefa via o milestone por spec (acima). Reaproveite esse mesmo milestone (mesmo
+  `<slug>`) sempre que outra issue do pipeline se referir à mesma spec/projeto — ex.: a issue de
+  `/sdd-hotfix` (`.claude/skills/sdd-hotfix/SKILL.md`, passo 1b) quando o bug tem spec relacionada.
+  Se ainda não existir nenhum milestone para essa spec (spec sem decomposição de tarefas em issues),
+  aplique em vez disso um label `spec:<slug>` (criando-o se faltar). Uma issue aberta sem nenhuma
+  spec relacionada (melhoria pontual sem origem) não precisa dessa identificação.
 - [ ] Se o TRD depende de código pré-existente sem documentação suficiente, `/sdd-baseline` rodou
   antes (ou a documentação já era suficiente, explicitamente constatado).
 - [ ] Nome de branch GitHub Flow definido **por fatia** (`docs/GIT-WORKFLOW.md`) — uma branch/PR

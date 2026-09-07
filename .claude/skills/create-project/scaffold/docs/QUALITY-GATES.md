@@ -172,6 +172,14 @@ gravada por quem causa a transição.
 - [ ] "Decomposição de tarefas e dependências" preenchida, com trilha (backend/frontend/ambos) e
   dependências técnicas explícitas para cada tarefa, e a coluna Status inicializada como
   `pendente` para cada tarefa nova (ciclo de vida completo na seção "Status de tarefas" abaixo).
+- [ ] **Toda issue GitHub que o pipeline cria no repositório do projeto-alvo carrega identificação
+  estruturada da spec de origem** — não só as de tarefa do TRD. `architect` cria um milestone por
+  spec (nomeado com o `<slug>`) para as issues de tarefa; reaproveite esse mesmo milestone sempre
+  que outra issue do pipeline se referir à mesma spec/projeto — ex.: a issue de `/sdd-hotfix`
+  (`.claude/skills/sdd-hotfix/SKILL.md`, passo 1b) quando o bug tem spec relacionada. Se ainda não
+  existir nenhum milestone para essa spec, aplique em vez disso um label `spec:<slug>` (criando-o se
+  faltar). Uma issue aberta sem nenhuma spec relacionada (melhoria pontual sem origem) não precisa
+  dessa identificação.
 - [ ] Se o TRD depende de código pré-existente sem documentação suficiente, `/sdd-baseline` rodou
   antes (ou a documentação já era suficiente, explicitamente constatado).
 - [ ] Nome de branch GitHub Flow definido **por fatia** (`docs/GIT-WORKFLOW.md`) — uma branch/PR
