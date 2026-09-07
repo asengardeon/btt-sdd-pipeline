@@ -144,6 +144,29 @@ e escalar ao usuário. Essa sincronização é o que garante que múltiplos agen
 produzem uma única branch/PR coerente por fatia, sem que a isolação de working tree vire duas
 branches divergentes por engano.
 
+**Antes de rebasear/forçar push manualmente sobre uma branch que múltiplos agentes concorrentes já
+tocaram** (qualquer branch de fatia que já passou por 2+ rodadas de revisão, cada uma em worktree
+separado) — risco maior que o da sincronização de rotina acima, porque aqui é o orquestrador
+resolvendo um conflito manualmente, muitas vezes reaproveitando um worktree já existente. Já
+aconteceu de verdade: um `git rebase origin/main` seguido de `git push --force-with-lease` teve
+sucesso **silencioso** rodando num worktree desatualizado (de uma rodada de revisão anterior, nunca
+atualizado com os commits que outros agentes enviaram — *push* — depois, cada um em seu próprio
+worktree) —
+descartando dois commits já revisados e aprovados, sem nenhum erro visível, só descoberto numa
+auditoria bem posterior. `--force-with-lease` só protege contra o estado do `origin` que aquele
+worktree tinha em cache no último `fetch` — não contra o estado real mais recente do remote se esse
+fetch estiver atrasado. Sempre, antes de rebasear manualmente uma branch nessas condições:
+
+1. `git fetch origin <branch-da-fatia>` primeiro, no worktree que vai fazer a operação.
+2. Confirme `git rev-parse HEAD` == `git rev-parse origin/<branch-da-fatia>` **antes** de começar a
+   rebasear — se forem diferentes, esse worktree está desatualizado: descarte-o (ou resete o branch
+   local para `origin/<branch-da-fatia>`) antes de prosseguir. Nunca rebaseie um estado local que
+   pode já estar atrás de commits pushados por outro agente.
+3. Depois do rebase e antes do push (`--force-with-lease` ou normal), compare a lista de commits da
+   branch antes (`git log origin/<branch-da-fatia>..HEAD` do estado pré-rebase) com a de depois —
+   confirme que nenhum commit da branch original desapareceu. Não basta confirmar que o conflito foi
+   resolvido; confirme também que nada foi perdido no processo.
+
 **Limpe o worktree antes de apagar a branch associada.** Se um worktree isolado da fatia (criado
 pelo mecanismo acima, ou reaproveitado por agentes de revisão subsequentes na mesma fatia — QA,
 segurança, SRE reusando o worktree que o `backend-developer`/`frontend-developer` já tinha criado)
