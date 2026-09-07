@@ -93,6 +93,16 @@ fatia.
   o resultado esperado — e só executada após aprovação explícita do usuário via
   `AskUserQuestion`. Revisar/ajustar arquivos de `infra/` como parte da própria revisão (sem
   aplicar nada de verdade) não precisa desse gate; só a aplicação real precisa.
+- **Você nunca mergeia o PR — gate humano inegociável, não uma prioridade a pesar contra outras.**
+  `gh pr merge` (ou equivalente) nunca é uma ação sua, mesmo que o plano desta rodada pareça já
+  satisfeito, mesmo que o usuário tenha dito algo que pareça autorizar em outro contexto, e mesmo
+  que "completar a tarefa" pareça exigir esse último passo. Isso já foi violado numa sessão real:
+  instruído explicitamente a não mergear (tanto no prompt de invocação quanto no próprio plano
+  documentado pelo agente), o agente `sre` mergeou um PR sozinho de qualquer forma, ativando uma
+  config quebrada que derrubou produção por ~20 minutos. Antes de reportar esta etapa como
+  concluída, confirme explicitamente: (1) você não executou nenhum merge nesta rodada; (2) o PR
+  permanece aberto aguardando decisão do usuário. Isso vale mesmo quando você mesmo implementou o
+  ajuste de infra que está sendo revisado.
 - **Verificação independente de dependências de terceiros.** Antes de referenciar, no
   `docker-compose.yml`/Dockerfile/Terraform, uma imagem, pacote ou serviço de terceiro que você
   não reconhece com confiança, verifique a legitimidade por conta própria (registry oficial,

@@ -79,6 +79,19 @@ documento é a referência única para não duplicar a lista em cada um deles.
   sem acesso a este repositório específico, ex. plugin instalado por outro operador), relate o
   feedback como texto ao usuário em vez de bloquear o que estava fazendo — mesma tolerância de
   falha do restante do pipeline com `gh` (no máximo 3 tentativas).
+- [ ] **Merge de PR nunca é ação de um agente — risco conhecido de agentes autônomos com escrita
+  em sistemas compartilhados.** Regra 5 de `CLAUDE.md` ("Fluxo de Git = GitHub Flow") e a linha
+  "Merge do PR" de `docs/GIT-WORKFLOW.md` já estabelecem que o merge é decisão do usuário; este
+  bullet existe porque, numa sessão real, essa regra em texto livre não foi suficiente — o agente
+  `sre`, instruído explicitamente a não mergear (no prompt de invocação e no próprio plano que ele
+  mesmo documentou), mergeou um PR sozinho de qualquer forma, ativando uma configuração quebrada
+  que causou um outage de produção. Nenhum agente com acesso a `Bash`/`gh` (implementador ou
+  revisor de qualquer etapa) executa `gh pr merge` ou equivalente, mesmo que pareça necessário
+  para "completar" a tarefa da rodada — isso vale mesmo quando o mesmo agente implementou o ajuste
+  que está sendo revisado. A única exceção deliberada e documentada é a skill `/repo-issues`
+  (manutenção deste próprio repositório sobre si mesmo), que mergeia os PRs que ela mesma abre só
+  depois de aprovação explícita do lote pelo usuário — nunca um padrão a copiar para as etapas do
+  pipeline SDD.
 
 ## Lições aprendidas recorrentes (`docs/LESSONS-LEARNED.md`)
 
