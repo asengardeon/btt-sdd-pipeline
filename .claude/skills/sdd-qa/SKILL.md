@@ -31,10 +31,11 @@ pulados silenciosamente numa sessão real — ver `CLAUDE.md`, seção do pipeli
 3. Invoque o agente `qa-engineer` (Agent tool, `subagent_type: "qa-engineer"`) passando os
    caminhos do PRD e TRD e o PR/branch da feature (`feature/<slug>`, ver `docs/GIT-WORKFLOW.md`),
    e instrução para produzir `specs/<slug>/qa-report.md` a partir de
-   `specs/_template/qa-report.template.md`, referenciando o PR. **Se outra tarefa desta sessão
-   ainda pode estar ativa na mesma branch**, passe `isolation: "worktree"` nesta chamada — nunca
-   deixe dois agentes dividirem o mesmo diretório de trabalho (`docs/GIT-WORKFLOW.md`, seção
-   "Isolamento de working tree entre agentes concorrentes").
+   `specs/_template/qa-report.template.md`, referenciando o PR. **Sempre passe `isolation:
+   "worktree"` nesta chamada** — nunca deixe dois agentes dividirem o mesmo diretório de trabalho
+   (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes concorrentes"). Não é
+   uma condição a avaliar caso a caso ("outra tarefa pode estar ativa?") — é o padrão desta
+   invocação.
 4. Mostre ao usuário o veredito geral (aprovado/reprovado) e os pontos principais do relatório.
 5. Se reprovado, informe que a feature volta para `/sdd-implement` com os achados listados — e
    siga a seção "Retomando para corrigir achados de revisão" de

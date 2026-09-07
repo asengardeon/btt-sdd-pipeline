@@ -30,10 +30,11 @@ serem pulados silenciosamente numa sessão real — ver `CLAUDE.md`, seção do 
 3. Invoque o agente `security-engineer` (Agent tool, `subagent_type: "security-engineer"`)
    passando os caminhos do TRD e do `qa-report.md`, e o PR da feature, com instrução para
    produzir `specs/<slug>/security-review.md` a partir de
-   `specs/_template/security-review.template.md`. **Se outra tarefa desta sessão ainda pode estar
-   ativa na mesma branch**, passe `isolation: "worktree"` nesta chamada — nunca deixe dois agentes
-   dividirem o mesmo diretório de trabalho (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working
-   tree entre agentes concorrentes").
+   `specs/_template/security-review.template.md`. **Sempre passe `isolation: "worktree"` nesta
+   chamada** — nunca deixe dois agentes dividirem o mesmo diretório de trabalho
+   (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes concorrentes"). Não é
+   uma condição a avaliar caso a caso ("outra tarefa pode estar ativa?") — é o padrão desta
+   invocação.
 4. Mostre ao usuário o veredito geral e os achados por área (OWASP, segredos, autenticação,
    validação de entrada, dependências).
 5. Se reprovado, informe que a feature volta para `/btt-sdd:implement` com os achados listados —

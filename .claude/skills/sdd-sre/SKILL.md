@@ -39,9 +39,12 @@ desperdiçada.
 3. Invoque o agente `sre` (Agent tool, `subagent_type: "sre"`) passando o caminho do TRD (seção
    de pilares de engenharia/infra), do `qa-report.md` e do `security-review.md`, e instrução para
    produzir `specs/<slug>/sre-review.md` a partir de `specs/_template/sre-review.template.md`.
-   **Se outra tarefa desta sessão ainda pode estar ativa na mesma branch**, passe `isolation:
-   "worktree"` nesta chamada — nunca deixe dois agentes dividirem o mesmo diretório de trabalho
-   (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes concorrentes").
+   **Sempre passe `isolation: "worktree"` nesta chamada** — nunca deixe dois agentes dividirem o
+   mesmo diretório de trabalho (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre
+   agentes concorrentes"). Não é uma condição a avaliar caso a caso ("outra tarefa pode estar
+   ativa?") — já aconteceu numa sessão real do agente `sre` presumir incorretamente a quem
+   pertenciam arquivos não commitados de outra tarefa ativa na mesma branch e realocá-los para o
+   próprio PR; o padrão desta invocação é sempre isolar.
 4. O agente `sre` já embute o gate de aprovação: qualquer proposta de mudança real de
    infraestrutura (`terraform apply`) é apresentada como plano e só executada após aprovação
    explícita do usuário via `AskUserQuestion`. Você não precisa duplicar essa confirmação, mas
