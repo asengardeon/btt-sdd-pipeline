@@ -16,6 +16,14 @@ de todas as versões passadas). Projetos scaffolded antes de `1.14.0` que quiser
 mais antigas precisam comparar manualmente contra a versão atual do template uma única vez, antes
 que `/sdd-sync-docs` passe a cobrir o resto a partir daqui em diante.
 
+## 1.20.10 — 2026-09-08
+
+- `docs/QUALITY-GATES.md`: novo item bloqueante no gate SRE/CI-CD/Infra — quando uma fatia torna
+  obrigatório um campo antes opcional/ausente numa rota já ativa consumida por um cliente já
+  implantado que ainda não foi atualizado, e os gates de deploy automático já estão ligados, o
+  `sre` exige um default retrocompatível ou confirmação explícita do usuário antes do merge, em
+  vez de registrar como nota não-bloqueante de coordenação de deploy. (issue #113)
+
 ## 1.20.9 — 2026-09-08
 
 - `docs/ENGINEERING-PILLARS.md`: seção "Disponibilidade" ganha um parágrafo apontando que, em
