@@ -326,6 +326,11 @@ gravada por quem causa a transição.
 - [ ] `main` protegida: sem push direto, PR obrigatório, status checks obrigatórios (verificado,
   não necessariamente configurado pelo agente — configuração real é do administrador do repo).
 - [ ] Deploy só roda após CI verde.
+- [ ] Se a fatia torna obrigatório um campo antes opcional/ausente numa rota já ativa consumida
+  por um cliente já implantado que ainda não foi atualizado para enviá-lo, e os gates de deploy
+  automático relevantes já estão ligados: bloqueante até haver um default retrocompatível nesta
+  fatia, ou confirmação explícita do usuário aceitando a janela de quebra em produção — nunca uma
+  nota não-bloqueante de coordenação de deploy (`.claude/agents/sre.md`, área "CD e GitHub Flow").
 - [ ] Nenhuma alteração de infraestrutura real (`terraform apply`) roda sem plano revisado
   (`terraform plan`) e aprovação explícita do usuário.
 - [ ] Docker: build multi-stage, imagem mínima, usuário não-root, sem segredo hardcoded.

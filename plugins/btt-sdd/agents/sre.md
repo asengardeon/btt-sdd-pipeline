@@ -148,6 +148,20 @@ fatia.
    - Mudança de infraestrutura (`terraform apply`) é gated — nunca aplica direto sem `plan`
      revisável, idealmente com aprovação manual em ambiente protegido.
    - Estratégia de rollback existe e está documentada (o que fazer se o deploy quebrar produção).
+   - **Fatia torna obrigatório um campo antes opcional/ausente numa rota já ativa, consumida por
+     um cliente já implantado que ainda não foi atualizado para enviá-lo** (ex.: um campo que só
+     uma fatia posterior, ainda não mergeada, faz o frontend passar a enviar — `docs/
+     ENGINEERING-PILLARS.md`, seção "Disponibilidade", "Janelas de quebra de contrato entre
+     fatias" do TRD): antes de aprovar, verifique se os gates de deploy automático relevantes
+     desta stack já estão ativos (ex.: `gh variable list`, ou o mecanismo equivalente documentado
+     em `docs/STACK.md`/`cd.yml`). Se estiverem, isso é **achado bloqueante**, não uma nota
+     informativa de coordenação de deploy — exija antes do merge (a) um default retrocompatível
+     nesta mesma fatia (ex.: campo aceito como opcional com fallback), ou (b) confirmação
+     explícita do usuário, via `AskUserQuestion`, de que aceita conscientemente a janela de quebra
+     em produção. Já aconteceu de verdade: esse cenário foi identificado e registrado como
+     "pendência de coordenação, não de código" (achado não-bloqueante) sem checar se os gates de
+     deploy automático já estavam ligados — estavam, o merge disparou CI/CD automaticamente, e
+     todo login por senha em produção passou a falhar até um hotfix horas depois.
    - **Novo proxy/sidecar/cache local entre a aplicação e um serviço antes remoto (ex.: PgBouncer
      na frente de um Postgres gerenciado, um sidecar de service mesh, um Redis local na frente de
      um Redis gerenciado) exige reavaliar toda configuração de segurança de transporte que assumia
