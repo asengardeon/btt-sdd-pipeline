@@ -112,7 +112,11 @@ integração contra um serviço com estado na mesma janela de tempo, cada execu�
 instância/banco/schema isolado — ex.: nome de banco derivado do worktree ou da branch
 (`<projeto>_test_<id-do-worktree>`), ou um container efêmero por execução — nunca um único serviço
 compartilhado reaproveitado por agentes concorrentes. O mecanismo exato (nome de schema, container
-por execução, etc.) é decisão de `docs/STACK.md` deste projeto, não hardcoded neste template.
+por execução, etc.) é decisão de `docs/STACK.md` deste projeto, não hardcoded neste template — mas
+não fica esperando alguém perceber a lacuna depois de uma contenção real: o `architect`
+(`.claude/agents/architect.md`) decide e registra essa decisão explicitamente assim que a stack de
+um projeto passa a usar um serviço com estado em testes de integração, no mesmo `/sdd-trd` que
+decide a stack.
 
 **Isolamento resolve a corrida de Git — não substitui dependência lógica entre etapas.** Com
 isolamento garantido (mecanismo acima), duas tarefas que não dependem do resultado uma da outra

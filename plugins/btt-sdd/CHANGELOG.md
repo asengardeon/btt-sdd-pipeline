@@ -16,6 +16,14 @@ de todas as versões passadas). Projetos scaffolded antes de `1.14.0` que quiser
 mais antigas precisam comparar manualmente contra a versão atual do template uma única vez, antes
 que `/sdd-sync-docs` passe a cobrir o resto a partir daqui em diante.
 
+## 1.20.7 — 2026-09-08
+
+- `docs/GIT-WORKFLOW.md`: a seção "Isolamento de arquivos não é isolamento de serviços com estado"
+  agora deixa explícito que o `architect` decide e registra em `docs/STACK.md` o mecanismo de
+  isolamento de serviço com estado (banco/fila/emulador) entre execuções concorrentes assim que a
+  stack do projeto passa a depender de um, em vez de deixar essa decisão totalmente implícita
+  esperando alguém perceber a lacuna só depois de uma contenção real entre agentes. (issue #107)
+
 ## 1.20.5 — 2026-09-07
 
 - `docs/DOCS-SYNC.md`: corrige a condição que dispara a comparação estrutural completa de
