@@ -42,6 +42,15 @@ dublê do contrato de API (`docs/ARCHITECTURE.md`, seção Frontend) no lugar de
 camada de e2e "de verdade" cross-stack obrigatória por padrão; se a feature justificar, um e2e
 que sobe backend+frontend juntos é uma decisão do `architect` a registrar no TRD.
 
+**"E2E do fluxo humano" sem harness de browser real contra backend real.** Se este projeto não tem
+uma suíte de e2e de browser disponível contra um backend real (nenhum harness documentado aqui ou
+em `docs/STACK.md`), uma tarefa de TRD descrita como "e2e do fluxo humano" não pode presumir
+implicitamente esse tipo de suíte — o `architect` (`.claude/agents/architect.md`, seção "Plano de
+testes de alto nível") já especifica o mecanismo de verificação alternativo esperado (ex.: um
+teste de integração HTTP encadeando os endpoints reais envolvidos, sem dublê, como prova do
+fluxo) diretamente na tarefa, em vez de deixar para quem implementa decidir ou perguntar no meio
+da fatia.
+
 ### Armadilha conhecida: `testPathIgnorePatterns` do Jest com `<rootDir>` e path com segmento iniciado por ponto
 
 Se o TRD decidir Jest como test runner do frontend (`docs/STACK.md`), evite usar `<rootDir>` como

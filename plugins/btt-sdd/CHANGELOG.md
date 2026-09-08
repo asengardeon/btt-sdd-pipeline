@@ -16,6 +16,13 @@ de todas as versões passadas). Projetos scaffolded antes de `1.14.0` que quiser
 mais antigas precisam comparar manualmente contra a versão atual do template uma única vez, antes
 que `/sdd-sync-docs` passe a cobrir o resto a partir daqui em diante.
 
+## 1.20.12 — 2026-09-08
+
+- `docs/TESTING.md`: nova seção "Frontend (quando aplicável)" explica que, sem um harness de e2e
+  de browser real contra backend real, uma tarefa de TRD descrita como "e2e do fluxo humano" exige
+  que o `architect` já especifique o mecanismo de verificação alternativo (ex.: integração HTTP
+  encadeada) na própria tarefa, em vez de deixar implícito. (issue #115)
+
 ## 1.20.10 — 2026-09-08
 
 - `docs/QUALITY-GATES.md`: novo item bloqueante no gate SRE/CI-CD/Infra — quando uma fatia torna

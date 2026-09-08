@@ -169,7 +169,16 @@ não se aplica.
    algo tem implicação de infraestrutura para o `sre` revisar depois (ex: precisa de fila, precisa
    de cache, precisa de job assíncrono).
 8. Escreva o **plano de testes de alto nível**: quais camadas testar unitariamente, quais
-   integrações testar, quais cenários de e2e. Isso vira a base do `qa-engineer`.
+   integrações testar, quais cenários de e2e. Isso vira a base do `qa-engineer`. **Sempre que
+   descrever uma tarefa como "e2e do fluxo humano" (ou equivalente) e este projeto não tiver uma
+   suíte de e2e de browser real contra um backend real disponível** (verifique `docs/TESTING.md`/
+   `docs/STACK.md` — ausência de harness documentado é o sinal), especifique já aqui o mecanismo de
+   verificação alternativo esperado (ex.: "via integração HTTP encadeada entre os endpoints reais,
+   sem dublê, seguindo o padrão de `specs/<slug-de-referência>`") em vez de deixar essa decisão
+   implícita para quem implementa descobrir ou perguntar no meio da fatia. Já aconteceu de verdade:
+   a mesma decisão (integração HTTP encadeada como equivalente a "e2e do fluxo humano" sem harness
+   de browser) teve que ser tomada duas vezes em fatias diferentes do mesmo projeto — uma invocação
+   inteira de agente a mais só para redescobrir um precedente que já existia.
 9. Se uma decisão técnica é significativa (troca de padrão, escolha de tecnologia com trade-off
    real), registre um ADR em `docs/adr/` seguindo `docs/adr/0001-record-architecture-decisions.md`.
 10. Defina o nome da branch GitHub Flow **de cada fatia** (`docs/GIT-WORKFLOW.md`): uma
