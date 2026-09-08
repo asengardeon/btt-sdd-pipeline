@@ -131,7 +131,15 @@ normalmente.
    fora do escopo da fatia que reconstrói o agregado sem repassar o campo novo perde esse valor
    silenciosamente em toda edição futura; já causou um achado bloqueante de segurança real (campo
    `deletedAt` perdido "ressuscitando" um registro excluído) depois de o mesmo padrão já ter
-   aparecido, sem gravidade, numa fatia anterior.
+   aparecido, sem gravidade, numa fatia anterior. **Se esta rodada rebaseou a branch sobre commits
+   substanciais de outra feature mergeada em `main` no meio do desenvolvimento desta fatia** (sinal
+   vindo do passo 2b da skill `/btt-sdd:code-review`), trate qualquer varredura de propagação desse
+   tipo que o dev tenha rodado *antes* desse rebase como potencialmente desatualizada — confirme com
+   um grep seu, agora, em vez de assumir que ela continua válida: código novo trazido pelo rebase
+   pode introduzir um novo ponto de reconstrução do agregado que a varredura original não podia ter
+   visto. Já aconteceu de verdade: uma varredura completa no momento em que rodou ficou incompleta
+   depois que outra feature, mergeada em paralelo, foi trazida por um rebase final — só pega pelo
+   `code-reviewer` rodando a suíte completa por hábito, não por checagem dedicada a esse cenário.
 
 ## Processo
 
