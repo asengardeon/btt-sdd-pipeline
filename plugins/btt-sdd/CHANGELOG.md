@@ -16,6 +16,13 @@ de todas as versões passadas). Projetos scaffolded antes de `1.14.0` que quiser
 mais antigas precisam comparar manualmente contra a versão atual do template uma única vez, antes
 que `/sdd-sync-docs` passe a cobrir o resto a partir daqui em diante.
 
+## 1.20.9 — 2026-09-08
+
+- `docs/ENGINEERING-PILLARS.md`: seção "Disponibilidade" ganha um parágrafo apontando que, em
+  features multi-fatia, o TRD também precisa endereçar janelas de quebra de contrato *entre*
+  fatias (não só a disponibilidade da feature inteira) — ver "Janelas de quebra de contrato entre
+  fatias" na seção 13 de `specs/_template/trd.template.md`. (issue #109)
+
 ## 1.20.7 — 2026-09-08
 
 - `docs/GIT-WORKFLOW.md`: a seção "Isolamento de arquivos não é isolamento de serviços com estado"

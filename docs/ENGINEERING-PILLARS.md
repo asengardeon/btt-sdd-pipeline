@@ -36,6 +36,12 @@ irrelevante? Isso informa decisões do `sre` (réplicas, health checks, estraté
 `docs/GIT-WORKFLOW.md`/`cd.yml`) — o TRD só precisa declarar a expectativa, não implementar a
 infraestrutura.
 
+Em features multi-fatia, essa pergunta também vale *entre fatias*, não só para a feature ficar
+fora do ar: alguma fatia introduz uma mudança de contrato obrigatória que só fica coerente depois
+que outra fatia posterior mergear (ex.: campo novo obrigatório numa API que o cliente só passa a
+enviar duas fatias depois)? Essa janela é decidida e documentada na seção 13 do TRD ("Janelas de
+quebra de contrato entre fatias"), não descoberta reativamente na revisão de SRE da fatia afetada.
+
 ## Observabilidade
 
 Como alguém vai saber, em produção, que esta feature está funcionando (ou não)? Estrutura mínima

@@ -142,6 +142,18 @@ que permite entregar e mostrar a spec completa aos poucos, em vez de só no fim.
 |------|------------------------------|------------------------------|--------------|---------------|-----------|------------------|
 | T-1  | <descrição da tarefa>         | backend / frontend / ambos    | F-1           | nenhuma        | pendente  | `<#N ou "não espelhada">` |
 
+### Janelas de quebra de contrato entre fatias
+
+Preencher só se alguma fatia acima introduz uma mudança de contrato obrigatória (campo novo
+obrigatório numa API, mensagem/evento incompatível, remoção de suporte a formato antigo) que só
+fica coerente depois que outra fatia posterior (ex.: a que atualiza o cliente/frontend) também
+mergear — nunca deixar essa janela implícita. Se nenhuma fatia introduz esse tipo de janela,
+escreva "não aplicável".
+
+| Fatia que quebra | O que quebra | Só fica coerente depois de | Mitigação decidida |
+|--------------------|-----------------|--------------------------------|------------------------|
+| F-1                  | <ex.: campo `tenantSlug` passa a ser obrigatório em `POST /auth/login`> | F-3 (seletor de tenant na UI) | <ex.: campo aceito como opcional com fallback até F-3 mergear / segurar merge de F-1 até F-3 estar pronta / janela aceita conscientemente, com justificativa> |
+
 A coluna **Status** é a fonte de verdade de onde cada tarefa está, mantida **in-place** por quem
 causa cada transição — nunca inferida depois por outra etapa. `architect` inicializa toda tarefa
 nova como `pendente`. Ciclo de vida completo e responsabilidade de cada transição em
