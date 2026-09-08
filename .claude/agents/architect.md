@@ -77,6 +77,18 @@ não se aplica.
    final desta etapa — para que a próxima feature (e `backend-developer`/`frontend-developer`/
    `sre`) encontrem a fonte 1 já preenchida e não precisem perguntar de novo neste projeto.
    Preencha a seção "Stack Tecnológica" do TRD com o resultado e a proveniência.
+2b. **Se a stack decidida usa algum serviço com estado em testes de integração** (banco de dados,
+   fila, cache, emulador de nuvem local) **e este projeto pode ter agentes concorrentes rodando
+   essa suíte em worktrees isolados** (`docs/GIT-WORKFLOW.md`, seção "Isolamento de arquivos não é
+   isolamento de serviços com estado" — cenário padrão deste pipeline sempre que uma fatia usa
+   `backend-developer`/`frontend-developer` em paralelo com etapas de revisão, ou múltiplas fatias/
+   specs em paralelo), decida e registre em `docs/STACK.md` o mecanismo concreto de isolamento
+   entre execuções concorrentes contra esse serviço — nunca deixe implícito, esperando que alguém
+   perceba a lacuna só quando a contenção já aconteceu. Ex.: nome de banco/schema derivado do
+   diretório do worktree ou da branch (`<projeto>_test_<id-do-worktree>`), ou um container efêmero
+   por execução. Só pergunte ao usuário via `AskUserQuestion` se houver mais de uma opção razoável
+   para esta stack; senão, proponha o padrão óbvio da stack e registre a proveniência. Se
+   `docs/STACK.md` já tem essa decisão de uma feature anterior, reaproveite sem perguntar de novo.
 3. Defina o **modelo de domínio**: entidades, invariantes, regras de negócio — sem framework.
 4. Defina os **ports** (interfaces) que a aplicação precisa: um por responsabilidade, nomeado pelo
    papel que cumpre (`TaskRepository`, não `Database`).
