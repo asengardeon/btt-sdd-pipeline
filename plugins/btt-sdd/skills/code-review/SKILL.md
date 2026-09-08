@@ -27,7 +27,15 @@ pulados silenciosamente numa sessão real — ver `CLAUDE.md`, seção do pipeli
    `qa-report.md`/`security-review.md`/`sre-review.md`/`trd.md`) preservando o conteúdo de ambos os
    lados quando tocarem os mesmos arquivos, e envie (push) o resultado. Isso evita que esta e as
    etapas seguintes (QA, segurança, SRE) commitem "às cegas" sobre uma base que já vai gerar
-   conflito — descoberto só na última etapa, exigindo uma correção retroativa.
+   conflito — descoberto só na última etapa, exigindo uma correção retroativa. **Se o rebase trouxe
+   commits substanciais de outra feature mergeada** (não só um hotfix pontual da mesma spec),
+   informe explicitamente ao `code-reviewer` que vai revisar esta rodada: qualquer varredura
+   exaustiva de propagação de campo/assinatura (ex.: "todo `new <Entidade>(` do repositório") que
+   `backend-developer`/`frontend-developer` tenha rodado *antes* deste rebase pode estar
+   desatualizada — código novo trazido pelo rebase pode ter introduzido um ponto de propagação que
+   a varredura original não podia ver. Não é motivo para reprovar de antemão; é sinal para o
+   `code-reviewer` reconfirmar com uma varredura própria (área 9 do agente `code-reviewer`) em vez
+   de confiar que "já rodei isso uma vez" continua válido.
 3. Invoque o agente `code-reviewer` (Agent tool, `subagent_type: "code-reviewer"`) passando o
    caminho do TRD e o PR/branch da feature, e instrução para produzir
    `specs/<slug>/code-review.md` a partir de `specs/_template/code-review.template.md`,
