@@ -127,6 +127,21 @@ não se aplica.
    incremento vertical isolado (ex.: uma dependência de infraestrutura compartilhada obriga
    agrupar duas fatias), registre essa divergência explicitamente e explique o motivo — não
    silencie a mudança em relação ao que o PRD propôs.
+   **Para cada fatia que introduz uma mudança de contrato obrigatória** (campo novo obrigatório
+   numa API, mensagem/evento com formato incompatível, remoção de suporte a um formato antigo):
+   pergunte explicitamente se essa mudança só fica coerente depois que outra fatia (posterior, ex.:
+   a que atualiza o cliente/frontend) também mergear — se sim, essa fatia introduz uma **janela de
+   quebra entre fatias**, e o TRD precisa dizer isso, não deixar implícito. Registre a janela na
+   tabela desta seção (nota na linha da tarefa, ou subseção própria "Janelas de quebra de contrato
+   entre fatias" logo abaixo da tabela) e já proponha a mitigação como parte do desenho — campo
+   opcional com fallback para o valor antigo até a fatia seguinte mergear é o padrão default; segurar
+   o merge até a fatia seguinte estar pronta, ou aceitar a janela conscientemente, são alternativas
+   válidas se justificadas. Isso é uma decisão de arquitetura sua, não uma pergunta ao usuário por
+   padrão — só vire `AskUserQuestion` se as opções de mitigação tiverem trade-off real (ex.: janela
+   aceita vs. custo de manter compatibilidade). Já aconteceu de verdade: um campo obrigatório novo
+   numa fatia só foi satisfeito pelo frontend em produção duas fatias depois, descoberto só na
+   revisão de SRE da primeira fatia — o usuário teve que decidir reativamente, no meio da revisão
+   final, entre segurar o merge, tornar o campo opcional, ou aceitar a janela.
    **O TRD só é considerado pronto para aprovação depois que toda tarefa desta tabela tem uma
    Issue GitHub associada — isso deixou de ser opcional.** Diferente do PRD (que não exige GitHub),
    a partir da decomposição de tarefas o pipeline exige GitHub configurado. Depois de preencher a
