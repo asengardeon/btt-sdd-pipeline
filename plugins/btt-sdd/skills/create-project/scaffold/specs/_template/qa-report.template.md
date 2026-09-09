@@ -66,11 +66,16 @@ onde a fronteira foi violada.
 ## 7. Pendências de validação (VALIDAR DEPOIS)
 
 Critério de aceite ambíguo o suficiente para não dar veredito sozinho vira pergunta ao usuário;
-se ele não souber responder agora, registre aqui em vez de decidir por conta própria.
+se ele não souber responder agora, registre aqui em vez de decidir por conta própria. **ID no
+formato `QA-<AAAA-MM-DD>-<slug-curto>`** (data + slug curto do próprio item — nunca um contador
+sequencial simples como `QA-1`/`QA-2`): duas branches de fatia paralelas calculando o "próximo
+número" a partir da própria cópia local já geraram colisão real de ID em merge (mesmo critério de
+`docs/LESSONS-LEARNED.md`, `docs/QUALITY-GATES.md`). Na rara colisão de duas entradas com data e
+slug idênticos, acrescente um sufixo numérico ao segundo (`-2`, `-3`, ...) no momento do merge.
 
-| ID    | Pergunta                          | Contexto                              | Status              |
-|-------|--------------------------------------|-------------------------------------------|------------------------|
-| QA-1  | <pergunta que ficou sem resposta>     | <por que essa pergunta importa>            | pendente / validado |
+| ID                              | Pergunta                          | Contexto                              | Status              |
+|----------------------------------|--------------------------------------|-------------------------------------------|------------------------|
+| QA-2026-08-25-criterio-timeout   | <pergunta que ficou sem resposta>     | <por que essa pergunta importa>            | pendente / validado |
 
 ## 8. Log de revisões
 
