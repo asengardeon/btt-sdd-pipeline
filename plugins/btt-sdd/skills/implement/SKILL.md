@@ -98,7 +98,17 @@ assim:
 2c-ter. **Gate obrigatório: toda tarefa da fatia escolhida precisa ter Issue GitHub associada.**
    Confira a coluna "Issue GitHub" da tabela de decomposição do TRD para cada tarefa desta fatia
    (excluindo fatias sem trilha de código, passo 2b-bis, que não passam por este gate). Se alguma
-   estiver vazia/`não espelhada`, **pare aqui, não crie a branch nem invoque nenhum agente de
+   estiver vazia/`não espelhada`, **antes de concluir que a fatia está pendente**, rode uma
+   checagem barata de que ela não foi implementada e mergeada sem que o TRD tivesse sido
+   atualizado depois (a coluna Status pode ter ficado desatualizada mesmo com a fatia já em
+   produção — ex.: `git log --oneline --all -i --grep="<slug>.*fatia N"` e/ou `gh pr list --search
+   "<slug> Fatia N" --state merged`, ajustando o padrão ao texto real usado nos commits/PRs deste
+   projeto). Se essa checagem encontrar um commit/PR já mergeado cobrindo as mesmas tarefas desta
+   fatia, **isso é uma discrepância de documentação, não trabalho pendente**: atualize a coluna
+   Status dessas tarefas no TRD para `concluído (mergeado)` citando o PR/commit real, informe o
+   usuário, e volte ao passo 2b para escolher a próxima fatia realmente pendente — não crie issues
+   nem branch/agente de implementação para esta fatia. Só quando a checagem não encontrar nada,
+   trate como o gate original: **pare aqui, não crie a branch nem invoque nenhum agente de
    implementação** — isso não deveria acontecer se o TRD foi aprovado depois desta regra existir
    (agente `architect`, passo 6c), mas pode ocorrer em TRDs aprovados antes dela, ou se uma issue
    foi apagada/perdida depois. Informe o usuário e ofereça, via `AskUserQuestion`, acionar
