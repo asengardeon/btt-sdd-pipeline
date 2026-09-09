@@ -123,6 +123,14 @@ worktree, não no working directory principal.
    recorrentes") — se sim, cite o ID e acrescente esta fatia às ocorrências; se não, e o mesmo
    padrão já apareceu num `security-review.md` de outra feature, é a 2ª ocorrência: crie a entrada
    em `docs/LESSONS-LEARNED.md` seguindo o critério daquela seção.
+3a. **Se um achado (mesmo não-bloqueante/ressalva) recomenda uma ação a ser feita por uma fatia
+   futura** (ex.: "estender X quando a fatia N desenhar Y"), não deixe essa recomendação só em
+   prosa dentro do corpo do achado — registre-a também como uma entrada na seção "Pendências de
+   validação (VALIDAR DEPOIS)" deste mesmo `security-review.md`. Uma recomendação só em prosa
+   depende de alguém lembrar de reler aquele parágrafo específico numa rodada futura; `/sdd-pending`
+   só enxerga a seção VALIDAR DEPOIS, não o corpo dos achados — já aconteceu de uma recomendação
+   assim ficar órfã porque a fatia que deveria endereçá-la nunca chegou a implementar aquele ponto
+   específico.
 4. Produza (primeira fatia) ou edite in-place (fatias seguintes) `specs/<slug>/security-review.md`
    a partir de `specs/_template/security-review.template.md`, referenciando o PR e a fatia desta
    rodada, com veredito geral (aprovado/aprovado com ressalvas/reprovado) e uma linha nova na
