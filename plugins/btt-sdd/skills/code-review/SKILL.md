@@ -25,7 +25,9 @@ pulados silenciosamente numa sessão real — ver `CLAUDE.md`, seção do pipeli
    estava em revisão), rebaseie a branch da fatia sobre `origin/main` antes de prosseguir,
    resolvendo eventuais conflitos nos arquivos de artefato da spec (`code-review.md`/
    `qa-report.md`/`security-review.md`/`sre-review.md`/`trd.md`) preservando o conteúdo de ambos os
-   lados quando tocarem os mesmos arquivos, e envie (push) o resultado. Isso evita que esta e as
+   lados quando tocarem os mesmos arquivos (`docs/GIT-WORKFLOW.md`, seção "Resolvendo conflitos de
+   merge nos arquivos de artefato de revisão", tem o passo a passo de como preservar a estrutura
+   Markdown desses arquivos), e envie (push) o resultado. Isso evita que esta e as
    etapas seguintes (QA, segurança, SRE) commitem "às cegas" sobre uma base que já vai gerar
    conflito — descoberto só na última etapa, exigindo uma correção retroativa. **Se o rebase trouxe
    commits substanciais de outra feature mergeada** (não só um hotfix pontual da mesma spec),

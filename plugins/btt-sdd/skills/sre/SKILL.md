@@ -32,7 +32,9 @@ desperdiçada.
    estava em revisão), rebaseie a branch da fatia sobre `origin/main` antes de prosseguir,
    resolvendo eventuais conflitos nos arquivos de artefato da spec (`code-review.md`/
    `qa-report.md`/`security-review.md`/`sre-review.md`/`trd.md`) preservando o conteúdo de ambos os
-   lados quando tocarem os mesmos arquivos, e envie (push) o resultado. Já aconteceu de verdade essa
+   lados quando tocarem os mesmos arquivos (`docs/GIT-WORKFLOW.md`, seção "Resolvendo conflitos de
+   merge nos arquivos de artefato de revisão", tem o passo a passo de como preservar a estrutura
+   Markdown desses arquivos), e envie (push) o resultado. Já aconteceu de verdade essa
    sincronização faltar até esta última etapa — descoberta só pelo `sre`, depois que code review, QA
    e segurança já tinham commitado às cegas sobre uma base que gerava conflito, exigindo uma
    invocação extra só para resolver retroativamente.
