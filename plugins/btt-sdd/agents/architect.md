@@ -92,6 +92,17 @@ não se aplica.
 3. Defina o **modelo de domínio**: entidades, invariantes, regras de negócio — sem framework.
 4. Defina os **ports** (interfaces) que a aplicação precisa: um por responsabilidade, nomeado pelo
    papel que cumpre (`TaskRepository`, não `Database`).
+4a. **Todo port/guard que resolve autorização ou identidade por um parâmetro de contexto**
+   (`tenantId`, `workspaceId`, `accountId`, etc.): pergunte explicitamente "este parâmetro
+   representa identidade do requisitante ou escopo operacional da ação? Eles podem divergir algum
+   dia?" antes de aceitar um único parâmetro para os dois papéis. Quando não há nenhum mecanismo de
+   troca de contexto no design atual (impersonação, "operar como", multi-workspace), os dois
+   valores coincidem "de graça" — até uma fatia futura introduzir exatamente esse mecanismo, e a
+   confusão implícita vira um bug de autorização real (já aconteceu: um `tenantId` único usado
+   tanto para resolver o membro requisitante quanto para o contexto da sessão quebrou quando uma
+   fatia posterior introduziu impersonação entre tenants). Se a feature já tem ou pode vir a ter
+   esse mecanismo, desenhe o port com dois parâmetros desde o início (ex.:
+   `assertCanAdminister(requestingMemberId, targetContextId)`), mesmo que hoje sempre coincidam.
 5. Defina os **casos de uso** (`application/use_cases`) que orquestram domínio + ports para
    cumprir cada critério de aceite do PRD. Mapeie explicitamente critério de aceite → caso de uso.
 6. Defina os **adapters** necessários (de entrada: HTTP/CLI/evento; de saída: persistência,

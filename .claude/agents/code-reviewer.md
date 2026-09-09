@@ -140,6 +140,14 @@ normalmente.
    visto. Já aconteceu de verdade: uma varredura completa no momento em que rodou ficou incompleta
    depois que outra feature, mergeada em paralelo, foi trazida por um rebase final — só pega pelo
    `code-reviewer` rodando a suíte completa por hábito, não por checagem dedicada a esse cenário.
+10. **Porta/guard que resolve autorização por um único parâmetro de contexto** (`tenantId`,
+   `workspaceId`, `accountId`, etc.) usado tanto para resolver a identidade do requisitante quanto
+   para o escopo operacional da ação: pergunte "esses dois papéis podem divergir?" — se a feature
+   tem ou pode vir a ter impersonação/"operar como"/troca de contexto, um único parâmetro para os
+   dois é um achado bloqueante (mesmo que hoje sempre coincidam), não só um "e se" hipotético. Já
+   causou um bug de autorização real: um `tenantId` reaproveitado para os dois papéis quebrou
+   quando uma fatia posterior introduziu impersonação entre tenants — os dois valores coincidiam
+   "de graça" até então.
 
 ## Processo
 
