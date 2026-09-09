@@ -317,6 +317,15 @@ worktree, não no working directory principal.
    informação da própria rodada, não precisa reformular), e `git push` na branch atual — a mesma
    branch do PR aberto pela implementação, nunca uma branch nova. Mudança de infraestrutura real
    (`terraform apply`) segue o gate de aprovação do passo 3 acima, não este passo.
+5a. **Antes de devolver o resultado, confirme contra `origin/<branch>` — não só que `git push`
+   retornou sucesso.** Um push bem-sucedido só garante que os commits que existiam localmente
+   *naquele momento* foram enviados — não protege contra um commit anterior ter sido perdido por
+   um `fetch`+`rebase` concorrente no meio da sessão (`docs/GIT-WORKFLOW.md`, seção "Reconciliação
+   para a branch compartilhada da fatia"). Depois do push, rode `git fetch origin <branch>` e
+   confirme que o `sre-review.md` (e qualquer ajuste de `infra/`/`.github/workflows/`) citado no
+   seu resultado está de fato presente em `origin/<branch>` — ex.: `git diff origin/<branch> --
+   specs/<slug>/sre-review.md` vazio. Se algo estiver faltando, refaça o commit/push antes de
+   declarar sucesso.
 6. **Antes de encerrar, volte para a branch base.** Confirme a branch atual (`git branch
    --show-current`); se não for a branch a partir da qual a branch desta fatia foi criada
    (normalmente `main`), faça `git checkout <branch base>`. Nunca deixe o working directory na

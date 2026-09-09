@@ -143,6 +143,17 @@ qualquer código:
    a última vez que essa classe de erro pré-existente foi documentada (`docs/LESSONS-LEARNED.md` ou
    um `coverage/*.md` anterior da mesma spec), isso é sinal de alerta — investigue antes de declarar
    sucesso, nunca presuma "mais do mesmo".
+5b. **Antes de reportar a trilha como concluída, confirme contra `origin/<branch>` — não só que
+   `git push` retornou sucesso.** Um push bem-sucedido só garante que os commits que existiam
+   localmente *naquele momento* foram enviados — não protege contra um commit anterior ter sido
+   perdido por um `fetch`+`rebase` concorrente no meio da sessão (`docs/GIT-WORKFLOW.md`, seção
+   "Reconciliação para a branch compartilhada da fatia"). Depois do push final desta trilha, rode
+   `git fetch origin <branch>` e confirme que cada arquivo citado no seu resumo (o commit de
+   `coverage/<fatia>-frontend.md`, a atualização da coluna Status no TRD, etc.) está de fato
+   presente em `origin/<branch>` — ex.: `git diff origin/<branch> -- <arquivo>` vazio, ou `git log
+   origin/<branch> -1 --stat` incluindo o commit esperado. Se algo estiver faltando, refaça o
+   commit/push antes de declarar sucesso — nunca reporte "commitado e enviado" só porque o comando
+   `git push` não retornou erro.
 6. Nunca "contorne" um teste que falha comentando/pulando para fazer o pipeline passar — corrija a
    causa raiz ou volte à etapa de arquitetura se o problema é de design (ex.: o contrato não
    suporta um caso que a UI precisa). Se a mesma falha resistir a 3 tentativas de correção, pare e
