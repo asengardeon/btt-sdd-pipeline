@@ -226,7 +226,10 @@ gravada por quem causa a transição.
 - [ ] **Antes de criar a branch, `/sdd-implement` confirmou que toda tarefa desta fatia tem a
   coluna "Issue GitHub" preenchida no TRD — nenhuma fatia começa sem isso** (gate obrigatório,
   `.claude/skills/sdd-implement/SKILL.md`, passo 2c-ter). O mesmo vale para `/sdd-hotfix`: a issue
-  do bug/ajuste existe antes da branch ser criada.
+  do bug/ajuste existe antes da branch ser criada. Antes de tratar uma coluna "Issue GitHub" vazia
+  como fatia pendente, o mesmo gate cruza com `git log`/`gh pr list` em busca de um commit/PR já
+  mergeado cobrindo aquela fatia — Status desatualizado no TRD é uma discrepância de documentação
+  a corrigir, não trabalho pendente a reabrir com issues novas.
 - [ ] Branch da fatia criada a partir de `main` atualizada (só depois do PR da fatia anterior já
   mergeado, se houver uma); PR aberto (única branch/PR por fatia, mesmo quando backend e frontend
   desenvolvem em paralelo dentro dela).
