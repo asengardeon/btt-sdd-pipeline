@@ -298,6 +298,14 @@ worktree, não no working directory principal.
    revisão) nas colunas correspondentes. Atualize também, no TRD, a coluna Status das tarefas
    desta fatia: `aprovado` se o veredito geral for aprovado (ou aprovado com ressalvas), ou
    `bloqueado` (com o motivo em uma linha) se reprovado.
+4a. **Se um achado (mesmo não-bloqueante/ressalva) recomenda uma ação a ser feita por uma fatia
+   futura** (ex.: "estender X quando a fatia N fizer Y"), não deixe essa recomendação só em prosa
+   dentro do corpo do achado — registre-a também como uma entrada na seção "Pendências de
+   validação (VALIDAR DEPOIS)" deste mesmo `sre-review.md`. Uma recomendação só em prosa depende de
+   alguém lembrar de reler aquele parágrafo específico numa rodada futura; `/sdd-pending` só
+   enxerga a seção VALIDAR DEPOIS, não o corpo dos achados — mais crítico ainda **se esta é a
+   última fatia da spec** (próximo parágrafo do checklist acima): sem uma fatia seguinte para
+   carregar a recomendação, ela fica órfã na revisão final se não virar uma pendência rastreável.
 4b. **Se você aprovou (ou aprovou com ressalvas) esta fatia** e a tabela "Decomposição de tarefas e
    dependências" do TRD tem issues do GitHub associadas (coluna "Issue GitHub" preenchida com
    `#N`) a tarefas cobertas por esta fatia, documente a resolução em cada uma antes de terminar:
