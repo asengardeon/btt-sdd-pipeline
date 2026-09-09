@@ -171,6 +171,35 @@ fetch estiver atrasado. Sempre, antes de rebasear manualmente uma branch nessas 
    confirme que nenhum commit da branch original desapareceu. Não basta confirmar que o conflito foi
    resolvido; confirme também que nada foi perdido no processo.
 
+**Resolvendo conflitos de merge nos arquivos de artefato de revisão
+(`code-review.md`/`qa-report.md`/`security-review.md`/`sre-review.md`).** Fatias/PRs paralelos da
+mesma spec costumam tocar os mesmos arquivos de artefato ao rebasear sobre `main`/sobre uma fatia
+irmã já mergeada. O conflito **não é um simples "duas edições no mesmo lugar"**: cada rodada de
+revisão escreve seu próprio bloco de cabeçalho (`## 1. Veredito geral` com sub-seções `###
+Rodada mais recente` + `### Histórico —` por dentro), e os dois lados do merge reescrevem esse
+mesmo bloco de formas incompatíveis. Resolver isso como texto bruto (aceitar "os dois lados" com
+`sed`/remoção ingênua dos marcadores de conflito) produz cabeçalhos `##` duplicados, fragmentos
+órfãos de linha cortada, e `###` colado sem linha em branco antes — quebrando a estrutura Markdown
+do documento. Ao resolver um conflito nesses arquivos:
+
+1. Combine o cabeçalho (`> PR (...)`/`> Escopo da rodada mais recente`/`> Data:`) unindo as duas
+   listas — nunca escolha um lado e descarte o outro.
+2. Trate cada seção numerada (`## N. ...`) que aparece duplicada como **a mesma seção, com uma
+   sub-seção `###` nova por rodada** — ambos os lados adicionam, nenhum remove uma sub-seção já
+   existente do lado oposto.
+3. **Reordene** as sub-seções por data real da rodada, não pela ordem que o merge trouxe: a
+   cronologicamente mais recente vira `### Rodada mais recente —`, qualquer rodada anterior (mesmo
+   já mergeada) vira `### Histórico —`. Simplesmente concatenar na ordem do merge deixa o rótulo
+   "mais recente" em uma rodada que não é.
+4. Confirme, antes de commitar a resolução: nenhum `## N.` duplicado sobrou (virou uma única seção
+   com múltiplas `###` por dentro); nenhum `###`/`##` ficou colado ao parágrafo anterior sem linha
+   em branco; nenhum fragmento de linha (ex.: uma `> Data:` cortada no meio) ficou órfão entre duas
+   seções.
+
+Documentar isso não é opcional a cada ocorrência: sem esse checklist, cada resolução de conflito
+nesses arquivos exige reconstruir esse raciocínio do zero, seção por seção, várias vezes na mesma
+sessão sempre que mais de uma fatia/PR da mesma spec rebaseia em sequência.
+
 **Operando diretamente sobre uma branch que um worktree isolado ainda segura.** Quando o
 orquestrador (não um agente novo) precisa tocar diretamente uma branch de fatia que um subagente
 com `isolation: "worktree"` tocou por último — ex.: para resolver um conflito de rebase
