@@ -19,7 +19,15 @@ dependências entre histórias (fatias verticais de entrega)"), PR obrigatório 
    confira com `gh pr view <PR> --json state` ou `git log main` antes de criar a branch. Se a
    fatia anterior ainda não estiver mergeada, **pare** e informe o usuário.
 4. **PR aberto cedo**, em modo *draft*, no primeiro commit — não só no final (mantém o CI rodando
-   continuamente e dá visibilidade do progresso).
+   continuamente e dá visibilidade do progresso). "Commita por incremento" (`backend-developer`/
+   `frontend-developer`, Fase 2 — TDD red-green-refactor) é sobre **commits locais**, não sobre um
+   push por commit — esses agentes já fazem só um push ao final da trilha inteira. Fora desse
+   fluxo (o orquestrador, fora de um agente de trilha específico, fazendo duas ou mais mudanças
+   relacionadas na mesma branch/sessão — ex.: um fix pontual e o `qa-report.md`/artefato de revisão
+   que o documenta): agrupe num commit e envie (push) uma vez só, salvo motivo real de durabilidade
+   incremental — cada push dispara seu próprio run de CI completo (`docs/QUALITY-GATES.md`, seção
+   "SRE / CI-CD / Infra", sobre o filtro de `paths` que reduz o custo dos pushes que só tocam
+   `specs/`/`docs/`, mas não elimina a necessidade de agrupar quando o push toca código).
 5. **Revisão de código, QA, segurança e SRE revisam o PR de cada fatia**, não a feature inteira
    de uma vez. `code-review.md`/`qa-report.md`/`security-review.md`/`sre-review.md` são editados
    in-place a cada fatia (nunca recriados), com uma linha por fatia na seção "Histórico de
