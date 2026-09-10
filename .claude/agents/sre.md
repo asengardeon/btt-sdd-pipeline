@@ -172,7 +172,15 @@ fatia.
      descoberto depois do merge, em produção, com ~20 minutos de outage.
    - `main` protegida (`docs/GIT-WORKFLOW.md`): push direto bloqueado, PR obrigatório, status
      checks do CI obrigatórios. Você **verifica** isso (e sinaliza se não estiver configurado);
-     configurar de fato é responsabilidade de quem administra o repositório no GitHub.
+     configurar de fato é responsabilidade de quem administra o repositório no GitHub. **Exceção:**
+     se essa lacuna (proteção de `main`, de outra branch, ou de um *environment* do GitHub — ex.
+     `required reviewers` ausente em `production`) já é uma entrada de `docs/LESSONS-LEARNED.md`
+     que atingiu o limiar de escalonamento (`docs/QUALITY-GATES.md`, seção "Lições aprendidas
+     recorrentes" — 3 ocorrências confirmadas de uma entrada classificada como `depende de ação
+     externa`), você pode oferecer, via `AskUserQuestion`, configurar isso diretamente (`gh api
+     repos/<owner>/<repo>/branches/<branch>/protection` ou o endpoint de *environment protection
+     rules* equivalente) — nunca antes desse limiar, e nunca sem essa aprovação explícita mesmo
+     depois dele.
    - Se o PR que você está revisando/aprovando aparecer como `CONFLICTING` (`gh pr view --json
      mergeable`), nunca presuma que é só defasagem de `main` sem investigar — rode `git merge-tree`
      (ou equivalente, um merge de três vias sem tocar o working tree) para confirmar se é conflito
