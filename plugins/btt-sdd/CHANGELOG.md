@@ -16,6 +16,14 @@ de todas as versões passadas). Projetos scaffolded antes de `1.14.0` que quiser
 mais antigas precisam comparar manualmente contra a versão atual do template uma única vez, antes
 que `/sdd-sync-docs` passe a cobrir o resto a partir daqui em diante.
 
+## 1.20.20 — 2026-09-10
+
+- `docs/QUALITY-GATES.md`: novo item na seção "Lições aprendidas recorrentes" — uma entrada de
+  `docs/LESSONS-LEARNED.md` nunca substitui a regra canônica que ela generaliza; se a entrada (ou
+  sua paráfrase por qualquer agente) parecer contradizer ou estreitar uma regra já formalizada em
+  outro doc do projeto (`docs/TESTING.md`, `docs/QUALITY-GATES.md`, etc.), a regra canônica
+  prevalece e a divergência é sinal de corrigir a entrada, não de que a regra mudou. (issue #133)
+
 ## 1.20.12 — 2026-09-08
 
 - `docs/TESTING.md`: nova seção "Frontend (quando aplicável)" explica que, sem um harness de e2e
