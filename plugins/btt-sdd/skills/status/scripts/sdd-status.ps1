@@ -123,6 +123,31 @@ function Get-ValidarDepoisPendentesCount {
 # Get-ValidarDepoisPendentesCount acima) em vez de checar a linha inteira, para
 # nao confundir texto livre de outra coluna mencionando "concluido" com o status
 # real da tarefa.
+# issue #144 corrigiu um falso-positivo sistematico em fatia unica/ultima fatia:
+# (a) a convencao real usada pelos agentes de revisao nem sempre escreve
+# "concluido (mergeado)" - "aprovado (mergeado, PR #N)" e "implementado" tambem
+# significam tarefa concluida; (b) uma linha removida/nao aplicavel (-, n/a,
+# "removida", "descartada" na coluna Status) nao e uma pendencia real; (c) o caso
+# mais comum na pratica - "aprovado (SRE, PR #N)" - e ambiguo por texto sozinho:
+# a mesma string descreve tanto "SRE aprovou, PR ainda nao mergeado" (pendente de
+# verdade) quanto "SRE aprovou e o PR ja foi mergeado ha dias, ninguem atualizou a
+# coluna" (falso-positivo) - so distinguivel cruzando com o estado real do PR no
+# GitHub. Quando a coluna Status nao bate com nenhum padrao "concluido" conhecido
+# mas referencia um PR (#N), confirma via "gh pr view" antes de contar como
+# pendente; sem gh disponivel ou sem PR referenciado, cai no comportamento
+# conservador anterior (conta como pendente) - nunca trava nem finge certeza.
+function Get-PrMergedState {
+  param([string]$PrNumber)
+  if (-not (Get-Command gh -ErrorAction SilentlyContinue)) { return "" }
+  try {
+    $state = gh pr view $PrNumber --json state -q '.state' 2>$null
+    if ($LASTEXITCODE -ne 0) { return "" }
+    return $state
+  } catch {
+    return ""
+  }
+}
+
 function Test-FatiaPendente {
   param([string]$TrdPath)
   if (-not (Test-Path $TrdPath)) { return $false }
@@ -143,7 +168,21 @@ function Test-FatiaPendente {
         for ($i = 0; $i -lt $cols.Count; $i++) { if ($cols[$i] -eq 'Status') { $statusIdx = $i } }
         continue
       }
-      if ($statusIdx -ge 0 -and $statusIdx -lt $cols.Count -and $cols[$statusIdx] -notmatch '(?i)conclu.do') {
+      if ($statusIdx -ge 0 -and $statusIdx -lt $cols.Count) {
+        $status = $cols[$statusIdx]
+        if ($status -match '(?i)conclu.do|aprovado.*mergead|^implementado$|n/a|removid|descartad') {
+          continue
+        }
+        $stripped = ($status -replace '[^a-zA-Z0-9]', '')
+        if ([string]::IsNullOrEmpty($stripped)) {
+          # placeholder puro (-, --, etc.) - tarefa removida/nao aplicavel, nao pendente.
+          continue
+        }
+        $prMatch = [regex]::Match($status, '#(\d+)')
+        if ($prMatch.Success) {
+          $prState = Get-PrMergedState -PrNumber $prMatch.Groups[1].Value
+          if ($prState -eq 'MERGED') { continue }
+        }
         $found = $true
       }
     }

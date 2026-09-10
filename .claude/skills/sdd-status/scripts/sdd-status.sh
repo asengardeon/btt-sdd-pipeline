@@ -122,11 +122,47 @@ count_validar_depois_pendentes() {
 # count_validar_depois_pendentes() acima) em vez de checar a linha inteira, para
 # não confundir texto livre de outra coluna mencionando "concluído" com o status
 # real da tarefa.
+# issue #144 corrigiu um falso-positivo sistemático em fatia única/última fatia:
+# (a) a convenção real usada pelos agentes de revisão nem sempre escreve
+# "concluído (mergeado)" — "aprovado (mergeado, PR #N)" e "implementado" também
+# significam tarefa concluída; (b) uma linha removida/não aplicável (`—`, `n/a`,
+# "removida", "descartada" na coluna Status) não é uma pendência real; (c) o caso
+# mais comum na prática — "aprovado (SRE, PR #N)" — é ambíguo por texto sozinho:
+# a mesma string descreve tanto "SRE aprovou, PR ainda não mergeado" (pendente de
+# verdade) quanto "SRE aprovou e o PR já foi mergeado há dias, ninguém atualizou a
+# coluna" (falso-positivo) — só distinguível cruzando com o estado real do PR no
+# GitHub. Quando a coluna Status não bate com nenhum padrão "concluído" conhecido
+# mas referencia um PR (`#N`), confirma via `gh pr view` antes de contar como
+# pendente; sem `gh` disponível ou sem PR referenciado, cai no comportamento
+# conservador anterior (conta como pendente) — nunca trava nem finge certeza.
+_pr_merged() {
+  command -v gh >/dev/null 2>&1 || { echo ""; return; }
+  gh pr view "$1" --json state -q '.state' 2>/dev/null
+}
+
 has_fatia_pendente() {
   local trd_file="$1"
   [ -f "$trd_file" ] || { echo "0"; return; }
-  awk '
-    BEGIN { insec = 0; found = 0; status_idx = 0; header_seen = 0 }
+  local found=0 status lstatus stripped pr_num pr_state
+  while IFS= read -r status; do
+    [ -z "$status" ] && continue
+    lstatus="$(printf '%s' "$status" | tr '[:upper:]' '[:lower:]')"
+    if printf '%s' "$lstatus" | grep -qE 'conclu.*do|aprovado.*mergead|^implementado$|n/a|removid|descartad'; then
+      continue
+    fi
+    stripped="$(printf '%s' "$status" | tr -cd '[:alnum:]')"
+    if [ -z "$stripped" ]; then
+      # placeholder puro (—, -, --, etc.) — tarefa removida/não aplicável, não pendente.
+      continue
+    fi
+    pr_num="$(printf '%s' "$status" | grep -oE '#[0-9]+' | head -1 | tr -d '#')"
+    if [ -n "$pr_num" ]; then
+      pr_state="$(_pr_merged "$pr_num")"
+      [ "$pr_state" = "MERGED" ] && continue
+    fi
+    found=1
+  done < <(awk '
+    BEGIN { insec = 0; status_idx = 0; header_seen = 0 }
     /^#{1,4}[[:space:]].*Decomposição de tarefas/ { insec = 1; next }
     insec == 1 && /^#{1,4}[[:space:]]/ { insec = 0 }
     insec == 1 && /^\|/ {
@@ -140,10 +176,10 @@ has_fatia_pendente() {
         for (i = 1; i <= n; i++) { if (cols[i] == "Status") status_idx = i }
         next
       }
-      if (status_idx > 0 && tolower(cols[status_idx]) !~ /conclu.*do/) { found = 1 }
+      if (status_idx > 0) print cols[status_idx]
     }
-    END { print (found ? 1 : 0) }
-  ' "$trd_file" 2>/dev/null
+  ' "$trd_file" 2>/dev/null)
+  if [ "$found" = "1" ]; then echo 1; else echo 0; fi
 }
 
 STAGES=(prd trd code-review qa-report security-review sre-review)
