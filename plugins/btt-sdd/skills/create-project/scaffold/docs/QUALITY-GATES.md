@@ -323,6 +323,11 @@ gravada por quem causa a transição.
 ## SRE / CI-CD / Infra
 
 - [ ] CI roda lint + testes + gate de cobertura em todo PR.
+- [ ] `ci.yml` tem filtro de `paths`/`paths-ignore` cobrindo `specs/**`, `docs/**` e `*.md` da raiz
+  — push/PR que só toca esses caminhos pula lint/testes/build (nenhum código executável mudou,
+  zero risco de qualidade). Sem esse filtro, cada push de um artefato de revisão
+  (`code-review.md`/`qa-report.md`/`security-review.md`/`sre-review.md`) dispara um run completo
+  desnecessário (`.claude/agents/sre.md`, área "CI").
 - [ ] `main` protegida: sem push direto, PR obrigatório, status checks obrigatórios (verificado,
   não necessariamente configurado pelo agente — configuração real é do administrador do repo).
 - [ ] Deploy só roda após CI verde.

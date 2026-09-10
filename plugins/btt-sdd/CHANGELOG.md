@@ -16,6 +16,14 @@ de todas as versões passadas). Projetos scaffolded antes de `1.14.0` que quiser
 mais antigas precisam comparar manualmente contra a versão atual do template uma única vez, antes
 que `/sdd-sync-docs` passe a cobrir o resto a partir daqui em diante.
 
+## 1.21.2 — 2026-09-10
+
+- `docs/QUALITY-GATES.md`, seção "SRE / CI-CD / Infra": novo item exigindo que `ci.yml` tenha
+  filtro de `paths`/`paths-ignore` cobrindo `specs/**`, `docs/**` e `*.md` da raiz — sem isso, cada
+  push de um artefato de revisão (`code-review.md`/`qa-report.md`/`security-review.md`/
+  `sre-review.md`) dispara um run completo de CI desnecessário. Confirmado ao vivo: um PR só com
+  `qa-report.md` atualizado disparou ~4min de CI sem necessidade. (issue #146)
+
 ## 1.21.1 — 2026-09-10
 
 - `docs/QUALITY-GATES.md`, seção "Status de tarefas": documenta o caso especial da última fatia de
