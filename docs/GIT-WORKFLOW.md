@@ -50,6 +50,24 @@ todas as fatias de uma vez para revisar depois.
 | `/sdd-sre`              | CI/CD/infra impactados por esta fatia; aprovado = PR pronto para merge; commita e envia (push) `sre-review.md` (e qualquer ajuste de infra desta rodada) na mesma branch. |
 | Merge do PR             | Decisão do usuário, nunca automática. Dispara CD e libera a fatia seguinte.   |
 
+## Revisão retroativa de um PR já mergeado
+
+Cenário distinto de "mudança no próprio pipeline" (seção abaixo) e da regra 2 (branch por fatia):
+o código de uma fatia/hotfix já foi mergeado em `main`, mas uma etapa de revisão que deveria ter
+rodado antes do merge não rodou (ex.: `/sdd-hotfix` mergeou sem SRE — passo 6b da skill existe
+para evitar isso, mas pode já ter acontecido antes dessa checagem existir, ou escapado por algum
+outro motivo). Nem a tabela de prefixos de "Mudanças no próprio pipeline" (é sobre este
+repositório, não sobre uma feature real de um projeto) nem a regra 2 (branch por fatia — não há
+fatia nova aqui, não há código novo) cobrem esse caso ao pé da letra.
+
+Para adicionar só o artefato de revisão faltante (`code-review.md`/`qa-report.md`/
+`security-review.md`/`sre-review.md`), sem código novo: crie uma branch
+`<prefixo-original-ou-fix>/<slug>-<etapa>-review` (reaproveite o prefixo já usado pela branch
+original se ainda fizer sentido — `hotfix/`, `fix/`, `feature/` — ou `fix/` por padrão), rode a
+skill de revisão correspondente contra o PR/commit já mergeado, e abra um PR próprio só com esse
+artefato. Não há gate adicional de QA/segurança/SRE sobre esse PR-de-revisão em si (não há código
+novo a revisar) — merge a critério do usuário, como qualquer PR de manutenção.
+
 ## Isolamento de working tree entre agentes concorrentes
 
 `checkout`/`commit`/`push`/`reset` são operações **globais ao repositório**, não escopadas a um
