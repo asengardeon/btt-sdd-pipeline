@@ -99,7 +99,12 @@ confirmado ainda").
   Testes-QA), com ID no formato `L-<AAAA-MM-DD>-<slug-curto>` (data da criação da entrada +
   slug curto em kebab-case do próprio achado, ex.: `L-2026-08-25-timeout-http-nao-configuravel`)
   e os campos "Detectado por", "Ocorrências" (caminho do artefato + fatia, por feature), "Padrão
-  observado" e "Recomendação para implementação". **Nunca use um contador sequencial simples
+  observado", "Recomendação para implementação" e **"Classe"** (`acionável-por-agente` se o
+  próximo dev/agente consegue evitar o padrão sozinho ao implementar a partir da lição; ou
+  `depende de ação externa` se a resolução depende de uma configuração fora do código — proteção
+  de branch/environment, segredo, permissão de infra — que nenhum agente corrige sozinho sem
+  aprovação explícita do usuário). A distinção importa porque a estratégia para quebrar o ciclo de
+  repetição é diferente para cada classe (próximo bullet). **Nunca use um contador sequencial simples
   (`L-001`, `L-002`, ...)**: duas branches de fatia diferentes, cada uma calculando o "próximo
   ID" a partir da sua própria cópia local do arquivo, já geraram colisão real de ID em merge —
   exigiu renumeração manual e correção de autorreferências. Data + slug do achado é
@@ -109,6 +114,18 @@ confirmado ainda").
 - [ ] `docs/LESSONS-LEARNED.md`, quando criado ou atualizado, é commitado junto do artefato de
   revisão da própria rodada (`code-review.md`/`qa-report.md`/`security-review.md`/
   `sre-review.md`) — nunca num commit separado.
+- [ ] **Entrada classificada como `depende de ação externa` que atinge 3 ocorrências confirmadas
+  deixa de ser só uma nota passiva.** Ao reconfirmar essa entrada pela 3ª vez (contando a criação
+  na 2ª ocorrência), o agente que a reconfirma não só acrescenta a ocorrência à tabela — aciona
+  `AskUserQuestion` oferecendo resolver a pendência ali mesmo, se tiver a capacidade técnica para
+  isso (ex.: `sre` configurando proteção de branch/environment via API do GitHub —
+  `.claude/agents/sre.md`, seção "Áreas de responsabilidade" — sempre sujeito a aprovação
+  explícita antes de qualquer mudança real, nunca aplicado sozinho), em vez de silenciar a
+  repetição como mais uma linha na tabela. Sem essa capacidade, ainda assim escala explicitamente
+  ao usuário. Uma lição sobre configuração externa nunca se resolve sozinha só por ser lida no
+  planejamento (diferente de uma entrada `acionável-por-agente`, onde "virar entrada e ser lida no
+  planejamento" já quebra o ciclo como desenhado) — já aconteceu de uma entrada ser reconfirmada 17
+  vezes em 9 features sem nunca resultar em correção efetiva da configuração.
 - [ ] `backend-developer`/`frontend-developer` leem `docs/LESSONS-LEARNED.md`, se existir, na fase
   de planejamento (antes de quebrar o TRD em incrementos) e aplicam as lições da(s) área(s)
   relevante(s) à trilha como restrição adicional ao TRD, citando no plano apresentado ao usuário

@@ -16,6 +16,14 @@ de todas as versões passadas). Projetos scaffolded antes de `1.14.0` que quiser
 mais antigas precisam comparar manualmente contra a versão atual do template uma única vez, antes
 que `/sdd-sync-docs` passe a cobrir o resto a partir daqui em diante.
 
+## 1.21.0 — 2026-09-10
+
+- `docs/QUALITY-GATES.md`: entradas de "Lições aprendidas recorrentes" ganham o campo "Classe"
+  (`acionável-por-agente` vs. `depende de ação externa`), e uma entrada `depende de ação externa`
+  que atinge 3 ocorrências confirmadas aciona `AskUserQuestion` oferecendo resolver a pendência
+  diretamente (ex.: `sre` configurando proteção de branch/environment via API do GitHub, sujeito a
+  aprovação explícita) em vez de só acrescentar mais uma linha passiva à tabela. (issue #140)
+
 ## 1.20.20 — 2026-09-10
 
 - `docs/QUALITY-GATES.md`: novo item na seção "Lições aprendidas recorrentes" — uma entrada de
