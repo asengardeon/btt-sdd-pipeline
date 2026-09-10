@@ -45,6 +45,19 @@ aprovado sem voltar da primeira etapa".
    `/btt-sdd:qa`, `/btt-sdd:security`, `/btt-sdd:sre`) precisam ser rodados de novo —
    só esses, não o pipeline inteiro.
 
+5b. **Ao fechar uma flag "requer revalidação"** (depois de rodar de novo o comando indicado no
+   passo 5 e a etapa ter sido revalidada de verdade): a entrada de log que registra o fechamento
+   **nunca deve recitar a frase-gatilho entre aspas** (ex.: nunca escreva algo como "fechando a
+   pendência 'TRD requer revalidação'") — `/btt-sdd:status`/`/btt-sdd:pending` detectam a flag por
+   texto livre (`grep`/regex procurando "requer revalida" em qualquer linha de log com data), então
+   uma entrada de fechamento que cita a frase original é lida como uma **nova** ocorrência não
+   resolvida, mais recente que a última aprovação formal — a flag nunca se resolve sozinha. Em vez
+   disso: descreva a resolução sem repetir esse texto (ex.: "TRD revisado e reconfirmado contra a
+   mudança do PRD") **e** garanta que o artefato-alvo (TRD ou PRD, seção "Aprovação") tem uma linha
+   formal `(Re)aprovado por... em <AAAA-MM-DD>` com data posterior à da flag original — é essa
+   linha, não a entrada de log, que `/btt-sdd:status` usa para confirmar que a flag foi mesmo
+   resolvida.
+
 6. Etapas **não** afetadas continuam aprovadas como estavam — não peça reaprovação delas.
 
 ## Quando usar sem agente dedicado

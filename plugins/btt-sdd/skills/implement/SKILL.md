@@ -68,6 +68,23 @@ assim:
 2. Leia a tabela "Decomposição de tarefas e dependências (fatias verticais de entrega)" do TRD e
    veja quais trilhas aparecem (`backend`, `frontend`, `ambos`) e a que fatia (coluna "Fatia
    (PRD)") cada tarefa pertence.
+2a. **Se nenhuma fatia estiver pendente** (todas as tarefas da tabela já implementadas/mergeadas —
+   `skills/status/scripts/sdd-status.sh`/`.ps1`, função `has_fatia_pendente`/`Test-FatiaPendente`,
+   agora cruza com o estado real do PR antes de confiar cegamente no texto da coluna Status),
+   **antes de simplesmente informar que não há trabalho a fazer**, confirme se a promoção de
+   Status da **última fatia** da tabela já aconteceu. O mecanismo normal de promoção para
+   `concluído (mergeado)` (`docs/QUALITY-GATES.md`, seção "Status de tarefas") só dispara "ao
+   confirmar, antes de iniciar a fatia seguinte, que o PR de uma fatia já foi mergeado" — e a
+   última fatia de uma spec nunca tem uma fatia seguinte para disparar isso, então a tarefa fica
+   presa no status que o `sre` deixou (`aprovado`), mesmo depois de mergeada de verdade. Verifique
+   o PR referenciado na coluna Status/Issue GitHub da última fatia (`gh pr view <N> --json
+   state,mergedAt`); se estiver mergeado e a coluna Status ainda não disser `concluído (mergeado)`,
+   promova-a agora (mesma transição de sempre, só aplicada retroativamente por não haver "fatia
+   seguinte" que a disparasse). Se essa promoção nunca tinha acontecido antes, é sinal de que o
+   "Teste geral obrigatório ao mergear a última fatia de uma spec" (seção abaixo) também pode nunca
+   ter rodado — confirme com o usuário se já rodou antes de considerar a spec de fato encerrada. Já
+   aconteceu de verdade em 7 specs diferentes de um mesmo projeto: todas 100% implementadas e
+   mergeadas, mas a tabela continuava reportando "próxima fatia pendente" indefinidamente.
 2b. Se restar mais de uma fatia vertical por implementar, **não** monte automaticamente um plano
    cobrindo todas de uma vez — cada fatia é sua própria branch/PR (`docs/GIT-WORKFLOW.md`).
    Proponha a próxima fatia pendente, na ordem da tabela (a de menor "Depende de" ainda não

@@ -168,6 +168,13 @@ gravada por quem causa a transição.
   o último gate antes do merge.
 - [ ] `/sdd-implement`, ao confirmar (pré-condição antes de iniciar a fatia seguinte) que o PR de
   uma fatia já foi mergeado em `main`, atualiza essa fatia para `concluído (mergeado)`.
+- [ ] **Caso especial: a última fatia de uma spec nunca tem "fatia seguinte" para disparar a regra
+  acima.** A promoção para `concluído (mergeado)` fica presa em `aprovado` para sempre se nada mais
+  a confirmar — `/sdd-implement`, passo 2a, cobre isso: ao ser invocado sem nenhuma fatia pendente,
+  confirma o merge real da última fatia (`gh pr view <N> --json state,mergedAt`) e promove o Status
+  retroativamente se ainda não tiver sido feito, antes de simplesmente informar "nada a fazer". Já
+  causou um falso-positivo sistemático em 7 specs de um mesmo projeto — todas 100% mergeadas,
+  reportadas como "próxima fatia pendente" indefinidamente por `/sdd-status`/`/sdd-pending`.
 - [ ] Se a tarefa tem Issue GitHub associada, a mesma transição é comentada na issue (`gh issue
   comment`) pelo mesmo agente/skill que a causou.
 - [ ] `/sdd-implement`, ao final de cada rodada de implementação, apresenta ao usuário uma tabela

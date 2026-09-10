@@ -16,6 +16,15 @@ de todas as versões passadas). Projetos scaffolded antes de `1.14.0` que quiser
 mais antigas precisam comparar manualmente contra a versão atual do template uma única vez, antes
 que `/sdd-sync-docs` passe a cobrir o resto a partir daqui em diante.
 
+## 1.21.1 — 2026-09-10
+
+- `docs/QUALITY-GATES.md`, seção "Status de tarefas": documenta o caso especial da última fatia de
+  uma spec, que nunca tem "fatia seguinte" para disparar a promoção de Status para `concluído
+  (mergeado)` — `/sdd-implement` (passo 2a) agora cobre isso, confirmando o merge real via `gh pr
+  view` e promovendo retroativamente antes de informar "nada a fazer". Já causou falso-positivo
+  sistemático em 7 specs de um mesmo projeto, todas 100% mergeadas mas reportadas como "próxima
+  fatia pendente" indefinidamente. (issue #144)
+
 ## 1.21.0 — 2026-09-10
 
 - `docs/QUALITY-GATES.md`: entradas de "Lições aprendidas recorrentes" ganham o campo "Classe"
