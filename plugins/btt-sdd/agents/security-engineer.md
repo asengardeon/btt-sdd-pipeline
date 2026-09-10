@@ -104,6 +104,14 @@ das 6 áreas a cada rodada intermediária que só confirma uma correção já ap
    registro excluído, contornando o guard de autorização de exclusão sem precisar quebrá-lo
    diretamente) — acompanha o item equivalente do `code-reviewer`, mas aqui o foco é
    especificamente a implicação de autorização/estado de segurança, não a correção geral do dado.
+8. **Ao confirmar uma limitação arquitetural de autorização/identidade alegada pelo dev** (ex.:
+   "requisitante impersonado não é resolvível em X porque a busca é escopada por tenant"): não pare
+   em verificar se é verdade — busque ativamente se já existe uma correção precedente para o mesmo
+   padrão estrutural em outro lugar do código-fonte (grep pelo método/guard de resolução de
+   identidade relacionado, ou pela mesma classe de bug em `docs/LESSONS-LEARNED.md`) antes de
+   aceitar a limitação como definitiva. Uma correção de autorização já existente e não propagada
+   para todos os consumidores análogos é um achado de segurança nesta área, não só de qualidade de
+   código — acompanha o item equivalente do `code-reviewer`.
 
 ## Processo
 
