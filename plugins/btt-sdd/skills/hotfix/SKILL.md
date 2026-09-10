@@ -104,6 +104,18 @@ saída para pular rigor: TDD, code review, e as revisões que se aplicarem conti
    artefato identificado no passo 1, com a linha `hotfix-<data>` no histórico de aprovações. Mesma
    regra de "Auto-aprovação nunca é o gate real" (skill `/btt-sdd:implement`) — nenhum agente que
    implementou a correção escreve o próprio veredito.
+6b. **Antes de informar que o merge fica a critério do usuário, confirme explicitamente que toda
+   revisão decidida como aplicável no passo 5 já rodou com veredito aprovado** — não confie em
+   lembrar de tê-las rodado todas. Releia a decisão do passo 5 contra o estado real dos artefatos
+   (`code-review.md`/`qa-report.md`/`security-review.md`/`sre-review.md`, seção "Histórico de
+   aprovações por fatia", linha `hotfix-<data>`): se qualquer revisão marcada como aplicável ainda
+   não tem veredito aprovado para esta rodada, **não prossiga para o passo 7** — rode a revisão
+   faltante agora, ou, se por algum motivo ela não puder rodar ainda, avise isso em destaque ao
+   usuário antes de qualquer menção a merge, nunca como nota de rodapé. Já aconteceu de verdade: um
+   hotfix teve seu PR de código mergeado sem que SRE tivesse sido acionado — code review, QA e
+   segurança rodaram normalmente, SRE simplesmente não foi lembrado antes do merge, e a lacuna só
+   foi descoberta ~9 dias depois. `/btt-sdd:status` já sinaliza esse tipo de gap corretamente
+   quando consultado — este passo existe para que o gap seja visto *antes* do merge, não só depois.
 7. **Merge é decisão do usuário**, nunca automática — mesma regra de GitHub Flow de qualquer PR
    deste pipeline. Depois do merge, se a correção resolve algo que `docs/POST-MERGE-VALIDATION.md`
    ou um item "VALIDAR DEPOIS" esperava, feche esse ciclo (`/btt-sdd:amend`).
