@@ -148,6 +148,17 @@ e escalar ao usuário. Essa sincronização é o que garante que múltiplos agen
 produzem uma única branch/PR coerente por fatia, sem que a isolação de working tree vire duas
 branches divergentes por engano.
 
+**Se `git checkout <branch-da-fatia>` falhar dentro do worktree isolado** (`fatal: '<branch>' is
+already used by worktree at '<caminho>'` — o mecanismo de `isolation: "worktree"` cria um worktree
+com uma branch própria do agente, não a branch da fatia, e um worktree concorrente — principal ou
+de outro agente — pode já ter `<branch-da-fatia>` como `HEAD`), não tente liberar a branch: crie
+uma branch local temporária rastreando `origin/<branch-da-fatia>` (`git checkout -b
+<nome-temporário> origin/<branch-da-fatia>`), trabalhe nela normalmente (ler artefatos, rodar
+suíte, editar), e ao final use o mesmo `git push origin HEAD:<branch-da-fatia>` da sincronização
+acima — não é preciso que `HEAD` literalmente *seja* `<branch-da-fatia>` para isso funcionar. Já
+aconteceu de 3 agentes de revisão em sequência baterem nesse mesmo erro e cada um re-derivar essa
+mesma solução de forma independente, em vez de segui-la já documentada.
+
 **Antes de rebasear/forçar push manualmente sobre uma branch que múltiplos agentes concorrentes já
 tocaram** (qualquer branch de fatia que já passou por 2+ rodadas de revisão, cada uma em worktree
 separado) — risco maior que o da sincronização de rotina acima, porque aqui é o orquestrador
