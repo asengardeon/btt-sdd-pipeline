@@ -16,6 +16,15 @@ de todas as versões passadas). Projetos scaffolded antes de `1.14.0` que quiser
 mais antigas precisam comparar manualmente contra a versão atual do template uma única vez, antes
 que `/sdd-sync-docs` passe a cobrir o resto a partir daqui em diante.
 
+## 1.21.4 — 2026-09-10
+
+- `docs/QUALITY-GATES.md`, seção "Lições aprendidas recorrentes": o mecanismo de escalonamento de
+  3 ocorrências (issue #140) agora também cobre entradas `acionável-por-agente`, não só `depende de
+  ação externa` — "virar entrada e ser lida no planejamento" evita o bug em código novo, mas não
+  corrige consumidores já existentes com o mesmo padrão. Na 3ª ocorrência confirmada sem correção
+  efetiva, o agente de revisão propõe explicitamente uma mini-fatia/hotfix dedicada via
+  `AskUserQuestion`. (issue #151)
+
 ## 1.21.2 — 2026-09-10
 
 - `docs/QUALITY-GATES.md`, seção "SRE / CI-CD / Infra": novo item exigindo que `ci.yml` tenha
