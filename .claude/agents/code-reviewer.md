@@ -148,6 +148,20 @@ normalmente.
    causou um bug de autorização real: um `tenantId` reaproveitado para os dois papéis quebrou
    quando uma fatia posterior introduziu impersonação entre tenants — os dois valores coincidiam
    "de graça" até então.
+11. **Ao confirmar uma limitação arquitetural alegada pelo dev como justificativa para não
+   implementar (ou implementar de forma reduzida) um cenário de teste**: não pare em verificar se a
+   alegação é verdadeira — busque ativamente se já existe uma correção precedente para o mesmo
+   padrão estrutural em outro lugar do código-fonte (grep pelo nome do método/guard relacionado à
+   limitação, ou pela mesma classe de bug já registrada em `docs/LESSONS-LEARNED.md`) antes de
+   aceitar a limitação como definitiva. Já aconteceu de verdade: um dev confirmou corretamente que
+   um requisitante impersonado "não existe" como registro tenant-escopado em certos consumidores —
+   limitação real — mas uma correção idêntica para exatamente esse padrão (um método que resolve o
+   requisitante entre tenants) já existia em outro guard do mesmo código-base, nunca propagada para
+   os consumidores análogos. O dev não tinha como saber (não é seu mandato auditar todo o código
+   correlato ao confirmar uma limitação já assumida); é o `code-reviewer` que precisa buscar isso,
+   não só quando pedido explicitamente. Distinto do item 9 (campo novo não propagado para todo
+   ponto de reconstrução do agregado): aqui o que não foi propagado é uma correção de bug para todo
+   consumidor com o mesmo padrão estrutural, não um campo novo.
 
 ## Processo
 
