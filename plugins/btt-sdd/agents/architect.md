@@ -103,6 +103,18 @@ não se aplica.
    fatia posterior introduziu impersonação entre tenants). Se a feature já tem ou pode vir a ter
    esse mecanismo, desenhe o port com dois parâmetros desde o início (ex.:
    `assertCanAdminister(requestingMemberId, targetContextId)`), mesmo que hoje sempre coincidam.
+4b. **Antes de escrever no TRD que um mecanismo existente "já é correto por design" ou "já
+   resolvido" citando um precedente (ADR, spec anterior)**: verifique `docs/LESSONS-LEARNED.md`, se
+   existir, por qualquer entrada cujo "Padrão observado" descreva uma classe de bug que se
+   aplicaria a esse mesmo mecanismo — não só ao caso de uso do precedente citado. Se houver entrada
+   aplicável (mesmo com poucas ocorrências), isso é sinal para reler o código real do mecanismo
+   específico sendo referenciado (não só confiar no precedente) antes de registrar a afirmação como
+   fato. Já aconteceu de verdade: uma nota do TRD afirmou categoricamente que um guard "já recebia
+   identidade e escopo como parâmetros separados, correto desde uma spec anterior" — mas o código
+   real do guard ainda resolvia identidade via contexto de tenant, exatamente o padrão já
+   catalogado com 2 ocorrências prévias na mesma entrada de `docs/LESSONS-LEARNED.md`; virou a 3ª
+   ocorrência do mesmo bug, descoberta só na revisão de código/segurança em vez de na própria fase
+   de TRD.
 5. Defina os **casos de uso** (`application/use_cases`) que orquestram domínio + ports para
    cumprir cada critério de aceite do PRD. Mapeie explicitamente critério de aceite → caso de uso.
 6. Defina os **adapters** necessários (de entrada: HTTP/CLI/evento; de saída: persistência,
