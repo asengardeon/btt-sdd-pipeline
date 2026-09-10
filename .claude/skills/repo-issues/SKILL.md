@@ -97,6 +97,11 @@ outra tarefa, pare e informe o usuário em vez de misturar.
         projeto e uma spec de origem (ex.: "ridersbnu-app/specs/0012-..."). Não invente essa
         referência quando a issue não a menciona — nesse caso, deixe a issue só com o label de
         tipo.
+   d3. **Aplique os mesmos labels da issue ao PR que a fecha** — o PR também deve carregar os
+      labels compatíveis (tipo + origem, se houver), não só a issue. `gh pr edit <PR> --repo
+      asengardeon/btt-sdd-pipeline --add-label <nome>` para cada label confirmado no passo `d2`
+      (os labels já existem nesse ponto, não precisa criar de novo). Faça isso logo após abrir o
+      PR no passo `d`, antes do passo `e`.
    e. **Aguarde o PR ficar limpo para merge**: `gh pr view <PR> --repo asengardeon/btt-sdd-pipeline
       --json mergeable,mergeStateStatus`. Se este repositório tiver CI configurado, siga
       `docs/GIT-WORKFLOW.md`, seção "Aguardando CI antes do merge" (espera inicial maior, não

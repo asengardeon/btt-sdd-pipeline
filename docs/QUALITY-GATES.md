@@ -140,9 +140,23 @@ confirmado ainda").
   explícita antes de qualquer mudança real, nunca aplicado sozinho), em vez de silenciar a
   repetição como mais uma linha na tabela. Sem essa capacidade, ainda assim escala explicitamente
   ao usuário. Uma lição sobre configuração externa nunca se resolve sozinha só por ser lida no
-  planejamento (diferente de uma entrada `acionável-por-agente`, onde "virar entrada e ser lida no
-  planejamento" já quebra o ciclo como desenhado) — já aconteceu de uma entrada ser reconfirmada 17
-  vezes em 9 features sem nunca resultar em correção efetiva da configuração.
+  planejamento — já aconteceu de uma entrada ser reconfirmada 17 vezes em 9 features sem nunca
+  resultar em correção efetiva da configuração.
+- [ ] **Entrada classificada como `acionável-por-agente` que atinge 3 ocorrências confirmadas sem
+  correção efetiva também escala — não é exclusividade de `depende de ação externa`.** "Virar
+  entrada e ser lida no planejamento" evita o bug em código *novo*, mas não corrige consumidores já
+  existentes com o mesmo padrão que nenhuma sessão foi tocar de propósito — uma lição pode ser lida
+  e aplicada corretamente em toda feature nova e, mesmo assim, o padrão continuar presente
+  indefinidamente em código antigo nunca revisitado. Ao reconfirmar essa entrada pela 3ª vez, o
+  agente de revisão que a reconfirma (`code-reviewer`/`qa-engineer`/`security-engineer`/`sre`, o
+  que estiver rodando) propõe explicitamente, via `AskUserQuestion` (ou repassando a pergunta ao
+  orquestrador se estiver rodando em background), uma mini-fatia/hotfix dedicada para aplicar a
+  correção já conhecida a todos os consumidores afetados — mesmo que a correção em si fique fora do
+  escopo da fatia atual, a proposta explícita ao usuário não fica. Já aconteceu de verdade: uma
+  correção conhecida e testada desde a 1ª ocorrência (trocar um método de resolução de identidade
+  tenant-escopado por uma variante entre tenants) nunca foi propagada aos demais consumidores, e a
+  mesma entrada chegou à 3ª ocorrência com o próprio achado já recomendando prioridade em texto
+  livre — sem nada no processo formal forçando essa priorização a acontecer.
 - [ ] `backend-developer`/`frontend-developer` leem `docs/LESSONS-LEARNED.md`, se existir, na fase
   de planejamento (antes de quebrar o TRD em incrementos) e aplicam as lições da(s) área(s)
   relevante(s) à trilha como restrição adicional ao TRD, citando no plano apresentado ao usuário
