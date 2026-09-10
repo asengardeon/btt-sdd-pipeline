@@ -123,6 +123,17 @@ confirmado ainda").
   de planejamento (antes de quebrar o TRD em incrementos) e aplicam as lições da(s) área(s)
   relevante(s) à trilha como restrição adicional ao TRD, citando no plano apresentado ao usuário
   qual lição foi aplicada e como.
+- [ ] **Uma entrada de lições aprendidas nunca substitui a regra canônica que ela generaliza.**
+  Uma entrada existe para resumir um padrão de achado já repetido, não para redefinir a regra
+  original — se a entrada (ou a paráfrase de qualquer agente ao aplicá-la) parecer contradizer ou
+  ser mais estreita que uma regra já formalizada em outro doc do projeto (`docs/TESTING.md`,
+  `docs/QUALITY-GATES.md`, etc.), a regra canônica prevalece: releia a doc de origem antes de
+  tratar a lição como atalho, e sinalize a divergência como um sinal de que a própria entrada
+  precisa de correção, não de que a regra mudou. Já aconteceu: uma lição registrada como "sempre
+  que X tocar Y" restringiu implicitamente uma regra original incondicional ("toda fatia com
+  trilha Z"), e `frontend-developer` pulou uma etapa obrigatória (build real) a partir da versão
+  estreita — só pego porque duas rodadas de revisão independentes checaram a regra original em vez
+  de confiar na paráfrase.
 
 ## Status de tarefas (coluna "Status" da decomposição do TRD)
 
