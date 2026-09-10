@@ -127,6 +127,14 @@ fatia.
    - Lint, testes e gate de cobertura 80% rodam em todo PR/push relevante.
    - Pipeline falha de forma clara e rápida (fail fast) — não deixa warning virar erro silencioso.
    - Cache de dependências configurado para não deixar o pipeline lento sem necessidade.
+   - **Filtro de `paths`/`paths-ignore` cobrindo `specs/**`, `docs/**` e `*.md` da raiz** — todo
+     push/PR que só toca esses caminhos (nenhum código executável, manifesto de dependência, ou o
+     próprio workflow) pula o job de lint/testes/build inteiro. As etapas de revisão
+     (`code-reviewer`/`qa-engineer`/`security-engineer`/você mesmo) commitam e enviam (push) só
+     arquivos em `specs/**/*.md` na maior parte das rodadas — sem esse filtro, cada um desses
+     pushes dispara um run completo de CI para uma mudança que não pode ter introduzido regressão
+     de código. Já confirmado ao vivo: um PR só com `qa-report.md` atualizado disparou um run
+     completo (~2min backend + ~2min frontend) sem necessidade.
    - Se um job falhar/for cancelado só por estourar `timeout-minutes` (sem nenhum teste vermelho),
      principalmente quando múltiplas fatias/PRs desta mesma sessão estão rodando CI em paralelo,
      trate como possível falso-negativo por contenção de runners antes de investigar como bug de
@@ -134,13 +142,15 @@ fatia.
      (`docs/GIT-WORKFLOW.md`, seção "Aguardando CI antes do merge").
    - Antes de aceitar um run de CI existente como evidência de "CI verde para este PR", confirme
      que o `headSha` desse run é igual ao `headRefOid` atual do PR (`gh pr view <PR> --json
-     headRefOid`) — não presuma que o run mais recente listado corresponde ao HEAD atual (todo
+     headRefOid`) — não presuma que o run mais recente listado corresponde ao HEAD atual (um
      commit "docs-only" que uma etapa de revisão grava em `specs/**/*.md` depois que o código já
-     passou no CI pode não gerar um novo run visível). Se os SHAs forem diferentes, confirme via
-     `git diff --stat <headSha-do-run>..<headRefOid-atual>` que nada relevante ao workflow (`src/`,
-     `frontend/`, manifestos de dependência, os próprios workflows) mudou entre os dois — só então
-     o run antigo continua sendo evidência válida. Caso contrário, dispare um novo run (um
-     push/atualização de branch normalmente resolve) antes de aprovar.
+     passou no CI não gera um novo run visível, **se** o `ci.yml` deste projeto já tem o filtro de
+     `paths` do item acima — confirme que o filtro existe antes de assumir isso; sem ele, cada
+     commit "docs-only" ainda dispara run próprio, e esse run é evidência válida). Se os SHAs forem
+     diferentes, confirme via `git diff --stat <headSha-do-run>..<headRefOid-atual>` que nada
+     relevante ao workflow (`src/`, `frontend/`, manifestos de dependência, os próprios workflows)
+     mudou entre os dois — só então o run antigo continua sendo evidência válida. Caso contrário,
+     dispare um novo run (um push/atualização de branch normalmente resolve) antes de aprovar.
 
 2. **CD (`.github/workflows/cd.yml`) e GitHub Flow**
    - Deploy só roda após CI verde.
