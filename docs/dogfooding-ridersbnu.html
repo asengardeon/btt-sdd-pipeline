@@ -1,0 +1,968 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Montserrat:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<title>Pipeline SDD</title>
+
+<style>
+  :root {
+    --bg: #f3f4f6;
+    --surface: #ffffff;
+    --surface-2: #eceff3;
+    --surface-3: #e1e5eb;
+    --border: #d7dbe2;
+    --ink: #0d0f12;
+    --ink-soft: #334155;
+    --ink-muted: #64748b;
+    --accent: #b45309;
+    --accent-strong: #92400e;
+    --accent-soft: #fef3e2;
+    --good: #059669;
+    --good-soft: #e3f5ef;
+    --critical: #dc2626;
+    --critical-soft: #fdecea;
+    --info: #2563eb;
+    --chart-bar: #d97706;
+    --chart-bar-peak: #b45309;
+    --chart-grid: #d7dbe2;
+    --shadow: 0 1px 2px rgba(13,15,18,0.06), 0 8px 24px -12px rgba(13,15,18,0.12);
+    --radius-s: 6px;
+    --radius-m: 10px;
+    --font-display: 'Rajdhani', 'Arial Narrow', sans-serif;
+    --font-body: 'Montserrat', -apple-system, 'Segoe UI', sans-serif;
+    --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0d0f12;
+      --surface: #14171d;
+      --surface-2: #1b2028;
+      --surface-3: #232a35;
+      --border: #2b323d;
+      --ink: #f8fafc;
+      --ink-soft: #cbd5e1;
+      --ink-muted: #8b94a5;
+      --accent: #f59e0b;
+      --accent-strong: #fbbf24;
+      --accent-soft: rgba(245,158,11,0.12);
+      --good: #10b981;
+      --good-soft: rgba(16,185,129,0.14);
+      --critical: #ef4444;
+      --critical-soft: rgba(239,68,68,0.14);
+      --info: #3b82f6;
+      --chart-bar: #f59e0b;
+      --chart-bar-peak: #fbbf24;
+      --chart-grid: #2b323d;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -16px rgba(0,0,0,0.6);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0d0f12;
+    --surface: #14171d;
+    --surface-2: #1b2028;
+    --surface-3: #232a35;
+    --border: #2b323d;
+    --ink: #f8fafc;
+    --ink-soft: #cbd5e1;
+    --ink-muted: #8b94a5;
+    --accent: #f59e0b;
+    --accent-strong: #fbbf24;
+    --accent-soft: rgba(245,158,11,0.12);
+    --good: #10b981;
+    --good-soft: rgba(16,185,129,0.14);
+    --critical: #ef4444;
+    --critical-soft: rgba(239,68,68,0.14);
+    --info: #3b82f6;
+    --chart-bar: #f59e0b;
+    --chart-bar-peak: #fbbf24;
+    --chart-grid: #2b323d;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -16px rgba(0,0,0,0.6);
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+  body { overflow-x: hidden; }
+
+  a { color: var(--accent-strong); }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 22px;
+    height: 2px;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  .tabular { font-variant-numeric: tabular-nums; }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    padding: 88px 0 64px;
+    background:
+      radial-gradient(ellipse 900px 420px at 15% -10%, var(--accent-soft), transparent 60%),
+      var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .hero .eyebrow { margin-bottom: 22px; }
+  .hero h1 {
+    font-size: clamp(40px, 7vw, 76px);
+    line-height: 0.98;
+    color: var(--ink);
+  }
+  .hero h1 span { color: var(--accent-strong); }
+  .hero-sub {
+    margin-top: 22px;
+    max-width: 640px;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .hero-meta {
+    margin-top: 36px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+  .hero-meta strong { color: var(--ink); font-weight: 600; }
+
+  /* ---------- SECTION SCAFFOLD ---------- */
+  section { padding: 64px 0; }
+  section.alt { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .section-head { margin-bottom: 36px; }
+  .section-head h2 { font-size: clamp(26px, 4vw, 34px); margin-top: 10px; }
+  .section-head p { margin: 12px 0 0; color: var(--ink-muted); max-width: 620px; font-size: 15px; line-height: 1.6; }
+
+  /* ---------- STAT GRID ---------- */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    overflow: hidden;
+  }
+  .stat {
+    background: var(--surface);
+    padding: 26px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .stat .n {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 40px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .stat .n .unit { font-size: 18px; color: var(--accent-strong); margin-left: 3px; }
+  .stat .label { font-size: 12.5px; color: var(--ink-muted); line-height: 1.4; }
+  @media (max-width: 860px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 520px) { .stat-grid { grid-template-columns: 1fr; } }
+
+  /* ---------- PIPELINE ---------- */
+  .pipeline {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 10px;
+  }
+  .stage {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-s);
+    padding: 16px 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+  }
+  .stage .idx {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+  }
+  .stage .name { font-family: var(--font-display); font-weight: 600; font-size: 14.5px; text-transform: uppercase; letter-spacing: 0.01em; }
+  .stage .out { font-size: 11.5px; color: var(--ink-muted); line-height: 1.4; }
+  .stage.conditional { opacity: 0.6; border-style: dashed; }
+  .pipeline-note { margin-top: 18px; font-size: 13px; color: var(--ink-muted); line-height: 1.6; }
+  .pipeline-note strong { color: var(--ink-soft); }
+  @media (max-width: 900px) { .pipeline { grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width: 560px) { .pipeline { grid-template-columns: repeat(2, 1fr); } }
+
+  /* ---------- CHART ---------- */
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    padding: 28px 28px 18px;
+  }
+  .chart-card .chart-title { font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 22px; display: flex; justify-content: space-between; }
+  .chart-card .chart-title b { color: var(--accent-strong); font-weight: 600; }
+  .bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 190px;
+    border-bottom: 1px solid var(--chart-grid);
+    position: relative;
+  }
+  .bars .gridline { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--chart-grid); font-family: var(--font-mono); font-size: 10px; color: var(--ink-muted); }
+  .bars .gridline span { position: absolute; right: 100%; margin-right: 8px; top: -6px; }
+  .bar-col { flex: 1; height: 100%; display: flex; align-items: flex-end; position: relative; cursor: pointer; }
+  .bar-col .bar {
+    width: 100%;
+    background: var(--chart-bar);
+    border-radius: 4px 4px 0 0;
+    transition: background 0.12s ease, transform 0.12s ease;
+    transform-origin: bottom;
+  }
+  .bar-col.peak .bar { background: var(--chart-bar-peak); }
+  .bar-col:hover .bar { transform: scaleY(1.02); filter: brightness(1.08); }
+  .bar-col .tip {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: var(--bg);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 6px 9px;
+    border-radius: 5px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.1s ease;
+    z-index: 5;
+  }
+  .bar-col:hover .tip { opacity: 1; }
+  .x-labels { display: flex; gap: 6px; margin-top: 8px; }
+  .x-labels span { flex: 1; text-align: center; font-family: var(--font-mono); font-size: 9.5px; color: var(--ink-muted); }
+  .chart-foot { margin-top: 20px; font-size: 13px; color: var(--ink-muted); line-height: 1.6; }
+
+  /* ---------- FEATURES LIST ---------- */
+  .feature-table { width: 100%; overflow-x: auto; }
+  table.features { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  table.features th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    padding: 0 14px 10px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+  }
+  table.features td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink-soft);
+    vertical-align: top;
+  }
+  table.features tr:last-child td { border-bottom: none; }
+  table.features td.num { font-family: var(--font-mono); color: var(--ink-muted); }
+  table.features td.name { color: var(--ink); font-weight: 500; }
+  table.features tr:hover td { background: var(--surface-2); }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .pill.good { background: var(--good-soft); color: var(--good); }
+  .pill.dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; display: inline-block; }
+
+  .features-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 36px; }
+  .features-cols table.features { margin: 0; }
+  @media (max-width: 700px) { .features-cols { grid-template-columns: 1fr; } }
+
+  /* ---------- CASE CARDS ---------- */
+  .cases { display: flex; flex-direction: column; gap: 14px; }
+  .case {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--good);
+    border-radius: var(--radius-s);
+    padding: 18px 22px;
+  }
+  .case .case-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+  .case .case-id { font-family: var(--font-mono); font-size: 11px; color: var(--good); }
+  .case h4 { font-family: var(--font-display); font-size: 16px; font-weight: 600; text-transform: none; letter-spacing: 0; margin: 0; color: var(--ink); }
+  .case p { margin: 0; font-size: 13.5px; line-height: 1.65; color: var(--ink-soft); }
+  .case p + p { margin-top: 8px; }
+  .case .caught-by { font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); margin-top: 10px; }
+
+  .case.open { border-left-color: var(--critical); }
+  .case.open .case-id { color: var(--critical); }
+
+  /* ---------- DECISIONS TABLE ---------- */
+  table.decisions { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  table.decisions th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    padding: 0 16px 10px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+  }
+  table.decisions td { padding: 14px 16px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.55; }
+  table.decisions tr:last-child td { border-bottom: none; }
+  table.decisions td.use { color: var(--ink); font-weight: 600; font-family: var(--font-display); font-size: 14px; text-transform: uppercase; letter-spacing: 0.01em; }
+  table.decisions td.rejected { color: var(--critical); font-size: 12.5px; }
+  table.decisions td.rejected::before { content: "✕ "; }
+  table.decisions td.why { color: var(--ink-muted); font-size: 12.5px; }
+
+  /* ---------- COST ---------- */
+  .cost-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; align-items: start; }
+  .cost-list { display: flex; flex-direction: column; }
+  .cost-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 13px 0; border-bottom: 1px solid var(--border);
+    gap: 16px;
+  }
+  .cost-row:last-of-type { border-bottom: none; }
+  .cost-row .item { font-size: 14px; color: var(--ink); }
+  .cost-row .sub { display: block; font-size: 11.5px; color: var(--ink-muted); margin-top: 2px; }
+  .cost-row .val { font-family: var(--font-mono); font-size: 14px; color: var(--ink); white-space: nowrap; }
+  .cost-row.total { padding-top: 16px; margin-top: 4px; border-top: 2px solid var(--ink); border-bottom: none; }
+  .cost-row.total .item { font-family: var(--font-display); font-weight: 700; text-transform: uppercase; font-size: 13px; letter-spacing: 0.02em; }
+  .cost-row.total .val { font-size: 20px; font-weight: 600; color: var(--accent-strong); }
+  .cost-note {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-s);
+    padding: 18px 20px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.7;
+  }
+  .cost-note b { color: var(--ink); }
+  @media (max-width: 760px) { .cost-grid { grid-template-columns: 1fr; } }
+
+  /* ---------- DOGFOOD LOOP ---------- */
+  .loop-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    padding: 26px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    margin-bottom: 28px;
+  }
+  .loop-node {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    font-size: 15px;
+    padding: 10px 18px;
+    border-radius: 20px;
+    border: 1.5px solid var(--accent);
+    color: var(--ink);
+  }
+  .loop-node.lab { border-color: var(--good); }
+  .loop-arrow { font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; max-width: 150px; }
+  .loop-arrow .glyph { font-size: 18px; color: var(--accent-strong); line-height: 1; }
+
+  .version-timeline { display: flex; gap: 0; margin: 6px 0 8px; overflow-x: auto; padding: 26px 4px 6px; }
+  .version-timeline .df-node { flex: 1 0 96px; text-align: center; position: relative; }
+  .version-timeline .df-node::before {
+    content: ""; position: absolute; top: -14px; left: 0; right: 0; height: 2px; background: var(--border);
+  }
+  .version-timeline .df-node:first-child::before { left: 50%; }
+  .version-timeline .df-node:last-child::before { right: 50%; }
+  .version-timeline .df-node::after {
+    content: ""; position: absolute; top: -19px; left: 50%; transform: translateX(-50%);
+    width: 11px; height: 11px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg);
+    box-shadow: 0 0 0 1px var(--border);
+  }
+  .version-timeline .df-node.final::after { background: var(--good); width: 13px; height: 13px; top: -20px; }
+  .df-ver { font-family: var(--font-mono); font-weight: 600; font-size: 12.5px; color: var(--ink); }
+  .df-date { font-family: var(--font-mono); font-size: 10px; color: var(--ink-muted); margin-top: 3px; }
+
+  .feedback-case {
+    margin-top: 22px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-s);
+    padding: 18px 22px;
+  }
+  .feedback-case .case-id { font-family: var(--font-mono); font-size: 11px; color: var(--accent-strong); }
+  .feedback-case h4 { font-family: var(--font-display); font-size: 16px; font-weight: 600; text-transform: none; letter-spacing: 0; margin: 6px 0 8px; color: var(--ink); }
+  .feedback-case p { margin: 0; font-size: 13.5px; line-height: 1.65; color: var(--ink-soft); }
+  .feedback-case p + p { margin-top: 8px; }
+
+  /* ---------- CLOSING ---------- */
+  .closing { padding: 90px 0 100px; text-align: left; }
+  .closing .line { font-family: var(--font-display); font-weight: 700; text-transform: uppercase; font-size: clamp(24px, 4.4vw, 40px); line-height: 1.15; max-width: 780px; }
+  .closing .line em { font-style: normal; color: var(--accent-strong); }
+  .closing .foot { margin-top: 30px; font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
+
+  ::selection { background: var(--accent-soft); color: var(--accent-strong); }
+</style>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Produto: Pipeline SDD · Laboratório: RidersBNU</div>
+    <h1>O pipeline é o produto.<br><span>RidersBNU</span> é o laboratório.</h1>
+    <p class="hero-sub">
+      RidersBNU — app de organização de encontros de motociclistas em Blumenau — não é o ponto
+      desta apresentação, é a prova de campo. O que está sendo medido aqui é um pipeline de agentes
+      especializados em Spec-Driven Development (SDD), e RidersBNU é o laboratório onde ele rodou
+      de verdade: 17 dias corridos, do PRD ao deploy em produção, sem equipe de desenvolvimento —
+      só o pipeline, se testando nele mesmo em cada feature.
+    </p>
+    <div class="hero-meta">
+      <span><strong>1</strong> pipeline</span>
+      <span><strong>10</strong> sincronizações de versão do próprio pipeline</span>
+      <span><strong>20</strong> features validadas no laboratório</span>
+      <span><strong>153</strong> PRs revisados</span>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">O produto</div>
+      <h2>Nenhuma etapa pula a anterior</h2>
+      <p>O pipeline SDD (<code>btt-sdd</code>) orquestra um agente especializado por etapa. Toda
+      feature nasce de um PRD, passa por desenho técnico revisável e só chega a produção depois de
+      revisão de código, QA, segurança e SRE — cada etapa com seu próprio agente e seu próprio
+      artefato escrito. RidersBNU é onde essa sequência rodou 20 vezes seguidas, sem exceção.</p>
+    </div>
+    <div class="pipeline">
+      <div class="stage conditional">
+        <div class="idx">00 · condicional</div>
+        <div class="name">Arqueologia</div>
+        <div class="out">mapeia código pré-existente quando falta documentação base</div>
+      </div>
+      <div class="stage">
+        <div class="idx">01</div>
+        <div class="name">Produto</div>
+        <div class="out">PRD — histórias de usuário e critérios de aceite verificáveis</div>
+      </div>
+      <div class="stage">
+        <div class="idx">02</div>
+        <div class="name">Arquitetura</div>
+        <div class="out">TRD — stack, ports &amp; adapters, contrato frontend↔backend</div>
+      </div>
+      <div class="stage">
+        <div class="idx">03</div>
+        <div class="name">Implementação</div>
+        <div class="out">código + testes via TDD, backend e frontend em paralelo</div>
+      </div>
+      <div class="stage">
+        <div class="idx">04</div>
+        <div class="name">Code review</div>
+        <div class="out">SOLID, clean code, qualidade dos testes — engenheiro sênior</div>
+      </div>
+      <div class="stage">
+        <div class="idx">05</div>
+        <div class="name">QA</div>
+        <div class="out">critérios de aceite validados um a um, gate de cobertura 80%</div>
+      </div>
+      <div class="stage">
+        <div class="idx">06</div>
+        <div class="name">Segurança</div>
+        <div class="out">OWASP, segredos, autenticação e autorização</div>
+      </div>
+      <div class="stage">
+        <div class="idx">07</div>
+        <div class="name">SRE</div>
+        <div class="out">CI/CD, Docker, Terraform, aprovação final antes do deploy</div>
+      </div>
+    </div>
+    <p class="pipeline-note">
+      Quando uma feature é grande, o TRD a divide em <strong>fatias verticais de entrega</strong> —
+      cada fatia é sua própria branch, seu próprio PR e passa pelas etapas 03–07 inteiras antes da
+      próxima começar. É por isso que 20 features viraram 153 PRs: features como
+      <code>0008-categorias-de-eventos</code> e <code>0011-ocultar-usuarios-de-teste</code> tiveram
+      5 fatias cada, todas em produção antes da seguinte iniciar.
+    </p>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Cachorro comendo a própria ração</div>
+      <h2>O pipeline se testa nele mesmo</h2>
+      <p>Dogfooding: quem constrói a ferramenta é o primeiro a viver com ela. Enquanto RidersBNU
+      era construído, o pipeline que o construía também estava sendo desenvolvido — e cada fricção
+      real encontrada no laboratório virou ajuste no produto, sincronizado de volta para dentro do
+      mesmo projeto que a encontrou.</p>
+    </div>
+    <div class="loop-diagram">
+      <div class="loop-node">Pipeline SDD</div>
+      <div class="loop-arrow"><span class="glyph">→</span>constrói</div>
+      <div class="loop-node lab">RidersBNU (laboratório)</div>
+      <div class="loop-arrow"><span class="glyph">↺</span>fricção real vira ADR, lição aprendida ou ajuste de scaffold</div>
+      <div class="loop-node">Pipeline SDD</div>
+    </div>
+    <div class="version-timeline" id="versiontl"></div>
+    <p class="pipeline-note" style="text-align:center; margin-top:0;">
+      <strong>10</strong> sincronizações de scaffold confirmadas via <code>/sdd-sync-docs</code>,
+      do <strong>v1.5.1</strong> ao <strong>v1.21.2</strong> — o pipeline mudou de versão em paralelo
+      às 20 features, nunca antes ou depois delas.
+    </p>
+    <div class="feedback-case">
+      <span class="case-id">Prova de que o loop fecha, não só de que ele existe</span>
+      <h4>O próprio pipeline não tinha uma seção formal para "lições aprendidas recorrentes"</h4>
+      <p>Durante a revisão de SRE da primeira fatia de <code>specs/0004-deploy-backend-heroku</code>,
+      o agente precisou registrar um padrão de falha recorrente — mas <code>docs/QUALITY-GATES.md</code>
+      (o próprio guia de governança do pipeline) ainda não tinha essa seção formalizada. Em vez de
+      ignorar, o agente criou o mecanismo ali mesmo, no laboratório (<code>docs/LESSONS-LEARNED.md</code>),
+      e deixou registrada a recomendação explícita: formalizar essa seção é responsabilidade de quem
+      mantém o pipeline, não do projeto que o usa.</p>
+      <p>É esse arquivo — nascido de uma lacuna real, encontrada usando o produto de verdade — que
+      hoje rastreia as 10 lições aprendidas citadas nesta apresentação.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">O laboratório em números</div>
+      <h2>A prova de campo, sem retoque</h2>
+      <p>Extraídos de <code>git log</code>, da API do GitHub e dos relatórios de cobertura gerados
+      pelo próprio pipeline — nada arredondado para cima. Isto é o que 17 dias de uso real do
+      produto produziram.</p>
+    </div>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="n tabular">17<span class="unit">dias</span></div>
+        <div class="label">do primeiro commit ao PR mais recente — corridos, não úteis</div>
+      </div>
+      <div class="stat">
+        <div class="n tabular">20</div>
+        <div class="label">features completas: PRD → TRD → código → 4 revisões independentes</div>
+      </div>
+      <div class="stat">
+        <div class="n tabular">153</div>
+        <div class="label">pull requests mergeados em <code>main</code>, GitHub Flow do início ao fim</div>
+      </div>
+      <div class="stat">
+        <div class="n tabular">42<span class="unit">min</span></div>
+        <div class="label">tempo mediano entre abrir e mergear um PR (média: 1h42)</div>
+      </div>
+      <div class="stat">
+        <div class="n tabular">39</div>
+        <div class="label">ADRs — decisões de arquitetura registradas com a alternativa descartada e o porquê</div>
+      </div>
+      <div class="stat">
+        <div class="n tabular">84</div>
+        <div class="label">documentos de revisão gerados: 21 code review, 21 QA, 21 segurança, 21 SRE</div>
+      </div>
+      <div class="stat">
+        <div class="n tabular">~97<span class="unit">%</span></div>
+        <div class="label">cobertura de testes típica do backend (gate mínimo do projeto: 80%)</div>
+      </div>
+      <div class="stat">
+        <div class="n tabular">10</div>
+        <div class="label">versões do pipeline sincronizadas durante o próprio uso — o produto evoluindo junto com o laboratório</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Ritmo</div>
+      <h2>Commits por dia, 17 dias corridos</h2>
+      <p>Sem fins de semana de folga nem sprints artificiais — o ritmo varia com a complexidade de
+      cada feature, não com um calendário de squad.</p>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title"><span>25 ago – 10 set 2026</span><span><b>385</b> commits no total</span></div>
+      <div class="bars" id="bars"></div>
+      <div class="x-labels" id="xlabels"></div>
+      <div class="chart-foot">
+        Pico em <strong>28 ago</strong> (67 commits) — fatia de autenticação/MFA e o design system
+        sendo fechados no mesmo dia. Vales em <strong>29 ago</strong> e <strong>02 set</strong>
+        correspondem a decisões de arquitetura em aberto (migração de hosting, spec de multitenancy)
+        sendo validadas com o usuário antes do código seguir.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Escopo entregue</div>
+      <h2>As 20 features, em ordem</h2>
+      <p>Cada uma nasceu de um PRD aprovado e chegou a produção passando pelas 4 revisões
+      independentes — todas com <span class="pill good"><span class="pill dot"></span>aprovado</span>
+      no pipeline.</p>
+    </div>
+    <div class="features-cols">
+      <table class="features">
+        <tbody>
+          <tr><td class="num">0001</td><td class="name">MVP — organizar Voltas (encontros)</td></tr>
+          <tr><td class="num">0002</td><td class="name">Design system</td></tr>
+          <tr><td class="num">0003</td><td class="name">Deploy em produção (HostGator) — histórico</td></tr>
+          <tr><td class="num">0004</td><td class="name">Deploy backend (Heroku + Postgres)</td></tr>
+          <tr><td class="num">0005</td><td class="name">Stories, feature flags e navegação</td></tr>
+          <tr><td class="num">0006</td><td class="name">Navegação global (menu, topbar, alertas)</td></tr>
+          <tr><td class="num">0007</td><td class="name">Papéis e administração</td></tr>
+          <tr><td class="num">0008</td><td class="name">Categorias de eventos</td></tr>
+          <tr><td class="num">0009</td><td class="name">Fotos oficiais de eventos</td></tr>
+          <tr><td class="num">0010</td><td class="name">Convites e confirmação de membros</td></tr>
+        </tbody>
+      </table>
+      <table class="features">
+        <tbody>
+          <tr><td class="num">0011</td><td class="name">Ocultar usuários de teste</td></tr>
+          <tr><td class="num">0012</td><td class="name">Excluir eventos cancelados</td></tr>
+          <tr><td class="num">0013</td><td class="name">Múltiplas séries de encontro recorrente</td></tr>
+          <tr><td class="num">0014</td><td class="name">Cadastro TOTP via QR code (MFA)</td></tr>
+          <tr><td class="num">0015</td><td class="name">Comentários em eventos</td></tr>
+          <tr><td class="num">0016</td><td class="name">Check-in retroativo</td></tr>
+          <tr><td class="num">0017</td><td class="name">Capa de encontros recorrentes</td></tr>
+          <tr><td class="num">0018</td><td class="name">Multitenancy</td></tr>
+          <tr><td class="num">0019</td><td class="name">Conta de teste isolada no tenant de teste</td></tr>
+          <tr><td class="num">0020</td><td class="name">Gestão coletiva de passeios auto-organizados</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">O que o gate pegou</div>
+      <h2>Bugs que não chegaram ao usuário</h2>
+      <p>O pipeline registra formalmente todo padrão de falha que se repete em duas ou mais features
+      (<code>docs/LESSONS-LEARNED.md</code>) — para a revisão seguinte citar o padrão em vez de
+      redescobri-lo. Quatro exemplos reais, com o que teria acontecido sem a etapa que pegou.</p>
+    </div>
+    <div class="cases">
+      <div class="case">
+        <div class="case-head">
+          <h4>Undelete silencioso de evento excluído</h4>
+          <span class="case-id">LL-7 · bloqueante</span>
+        </div>
+        <p>Um campo novo (<code>deletedAt</code>) não era propagado por três casos de uso que
+        reconstroem o agregado <code>Volta</code>. Resultado: editar um evento excluído
+        <em>restaurava</em> ele silenciosamente, sem passar pela guarda de autorização de exclusão.</p>
+        <p class="caught-by">Pego por: revisão de segurança (SEC-0012-1), bloqueou o merge até a correção no mesmo PR.</p>
+      </div>
+      <div class="case">
+        <div class="case-head">
+          <h4>Bypass de autorização sob impersonação de tenant</h4>
+          <span class="case-id">LL-9 · 3 ocorrências</span>
+        </div>
+        <p>Um guard resolvia a identidade de quem fazia a requisição pelo tenant <em>atual</em> do
+        contexto — que durante uma impersonação de administrador é o tenant do alvo, não o do
+        administrador. Reapareceu em 3 features diferentes.</p>
+        <p class="caught-by">Pego por: code review, todas as 3 vezes — na 3ª ocorrência, a regra de
+        "nunca repetir uma pergunta mais de 3 vezes" acionou uma pergunta formal ao usuário em vez
+        de mais uma linha de registro passivo.</p>
+      </div>
+      <div class="case">
+        <div class="case-head">
+          <h4>Bug de build invisível a lint, typecheck e testes unitários</h4>
+          <span class="case-id">LL-3</span>
+        </div>
+        <p>Uma função passada como prop atravessando a fronteira Server→Client Component do Next.js
+        só quebrava em <code>next build</code> — nunca em <code>jest</code>/<code>tsc</code>/lint.
+        Passou por 2 rodadas de code review e 2 de QA sem ser detectado.</p>
+        <p class="caught-by">Pego por: SRE, após 10 execuções de CI em falha — motivou incluir
+        <code>npm run build</code> na verificação padrão de toda mudança de composição de tela,
+        antes do SRE, não depois.</p>
+      </div>
+      <div class="case">
+        <div class="case-head">
+          <h4>Conta duplicada por e-mail sensível a maiúsculas</h4>
+          <span class="case-id">LL-5</span>
+        </div>
+        <p>Login por senha e login via Google, com capitalizações diferentes do mesmo e-mail, criavam
+        duas contas em vez de uma — e a correção inicial abriu um vetor de account takeover (vincular
+        identidade sem exigir e-mail verificado pelo provedor).</p>
+        <p class="caught-by">Pego por: investigação de bug de produção → corrigido → o próprio fix
+        revisado encontrou o problema mais grave (CR13-1) antes de ir ao ar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Honestidade, não destaque</div>
+      <h2>O que ainda está em aberto</h2>
+      <p>Um relatório de telemetria que só mostra vitória não serve para nada. Isto segue pendente,
+      documentado e rastreado — não escondido.</p>
+    </div>
+    <div class="cases">
+      <div class="case open">
+        <div class="case-head">
+          <h4>Environment "production" do GitHub sem aprovação manual obrigatória</h4>
+          <span class="case-id">LL-2 · 18 ocorrências</span>
+        </div>
+        <p>Reconfirmado em 18 rodadas de revisão de SRE ao longo de 10 features distintas — desde
+        que os dois gates de deploy automático foram ligados, cada merge em <code>main</code> dispara
+        deploy real em produção sem um gate de aprovação humana dedicado no ambiente.</p>
+        <p class="caught-by">Status: é configuração de painel do repositório, fora do mandato de
+        qualquer agente do pipeline resolver sozinho — na 18ª ocorrência, o SRE finalmente formalizou
+        a pergunta ao usuário em vez de só reconfirmar passivamente mais uma vez.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Arquitetura</div>
+      <h2>O que foi usado — e o que foi descartado de propósito</h2>
+      <p>Cada linha da tabela é uma decisão registrada em ADR, com a alternativa que foi considerada
+      e rejeitada antes de escrever qualquer código.</p>
+    </div>
+    <table class="decisions">
+      <thead>
+        <tr><th>Usado</th><th>Descartado</th><th>Por quê</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="use">Heroku · dyno Basic</td>
+          <td class="rejected">dyno Eco (grátis)</td>
+          <td class="why">Eco dorme por inatividade — inadequado para um sistema em produção real com usuários acessando a qualquer hora.</td>
+        </tr>
+        <tr>
+          <td class="use">PostgreSQL nativo Heroku</td>
+          <td class="rejected">manter MySQL/MariaDB</td>
+          <td class="why">troca de hosting forçou a troca de motor; dev, testes e CI migraram junto para manter paridade exata com produção.</td>
+        </tr>
+        <tr>
+          <td class="use">Cloudflare R2</td>
+          <td class="rejected">AWS S3</td>
+          <td class="why">S3 nunca chegou a ser provisionado de fato; R2 assumido via o mesmo mecanismo de endpoint S3-compatível, sem alterar uma linha do adapter.</td>
+        </tr>
+        <tr>
+          <td class="use">Leaflet + OpenStreetMap</td>
+          <td class="rejected">Google Maps JavaScript API</td>
+          <td class="why">exibir marcadores simples não justifica chave de API nem billing — zero custo por uso.</td>
+        </tr>
+        <tr>
+          <td class="use">Deploy do frontend via Wrangler no CD</td>
+          <td class="rejected">integração Git nativa do Cloudflare Pages</td>
+          <td class="why">decisão do usuário: manter o deploy do frontend auditável no mesmo pipeline do backend, mesmo indo contra a recomendação original do arquiteto.</td>
+        </tr>
+        <tr>
+          <td class="use">Feature flags in-house</td>
+          <td class="rejected">serviço externo de feature flags</td>
+          <td class="why">volume e complexidade do projeto não justificam uma assinatura recorrente de terceiro.</td>
+        </tr>
+        <tr>
+          <td class="use">GIF hotlinkado direto do Giphy CDN</td>
+          <td class="rejected">baixar e re-hospedar no storage próprio</td>
+          <td class="why">decisão explícita do usuário contra a recomendação original — trade-off aceito (IP do visualizador exposto ao Giphy) por zero custo de storage extra.</td>
+        </tr>
+        <tr>
+          <td class="use"><code>composer audit</code> bloqueante no CI</td>
+          <td class="rejected"><code>npm audit</code> bloqueante imediato</td>
+          <td class="why">1 vulnerabilidade transitiva pré-existente (Next.js) sem correção simples disponível — registrada como pendência explícita, não ignorada em silêncio.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Custo direto</div>
+      <h2>O que isso custa, de verdade</h2>
+      <p>Só os custos reais e verificáveis — nada de comparação especulativa com o que uma agência
+      cobraria. O que está rodando em produção hoje:</p>
+    </div>
+    <div class="cost-grid">
+      <div class="cost-list">
+        <div class="cost-row">
+          <div class="item">Heroku — dyno Basic<span class="sub">backend Laravel, região US, sem hibernação</span></div>
+          <div class="val tabular">US$ 7/mês</div>
+        </div>
+        <div class="cost-row">
+          <div class="item">Heroku Postgres — essential-1<span class="sub">mesma região do app, paridade com dev/CI</span></div>
+          <div class="val tabular">US$ 9/mês</div>
+        </div>
+        <div class="cost-row">
+          <div class="item">Heroku Scheduler<span class="sub">jobs periódicos — expiração de stories, geração de ocorrências</span></div>
+          <div class="val tabular">US$ 0</div>
+        </div>
+        <div class="cost-row">
+          <div class="item">Cloudflare Pages<span class="sub">frontend Next.js, static export</span></div>
+          <div class="val tabular">US$ 0</div>
+        </div>
+        <div class="cost-row">
+          <div class="item">Cloudflare R2<span class="sub">storage de fotos — faixa gratuita atual</span></div>
+          <div class="val tabular">US$ 0</div>
+        </div>
+        <div class="cost-row">
+          <div class="item">Giphy Search API<span class="sub">busca de GIF em comentários</span></div>
+          <div class="val tabular">US$ 0</div>
+        </div>
+        <div class="cost-row">
+          <div class="item">GitHub — plano<span class="sub">repositório privado, Actions</span></div>
+          <div class="val tabular">US$ 49/ano</div>
+        </div>
+        <div class="cost-row">
+          <div class="item">GitHub — estouro de minutos de CI<span class="sub">153 PRs geram muito job de Actions — excedeu a cota do plano neste ciclo</span></div>
+          <div class="val tabular">US$ 5</div>
+        </div>
+        <div class="cost-row total">
+          <div class="item">Infraestrutura de produção</div>
+          <div class="val tabular">~US$ 20/mês</div>
+        </div>
+        <div class="cost-row" style="padding-top: 24px;">
+          <div class="item">Claude Code<span class="sub">assinatura usada para rodar todo o pipeline de agentes</span></div>
+          <div class="val tabular">R$ 500/mês</div>
+        </div>
+        <div class="cost-row total">
+          <div class="item">Ferramental de desenvolvimento</div>
+          <div class="val tabular">R$ 500/mês</div>
+        </div>
+      </div>
+      <div class="cost-note">
+        <b>Duas moedas de propósito, não por descuido:</b> a infraestrutura é faturada em dólar
+        (Heroku, Cloudflare, GitHub) e a assinatura do Claude Code em real — conversão não incluída
+        para não embutir uma cotação que muda a cada dia. O plano do GitHub (US$ 49/ano) foi
+        amortizado em ~US$ 4/mês; os US$ 5 de estouro de CI são deste ciclo específico — 153 PRs
+        rodando a suíte completa de testes a cada push consome minuto de Actions rápido, é o preço
+        direto de nunca pular a verificação automatizada antes do merge. Somando os dois blocos:
+        <b>uma pessoa, ~US$ 20/mês de produção real + R$ 500/mês de ferramenta, entregou 20 features
+        completas em 17 dias.</b> Fora desta conta: o domínio próprio, já existente antes deste
+        projeto começar. Nenhum custo de equipe, agência ou freelancer entrou aqui — o pipeline
+        substituiu esse orçamento, não o comparou com ele.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="closing">
+  <div class="wrap">
+    <div class="eyebrow">Fechamento</div>
+    <div class="line" style="margin-top:14px;">
+      O pipeline construiu 20 features<br>
+      e <em>se corrigiu sozinho</em> 10 vezes<br>
+      no meio do próprio trabalho.
+    </div>
+    <div class="foot">Pipeline SDD · laboratório RidersBNU · 25 ago – 10 set 2026 · dados extraídos de git log, GitHub API e specs/</div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var versions = [
+      ["v1.5.1", "26 ago"], ["v1.14.1", "03 set"], ["v1.15.0", "03 set"],
+      ["v1.15.4", "04 set"], ["v1.19.0", "07 set"], ["v1.19.2", "07 set"],
+      ["v1.20.4", "07 set"], ["v1.20.13", "09 set"], ["v1.20.20", "10 set"],
+      ["v1.21.2", "10 set"]
+    ];
+    var vtEl = document.getElementById("versiontl");
+    versions.forEach(function (v, i) {
+      var node = document.createElement("div");
+      node.className = "df-node" + (i === versions.length - 1 ? " final" : "");
+      var ver = document.createElement("div");
+      ver.className = "df-ver";
+      ver.textContent = v[0];
+      var date = document.createElement("div");
+      date.className = "df-date";
+      date.textContent = v[1];
+      node.appendChild(ver);
+      node.appendChild(date);
+      vtEl.appendChild(node);
+    });
+  })();
+
+  (function () {
+    var data = [
+      ["25 ago", 34], ["26 ago", 35], ["27 ago", 58], ["28 ago", 67], ["29 ago", 8],
+      ["30 ago", 14], ["31 ago", 19], ["01 set", 18], ["02 set", 6], ["03 set", 9],
+      ["04 set", 30], ["05 set", 11], ["06 set", 15], ["07 set", 23], ["08 set", 11],
+      ["09 set", 13], ["10 set", 14]
+    ];
+    var max = Math.max.apply(null, data.map(function (d) { return d[1]; }));
+    var barsEl = document.getElementById("bars");
+    var xEl = document.getElementById("xlabels");
+
+    [25, 50, 75].forEach(function (pct) {
+      var g = document.createElement("div");
+      g.className = "gridline";
+      g.style.bottom = pct + "%";
+      var lbl = document.createElement("span");
+      lbl.textContent = Math.round(max * pct / 100);
+      g.appendChild(lbl);
+      barsEl.appendChild(g);
+    });
+
+    data.forEach(function (d) {
+      var col = document.createElement("div");
+      col.className = "bar-col" + (d[1] === max ? " peak" : "");
+      var bar = document.createElement("div");
+      bar.className = "bar";
+      bar.style.height = Math.max(3, (d[1] / max) * 100) + "%";
+      var tip = document.createElement("div");
+      tip.className = "tip";
+      tip.textContent = d[0] + " — " + d[1] + " commits";
+      col.appendChild(tip);
+      col.appendChild(bar);
+      barsEl.appendChild(col);
+
+      var xl = document.createElement("span");
+      xl.textContent = d[0].replace(" ", "\n");
+      xEl.appendChild(xl);
+    });
+  })();
+</script>
