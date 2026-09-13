@@ -57,6 +57,15 @@ Aciona a **etapa 1** do pipeline SDD descrito em `CLAUDE.md`: geração do PRD.
    usuário, ou "não aplicável" se a feature não tem UI), e instrução explícita para salvar o PRD em
    `specs/<NNNN-slug>/prd.md` usando `specs/_template/prd.template.md` como estrutura — incluindo a
    seção "Wireframes/Protótipos de tela".
+3b. **Se `product-design` estiver rodando como subagente assíncrono/em background e devolver uma
+   pergunta/lista de perguntas em texto puro** (sinal de que `AskUserQuestion` não estava
+   disponível para ele nesse modo — mesmo padrão já documentado para `sre`/`/sdd-sre`,
+   `.claude/skills/sdd-sre/SKILL.md`, passo 4b), **você** — o orquestrador desta skill — é
+   responsável por apresentar essa(s) pergunta(s) ao usuário via *sua própria* `AskUserQuestion` e
+   repassar a resposta de volta ao agente (`SendMessage`, se ainda estiver ativo/endereçável) antes
+   de tratar o PRD como pronto para o resumo do passo 4. Não deixe a lacuna só registrada como
+   "VALIDAR DEPOIS" pelo próprio agente sem tentar obter a resposta real do usuário nesta mesma
+   rodada quando possível.
 4. Depois que o agente retornar, mostre ao usuário um resumo do PRD gerado (não o arquivo
    inteiro) e pergunte se aprova ou quer ajustes.
 5. Se pedir ajustes, repasse o feedback ao agente `product-design` (ou edite diretamente se for
