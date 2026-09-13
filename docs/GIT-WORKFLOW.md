@@ -50,7 +50,7 @@ todas as fatias de uma vez para revisar depois.
 
 | Etapa                  | Ação de Git                                                                 |
 |-------------------------|-------------------------------------------------------------------------------|
-| `/sdd-prd`, `/sdd-trd`  | Nenhuma — documentos em `specs/`, sem código/branch ainda.                    |
+| `/sdd-prd`, `/sdd-trd`  | Nenhuma — documentos em `specs/`, sem código/branch ainda (ficam como mudança não commitada até `/sdd-implement`, passo 2c-bis, incluí-los no primeiro commit da branch da 1ª fatia). |
 | `/sdd-implement`        | Escolhe a próxima fatia pendente (TRD, seção 13); confirma merge da fatia anterior (regra 3); cria a branch, abre PR draft no primeiro commit, commita por incremento. Full-stack: backend e frontend na mesma branch, em paralelo. |
 | `/sdd-code-review`      | Contra o PR desta fatia; registra em `code-review.md`, preservando o histórico das fatias anteriores; commita e envia (push) esse arquivo na mesma branch antes de devolver o resultado. |
 | `/sdd-qa`               | Contra o PR desta fatia, só os critérios de aceite cobertos por ela; registra em `qa-report.md`; commita e envia (push) esse arquivo (e o de cobertura, se regravado) na mesma branch. |
