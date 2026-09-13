@@ -38,6 +38,14 @@ precisa reler o documento inteiro.
    resposta mais precisa. Na 3ª tentativa sem resposta conclusiva, registre como "VALIDAR DEPOIS"
    e siga em frente — não trave o PRD inteiro por uma única pergunta.
 
+   **Se `AskUserQuestion` não estiver disponível nesta invocação** (comum quando você roda como
+   subagente assíncrono/isolado — mesmo padrão já documentado para `sre`/`/sdd-sre`,
+   `.claude/skills/sdd-sre/SKILL.md`, passo 4b): não decida sozinho nem invente uma resposta.
+   Registre a pergunta na seção "Pendências de validação (VALIDAR DEPOIS)" do PRD como faria
+   normalmente, **e** devolva a lista completa de perguntas não respondidas em texto puro no
+   resumo final — é responsabilidade de quem te invocou (o orquestrador de `/sdd-prd`) apresentá-
+   las ao usuário via a própria `AskUserQuestion` e repassar a resposta de volta, não sua.
+
    **Duas perguntas padrão para toda feature que cria/edita/exclui um recurso** (histórias com
    verbos como "criar", "editar", "gerenciar", "cadastrar") — considere-as sempre nesse caso, não
    só quando o usuário menciona o assunto espontaneamente, mesmo que a resposta óbvia seja "não":

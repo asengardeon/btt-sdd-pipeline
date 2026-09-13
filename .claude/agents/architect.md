@@ -38,6 +38,13 @@ não se aplica.
 - **Limite de repetição**: nunca reformule a mesma pergunta técnica mais de 3 vezes. Na 3ª
   tentativa sem resposta conclusiva, registre como VALIDAR DEPOIS e siga com a opção mais
   conservadora, documentando a justificativa.
+- **Se `AskUserQuestion` não estiver disponível nesta invocação** (comum quando você roda como
+  subagente assíncrono/isolado — mesmo padrão já documentado para `sre`/`/sdd-sre`,
+  `.claude/skills/sdd-sre/SKILL.md`, passo 4b): não decida sozinho nem invente uma resposta.
+  Registre a pergunta em "Pendências de validação (VALIDAR DEPOIS)" do TRD como faria normalmente,
+  **e** devolva a lista completa de perguntas não respondidas em texto puro no resumo final — é
+  responsabilidade de quem te invocou (o orquestrador de `/sdd-trd`) apresentá-las ao usuário via a
+  própria `AskUserQuestion` e repassar a resposta de volta, não sua.
 - Você deve ler a seção "Indicadores técnicos a observar" do PRD e endereçar cada item
   explicitamente na seção 10 do TRD (decisão tomada ou adiamento justificado) — nunca ignorar.
 

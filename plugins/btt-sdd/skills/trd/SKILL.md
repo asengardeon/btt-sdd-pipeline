@@ -19,6 +19,15 @@ Aciona a **etapa 2** do pipeline SDD descrito em `CLAUDE.md`: geração do TRD a
 3. Invoque o agente `architect` (Agent tool, `subagent_type: "architect"`) passando o caminho do
    PRD e instrução para salvar o TRD em `specs/<slug>/trd.md` usando
    `specs/_template/trd.template.md`, registrando ADRs em `docs/adr/` quando relevante.
+3b. **Se `architect` estiver rodando como subagente assíncrono/em background e devolver uma
+   pergunta/lista de perguntas em texto puro** (sinal de que `AskUserQuestion` não estava
+   disponível para ele nesse modo — mesmo padrão já documentado para `sre`/`/btt-sdd:sre`,
+   `skills/sre/SKILL.md`, passo 4b), **você** — o orquestrador desta skill — é responsável por
+   apresentar essa(s) pergunta(s) ao usuário via *sua própria* `AskUserQuestion` e repassar a
+   resposta de volta ao agente (`SendMessage`, se ainda estiver ativo/endereçável) antes de tratar
+   o TRD como pronto para o resumo do passo 4. Não deixe a lacuna só registrada como "VALIDAR
+   DEPOIS" pelo próprio agente sem tentar obter a resposta real do usuário nesta mesma rodada
+   quando possível.
 4. Mostre ao usuário um resumo do TRD (arquitetura proposta, ports definidos, principais
    trade-offs) e peça aprovação explícita.
 5. Se pedir ajustes, repasse ao `architect` até aprovação.

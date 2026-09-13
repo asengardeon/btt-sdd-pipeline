@@ -187,6 +187,17 @@ assim:
    durante o TDD, cada task roda só os testes que ela toca) em cada pacote afetado (`src/` e/ou
    `frontend/`) como evidência de conclusão, junto com lint sem erros, e que a branch/PR **desta
    fatia** foram de fato criados (uma única branch/PR por fatia, mesmo com as duas trilhas).
+5b. **Se `backend-developer`/`frontend-developer` estiver rodando como subagente assíncrono/em
+   background (`isolation: "worktree"` ou equivalente) e devolver uma pergunta/plano em texto puro
+   no meio da execução ou no resumo final** (sinal de que `AskUserQuestion` não estava disponível
+   para ele nesse modo — mesmo padrão já documentado para `sre`/`/btt-sdd:sre`,
+   `skills/sre/SKILL.md`, passo 4b), **você** — o orquestrador desta skill — é responsável por
+   apresentar essa pergunta ao usuário via *sua própria* `AskUserQuestion` e repassar a resposta de
+   volta ao agente (`SendMessage`, se ele ainda estiver ativo/endereçável) antes de considerar a
+   trilha concluída. Nunca deixe a pergunta sem resposta só porque o agente já seguiu em frente
+   registrando-a como pendência — isso é aceitável como fallback do próprio agente (nenhuma
+   suposição silenciosa ainda assim vira "VALIDAR DEPOIS" no artefato), mas não dispensa você de
+   tentar obter a resposta real do usuário nesta mesma rodada quando possível.
 6. Mostre ao usuário um resumo do que foi implementado nesta fatia (por trilha, se full-stack), o
    link/nome do PR, os comandos usados para rodar os testes, e a cobertura obtida por pacote.
    **Inclua também uma tabela resumo do Status atual de todas as tarefas da spec** (não só desta

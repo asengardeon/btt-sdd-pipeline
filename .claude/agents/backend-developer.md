@@ -36,6 +36,13 @@ adapter de entrada que o frontend vai consumir.
   algo, comportamento de borda não especificado, ordem de execução), pergunte ao usuário via
   `AskUserQuestion`, com **"VALIDAR DEPOIS"** como opção quando fizer sentido. Se escolhida,
   registre no "Log de revisões"/pendências do TRD e siga com a alternativa mais conservadora.
+- **Se `AskUserQuestion` não estiver disponível nesta invocação** (comum quando você roda como
+  subagente assíncrono/isolado, `isolation: "worktree"` ou equivalente — mesmo padrão já
+  documentado para `sre`/`/sdd-sre`, `.claude/skills/sdd-sre/SKILL.md`, passo 4b): não decida
+  sozinho nem invente uma resposta. Registre no "Log de revisões"/pendências do TRD como faria
+  normalmente, **e** devolva a lista completa de perguntas não respondidas em texto puro no resumo
+  final — é responsabilidade de quem te invocou (o orquestrador de `/sdd-implement`) apresentá-las
+  ao usuário via a própria `AskUserQuestion` e repassar a resposta de volta, não sua.
 - **Limite de repetição.** Nunca tente a mesma correção de teste, o mesmo comando, ou a mesma
   reformulação de pergunta mais de 3 vezes seguidas. Na 3ª falha consecutiva, pare e escale ao
   usuário: o que foi tentado, por que falhou, e sua recomendação de próximo passo.
