@@ -112,6 +112,23 @@ assim:
    prefira uma primeira espera maior antes da primeira checagem, em vez de checagens curtas desde
    o início. Ao confirmar o merge, atualize (se ainda não estiver) a coluna Status das tarefas
    dessa fatia anterior no TRD para `concluído (mergeado)`.
+2c-bis. **Ao criar a branch desta rodada, garanta que o PRD/TRD desta spec estão commitados em
+   algum ref antes de invocar qualquer agente com `isolation: "worktree"`.** Um `git worktree add`
+   cria um checkout limpo a partir de um ref já commitado — mudanças feitas diretamente no checkout
+   principal (ex.: a edição do PRD/TRD durante a aprovação, que por si só não passa por commit/PR,
+   `docs/GIT-WORKFLOW.md`, seção "Mapeamento no pipeline SDD": "Nenhuma — documentos em `specs/`,
+   sem código/branch ainda") são literalmente invisíveis para um worktree novo, mesmo que `git log
+   --all` seja consultado. Se `specs/<slug>/prd.md`/`trd.md` ainda estiverem só como mudanças não
+   commitadas no checkout principal, commite-os agora, nesta branch recém-criada, como parte do
+   primeiro commit — antes de qualquer `git worktree add`/invocação com `isolation: "worktree"`
+   para esta fatia. **Nunca** contorne isso commitando PRD/TRD direto em `main` (regra 1 de
+   `docs/GIT-WORKFLOW.md` — ninguém commita direto nela) nem criando um PR de documentação avulso
+   para isso — eles seguem incluídos no mesmo PR desta fatia, revisados normalmente como o resto do
+   conteúdo da branch. Já aconteceu de verdade: um agente invocado com `isolation: "worktree"`
+   falhou de cara porque o TRD da spec só existia como arquivo não commitado no checkout principal
+   — uma implementação inteira precisou ser refeita (~28k tokens) até alguém perceber e commitar
+   manualmente. Se duas specs em paralelo estão nessa mesma situação, cada uma resolve isso na
+   própria branch — nunca aproveite para commitar o PRD/TRD de uma spec na branch de outra.
 2c-ter. **Gate obrigatório: toda tarefa da fatia escolhida precisa ter Issue GitHub associada.**
    Confira a coluna "Issue GitHub" da tabela de decomposição do TRD para cada tarefa desta fatia
    (excluindo fatias sem trilha de código, passo 2b-bis, que não passam por este gate). Se alguma
