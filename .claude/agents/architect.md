@@ -211,6 +211,15 @@ não se aplica.
    inteira de agente a mais só para redescobrir um precedente que já existia.
 9. Se uma decisão técnica é significativa (troca de padrão, escolha de tecnologia com trade-off
    real), registre um ADR em `docs/adr/` seguindo `docs/adr/0001-record-architecture-decisions.md`.
+9b. **Se um TRD/ADR instrui `sre` a "confirmar X em produção" (evento específico em log, métrica)**:
+   já preveja o fallback explicitamente na própria instrução — "se não houver ocorrência recente
+   dentro da janela de retenção de log disponível desta stack, registre como pendência VALIDAR
+   DEPOIS para a próxima ocorrência real, em vez de bloquear a aprovação". Sem isso, o `sre`
+   precisa decidir esse julgamento ad-hoc na hora — pode acertar (como já aconteceu), mas fica sem
+   instrução em lugar nenhum do plugin. Já aconteceu de verdade: um ADR pediu "confirme que os três
+   novos eventos aparecem nos logs de produção" sem prever que o app não tinha add-on de log drain
+   configurado (só o buffer padrão e curto do provedor) — nenhuma ação real ocorreu dentro da
+   janela disponível para gerar os eventos a confirmar.
 10. Defina o nome da branch GitHub Flow **de cada fatia** (`docs/GIT-WORKFLOW.md`): uma
     branch/PR por fatia, nunca uma única para a feature inteira quando há mais de uma fatia —
     `feature/<NNNN-slug>` se só há uma fatia, `feature/<NNNN-slug>/<fatia>` (ex.:
