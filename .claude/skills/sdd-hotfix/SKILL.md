@@ -93,7 +93,13 @@ saída para pular rigor: TDD, code review, e as revisões que se aplicarem conti
      um novo critério pontual surge do próprio bug), rode `/sdd-qa` contra esse critério. Uma
      correção puramente técnica sem critério de aceite de produto associado (ex.: corrigir uma
      falha de performance sem mudança de comportamento observável) pode pular o QA — registre essa
-     decisão explicitamente no artefato desta rodada, nunca em silêncio.
+     decisão **com o heading padronizado `## Decisão: QA pulado (justificado)`** no
+     `qa-report.md` desta rodada (crie o arquivo a partir do template se ainda não existir, só com
+     essa seção — não é um relatório de execução de QA), com a justificativa completa logo abaixo.
+     Nunca registre essa decisão em texto livre sem esse heading — é o que permite a
+     `/sdd-status`/`/sdd-pending` (`skills/status/scripts/sdd-status.sh`/`.ps1`) reconhecerem isso
+     como um estado terminal válido em vez de "veredito não identificado", evitando que o usuário
+     seja questionado à toa sobre algo já decidido e justificado.
    - **Segurança: sempre que o diff tocar qualquer item do critério objetivo de
      `docs/QUALITY-GATES.md` (seção "Segurança (`security-engineer`)")** — autenticação,
      autorização, gestão de sessão, dados pessoais/sensíveis, ou qualquer ponto de entrada
