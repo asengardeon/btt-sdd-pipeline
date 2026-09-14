@@ -117,11 +117,12 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    principal (ex.: a edição do PRD/TRD durante a aprovação, que por si só não passa por commit/PR,
    `docs/GIT-WORKFLOW.md`, seção "Mapeamento no pipeline SDD": "Nenhuma — documentos em `specs/`,
    sem código/branch ainda") são literalmente invisíveis para um worktree novo, mesmo que `git log
-   --all` seja consultado. Se `specs/<slug>/prd.md`/`trd.md` ainda estiverem só como mudanças não
-   commitadas no checkout principal, commite-os agora, nesta branch recém-criada, como parte do
-   primeiro commit — antes de qualquer `git worktree add`/invocação com `isolation: "worktree"`
-   para esta fatia. **Nunca** contorne isso commitando PRD/TRD direto em `main` (regra 1 de
-   `docs/GIT-WORKFLOW.md` — ninguém commita direto nela) nem criando um PR de documentação avulso
+   --all` seja consultado. Se `specs/<slug>/prd.md`/`trd.md` (e `timing-log.md`, se as etapas de
+   PRD/TRD já o criaram — `specs/_template/timing-log.template.md`) ainda estiverem só como
+   mudanças não commitadas no checkout principal, commite-os agora, nesta branch recém-criada, como
+   parte do primeiro commit — antes de qualquer `git worktree add`/invocação com `isolation:
+   "worktree"` para esta fatia. **Nunca** contorne isso commitando PRD/TRD direto em `main` (regra 1
+   de `docs/GIT-WORKFLOW.md` — ninguém commita direto nela) nem criando um PR de documentação avulso
    para isso — eles seguem incluídos no mesmo PR desta fatia, revisados normalmente como o resto do
    conteúdo da branch. Já aconteceu de verdade: um agente invocado com `isolation: "worktree"`
    falhou de cara porque o TRD da spec só existia como arquivo não commitado no checkout principal
@@ -147,10 +148,11 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    uma issue foi apagada/perdida depois. Informe o usuário e ofereça, via `AskUserQuestion`,
    acionar `architect` para criar as issues faltantes desta fatia (opção recomendada) antes de
    prosseguir — nunca inicie a fatia sem elas, mesmo que o usuário peça para pular o gate.
-3. **Se só uma trilha aparece** (só backend ou só frontend): invoque o agente correspondente
-   (`backend-developer` ou `frontend-developer`, Agent tool) passando os caminhos do TRD e do
-   PRD. O agente segue seu próprio processo em duas fases (plano aprovado via `AskUserQuestion`
-   antes de codar) — você não precisa orquestrar isso manualmente.
+3. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 5a para
+   registrar a duração desta trilha. **Se só uma trilha aparece** (só backend ou só frontend):
+   invoque o agente correspondente (`backend-developer` ou `frontend-developer`, Agent tool)
+   passando os caminhos do TRD e do PRD. O agente segue seu próprio processo em duas fases (plano
+   aprovado via `AskUserQuestion` antes de codar) — você não precisa orquestrar isso manualmente.
 4. **Se as duas trilhas aparecem** (feature full-stack): você orquestra o plano combinado antes
    de invocar os agentes. **Invocar as duas trilhas em paralelo é o padrão, não uma exceção
    cautelosa** — com isolamento de working tree garantido (passo "d" abaixo), não há mais motivo
@@ -178,10 +180,12 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
       lição de `docs/LESSONS-LEARNED.md` foi aplicada e como (se alguma foi), e só prossiga com
       aprovação explícita (mesmo limite de 3 repetições dos outros agentes — na 3ª rodada sem
       convergência, registre como VALIDAR DEPOIS no TRD e pare).
-   d. Só depois de aprovado, invoque `backend-developer` e `frontend-developer` **em paralelo**
-      (uma única mensagem, duas chamadas de Agent tool), cada um com a instrução explícita: "este
-      plano já foi aprovado pelo orquestrador de /sdd-implement — pule sua Fase 1 e execute
-      direto a sua trilha: <trilha específica do agente, extraída do plano combinado>". **Invocação
+   d. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 5a
+      para registrar a duração de cada trilha. Só depois de aprovado, invoque `backend-developer` e
+      `frontend-developer` **em paralelo** (uma única mensagem, duas chamadas de Agent tool), cada
+      um com a instrução explícita: "este plano já foi aprovado pelo orquestrador de
+      /sdd-implement — pule sua Fase 1 e execute direto a sua trilha: <trilha específica do
+      agente, extraída do plano combinado>". **Invocação
       paralela no mesmo repositório exige isolamento de working tree** (`docs/GIT-WORKFLOW.md`,
       seção "Isolamento de working tree entre agentes concorrentes") — passe `isolation: "worktree"`
       em cada chamada da Agent tool; não deixe os dois agentes dividirem o mesmo diretório de
@@ -191,6 +195,15 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    durante o TDD, cada task roda só os testes que ela toca) em cada pacote afetado (`src/` e/ou
    `frontend/`) como evidência de conclusão, junto com lint sem erros, e que a branch/PR **desta
    fatia** foram de fato criados (uma única branch/PR por fatia, mesmo com as duas trilhas).
+5a. **Registre a duração desta rodada em `specs/<slug>/timing-log.md`** (crie a partir de
+   `specs/_template/timing-log.template.md` se ainda não existir): uma linha por trilha invocada
+   nesta rodada (etapa "Implementação", agente "backend-developer" e/ou "frontend-developer", fatia
+   desta rodada), com o horário anotado no passo 3 (trilha única) ou 4d (full-stack — mesmo horário
+   de início para as duas linhas, já que rodam em paralelo), o horário atual, e a diferença
+   calculada. Diferente de PRD/TRD (passo 2c-bis), aqui já existe branch/PR — commit e envie (push)
+   essa atualização junto com o resto do que esta rodada já for commitar (não é um push extra só
+   para isso, salvo se nada mais estiver pendente — `docs/GIT-WORKFLOW.md`, regra 4, sobre agrupar
+   pushes relacionados).
 5b. **Se `backend-developer`/`frontend-developer` estiver rodando como subagente assíncrono/em
    background (`isolation: "worktree"` ou equivalente) e devolver uma pergunta/plano em texto puro
    no meio da execução ou no resumo final** (sinal de que `AskUserQuestion` não estava disponível

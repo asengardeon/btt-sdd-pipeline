@@ -16,9 +16,11 @@ Aciona a **etapa 2** do pipeline SDD descrito em `CLAUDE.md`: geração do TRD a
    pergunte ao usuário qual feature) e confirme que `specs/<slug>/prd.md` existe.
 2. Se nenhum PRD foi encontrado nem indicado, informe o usuário e sugira rodar `/btt-sdd:prd`
    primeiro — não prossiga sem PRD.
-3. Invoque o agente `architect` (Agent tool, `subagent_type: "architect"`) passando o caminho do
-   PRD e instrução para salvar o TRD em `specs/<slug>/trd.md` usando
-   `specs/_template/trd.template.md`, registrando ADRs em `docs/adr/` quando relevante.
+3. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 3c para
+   registrar a duração desta invocação. Invoque o agente `architect` (Agent tool,
+   `subagent_type: "architect"`) passando o caminho do PRD e instrução para salvar o TRD em
+   `specs/<slug>/trd.md` usando `specs/_template/trd.template.md`, registrando ADRs em `docs/adr/`
+   quando relevante.
 3b. **Se `architect` estiver rodando como subagente assíncrono/em background e devolver uma
    pergunta/lista de perguntas em texto puro** (sinal de que `AskUserQuestion` não estava
    disponível para ele nesse modo — mesmo padrão já documentado para `sre`/`/btt-sdd:sre`,
@@ -28,6 +30,12 @@ Aciona a **etapa 2** do pipeline SDD descrito em `CLAUDE.md`: geração do TRD a
    o TRD como pronto para o resumo do passo 4. Não deixe a lacuna só registrada como "VALIDAR
    DEPOIS" pelo próprio agente sem tentar obter a resposta real do usuário nesta mesma rodada
    quando possível.
+3c. **Registre a duração desta invocação em `specs/<slug>/timing-log.md`** (crie a partir de
+   `specs/_template/timing-log.template.md` se ainda não existir): uma linha com o horário do
+   passo 3, o horário atual, e a diferença calculada (etapa "TRD", agente "architect", fatia "—").
+   Como o TRD em si (`docs/GIT-WORKFLOW.md`, seção "Mapeamento no pipeline SDD"), esse arquivo
+   ainda não tem branch/PR nesta etapa — fica como mudança não commitada até `/btt-sdd:implement`,
+   passo 2c-bis, incluí-lo no primeiro commit da branch da 1ª fatia junto com PRD/TRD.
 4. Mostre ao usuário um resumo do TRD (arquitetura proposta, ports definidos, principais
    trade-offs) e peça aprovação explícita.
 5. Se pedir ajustes, repasse ao `architect` até aprovação.
