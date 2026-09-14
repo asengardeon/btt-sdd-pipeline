@@ -18,8 +18,14 @@ serem pulados silenciosamente numa sessão real — ver `CLAUDE.md`, seção do 
 1. Identifique o slug da feature (mesma lógica das skills anteriores).
 2. Confirme que `specs/<slug>/qa-report.md` existe com veredito aprovado. Se não, sugira
    `/btt-sdd:qa` primeiro — não pule QA.
-2b. **Confirme que a branch está sincronizada com `main` antes de revisar.** Rode `git fetch origin
-   main` e `git rev-list --count HEAD..origin/main` — se houver commits novos em `main` desde que
+2b. **Se a branch/PR original da fatia já foi mergeado e apagado** (comum em revisão retroativa
+   pedida depois do fato — ex.: um `/btt-sdd:hotfix` que pulou segurança no momento do merge, e o
+   usuário pede para formalizar essa etapa depois), não tente localizar/rebasear uma branch
+   inexistente: siga `docs/GIT-WORKFLOW.md`, seção "Revisão retroativa de um PR já mergeado" — crie
+   uma branch nova a partir de `origin/main`, produza só o `security-review.md` desta rodada, e
+   abra um PR próprio (sem gate adicional, já que não há código novo a revisar). Caso contrário
+   (branch/PR ainda ativo), **confirme que a branch está sincronizada com `main` antes de revisar.**
+   Rode `git fetch origin main` e `git rev-list --count HEAD..origin/main` — se houver commits novos em `main` desde que
    esta branch nasceu (ex.: merge de um hotfix concorrente da mesma spec enquanto esta fatia ainda
    estava em revisão), rebaseie a branch da fatia sobre `origin/main` antes de prosseguir,
    resolvendo eventuais conflitos nos arquivos de artefato da spec (`code-review.md`/

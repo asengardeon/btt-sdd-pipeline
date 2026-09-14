@@ -19,7 +19,13 @@ pulados silenciosamente numa sessão real — ver `CLAUDE.md`, seção do pipeli
 2. Confirme que existe `specs/<slug>/code-review.md` com veredito aprovado (ou aprovado com
    ressalvas aceitas pelo usuário). Se não existir, sugira `/sdd-code-review` primeiro; se existir
    reprovado, sugira `/sdd-implement` para tratar os achados antes de rodar o QA.
-2b. **Confirme que a branch está sincronizada com `main` antes de revisar.** Rode `git fetch origin
+2b. **Se a branch/PR original da fatia já foi mergeado e apagado** (comum em revisão retroativa
+   pedida depois do fato — ex.: um `/sdd-hotfix` que pulou QA no momento do merge, e o usuário pede
+   para formalizar essa etapa depois), não tente localizar/rebasear uma branch inexistente: siga
+   `docs/GIT-WORKFLOW.md`, seção "Revisão retroativa de um PR já mergeado" — crie uma branch nova a
+   partir de `origin/main`, produza só o `qa-report.md` desta rodada, e abra um PR próprio (sem
+   gate adicional, já que não há código novo a revisar). Caso contrário (branch/PR ainda ativo),
+   **confirme que a branch está sincronizada com `main` antes de revisar.** Rode `git fetch origin
    main` e `git rev-list --count HEAD..origin/main` — se houver commits novos em `main` desde que
    esta branch nasceu (ex.: merge de um hotfix concorrente da mesma spec enquanto esta fatia ainda
    estava em revisão), rebaseie a branch da fatia sobre `origin/main` antes de prosseguir,
