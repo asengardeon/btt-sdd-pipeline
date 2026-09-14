@@ -146,8 +146,18 @@ não se aplica.
    valor" do PRD como ponto de partida para a sequência, associando cada tarefa à fatia (coluna
    "Fatia (PRD)") a que ela pertence. Inicialize a coluna Status de toda tarefa nova como
    `pendente` — as etapas seguintes do pipeline atualizam esse valor conforme o trabalho avança,
-   cada uma na sua transição (`docs/QUALITY-GATES.md`, seção "Status de tarefas"). Adicione as
-   dependências técnicas que só a arquitetura
+   cada uma na sua transição (`docs/QUALITY-GATES.md`, seção "Status de tarefas"). **Para cada
+   tarefa que implementa um critério de aceite já mapeado na seção 6 deste TRD (tabela de
+   critérios de aceite/casos de uso)**, referencie o critério diretamente no texto da tarefa (ex.:
+   "conforme US-2, seção 6") em vez de reformulá-lo livremente — uma paráfrase resumida cria uma
+   superfície de divergência textual dentro do próprio documento, que ninguém mais confere antes da
+   aprovação. Se preferir resumir para caber na tabela, releia a seção 6 correspondente ao escrever
+   cada linha (não confie em ter lido antes) e garanta que o resumo é logicamente equivalente, não
+   uma versão editada/reduzida do comportamento exigido. Já aconteceu de verdade: uma tarefa dizia
+   "estado `empty` sem mudança", divergindo da própria seção 6 do mesmo TRD (que exigia um link
+   secundário desaparecer nesse estado) — o `frontend-developer` seguiu a tarefa ao pé da letra e
+   entregou o comportamento errado, só pego pelo QA depois de code review já ter aprovado. Adicione
+   as dependências técnicas que só a arquitetura
    revela (ex.: o endpoint precisa existir — nem que seja como stub respeitando o contrato — antes
    do client de frontend poder ser testado de ponta a ponta, embora ambos possam desenvolver em
    paralelo usando dublês), mas **preserve o caráter vertical de cada fatia**: agrupe as tarefas
