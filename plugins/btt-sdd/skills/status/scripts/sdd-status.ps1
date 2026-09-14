@@ -250,6 +250,14 @@ foreach ($d in $dirs) {
         $current = "$($Labels[$stage]) (rascunho, nao aprovado)"
         $next = "(aprovar $($Labels[$stage]) antes de continuar)"
       }
+    } elseif ($stage -eq "qa-report" -and $content -match '(?mi)^#{1,4}\s*Decis.o:\s*QA pulado') {
+      # QA formalmente pulado (justificado) - issue #163: sem essa checagem, um hotfix
+      # puramente tecnico sem criterio de aceite de produto (skills/hotfix/SKILL.md, passo 5)
+      # caia no fallback "veredito nao identificado" abaixo, confundido com QA que rodou sem
+      # deixar veredito claro. Estado terminal distinto, sem proximo comando - reabrir QA e
+      # escolha explicita do usuario, nao o fluxo padrao.
+      $current = "QA pulado (justificado)"
+      $next = "(nenhum - decisao registrada)"
     } else {
       $verdict = Get-LatestVerdict $content
       if ($verdict -match '(?i)reprovado') {

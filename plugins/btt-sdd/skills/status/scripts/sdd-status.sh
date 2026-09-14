@@ -241,6 +241,14 @@ for dir in "$SPECS_DIR"/*/; do
         current="$(label "$stage") (rascunho, não aprovado)"
         next="(aprovar $(label "$stage") antes de continuar)"
       fi
+    elif [ "$stage" = "qa-report" ] && grep -qiE '^#{1,4}[[:space:]]*Decis.*o:[[:space:]]*QA pulado' "$file" 2>/dev/null; then
+      # QA formalmente pulado (justificado) — issue #163: sem essa checagem, um hotfix
+      # puramente técnico sem critério de aceite de produto (skills/hotfix/SKILL.md, passo 5)
+      # caía no fallback "veredito não identificado" do case abaixo, confundido com QA que
+      # rodou sem deixar veredito claro. Estado terminal distinto, sem próximo comando —
+      # reabrir QA é escolha explícita do usuário, não o fluxo padrão.
+      current="QA pulado (justificado)"
+      next="(nenhum — decisão registrada)"
     else
       verdict="$(latest_verdict "$file")"
       case "$verdict" in
