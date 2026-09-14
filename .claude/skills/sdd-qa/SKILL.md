@@ -36,14 +36,20 @@ pulados silenciosamente numa sessão real — ver `CLAUDE.md`, seção do pipeli
    Markdown desses arquivos), e envie (push) o resultado. Isso evita que esta e as
    etapas seguintes (segurança, SRE) commitem "às cegas" sobre uma base que já vai gerar conflito —
    descoberto só na última etapa, exigindo uma correção retroativa.
-3. Invoque o agente `qa-engineer` (Agent tool, `subagent_type: "qa-engineer"`) passando os
-   caminhos do PRD e TRD e o PR/branch da feature (`feature/<slug>`, ver `docs/GIT-WORKFLOW.md`),
-   e instrução para produzir `specs/<slug>/qa-report.md` a partir de
-   `specs/_template/qa-report.template.md`, referenciando o PR. **Sempre passe `isolation:
-   "worktree"` nesta chamada** — nunca deixe dois agentes dividirem o mesmo diretório de trabalho
-   (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes concorrentes"). Não é
-   uma condição a avaliar caso a caso ("outra tarefa pode estar ativa?") — é o padrão desta
-   invocação.
+3. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 3b para
+   registrar a duração desta invocação. Invoque o agente `qa-engineer` (Agent tool,
+   `subagent_type: "qa-engineer"`) passando os caminhos do PRD e TRD e o PR/branch da feature
+   (`feature/<slug>`, ver `docs/GIT-WORKFLOW.md`), e instrução para produzir
+   `specs/<slug>/qa-report.md` a partir de `specs/_template/qa-report.template.md`, referenciando
+   o PR. **Sempre passe `isolation: "worktree"` nesta chamada** — nunca deixe dois agentes
+   dividirem o mesmo diretório de trabalho (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working
+   tree entre agentes concorrentes"). Não é uma condição a avaliar caso a caso ("outra tarefa pode
+   estar ativa?") — é o padrão desta invocação.
+3b. **Registre a duração desta invocação em `specs/<slug>/timing-log.md`** (crie a partir de
+   `specs/_template/timing-log.template.md` se ainda não existir): uma linha com o horário do
+   passo 3, o horário atual, e a diferença calculada (etapa "QA", agente "qa-engineer", fatia desta
+   rodada). Commit e envie (push) essa atualização junto com o resto do que esta rodada já for
+   commitar (`docs/GIT-WORKFLOW.md`, regra 4, sobre agrupar pushes relacionados).
 4. Mostre ao usuário o veredito geral (aprovado/reprovado) e os pontos principais do relatório.
 5. Se reprovado, informe que a feature volta para `/sdd-implement` com os achados listados — e
    siga a seção "Retomando para corrigir achados de revisão" de

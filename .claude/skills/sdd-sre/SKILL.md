@@ -44,15 +44,22 @@ desperdiçada.
    sincronização faltar até esta última etapa — descoberta só pelo `sre`, depois que code review, QA
    e segurança já tinham commitado às cegas sobre uma base que gerava conflito, exigindo uma
    invocação extra só para resolver retroativamente.
-3. Invoque o agente `sre` (Agent tool, `subagent_type: "sre"`) passando o caminho do TRD (seção
-   de pilares de engenharia/infra), do `qa-report.md` e do `security-review.md`, e instrução para
-   produzir `specs/<slug>/sre-review.md` a partir de `specs/_template/sre-review.template.md`.
-   **Sempre passe `isolation: "worktree"` nesta chamada** — nunca deixe dois agentes dividirem o
-   mesmo diretório de trabalho (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre
-   agentes concorrentes"). Não é uma condição a avaliar caso a caso ("outra tarefa pode estar
-   ativa?") — já aconteceu numa sessão real do agente `sre` presumir incorretamente a quem
-   pertenciam arquivos não commitados de outra tarefa ativa na mesma branch e realocá-los para o
-   próprio PR; o padrão desta invocação é sempre isolar.
+3. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 3b para
+   registrar a duração desta invocação. Invoque o agente `sre` (Agent tool, `subagent_type:
+   "sre"`) passando o caminho do TRD (seção de pilares de engenharia/infra), do `qa-report.md` e do
+   `security-review.md`, e instrução para produzir `specs/<slug>/sre-review.md` a partir de
+   `specs/_template/sre-review.template.md`. **Sempre passe `isolation: "worktree"` nesta chamada**
+   — nunca deixe dois agentes dividirem o mesmo diretório de trabalho (`docs/GIT-WORKFLOW.md`,
+   seção "Isolamento de working tree entre agentes concorrentes"). Não é uma condição a avaliar
+   caso a caso ("outra tarefa pode estar ativa?") — já aconteceu numa sessão real do agente `sre`
+   presumir incorretamente a quem pertenciam arquivos não commitados de outra tarefa ativa na mesma
+   branch e realocá-los para o próprio PR; o padrão desta invocação é sempre isolar.
+3b. **Registre a duração desta invocação em `specs/<slug>/timing-log.md`** (crie a partir de
+   `specs/_template/timing-log.template.md` se ainda não existir): uma linha com o horário do
+   passo 3, o horário atual, e a diferença calculada (etapa "SRE", agente "sre", fatia desta
+   rodada). Commit e envie (push) essa atualização junto com o resto do que esta rodada já for
+   commitar (`docs/GIT-WORKFLOW.md`, regra 4, sobre agrupar pushes relacionados) — precisa estar
+   commitado antes do passo 5c (retrospectiva), que lê este arquivo.
 4. O agente `sre` já embute o gate de aprovação: qualquer proposta de mudança real de
    infraestrutura (`terraform apply`) é apresentada como plano e só executada após aprovação
    explícita do usuário via `AskUserQuestion`. Você não precisa duplicar essa confirmação, mas
@@ -89,7 +96,14 @@ desperdiçada.
    com evidência concreta dos artefatos desta rodada (não especulação genérica): pontos de melhoria
    de fluxo do próprio pipeline (etapa redundante, instrução ambígua que gerou retrabalho, gate que
    bloqueou sem necessidade), otimizações de performance, e otimizações de custo de token
-   (invocação repetida do que já existia, contexto inflado sem necessidade). Essa avaliação é
+   (invocação repetida do que já existia, contexto inflado sem necessidade). **Leia
+   `specs/<slug>/timing-log.md`, se existir**, como parte dessa avaliação — a duração de cada
+   invocação desta fatia (e, se houver histórico de fatias anteriores da mesma spec no arquivo, a
+   tendência entre elas) é evidência concreta para a análise de otimização de performance, não só
+   contagem de rodadas de correção. Uma etapa desproporcionalmente lenta em relação às outras da
+   mesma rodada (ex.: `code-reviewer` levando 3x mais que `qa-engineer` sem justificativa óbvia no
+   escopo) é candidata a virar uma issue de melhoria como qualquer outro achado desta retrospectiva.
+   Essa avaliação é
    investigação somente-leitura que não precisa ficar retida no seu contexto depois de concluída —
    prefira delegar a uma sub-tarefa isolada que devolva só as sugestões destiladas
    (`docs/QUALITY-GATES.md`, seção "Governança de decisão", bullet sobre investigação de causa

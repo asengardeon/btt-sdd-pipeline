@@ -50,13 +50,14 @@ Aciona a **etapa 1** do pipeline SDD descrito em `CLAUDE.md`: geração do PRD.
    (opção escolhida, URL do Artifact, caminho do arquivo salvo, e se `docs/DESIGN-SYSTEM.md` já
    existia, foi estabelecido nesta rodada, ou foi recusado — ou a recusa das opções em si) para o
    passo 3 abaixo. Se a feature não tem UI, pule este passo sem perguntar.
-3. Invoque o agente `product-design` (Agent tool, `subagent_type: "product-design"`) passando:
-   o pedido do usuário, o número/slug decidido, o resultado do passo 2b (opção de wireframe
-   escolhida com a referência do Artifact, o caminho do arquivo salvo em
-   `specs/<NNNN-slug>/wireframes/`, e o status do sistema de design usado, recusa explícita do
-   usuário, ou "não aplicável" se a feature não tem UI), e instrução explícita para salvar o PRD em
-   `specs/<NNNN-slug>/prd.md` usando `specs/_template/prd.template.md` como estrutura — incluindo a
-   seção "Wireframes/Protótipos de tela".
+3. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 3c para
+   registrar a duração desta invocação. Invoque o agente `product-design` (Agent tool,
+   `subagent_type: "product-design"`) passando: o pedido do usuário, o número/slug decidido, o
+   resultado do passo 2b (opção de wireframe escolhida com a referência do Artifact, o caminho do
+   arquivo salvo em `specs/<NNNN-slug>/wireframes/`, e o status do sistema de design usado, recusa
+   explícita do usuário, ou "não aplicável" se a feature não tem UI), e instrução explícita para
+   salvar o PRD em `specs/<NNNN-slug>/prd.md` usando `specs/_template/prd.template.md` como
+   estrutura — incluindo a seção "Wireframes/Protótipos de tela".
 3b. **Se `product-design` estiver rodando como subagente assíncrono/em background e devolver uma
    pergunta/lista de perguntas em texto puro** (sinal de que `AskUserQuestion` não estava
    disponível para ele nesse modo — mesmo padrão já documentado para `sre`/`/btt-sdd:sre`,
@@ -66,6 +67,13 @@ Aciona a **etapa 1** do pipeline SDD descrito em `CLAUDE.md`: geração do PRD.
    o PRD como pronto para o resumo do passo 4. Não deixe a lacuna só registrada como "VALIDAR
    DEPOIS" pelo próprio agente sem tentar obter a resposta real do usuário nesta mesma rodada
    quando possível.
+3c. **Registre a duração desta invocação em `specs/<NNNN-slug>/timing-log.md`** (crie a partir de
+   `specs/_template/timing-log.template.md` se ainda não existir): uma linha com o horário do
+   passo 3, o horário atual, e a diferença calculada (etapa "PRD", agente "product-design", fatia
+   "—"). Como o PRD em si (`docs/GIT-WORKFLOW.md`, seção "Mapeamento no pipeline SDD"), esse
+   arquivo ainda não tem branch/PR nesta etapa — fica como mudança não commitada até
+   `/btt-sdd:implement`, passo 2c-bis, incluí-lo no primeiro commit da branch da 1ª fatia junto com
+   PRD/TRD.
 4. Depois que o agente retornar, mostre ao usuário um resumo do PRD gerado (não o arquivo
    inteiro) e pergunte se aprova ou quer ajustes.
 5. Se pedir ajustes, repasse o feedback ao agente `product-design` (ou edite diretamente se for
