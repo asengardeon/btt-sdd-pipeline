@@ -154,6 +154,15 @@ qualquer código:
    origin/<branch> -1 --stat` incluindo o commit esperado. Se algo estiver faltando, refaça o
    commit/push antes de declarar sucesso — nunca reporte "commitado e enviado" só porque o comando
    `git push` não retornou erro.
+5c. **Se esta trilha tocou mais de um ponto de entrada estruturalmente equivalente** (mesma
+   correção/comportamento aplicado a N call-sites com o mesmo padrão — ex.: N endpoints usando o
+   mesmo handler compartilhado, N validações idênticas em rotas irmãs), confirme, antes de
+   reportar a trilha como concluída, que **todos** os N pontos saíram com cobertura de teste
+   equivalente — não só implementação equivalente. Liste os N pontos e confirme, um a um, que cada
+   um tem um teste dedicado ao novo comportamento (não é suficiente que o teste de um ponto cubra
+   o padrão "por amostragem"). Já aconteceu de verdade: uma correção aplicada corretamente em 7
+   pontos de entrada saiu com teste de integração dedicado em só 5 deles — os outros 2 só ganharam
+   teste depois que `code-reviewer` identificou a assimetria numa rodada extra evitável.
 6. Nunca "contorne" um teste que falha comentando/pulando (`skip`, `xfail`, mocks fake-positivos)
    para fazer o pipeline passar — corrija a causa raiz ou volte à etapa de arquitetura se o
    problema é de design. Se a mesma falha resistir a 3 tentativas de correção, pare e escale ao
