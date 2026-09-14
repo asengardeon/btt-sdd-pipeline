@@ -59,8 +59,15 @@ saída para pular rigor: TDD, code review, e as revisões que se aplicarem conti
 3. **Implemente com TDD estrito**, mesmo rigor de `.claude/agents/backend-developer.md`/
    `.claude/agents/frontend-developer.md` (teste que falha primeiro, código mínimo, refactor) —
    invoque o agente correspondente à trilha afetada (Agent tool) passando esta instrução: sem
-   TRD/PRD desta vez, o "plano" é a descrição do bug/ajuste desta rodada e o escopo do passo 1;
-   ainda assim, apresente esse plano mínimo ao usuário via `AskUserQuestion` antes do primeiro
+   TRD/PRD desta vez, o "plano" é a descrição do bug/ajuste desta rodada e o escopo do passo 1.
+   **Se a correção se aplica a múltiplos pontos de entrada estruturalmente equivalentes** (mesmo
+   padrão de UI/lógica duplicado em N lugares — ex.: N formulários de upload usando o mesmo hook
+   compartilhado, N validações idênticas em rotas irmãs), inclua explicitamente na instrução:
+   "aplique a correção com paridade de teste em todos os N pontos, não só paridade de
+   implementação" — já aconteceu de a implementação sair correta nos N pontos, mas só alguns
+   ganharem teste de integração dedicado ao novo caminho, achado só pelo `code-reviewer` numa
+   rodada extra de correção evitável.
+   Ainda assim, apresente esse plano mínimo ao usuário via `AskUserQuestion` antes do primeiro
    commit (mesmo gate de aprovação de sempre, só que sobre um escopo bem menor). **Se o plano
    envolve mutação real de infraestrutura/config vars de produção ou geração deliberada de
    tráfego/carga** (ex.: múltiplos logins concorrentes para validar esgotamento de conexão),
