@@ -237,6 +237,34 @@ Documentar isso não é opcional a cada ocorrência: sem esse checklist, cada re
 nesses arquivos exige reconstruir esse raciocínio do zero, seção por seção, várias vezes na mesma
 sessão sempre que mais de uma fatia/PR da mesma spec rebaseia em sequência.
 
+**Conflito de rebase real em código de produção — fatia vs. hotfix concorrente.** A checagem de
+drift de `main` antes de cada etapa de revisão (`git rev-list --count HEAD..origin/main` + rebase)
+normalmente resolve como fast-forward limpo. Mas quando um hotfix de outra spec (sem relação de
+escopo com esta fatia) já foi mergeado em `main` tocando o mesmo arquivo de produção que esta fatia
+edita, o rebase pode gerar um **conflito de merge real** — situação distinta da anterior (conflito
+em `code-review.md`/`qa-report.md`/etc.) porque aqui o conflito está em código/lógica de
+comportamento, não em prosa de relatório. Já aconteceu de verdade: um hotfix de outra spec mergeado
+em `main` no meio da implementação de uma fatia tocou o mesmo arquivo, exigindo do orquestrador
+resolver o conflito manualmente duas vezes (uma vez após o merge do hotfix, outra antes do code
+review), incluindo ler o arquivo inteiro por leitura direta para confirmar que as duas mudanças não
+compartilhavam estado — trabalho de reconciliação sem TDD por trás, diferente do rigor normal de
+quem implementa a fatia.
+
+Quem resolve depende da natureza do conflito:
+- **Conflito mecânico trivial** (import reordenado, formatação, marcador de conflito em torno de
+  uma linha que não muda semântica) — o orquestrador resolve diretamente, sem reacionar nenhum
+  agente.
+- **Conflito que toca lógica de comportamento sobreposta** (as duas mudanças alteram o mesmo
+  trecho funcional, mesmo que sirvam propósitos diferentes) — o orquestrador **não** edita código
+  de produção diretamente para resolver. Reacione o `backend-developer`/`frontend-developer`
+  responsável por esta fatia (via `SendMessage`, mesmo padrão de "retomar para corrigir achados",
+  `.claude/skills/sdd-implement/SKILL.md`) para refazer a resolução com TDD — ajustando/adicionando
+  teste que cubra o comportamento combinado das duas mudanças, não só editando o código de produção
+  para fazer os dois lados coexistirem.
+
+Isso não substitui a checagem de drift já existente antes de cada etapa de revisão — só cobre o
+caso em que essa checagem encontra um conflito de merge real, não um fast-forward limpo.
+
 **Operando diretamente sobre uma branch que um worktree isolado ainda segura.** Quando o
 orquestrador (não um agente novo) precisa tocar diretamente uma branch de fatia que um subagente
 com `isolation: "worktree"` tocou por último — ex.: para resolver um conflito de rebase
