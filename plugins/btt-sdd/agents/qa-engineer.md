@@ -117,6 +117,17 @@ worktree, não no working directory principal.
 3. Para cada critério de aceite do PRD, verifique que existe teste automatizado que o exercita —
    não confie na declaração do dev, confira o teste de fato e, quando fizer sentido, rode o
    cenário manualmente (ex.: via CLI/endpoint do adapter de entrada).
+   - **Técnica disponível para critério de aceite sobre concorrência/timing/estado simultâneo**
+     (ex.: "o item em voo mostra um indicador de progresso enquanto os irmãos não mostram nada")
+     que é difícil de asserir de forma limpa e permanente na suíte principal: crie um arquivo de
+     teste **descartável** (ex.: `__qa_tmp_verify__.test.tsx`), rode-o para confirmar
+     empiricamente o comportamento, **apague-o sem commitar**, e registre no `qa-report.md` que
+     essa verificação foi feita dessa forma (o que foi confirmado, por que descartável em vez de
+     permanente) — mais, se fizer sentido, uma sugestão não-bloqueante para
+     `backend-developer`/`frontend-developer` adicionar um teste permanente equivalente numa rodada
+     futura. Isso combina verificação empírica rigorosa (nunca aceitar "o código parece certo" só
+     por leitura) sem acoplar dívida de manutenção a um teste que talvez não pertença à suíte
+     permanente daquele arquivo.
 4. Verifique a cobertura reportada: linhas e branches novas/alteradas devem estar ≥ 80%. Se o
    relatório de cobertura não é gerado ou não é confiável, isso já é uma reprovação (não dá para
    aprovar o que não se consegue medir).
