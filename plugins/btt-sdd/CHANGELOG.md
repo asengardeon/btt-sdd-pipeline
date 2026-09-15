@@ -16,6 +16,14 @@ de todas as versões passadas). Projetos scaffolded antes de `1.14.0` que quiser
 mais antigas precisam comparar manualmente contra a versão atual do template uma única vez, antes
 que `/sdd-sync-docs` passe a cobrir o resto a partir daqui em diante.
 
+## 1.22.4 — 2026-09-15
+
+- `docs/QUALITY-GATES.md`, seção "Revisão de código": novo item — uma fatia que estende um
+  guard/regra de autorização já implementado por uma fatia anterior precisa renomear os testes
+  cujo nome descreve o comportamento invertido pela nova fatia (não só alterar a asserção), e
+  confirmar via grep que nenhuma referência órfã ao nome antigo do teste ficou para trás. (issue
+  #177)
+
 ## 1.22.2 — 2026-09-15
 
 - `docs/QUALITY-GATES.md`, seção "Governança de decisão": novo item — reconfirmar um ponto técnico

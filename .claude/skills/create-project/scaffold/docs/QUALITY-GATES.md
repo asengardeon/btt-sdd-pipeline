@@ -288,6 +288,11 @@ gravada por quem causa a transição.
   dois lados.
 - [ ] Débito técnico introduzido está sinalizado explicitamente (pelo dev ou pela revisão) — débito
   silencioso não documentado é achado bloqueante.
+- [ ] **Fatia que estende um guard/regra de autorização já implementado por uma fatia anterior
+  renomeia os testes cujo nome descreve o comportamento que a nova fatia inverte — não só altera a
+  asserção.** Um teste cujo nome descreve um comportamento que já não é mais verdade é uma inversão
+  semântica silenciosa. Confirme também, via grep pelo nome antigo do teste no restante da suíte,
+  que nenhuma referência órfã ficou para trás.
 - [ ] Se a fatia tem trilha de frontend, ou gera qualquer outro artefato de build/empacotamento
   distinto do código-fonte, o comando de build/empacotamento real de produção (`docs/STACK.md`)
   foi verificado (reaproveitado do arquivo de cobertura da fatia ou reexecutado nesta rodada) antes
