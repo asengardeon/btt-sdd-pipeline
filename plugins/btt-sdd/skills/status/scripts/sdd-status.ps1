@@ -155,6 +155,7 @@ function Test-FatiaPendente {
   $inSec = $false
   $headerSeen = $false
   $statusIdx = -1
+  $headerColCount = 0
   $found = $false
   foreach ($line in ($content -split "`r?`n")) {
     if ($line -match '^#{1,4}\s.*Decomposi.{3} de tarefas') { $inSec = $true; continue }
@@ -165,7 +166,12 @@ function Test-FatiaPendente {
       $cols = $trimmed -split '\|' | ForEach-Object { $_.Trim() }
       if (-not $headerSeen) {
         $headerSeen = $true
+        $headerColCount = $cols.Count
         for ($i = 0; $i -lt $cols.Count; $i++) { if ($cols[$i] -eq 'Status') { $statusIdx = $i } }
+        continue
+      }
+      if ($cols.Count -ne $headerColCount) {
+        Write-Warning "Linha da tabela de decomposicao em $TrdPath tem $($cols.Count) colunas, cabecalho tem $headerColCount - provavel '|' literal/escapado dentro de uma celula deslocando colunas; linha ignorada em vez de reportar Status errado: $line"
         continue
       }
       if ($statusIdx -ge 0 -and $statusIdx -lt $cols.Count) {

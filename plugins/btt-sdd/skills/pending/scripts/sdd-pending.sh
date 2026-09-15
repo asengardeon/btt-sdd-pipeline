@@ -75,8 +75,8 @@ dedupe_rows() {
 # pendente de verdade (issue #189). ID/Tarefa/Trilha continuam nas 3 primeiras
 # colunas, únicas cuja ordem o restante do pipeline já depende.
 print_task_rows() {
-  awk '
-    BEGIN { insec = 0; header_seen = 0; status_idx = 0; issue_idx = 0 }
+  awk -v trd="$1" '
+    BEGIN { insec = 0; header_seen = 0; status_idx = 0; issue_idx = 0; hdr_n = 0 }
     /^## .*Decomposição de tarefas e dependências/ { insec = 1; next }
     /^## / && insec == 1 { insec = 0 }
     insec == 1 && /^\|/ {
@@ -87,10 +87,15 @@ print_task_rows() {
       for (i = 1; i <= n; i++) { gsub(/^ +| +$/, "", cols[i]) }
       if (!header_seen) {
         header_seen = 1
+        hdr_n = n
         for (i = 1; i <= n; i++) {
           if (cols[i] == "Status") status_idx = i
           if (cols[i] == "Issue GitHub") issue_idx = i
         }
+        next
+      }
+      if (n != hdr_n) {
+        print "AVISO: linha da tabela de decomposição em " trd " tem " n " colunas, cabeçalho tem " hdr_n " — provável \"|\" literal/escapado dentro de uma célula deslocando colunas; linha ignorada em vez de reportar Status errado: " line > "/dev/stderr"
         next
       }
       if (status_idx > 0 && cols[1] != "") {

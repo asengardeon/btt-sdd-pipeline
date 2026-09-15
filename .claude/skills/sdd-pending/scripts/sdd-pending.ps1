@@ -44,12 +44,13 @@ function Get-PendingRows {
 # tarefa pendente de verdade (issue #189). ID/Tarefa/Trilha continuam nas 3
 # primeiras colunas, unicas cuja ordem o restante do pipeline ja depende.
 function Get-OpenTaskRows {
-  param([string]$Content)
+  param([string]$Content, [string]$SourcePath = "")
   $rows = @()
   $inSection = $false
   $headerSeen = $false
   $statusIdx = -1
   $issueIdx = -1
+  $headerColCount = 0
   foreach ($line in ($Content -split "`r?`n")) {
     # Regex so com ASCII de proposito (mesma razao do aviso no topo do arquivo):
     # casa "Decomposicao de tarefas e dependencias" com ou sem acentuacao,
@@ -62,10 +63,15 @@ function Get-OpenTaskRows {
       $cols = $trimmed -split '\|' | ForEach-Object { $_.Trim() }
       if (-not $headerSeen) {
         $headerSeen = $true
+        $headerColCount = $cols.Count
         for ($i = 0; $i -lt $cols.Count; $i++) {
           if ($cols[$i] -eq 'Status') { $statusIdx = $i }
           if ($cols[$i] -eq 'Issue GitHub') { $issueIdx = $i }
         }
+        continue
+      }
+      if ($cols.Count -ne $headerColCount) {
+        Write-Warning "Linha da tabela de decomposicao$(if ($SourcePath) { " em $SourcePath" }) tem $($cols.Count) colunas, cabecalho tem $headerColCount - provavel '|' literal/escapado dentro de uma celula deslocando colunas; linha ignorada em vez de reportar Status errado: $line"
         continue
       }
       if ($statusIdx -ge 0 -and $statusIdx -lt $cols.Count) {
@@ -132,7 +138,7 @@ if (Test-Path $SpecsDir) {
     $prdFile = Join-Path $d.FullName "prd.md"
     if (Test-Path $trdFile) {
       $content = Get-Content $trdFile -Raw
-      foreach ($row in (Get-OpenTaskRows -Content $content)) {
+      foreach ($row in (Get-OpenTaskRows -Content $content -SourcePath $trdFile)) {
         $allTaskRows += [PSCustomObject]@{ Feature = $d.Name; Id = $row.Id; Tarefa = $row.Tarefa; Trilha = $row.Trilha; Status = $row.Status; Issue = $row.Issue }
       }
     } elseif (Test-Path $prdFile) {
