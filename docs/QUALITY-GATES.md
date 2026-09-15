@@ -51,6 +51,17 @@ documento é a referência única para não duplicar a lista em cada um deles.
   subconjunto de testes do arquivo/módulo tocado pela correção. A suíte 100% completa do zero só
   precisa rodar de novo **uma vez — na última rodada de verificação antes do merge efetivo da
   fatia** — não em cada rodada intermediária de reverificação pontual.
+- [ ] **Reconfirmar um ponto técnico já documentado em detalhe por uma etapa anterior não exige
+  reescrever a explicação inteira.** Quando `code-review.md`/`qa-report.md`/`security-review.md`
+  já documentou em detalhe um mecanismo específico (ex.: uma mitigação de IDOR, uma ordem de
+  validação) com veredito "sem achado", a etapa seguinte (`qa-engineer`/`security-engineer`/`sre`)
+  continua obrigada a reconfirmar esse ponto com sua própria verificação independente (ler o teste
+  relevante, rodar o cenário) — isso não relaxa o bullet "Nenhum agente aprova/reprova o próprio
+  trabalho" nem o gate de verificação independente. Muda só como a conclusão é **registrada**: uma
+  linha referenciando o relatório anterior (ex.: "mitigação de IDOR reconfirmada independentemente
+  via teste X — mecanismo em `code-review.md`, seção N") em vez de reescrever a narrativa completa
+  do zero. Reduz tamanho de artefato e custo de geração (tempo e tokens) sem reduzir o rigor da
+  verificação.
 - [ ] **Investigação de causa raiz somente-leitura prefere uma sub-tarefa isolada a inflar o
   contexto principal.** Quando quem orquestra uma etapa (ex. `/sdd-implement` decidindo o que pedir
   numa correção pontual, ou `/sdd-pending` ajudando a responder um item VALIDAR DEPOIS) precisa ler

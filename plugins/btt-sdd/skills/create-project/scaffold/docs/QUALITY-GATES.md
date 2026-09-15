@@ -37,6 +37,13 @@ documento é a referência única para não duplicar a lista em cada um deles.
   pela correção. A suíte 100% completa do zero só precisa rodar de novo **uma vez — na última
   rodada de verificação antes do merge efetivo da fatia** — não em cada rodada intermediária de
   reverificação pontual.
+- [ ] **Reconfirmar um ponto técnico já documentado em detalhe por uma etapa anterior não exige
+  reescrever a explicação inteira.** Quando `code-review.md`/`qa-report.md`/`security-review.md`
+  já documentou em detalhe um mecanismo específico com veredito "sem achado", a etapa seguinte
+  ainda reconfirma esse ponto com sua própria verificação independente — isso não relaxa a
+  exigência de verificação independente. Muda só como a conclusão é registrada: uma linha
+  referenciando o relatório anterior em vez de reescrever a narrativa completa do zero. Reduz
+  tamanho de artefato e custo de geração sem reduzir o rigor da verificação.
 - [ ] **Investigação de causa raiz somente-leitura prefere uma sub-tarefa isolada a inflar o
   contexto principal.** Quando quem orquestra uma etapa precisa ler vários arquivos de código,
   histórico de Git, ou logs só para chegar a uma conclusão — e o conteúdo lido não precisa ficar

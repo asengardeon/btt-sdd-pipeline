@@ -16,6 +16,14 @@ de todas as versões passadas). Projetos scaffolded antes de `1.14.0` que quiser
 mais antigas precisam comparar manualmente contra a versão atual do template uma única vez, antes
 que `/sdd-sync-docs` passe a cobrir o resto a partir daqui em diante.
 
+## 1.22.2 — 2026-09-15
+
+- `docs/QUALITY-GATES.md`, seção "Governança de decisão": novo item — reconfirmar um ponto técnico
+  já documentado em detalhe por uma etapa anterior (`code-review.md`/`qa-report.md`/
+  `security-review.md`) com veredito "sem achado" não exige reescrever a explicação inteira; a
+  verificação independente continua obrigatória, mas a conclusão pode ser registrada por referência
+  cruzada ao relatório anterior, reduzindo tamanho de artefato e custo de geração. (issue #173)
+
 ## 1.21.4 — 2026-09-10
 
 - `docs/QUALITY-GATES.md`, seção "Lições aprendidas recorrentes": o mecanismo de escalonamento de
