@@ -118,8 +118,10 @@ normalmente.
    (`docs/TESTING.md`, seção "Build/empacotamento real como parte da suíte completa"). Isso já
    causou um defeito real que passou por duas rodadas de code review sem esse passo, só pego muito
    depois pelo `sre`. Reaproveite `specs/<slug>/coverage/<fatia>-<trilha>.md` se o `Commit` bater
-   com o HEAD atual (o campo "Build/empacotamento" já vem preenchido por `backend-developer`/
-   `frontend-developer`); se o arquivo faltar ou estiver desatualizado, rode o comando você mesmo
+   com o commit mais recente que tocou `src/`/`frontend/` (`git log -1 --format=%H -- src/
+   frontend/`) — nunca o HEAD literal, que sempre avança por commits docs-only de etapas anteriores
+   (o campo "Build/empacotamento" já vem preenchido por `backend-developer`/`frontend-developer`);
+   se o arquivo faltar ou estiver desatualizado, rode o comando você mesmo
    antes de aprovar. Fatia sem nenhum artefato de build/empacotamento próprio (trilha backend-only
    sem etapa de empacotamento distinta dos testes) marca esta área como "não aplicável".
 9. **Campo novo em construtor de entidade de domínio → todo ponto de reconstrução do agregado,
