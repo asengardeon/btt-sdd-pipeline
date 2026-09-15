@@ -68,24 +68,37 @@ dedupe_rows() {
 
 # Extrai da tabela "Decomposição de tarefas e dependências" do TRD as linhas
 # cujo Status ainda não chegou a "implementado" (pendente/em andamento/
-# bloqueado) — colunas: ID | Tarefa | Trilha | Fatia (PRD) | Depende de |
-# Status | Issue GitHub.
+# bloqueado). As colunas "Status"/"Issue GitHub" são resolvidas pelo texto do
+# cabeçalho, não por posição fixa — a ordem das demais colunas já variou entre
+# TRDs reais (`docs/QUALITY-GATES.md` não fixa uma ordem além de exigir as
+# duas), e um índice fixo já fez esta função nunca encontrar nenhuma tarefa
+# pendente de verdade (issue #189). ID/Tarefa/Trilha continuam nas 3 primeiras
+# colunas, únicas cuja ordem o restante do pipeline já depende.
 print_task_rows() {
   awk '
-    BEGIN { insec = 0 }
+    BEGIN { insec = 0; header_seen = 0; status_idx = 0; issue_idx = 0 }
     /^## .*Decomposição de tarefas e dependências/ { insec = 1; next }
     /^## / && insec == 1 { insec = 0 }
     insec == 1 && /^\|/ {
+      if ($0 ~ /^\|[-|[:space:]]+\|?$/) next
       line = $0
       gsub(/^\| */, "", line); gsub(/ *\|$/, "", line)
       n = split(line, cols, "|")
       for (i = 1; i <= n; i++) { gsub(/^ +| +$/, "", cols[i]) }
-      if (n >= 6 && cols[1] != "ID" && cols[1] !~ /^-+$/) {
-        status = tolower(cols[6])
+      if (!header_seen) {
+        header_seen = 1
+        for (i = 1; i <= n; i++) {
+          if (cols[i] == "Status") status_idx = i
+          if (cols[i] == "Issue GitHub") issue_idx = i
+        }
+        next
+      }
+      if (status_idx > 0 && cols[1] != "") {
+        status = tolower(cols[status_idx])
         gsub(/^\*+/, "", status)
         if (status ~ /^(pendente|em andamento|bloqueado)/) {
-          issue = (n >= 7) ? cols[7] : ""
-          printf("%s\t%s\t%s\t%s\t%s\n", cols[1], cols[2], cols[3], cols[6], issue)
+          issue = (issue_idx > 0) ? cols[issue_idx] : ""
+          printf("%s\t%s\t%s\t%s\t%s\n", cols[1], cols[2], cols[3], cols[status_idx], issue)
         }
       }
     }

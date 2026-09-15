@@ -38,12 +38,18 @@ function Get-PendingRows {
 
 # Extrai da tabela "Decomposicao de tarefas e dependencias" do TRD as linhas
 # cujo Status ainda nao chegou a "implementado" (pendente/em andamento/
-# bloqueado) - colunas: ID | Tarefa | Trilha | Fatia (PRD) | Depende de |
-# Status | Issue GitHub.
+# bloqueado). As colunas "Status"/"Issue GitHub" sao resolvidas pelo texto do
+# cabecalho, nao por posicao fixa - a ordem das demais colunas ja variou entre
+# TRDs reais, e um indice fixo ja fez esta funcao nunca encontrar nenhuma
+# tarefa pendente de verdade (issue #189). ID/Tarefa/Trilha continuam nas 3
+# primeiras colunas, unicas cuja ordem o restante do pipeline ja depende.
 function Get-OpenTaskRows {
   param([string]$Content)
   $rows = @()
   $inSection = $false
+  $headerSeen = $false
+  $statusIdx = -1
+  $issueIdx = -1
   foreach ($line in ($Content -split "`r?`n")) {
     # Regex so com ASCII de proposito (mesma razao do aviso no topo do arquivo):
     # casa "Decomposicao de tarefas e dependencias" com ou sem acentuacao,
@@ -51,12 +57,23 @@ function Get-OpenTaskRows {
     if ($line -match '^## .*Decomposi.*de tarefas e depend') { $inSection = $true; continue }
     if ($inSection -and $line -match '^## ') { $inSection = $false }
     if ($inSection -and $line -match '^\|') {
+      if ($line -match '^\|[-|\s]+\|?$') { continue }
       $trimmed = $line.Trim().Trim('|')
       $cols = $trimmed -split '\|' | ForEach-Object { $_.Trim() }
-      $status6 = $cols[5] -replace '^\*+', ''
-      if ($cols.Count -ge 6 -and $cols[0] -ne 'ID' -and $cols[0] -notmatch '^-+$' -and $status6 -match $OpenTaskStatusPattern) {
-        $issue = if ($cols.Count -ge 7) { $cols[6] } else { "" }
-        $rows += [PSCustomObject]@{ Id = $cols[0]; Tarefa = $cols[1]; Trilha = $cols[2]; Status = $cols[5]; Issue = $issue }
+      if (-not $headerSeen) {
+        $headerSeen = $true
+        for ($i = 0; $i -lt $cols.Count; $i++) {
+          if ($cols[$i] -eq 'Status') { $statusIdx = $i }
+          if ($cols[$i] -eq 'Issue GitHub') { $issueIdx = $i }
+        }
+        continue
+      }
+      if ($statusIdx -ge 0 -and $statusIdx -lt $cols.Count) {
+        $status = $cols[$statusIdx] -replace '^\*+', ''
+        if ($status -match $OpenTaskStatusPattern) {
+          $issue = if ($issueIdx -ge 0 -and $issueIdx -lt $cols.Count) { $cols[$issueIdx] } else { "" }
+          $rows += [PSCustomObject]@{ Id = $cols[0]; Tarefa = $cols[1]; Trilha = $cols[2]; Status = $cols[$statusIdx]; Issue = $issue }
+        }
       }
     }
   }
