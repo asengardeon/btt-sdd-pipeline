@@ -74,6 +74,13 @@ cobrindo tudo que foi fast-pathed desde a última auditoria de verdade, não só
 feature (primeiro commit da branch, ou `main`), que já é o comportamento padrão de uma primeira
 fatia.
 
+**"Completo" significa confirmar objetivamente, não reescrever a narrativa inteira.** Para uma
+área cujo diff acumulado (calculado acima) comprovadamente não toca nenhum arquivo relevante,
+"revisar por completo" significa confirmar isso com um comando real (`git diff --stat` ou
+equivalente) e registrar o veredito em uma linha citando esse comando como evidência — não
+reescrever do zero a investigação inteira em prosa só porque é a fatia final. Prosa detalhada de
+investigação continua obrigatória só para a(s) área(s) que o diff efetivamente toca.
+
 ## Governança de decisão
 
 - **Nenhuma suposição silenciosa.** Escolha de recurso de infraestrutura, topologia de rede,

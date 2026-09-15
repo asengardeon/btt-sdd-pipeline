@@ -41,6 +41,13 @@ desde a última auditoria de verdade, não só o que mudou nesta última fatia. 
 anterior tiver `Profundidade = completo`, use a base da própria feature (primeiro commit da
 branch, ou `main`), que já é o comportamento padrão de uma primeira fatia.
 
+**"Completo" significa confirmar objetivamente, não reescrever a narrativa inteira.** Para uma
+área cujo diff acumulado (calculado acima) comprovadamente não toca nenhum arquivo relevante,
+"revisar por completo" significa confirmar isso com um comando real (`git diff --stat` ou
+equivalente) e registrar o veredito em uma linha citando esse comando como evidência — não
+reescrever do zero a investigação inteira em prosa só porque é a fatia final. Prosa detalhada de
+investigação continua obrigatória só para a(s) área(s) que o diff efetivamente toca.
+
 **Reverificação de um achado específico já corrigido (diferente do fast path acima).** O fast
 path acima é sobre *áreas que o diff da fatia não toca*; isto aqui é sobre ser reinvocado só para
 confirmar que um achado específico do `security-review.md` foi corrigido (ex.: uma correção
