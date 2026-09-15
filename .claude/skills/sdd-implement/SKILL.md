@@ -205,16 +205,26 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    para isso, salvo se nada mais estiver pendente — `docs/GIT-WORKFLOW.md`, regra 4, sobre agrupar
    pushes relacionados).
 5b. **Se `backend-developer`/`frontend-developer` estiver rodando como subagente assíncrono/em
-   background (`isolation: "worktree"` ou equivalente) e devolver uma pergunta/plano em texto puro
-   no meio da execução ou no resumo final** (sinal de que `AskUserQuestion` não estava disponível
-   para ele nesse modo — mesmo padrão já documentado para `sre`/`/sdd-sre`, `.claude/skills/sdd-sre/
-   SKILL.md`, passo 4b), **você** — o orquestrador desta skill — é responsável por apresentar essa
-   pergunta ao usuário via *sua própria* `AskUserQuestion` e repassar a resposta de volta ao agente
-   (`SendMessage`, se ele ainda estiver ativo/endereçável) antes de considerar a trilha concluída.
-   Nunca deixe a pergunta sem resposta só porque o agente já seguiu em frente registrando-a como
-   pendência — isso é aceitável como fallback do próprio agente (nenhuma suposição silenciosa
-   ainda assim vira "VALIDAR DEPOIS" no artefato), mas não dispensa você de tentar obter a resposta
-   real do usuário nesta mesma rodada quando possível.
+   background (`isolation: "worktree"` ou equivalente) e devolver uma pergunta/plano em texto puro**
+   (sinal de que `AskUserQuestion` não estava disponível para ele nesse modo — mesmo padrão já
+   documentado para `sre`/`/sdd-sre`, `.claude/skills/sdd-sre/SKILL.md`, passo 4b), o tratamento
+   depende de **quando** isso aconteceu:
+   - **Ambiguidade pontual no meio da execução ou no resumo final** (o agente já seguiu com a
+     alternativa mais conservadora e registrou a pendência): **você** — o orquestrador desta
+     skill — é responsável por apresentar essa pergunta ao usuário via *sua própria*
+     `AskUserQuestion` e repassar a resposta de volta ao agente (`SendMessage`, se ele ainda estiver
+     ativo/endereçável) antes de considerar a trilha concluída. Nunca deixe a pergunta sem resposta
+     só porque o agente já seguiu em frente registrando-a como pendência — isso é aceitável como
+     fallback do próprio agente (nenhuma suposição silenciosa ainda assim vira "VALIDAR DEPOIS" no
+     artefato), mas não dispensa você de tentar obter a resposta real do usuário nesta mesma rodada
+     quando possível.
+   - **O plano inteiro da Fase 1 voltou em texto puro, sem nenhuma implementação ainda** (o agente
+     parou de propósito, sem tocar código — `.claude/agents/backend-developer.md`/
+     `.claude/agents/frontend-developer.md`, Fase 1, passo 3): **nunca trate isso como se já fosse
+     conclusão da trilha.** Apresente o plano ao usuário via sua própria `AskUserQuestion` e, só
+     depois de aprovação explícita, retome o agente (`SendMessage`) autorizando a Fase 2. O agente
+     fica parado indefinidamente até essa retomada — diferente do caso anterior, aqui não há
+     trabalho de trilha em andamento para "considerar concluído": não existe ainda.
 6. Mostre ao usuário um resumo do que foi implementado nesta fatia (por trilha, se full-stack), o
    link/nome do PR, os comandos usados para rodar os testes, e a cobertura obtida por pacote.
    **Inclua também uma tabela resumo do Status atual de todas as tarefas da spec** (não só desta

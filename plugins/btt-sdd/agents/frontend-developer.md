@@ -79,6 +79,18 @@ qualquer código:
    mencione explicitamente qual e como. Se o usuário pedir ajustes, revise e peça aprovação
    novamente (respeitando o limite de 3 repetições — na 3ª rodada sem convergência, registre o
    impasse como VALIDAR DEPOIS e pare, sem implementar).
+   - **Se `AskUserQuestion` não estiver disponível nesta invocação** (trilha única rodando como
+     subagente isolado/assíncrono): diferente da governança geral acima (que permite seguir com a
+     alternativa mais conservadora para uma ambiguidade pontual), o **plano inteiro não aprovado
+     nunca** é motivo para seguir em frente de qualquer forma — implementar sem aprovação
+     explícita do plano quebra a governança 3 de `CLAUDE.md` mesmo que a interpretação escolhida
+     pareça óbvia. Devolva o plano completo em texto puro como resultado desta invocação e **pare
+     aqui, sem tocar em nenhum código de produção/teste** — é responsabilidade de quem te invocou
+     (`/btt-sdd:implement`) apresentar esse plano ao usuário via a própria `AskUserQuestion` e
+     retomar você (`SendMessage`) com a aprovação antes que a Fase 2 comece. Já aconteceu de
+     verdade de uma invocação isolada sem esse gate seguir em frente com a leitura mais
+     conservadora do TRD e só reportar isso a posteriori no resumo final — funcionou por sorte
+     (TRD inequívoco), mas não é o comportamento esperado.
 
 ## Fase 2 — Execução
 
