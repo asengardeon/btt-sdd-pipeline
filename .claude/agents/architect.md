@@ -146,7 +146,15 @@ não se aplica.
    valor" do PRD como ponto de partida para a sequência, associando cada tarefa à fatia (coluna
    "Fatia (PRD)") a que ela pertence. Inicialize a coluna Status de toda tarefa nova como
    `pendente` — as etapas seguintes do pipeline atualizam esse valor conforme o trabalho avança,
-   cada uma na sua transição (`docs/QUALITY-GATES.md`, seção "Status de tarefas"). **Para cada
+   cada uma na sua transição (`docs/QUALITY-GATES.md`, seção "Status de tarefas"). **Nunca use o
+   caractere `|` literal ou escapado (`\|`) dentro de uma célula desta tabela** — os scripts que
+   leem esta tabela (`sdd-status`, `sdd-pending`) fazem `split` ingênuo por `|`, e um `\|` dentro do
+   texto de uma célula ainda conta como separador de coluna para eles, deslocando todas as colunas
+   seguintes daquela linha (já aconteceu de verdade: uma célula descrevendo valores literais entre
+   aspas com `'a' \| 'b'` fez o parser contar colunas a mais e ler o Status errado, reportando uma
+   fatia já mergeada como pendente). Se precisar mesmo citar um valor com `|` (union type, opções
+   separadas por barra), reescreva como prosa (`'a', 'b' ou 'c'`) ou use a entidade HTML `&#124;`
+   quando a barra for genuinamente necessária no texto renderizado. **Para cada
    tarefa que implementa um critério de aceite já mapeado na seção 6 deste TRD (tabela de
    critérios de aceite/casos de uso)**, referencie o critério diretamente no texto da tarefa (ex.:
    "conforme US-2, seção 6") em vez de reformulá-lo livremente — uma paráfrase resumida cria uma

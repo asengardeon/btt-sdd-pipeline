@@ -161,8 +161,8 @@ has_fatia_pendente() {
       [ "$pr_state" = "MERGED" ] && continue
     fi
     found=1
-  done < <(awk '
-    BEGIN { insec = 0; status_idx = 0; header_seen = 0 }
+  done < <(awk -v trd="$trd_file" '
+    BEGIN { insec = 0; status_idx = 0; header_seen = 0; hdr_n = 0 }
     /^#{1,4}[[:space:]].*Decomposição de tarefas/ { insec = 1; next }
     insec == 1 && /^#{1,4}[[:space:]]/ { insec = 0 }
     insec == 1 && /^\|/ {
@@ -173,12 +173,17 @@ has_fatia_pendente() {
       for (i = 1; i <= n; i++) { gsub(/^ +| +$/, "", cols[i]) }
       if (!header_seen) {
         header_seen = 1
+        hdr_n = n
         for (i = 1; i <= n; i++) { if (cols[i] == "Status") status_idx = i }
+        next
+      }
+      if (n != hdr_n) {
+        print "AVISO: linha da tabela de decomposição em " trd " tem " n " colunas, cabeçalho tem " hdr_n " — provável \"|\" literal/escapado dentro de uma célula deslocando colunas; linha ignorada em vez de reportar Status errado: " line > "/dev/stderr"
         next
       }
       if (status_idx > 0) print cols[status_idx]
     }
-  ' "$trd_file" 2>/dev/null)
+  ' "$trd_file")
   if [ "$found" = "1" ]; then echo 1; else echo 0; fi
 }
 
