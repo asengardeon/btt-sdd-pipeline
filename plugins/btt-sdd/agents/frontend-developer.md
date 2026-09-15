@@ -127,6 +127,17 @@ qualquer código:
    suficiente para confirmar o ciclo red-green-refactor sem pagar o custo da suíte inteira a cada
    incremento. Não acumule débito: se um teste tocado falha, corrija antes de seguir para o
    próximo incremento.
+4b. **Checklist pré-revisão, antes de considerar qualquer tarefa "pronta"** — dois padrões que já
+   custaram uma rodada extra de correção + reverificação completa numa sessão real, evitáveis antes
+   do code review em vez de descobertos depois:
+   - Todo uso de `URL.createObjectURL` (ex.: preview de arquivo antes do upload) tem um
+     `URL.revokeObjectURL` pareado cobrindo **sucesso, erro e desmontagem do componente** — nunca
+     só o caminho feliz. Objeto URL não revogado é vazamento de memória silencioso, sem erro visível
+     em teste ou build.
+   - Todo `aria-label`/`aria-labelledby` derivado de dado do usuário dentro de uma lista renderizada
+     dinamicamente inclui um identificador único (índice/id) — nunca só o campo de dado bruto, que
+     pode se repetir entre itens da mesma lista (ex.: dois arquivos do mesmo lote com o mesmo nome)
+     e colidir silenciosamente para tecnologia assistiva.
 5. **Só depois de concluídos todos os incrementos da sua trilha**, rode a suíte completa com
    cobertura uma única vez — é esse resultado (não os testes parciais dos incrementos) que conta
    como evidência de conclusão da trilha, antes de `/btt-sdd:code-review`. Se a suíte completa
