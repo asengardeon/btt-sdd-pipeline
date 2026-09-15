@@ -84,12 +84,15 @@ worktree, não no working directory principal.
 2. Reaproveite a evidência de teste/cobertura em vez de regenerá-la por padrão
    (`docs/TESTING.md`, seção "Reaproveitamento do artefato de cobertura entre etapas"): procure
    `specs/<slug>/coverage/<fatia>-backend.md`/`<fatia>-frontend.md` (conforme a trilha desta
-   fatia) e confira se o `Commit` gravado ali bate com o HEAD atual da branch (`git rev-parse
-   HEAD`). Se bater, use esses números como evidência de teste/cobertura desta rodada — não rode a
-   suíte completa de novo só para confirmar o que a implementação já rodou. Rode lint e a suíte
-   completa de testes com relatório de cobertura (comando documentado em `docs/TESTING.md`) você
-   mesmo só se o arquivo não existir, ou se o `Commit` estiver desatualizado (ex.: houve commit
-   novo depois da geração) — e, ao rodar, regrave o arquivo de resumo com o novo commit, no mesmo
+   fatia) e confira se o `Commit` gravado ali bate com o **commit mais recente que tocou
+   `src/`/`frontend/`** na branch (`git log -1 --format=%H -- src/ frontend/`) — nunca o HEAD
+   literal da branch, que sempre avança por commits docs-only de etapas anteriores. Se bater, use
+   esses números como evidência de teste/cobertura desta rodada — não rode a suíte completa de novo
+   só para confirmar o que a implementação já rodou. Rode lint e a suíte completa de testes com
+   relatório de cobertura (comando documentado em `docs/TESTING.md`) você mesmo só se o arquivo não
+   existir, ou se o `Commit` estiver desatualizado em relação a esse commit (ex.: houve commit de
+   código novo depois da geração) — e, ao rodar, regrave o arquivo de resumo com o novo commit, no
+   mesmo
    formato condensado (nunca copiando um relatório HTML bruto), para as etapas seguintes também
    reaproveitarem. Se estiver rodando isso num working tree isolado (`docs/GIT-WORKFLOW.md`, seção
    "Isolamento de working tree entre agentes concorrentes"), reaproveite o cache de dependências
