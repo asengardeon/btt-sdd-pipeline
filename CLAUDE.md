@@ -252,9 +252,11 @@ Detalhe completo em `docs/QUALITY-GATES.md` — aqui só o resumo:
    entrega** (não por feature inteira), PR obrigatório, merge só após revisão de código, QA,
    segurança e SRE aprovados para aquela fatia. **Vale também para mudanças no próprio pipeline**
    (agentes, skills, docs, templates) — nunca commite direto em `main`/`master`, mesmo para uma
-   edição pontual de documentação: crie uma branch com o prefixo certo (`fix/`, `hotfix/`,
-   `chore/`, `docs/`, `refactor/`, `perf/`, `test/`, `ci/` — tabela completa em
-   `docs/GIT-WORKFLOW.md`) e abra PR antes de mergear.
+   edição pontual de documentação: confirme (ou crie) uma issue do GitHub descrevendo o porquê
+   antes de criar a branch, crie uma branch com o prefixo certo (`fix/`, `hotfix/`, `chore/`,
+   `docs/`, `refactor/`, `perf/`, `test/`, `ci/` — tabela completa em `docs/GIT-WORKFLOW.md`) e
+   abra PR referenciando `Closes #N` antes de mergear — todo PR fica sempre vinculado à issue que
+   registra o porquê da mudança, não só o diff que mostra o quê mudou.
 6. Nunca avance uma etapa sem o artefato de entrada da etapa anterior existir e estar aprovado
    pelo usuário (não apenas gerado).
 7. Nunca escreva código de produção fora de `src/`/`frontend/` seguindo a separação de
