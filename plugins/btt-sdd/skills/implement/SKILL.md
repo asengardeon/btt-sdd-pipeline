@@ -45,6 +45,14 @@ assim:
    praticamente fixo por invocação, independente do tamanho da correção — dosar isso tem efeito
    multiplicativo em qualquer fatia que feche achados não-bloqueantes antes do merge (o caso mais
    comum de "retomar para corrigir").
+1c. **A janela de endereçabilidade do agente retomado no passo 1 pode ser bem mais curta do que
+   parece razoável supor** — já expirou em menos de 1h de wall-clock dentro da mesma sessão,
+   preenchida só por outras duas invocações de subagente da mesma spec (não horas, nem a sessão
+   inteira ter encerrado). Sempre tente `SendMessage` primeiro (é barato), mas **já formule o
+   pedido de correção do passo 1 de um jeito que funcione igualmente bem como prompt de abertura
+   para um agente novo** — caminhos de arquivo/linha explícitos, não referências implícitas a "o
+   que você acabou de fazer" — assim, se a retomada falhar (item `b` do passo 2 abaixo), o fallback
+   para agente novo não exige reformular o pedido do zero.
 2. Só prefira um agente **novo** (voltando aos passos 1-4 normais) quando: (a) a correção exige
    julgamento/desenho novo, não só aplicar o que já foi apontado; (b) o agente original já não
    está mais endereçável (sessão encerrada, `ListAgents` não o lista mais e uma tentativa de
