@@ -1,20 +1,23 @@
-# Changelog do scaffold do plugin btt-sdd
+# Changelog do scaffold do plugin btt-sdd (histórico — mecanismo descontinuado)
 
-Este arquivo rastreia só as mudanças em `skills/create-project/scaffold/docs/*.md` e
-`skills/create-project/scaffold/CLAUDE.md` deste plugin — os arquivos que `/create-project` copia
-para dentro de um projeto novo no momento em que ele é criado. Não é o changelog geral do plugin
-(isso seria todo o histórico de commits/PRs); é especificamente a lista do que um projeto já
-scaffolded numa versão antiga está sem, para `/sdd-sync-docs` (`docs/DOCS-SYNC.md`) comparar contra
-a versão instalada e oferecer aplicar.
+**Este arquivo é só histórico a partir da versão que removeu `/sdd-sync-docs`/`docs/DOCS-SYNC.md`
+(ver issue de consolidação dos docs de governança no repositório do plugin).** Os docs de
+governança genéricos do pipeline não são mais copiados para dentro de cada projeto novo — vivem
+bundled com o próprio plugin/distribuição (`plugins/btt-sdd/docs/`) e se atualizam sozinhos a cada
+`claude plugin update`, sem nada para um projeto precisar "sincronizar" manualmente. Não há mais
+motivo para registrar novas entradas aqui — as entradas abaixo ficam preservadas como registro do
+que já mudou no scaffold ao longo do tempo, mas nada as consome automaticamente mais.
 
-Cada entrada nova acontece no mesmo commit/PR que muda um desses arquivos — nunca depois
-(`docs/GIT-WORKFLOW.md`, seção "Mudanças no próprio pipeline").
+~~Este arquivo rastreava só as mudanças em `skills/create-project/scaffold/docs/*.md` e
+`skills/create-project/scaffold/CLAUDE.md` deste plugin — os arquivos que `/create-project` copiava
+para dentro de um projeto novo no momento em que ele era criado. Não era o changelog geral do
+plugin (isso seria todo o histórico de commits/PRs); era especificamente a lista do que um projeto
+já scaffolded numa versão antiga estava sem, para `/sdd-sync-docs` comparar contra a versão
+instalada e oferecer aplicar.~~
 
-**Rastreamento começa nesta versão (`1.14.0`)** — mudanças de scaffold anteriores a ela não têm
-entrada retroativa aqui (não há registro confiável o suficiente para reconstruir seção por seção
-de todas as versões passadas). Projetos scaffolded antes de `1.14.0` que quiserem essas melhorias
-mais antigas precisam comparar manualmente contra a versão atual do template uma única vez, antes
-que `/sdd-sync-docs` passe a cobrir o resto a partir daqui em diante.
+**Rastreamento começou na versão `1.14.0`** — mudanças de scaffold anteriores a ela não têm
+entrada retroativa aqui (não havia registro confiável o suficiente para reconstruir seção por
+seção de todas as versões passadas).
 
 ## 1.22.12 — 2026-09-17
 

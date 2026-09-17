@@ -14,6 +14,19 @@ correto). Esta skill em si não carrega lógica extra além de acionar o agente,
 pular a skill nas etapas 4-7 já causou passos de outras skills de revisão (`/btt-sdd:sre`) serem
 pulados silenciosamente numa sessão real — ver `CLAUDE.md`, seção do pipeline.
 
+## Onde ficam os docs de governança citados nesta skill
+
+Referências como `docs/GIT-WORKFLOW.md`, `docs/QUALITY-GATES.md`, `docs/TESTING.md`,
+`docs/ENGINEERING-PILLARS.md`, `docs/ARCHITECTURE.md`, `docs/SDD-WORKFLOW.md`,
+`docs/FILE-GUIDE.md` e `docs/POST-MERGE-VALIDATION.md` nesta skill apontam para os docs genéricos
+deste pipeline — **não são copiados para dentro de cada projeto que o usa**. Resolva-os a partir
+de onde esta própria skill está instalada (o "Base directory" desta invocação, dentro do plugin
+`btt-sdd`): esses docs estão em `docs/` na raiz **deste plugin instalado**, atualizado
+automaticamente a cada `claude plugin update` — não no projeto onde você está trabalhando agora.
+Se o projeto atual também tiver um `docs/<nome>.md` próprio (`STACK.md`, `BASELINE.md`,
+`LESSONS-LEARNED.md`, `adr/`), esse é conteúdo do projeto, não deste plugin — não confunda os
+dois.
+
 ## Passos
 
 1. Identifique o slug da feature (mesma lógica das skills anteriores).

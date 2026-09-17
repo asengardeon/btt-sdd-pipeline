@@ -28,9 +28,15 @@ diretamente.
 
 4. **Copie o scaffold**: todo o conteúdo da pasta `scaffold/` deste plugin (a pasta irmã deste
    arquivo `SKILL.md`, dentro de onde quer que o plugin `btt-sdd` esteja instalado) para o
-   diretório novo, preservando a estrutura (`CLAUDE.md`, `README.md`, `.gitignore`, `docs/**`,
-   `specs/_template/**`). Se o usuário deu um nome de projeto, substitua o placeholder `<nome do
-   projeto>` no `README.md` copiado.
+   diretório novo, preservando a estrutura (`CLAUDE.md`, `README.md`, `.gitignore`, `docs/adr/**`,
+   `specs/_template/**`). **Note que `docs/` do scaffold só tem `adr/`** — os docs de governança
+   genéricos do pipeline (`GIT-WORKFLOW.md`, `QUALITY-GATES.md`, `TESTING.md`, etc.) não são
+   copiados: eles vivem em `docs/` na raiz deste plugin instalado, lidos diretamente pelos
+   agentes/skills a partir de lá — nunca duplicados para dentro do projeto novo, o que elimina a
+   necessidade de qualquer sincronização futura. O `docs/` do projeto novo fica só com o que é
+   genuinamente dele (`adr/` agora; `STACK.md`/`BASELINE.md`/`LESSONS-LEARNED.md` nascem depois,
+   conforme o pipeline avança). Se o usuário deu um nome de projeto, substitua o placeholder
+   `<nome do projeto>` no `README.md` copiado.
 
 5. **Gere o primeiro PRD**: siga o mesmo processo descrito no agente `product-design` (o mesmo
    que `/btt-sdd:prd` aciona) usando os requisitos coletados no passo 1, salvando em

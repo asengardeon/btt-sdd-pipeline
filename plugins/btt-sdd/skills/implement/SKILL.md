@@ -8,6 +8,19 @@ description: Etapa 3 do pipeline SDD. Use depois que um TRD existe e foi aprovad
 Aciona a **etapa 3** do pipeline SDD descrito em `CLAUDE.md`: implementação via TDD a partir do
 TRD, em uma branch GitHub Flow (`docs/GIT-WORKFLOW.md`).
 
+## Onde ficam os docs de governança citados nesta skill
+
+Referências como `docs/GIT-WORKFLOW.md`, `docs/QUALITY-GATES.md`, `docs/TESTING.md`,
+`docs/ENGINEERING-PILLARS.md`, `docs/ARCHITECTURE.md`, `docs/SDD-WORKFLOW.md`,
+`docs/FILE-GUIDE.md` e `docs/POST-MERGE-VALIDATION.md` nesta skill apontam para os docs genéricos
+deste pipeline — **não são copiados para dentro de cada projeto que o usa**. Resolva-os a partir
+de onde esta própria skill está instalada (o "Base directory" desta invocação, dentro do plugin
+`btt-sdd`): esses docs estão em `docs/` na raiz **deste plugin instalado**, atualizado
+automaticamente a cada `claude plugin update` — não no projeto onde você está trabalhando agora.
+Se o projeto atual também tiver um `docs/<nome>.md` próprio (`STACK.md`, `BASELINE.md`,
+`LESSONS-LEARNED.md`, `adr/`), esse é conteúdo do projeto, não deste plugin — não confunda os
+dois.
+
 ## Retomando para corrigir achados de revisão (não recomeçando do zero)
 
 Quando `/btt-sdd:implement` é acionado porque `/btt-sdd:code-review`, `/btt-sdd:qa`,

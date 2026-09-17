@@ -11,6 +11,19 @@ completa (`CLAUDE.md`, `docs/`, `specs/_template/`) pronta para o pipeline
 mesmo (a sessão atual) faz o scaffolding e depois segue o processo do `product-design`
 diretamente.
 
+## Onde ficam os docs de governança citados nesta skill
+
+Referências como `docs/GIT-WORKFLOW.md`, `docs/QUALITY-GATES.md`, `docs/TESTING.md`,
+`docs/ENGINEERING-PILLARS.md`, `docs/ARCHITECTURE.md`, `docs/SDD-WORKFLOW.md`,
+`docs/FILE-GUIDE.md` e `docs/POST-MERGE-VALIDATION.md` nesta skill apontam para os docs genéricos
+deste pipeline — **não são copiados para dentro de cada projeto que o usa**. Resolva-os a partir
+de onde esta própria skill está instalada (o "Base directory" desta invocação): se for
+`.claude/skills/<esta-skill>/` apontando para este repositório via junction global (`CLAUDE.md`,
+seção "Distribuição global"), esses docs estão em `docs/` na raiz **deste mesmo repositório** —
+não necessariamente no projeto onde você está trabalhando agora. Se o projeto atual também tiver
+um `docs/<nome>.md` próprio (`STACK.md`, `BASELINE.md`, `LESSONS-LEARNED.md`, `adr/`), esse é
+conteúdo do projeto, não deste pipeline — não confunda os dois.
+
 ## Passos
 
 1. **Pergunte, não assuma** (mesma governança do resto do pipeline, `docs/QUALITY-GATES.md`):
@@ -30,11 +43,17 @@ diretamente.
    (caminho relativo à raiz do repositório onde este arquivo `SKILL.md` vive, ou seja
    `../../../plugins/btt-sdd/skills/create-project/scaffold/` a partir daqui, de onde quer que
    esta skill esteja instalada) para o diretório novo, preservando a estrutura (`CLAUDE.md`,
-   `README.md`, `.gitignore`, `docs/**`, `specs/_template/**`). Este repositório não mantém uma
-   cópia própria do scaffold em `.claude/skills/create-project/` — a cópia do plugin é a única
-   fonte, mesma usada por uma instalação standalone do plugin (`docs/GIT-WORKFLOW.md` não exige
-   isso, mas evita duas cópias divergindo silenciosamente; ver `plugins/btt-sdd/README.md`). Se o
-   usuário deu um nome de projeto, substitua o placeholder `<nome do projeto>` no `README.md`
+   `README.md`, `.gitignore`, `docs/adr/**`, `specs/_template/**`). **Note que `docs/` do
+   scaffold só tem `adr/`** — os docs de governança genéricos do pipeline (`GIT-WORKFLOW.md`,
+   `QUALITY-GATES.md`, `TESTING.md`, etc.) não são copiados: eles vivem em
+   `plugins/btt-sdd/docs/` (ou, via junction, na raiz deste repositório), lidos diretamente pelos
+   agentes/skills a partir de onde estão instalados — nunca duplicados para dentro do projeto
+   novo, o que elimina a necessidade de qualquer sincronização futura. O `docs/` do projeto novo
+   fica só com o que é genuinamente dele (`adr/` agora; `STACK.md`/`BASELINE.md`/
+   `LESSONS-LEARNED.md` nascem depois, conforme o pipeline avança). Este repositório não mantém
+   uma cópia própria do scaffold em `.claude/skills/create-project/` — a cópia do plugin é a única
+   fonte, mesma usada por uma instalação standalone do plugin (ver `plugins/btt-sdd/README.md`).
+   Se o usuário deu um nome de projeto, substitua o placeholder `<nome do projeto>` no `README.md`
    copiado.
 
 5. **Gere o primeiro PRD**: siga o processo descrito em `.claude/agents/product-design.md` (o

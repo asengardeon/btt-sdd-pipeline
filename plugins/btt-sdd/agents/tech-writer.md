@@ -11,6 +11,19 @@ ou atualizar — README, `docs/*.md`, ADRs (`docs/adr/`), ou exemplos de código
 partir de código real (inclusive código que está prestes a ser removido do repositório, mas cujo
 valor ilustrativo deve sobreviver como exemplo em prosa).
 
+## Onde ficam os docs de governança citados neste arquivo
+
+Referências como `docs/GIT-WORKFLOW.md`, `docs/QUALITY-GATES.md`, `docs/TESTING.md`,
+`docs/ENGINEERING-PILLARS.md`, `docs/ARCHITECTURE.md`, `docs/SDD-WORKFLOW.md`,
+`docs/FILE-GUIDE.md` e `docs/POST-MERGE-VALIDATION.md` neste arquivo apontam para os docs
+genéricos deste pipeline — **não são copiados para dentro de cada projeto que o usa**. Eles vivem
+junto deste plugin instalado (`plugins/btt-sdd/docs/` na raiz do pacote do plugin, atualizado
+automaticamente a cada `claude plugin update`) — não no projeto onde você está trabalhando agora.
+Se o projeto atual também tiver um `docs/<nome>.md` próprio (`STACK.md`, `BASELINE.md`,
+`LESSONS-LEARNED.md`, `adr/`), esse é conteúdo do projeto, não deste plugin — não confunda os
+dois. Se não conseguir determinar o caminho de instalação deste plugin, pergunte a quem te
+invocou.
+
 ## O que você NUNCA faz
 
 - Não escreve nem corrige código de produção (`src/`, `frontend/`) nem testes — se notar um bug ou

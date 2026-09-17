@@ -36,18 +36,18 @@ dependências entre histórias (fatias verticais de entrega)"), PR obrigatório 
 
 ## Mapeamento no pipeline SDD
 
-Com mais de uma fatia, as etapas de `/sdd-implement` a `/sdd-sre` **se repetem por fatia**:
+Com mais de uma fatia, as etapas de `/btt-sdd:implement` a `/btt-sdd:sre` **se repetem por fatia**:
 implementa, revisa/QA/segurança/SRE, mergeia, só então a fatia seguinte começa. Nunca implementa
 todas as fatias de uma vez para revisar depois.
 
 | Etapa                  | Ação de Git                                                                 |
 |-------------------------|-------------------------------------------------------------------------------|
-| `/sdd-prd`, `/sdd-trd`  | Nenhuma — documentos em `specs/`, sem código/branch ainda.                    |
-| `/sdd-implement`        | Escolhe a próxima fatia pendente (TRD, seção 13); confirma merge da fatia anterior (regra 3); cria a branch, abre PR draft no primeiro commit, commita por incremento. Full-stack: backend e frontend na mesma branch, em paralelo. |
-| `/sdd-code-review`      | Contra o PR desta fatia; registra em `code-review.md`, preservando o histórico das fatias anteriores; commita e envia (push) esse arquivo na mesma branch antes de devolver o resultado. |
-| `/sdd-qa`               | Contra o PR desta fatia, só os critérios de aceite cobertos por ela; registra em `qa-report.md`; commita e envia (push) esse arquivo (e o de cobertura, se regravado) na mesma branch. |
-| `/sdd-security`         | Contra o PR desta fatia; registra em `security-review.md`; commita e envia (push) esse arquivo na mesma branch. |
-| `/sdd-sre`              | CI/CD/infra impactados por esta fatia; aprovado = PR pronto para merge; commita e envia (push) `sre-review.md` (e qualquer ajuste de infra desta rodada) na mesma branch. |
+| `/btt-sdd:prd`, `/btt-sdd:trd`  | Nenhuma — documentos em `specs/`, sem código/branch ainda.                    |
+| `/btt-sdd:implement`        | Escolhe a próxima fatia pendente (TRD, seção 13); confirma merge da fatia anterior (regra 3); cria a branch, abre PR draft no primeiro commit, commita por incremento. Full-stack: backend e frontend na mesma branch, em paralelo. |
+| `/btt-sdd:code-review`      | Contra o PR desta fatia; registra em `code-review.md`, preservando o histórico das fatias anteriores; commita e envia (push) esse arquivo na mesma branch antes de devolver o resultado. |
+| `/btt-sdd:qa`               | Contra o PR desta fatia, só os critérios de aceite cobertos por ela; registra em `qa-report.md`; commita e envia (push) esse arquivo (e o de cobertura, se regravado) na mesma branch. |
+| `/btt-sdd:security`         | Contra o PR desta fatia; registra em `security-review.md`; commita e envia (push) esse arquivo na mesma branch. |
+| `/btt-sdd:sre`              | CI/CD/infra impactados por esta fatia; aprovado = PR pronto para merge; commita e envia (push) `sre-review.md` (e qualquer ajuste de infra desta rodada) na mesma branch. |
 | Merge do PR             | Decisão do usuário, nunca automática. Dispara CD e libera a fatia seguinte.   |
 
 ## Isolamento de working tree entre agentes concorrentes
@@ -64,10 +64,10 @@ repetir só porque "geralmente dá certo".
 **Regra: sempre que dois agentes/tarefas puderem tocar `checkout`/`commit`/`push`/`reset` no mesmo
 repositório dentro da mesma janela de tempo, cada um trabalha num working tree isolado — nunca
 dividem o mesmo diretório de trabalho.** Isso vale tanto para invocação paralela deliberada (ex.:
-`backend-developer` + `frontend-developer` na mesma fatia, `/sdd-implement` passo 4d) quanto para
+`backend-developer` + `frontend-developer` na mesma fatia, `/btt-sdd:implement` passo 4d) quanto para
 qualquer agente de revisão fazendo sua própria verificação independente (rodar suíte de testes,
 `git diff`, lint) enquanto outra tarefa desta sessão pode ainda estar ativa na mesma branch (ex.:
-uma correção retomada via `SendMessage`, `.claude/skills/sdd-implement/SKILL.md`, seção
+uma correção retomada via `SendMessage`, `skills/implement/SKILL.md`, seção
 "Retomando", ainda em andamento quando uma nova rodada de revisão é disparada). Não fica a
 critério do orquestrador perceber isso depois de um incidente — é decisão obrigatória antes de
 disparar a segunda invocação concorrente.
@@ -114,8 +114,8 @@ instância/banco/schema isolado — ex.: nome de banco derivado do worktree ou d
 compartilhado reaproveitado por agentes concorrentes. O mecanismo exato (nome de schema, container
 por execução, etc.) é decisão de `docs/STACK.md` deste projeto, não hardcoded neste template — mas
 não fica esperando alguém perceber a lacuna depois de uma contenção real: o `architect`
-(`.claude/agents/architect.md`) decide e registra essa decisão explicitamente assim que a stack de
-um projeto passa a usar um serviço com estado em testes de integração, no mesmo `/sdd-trd` que
+(`agents/architect.md`) decide e registra essa decisão explicitamente assim que a stack de
+um projeto passa a usar um serviço com estado em testes de integração, no mesmo `/btt-sdd:trd` que
 decide a stack.
 
 **Isolamento resolve a corrida de Git — não substitui dependência lógica entre etapas.** Com
@@ -123,7 +123,7 @@ isolamento garantido (mecanismo acima), duas tarefas que não dependem do result
 podem — e devem, por padrão — ser invocadas em paralelo, sem a cautela de serializar tudo "por via
 das dúvidas" que fazia sentido antes do isolamento existir. O caso mais comum no pipeline é a
 trilha de backend e a trilha de frontend de uma fatia full-stack, quando o contrato entre elas já
-está totalmente especificado no TRD (`/sdd-implement`, passo 4d) — o frontend não precisa esperar
+está totalmente especificado no TRD (`/btt-sdd:implement`, passo 4d) — o frontend não precisa esperar
 o backend terminar, desde que trabalhe contra um dublê do contrato até o endpoint existir de
 verdade. Isso **não** se aplica a etapas com dependência real de aprovação — revisão de código →
 QA → segurança → SRE continuam estritamente sequenciais independente de isolamento (cada uma exige
@@ -185,7 +185,7 @@ timeout achando que "o CI está demorando" quando na verdade é a própria ferra
 está quebrada — um desperdício de tempo/tokens investigando o lugar errado.
 
 **Timeout de job de CI sob alta concorrência do próprio pipeline é um falso-negativo conhecido.**
-Quando `/sdd-implement` (ou o orquestrador de uma sessão) dispara múltiplas fatias/PRs em paralelo
+Quando `/btt-sdd:implement` (ou o orquestrador de uma sessão) dispara múltiplas fatias/PRs em paralelo
 no mesmo projeto, os runners/rede do provedor de CI ficam sob contenção real — passos normalmente
 rápidos (`npm ci`, `npm audit`, instalação de dependências em geral) podem levar bem mais tempo que
 o observado isoladamente, estourando `timeout-minutes` do job sem nenhum teste vermelho. Já
@@ -196,9 +196,9 @@ concorrente da mesma janela. Antes de investigar isso como bug de código, tente
 de CI, não a feature. Só escale como achado bloqueante se o rerun também falhar, ou se falhar com
 teste vermelho (não só timeout).
 
-## Por que `/sdd-amend` não reescreve histórico
+## Por que `/btt-sdd:amend` não reescreve histórico
 
-Uma emenda a um artefato já aprovado (`/sdd-amend`, ver `docs/SDD-WORKFLOW.md`) nunca reescreve
+Uma emenda a um artefato já aprovado (`/btt-sdd:amend`, ver `docs/SDD-WORKFLOW.md`) nunca reescreve
 commits já feitos numa branch — adiciona um novo commit registrando a mudança. O "Log de
 revisões" do artefato é o registro de *por que* mudou; o git log é o registro de *quando*.
 
@@ -206,13 +206,13 @@ revisões" do artefato é o registro de *por que* mudou; o git log é o registro
 
 A regra 1 (`main` sempre implantável, ninguém commita direto nela) **vale para qualquer mudança
 neste repositório, não só para features rastreadas em `specs/`** — inclusive edições em
-`.claude/agents/`, `.claude/skills/`, `plugins/btt-sdd/`, `docs/` ou `specs/_template/` feitas
+`agents/`, `skills/`, `plugins/btt-sdd/`, `docs/` ou `specs/_template/` feitas
 por uma sessão do Claude Code mantendo o próprio pipeline. Esse tipo de mudança não tem PRD/TRD
 nem fatia (não é uma feature de produto), então usa uma branch simples em vez do padrão
 `feature/<NNNN-slug>/<fatia>`:
 
 1. **Confirme que existe uma issue do GitHub descrevendo o porquê desta mudança antes de criar a
-   branch.** Mesma exigência já aplicada a `/sdd-hotfix` (`docs/QUALITY-GATES.md`, seção
+   branch.** Mesma exigência já aplicada a `/btt-sdd:hotfix` (`docs/QUALITY-GATES.md`, seção
    "Implementação" — "a issue do bug/ajuste existe antes da branch ser criada"), estendida a
    qualquer mudança no próprio pipeline: o diff mostra *o quê* mudou, mas só a issue registra *por
    quê* — histórico de revisão sem isso vira uma sequência de commits sem contexto recuperável
@@ -240,11 +240,7 @@ nem fatia (não é uma feature de produto), então usa uma branch simples em vez
    1**, e só mergeie em `main` com decisão explícita do usuário — as mesmas regras 1, 4, 6 e 7
    acima se aplicam (PR obrigatório, sem push direto, sem force-push). Não há gate de QA/segurança/
    SRE automático para esse tipo de mudança (não é uma feature de produto), mas o PR ainda é o
-   mecanismo de revisão antes do merge. **Se a mudança tocar algum arquivo de
-   `skills/create-project/scaffold/docs/` ou `skills/create-project/scaffold/CLAUDE.md` deste
-   plugin**, acrescente também uma entrada em `plugins/btt-sdd/CHANGELOG.md` no mesmo commit/PR —
-   é o que permite a projetos já scaffolded em versões antigas descobrir e aplicar essa melhoria
-   depois (`docs/DOCS-SYNC.md`).
+   mecanismo de revisão antes do merge.
 
 ## Exceção histórica
 

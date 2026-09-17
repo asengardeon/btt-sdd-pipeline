@@ -2,10 +2,8 @@
 # Resumo do estágio de cada feature em specs/, sem precisar ler cada artefato
 # inteiro no contexto do agente. Usado por .claude/skills/sdd-status.
 #
-# Uso: scripts/sdd-status.sh [slug] [--check-docs]
+# Uso: scripts/sdd-status.sh [slug]
 #   slug (opcional) — mostra só aquela feature.
-#   --check-docs (opcional) — compara docs/*.md deste projeto contra o
-#     scaffold da versão instalada do plugin, sinalizando divergência.
 #
 # Saída: aproximação best-effort via grep/awk sobre a convenção de formatação
 # dos templates em specs/_template/. Se um artefato fugir muito do formato
@@ -15,49 +13,9 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SPECS_DIR="specs"
 FILTER=""
-CHECK_DOCS=0
 for arg in "$@"; do
-  case "$arg" in
-    --check-docs) CHECK_DOCS=1 ;;
-    *) FILTER="$arg" ;;
-  esac
+  FILTER="$arg"
 done
-
-# Compara docs/*.md deste projeto contra o scaffold de /create-project (siblings
-# de scripts/ sob skills/, tanto na junction quanto no pacote do plugin) — só
-# sinaliza divergência, nunca aplica merge automático (issue #23: projetos
-# criados antes de uma melhoria de processo no plugin nunca se beneficiam dela
-# até alguém perceber a divergência manualmente).
-check_docs_drift() {
-  local scaffold_docs="${SCRIPT_DIR}/../../create-project/scaffold/docs"
-  if [ ! -d "$scaffold_docs" ]; then
-    echo
-    echo "Checagem de docs desatualizados: scaffold não encontrado em '$scaffold_docs' — pulando."
-    return
-  fi
-  local plugin_json="${SCRIPT_DIR}/../../../.claude-plugin/plugin.json"
-  local version="desconhecida"
-  if [ -f "$plugin_json" ]; then
-    version="$(grep -oE '"version"[[:space:]]*:[[:space:]]*"[^"]+"' "$plugin_json" | head -1 | sed -E 's/.*"([^"]+)"$/\1/')"
-    [ -z "$version" ] && version="desconhecida"
-  fi
-
-  echo
-  echo "Checagem de docs desatualizados (docs/*.md deste projeto vs. scaffold da versão $version):"
-  local any_diff=0
-  for f in "$scaffold_docs"/*.md; do
-    [ -f "$f" ] || continue
-    name="$(basename "$f")"
-    project_file="docs/${name}"
-    if [ -f "$project_file" ] && ! cmp -s "$project_file" "$f"; then
-      any_diff=1
-      echo "  - docs/${name} diverge do scaffold da versão ${version} — revise manualmente ou peça pra atualizar."
-    fi
-  done
-  if [ "$any_diff" = "0" ]; then
-    echo "  Nenhuma divergência encontrada."
-  fi
-}
 
 # Devolve o veredito da RODADA MAIS RECENTE de um artefato de revisão: prefere a
 # última linha da tabela "Histórico de aprovações por fatia" (append-only por
@@ -324,6 +282,3 @@ if [ "$any" = "0" ]; then
   fi
 fi
 
-if [ "$CHECK_DOCS" = "1" ]; then
-  check_docs_drift
-fi
