@@ -7,8 +7,10 @@ description: Utilitário exclusivo deste repositório (btt-sdd-pipeline) — nun
 
 **Esta skill é manutenção deste repositório sobre si mesmo — não é uma etapa do pipeline SDD e
 não é distribuída com o plugin** (`plugins/btt-sdd/`, ver "⚠️ Isto é uma cópia, não um link" em
-`plugins/btt-sdd/README.md`, que lista `skills/repo-issues/` como uma segunda exceção deliberada
-ao processo de sincronização, ao lado de `skills/create-project/scaffold/`). Ela só faz sentido
+`plugins/btt-sdd/README.md`, que lista `skills/repo-issues/` como exceção deliberada ao processo
+de sincronização — nunca replicada no plugin, diferente de `skills/create-project/scaffold/`, que
+não é mais uma cópia sincronizada e sim a única cópia que existe, lida diretamente pela raiz
+deste repositório). Ela só faz sentido
 rodando dentro deste repositório: lê as issues do próprio `asengardeon/btt-sdd-pipeline`, decide
 quais fazem sentido aplicar como mudança no pipeline (agentes, skills, docs, templates), e para
 cada uma aplicada abre uma branch + PR (`docs/GIT-WORKFLOW.md`, seção "Mudanças no próprio
@@ -66,10 +68,14 @@ outra tarefa, pare e informe o usuário em vez de misturar.
       otimização de performance/token, `docs/issue-<N>-<slug>` para mudança só de documentação,
       `chore/issue-<N>-<slug>` nos demais casos.
    b. Aplique a mudança seguindo as convenções já estabelecidas deste repositório — inclusive
-      replicando para `.claude/skills/create-project/scaffold/` e `plugins/btt-sdd/` (agentes,
-      skills, scaffold) quando o conteúdo alterado tiver equivalente lá (`plugins/btt-sdd/README.md`,
-      seção "⚠️ Isto é uma cópia, não um link"). Exceção: se a própria issue for sobre algo
-      deliberadamente exclusivo deste repositório (como esta skill), não replique para o plugin.
+      replicando para `plugins/btt-sdd/` (agentes, skills) quando o conteúdo alterado tiver
+      equivalente lá (`plugins/btt-sdd/README.md`, seção "⚠️ Isto é uma cópia, não um link").
+      **Exceção ao contrário para `skills/create-project/scaffold/`**: esse conteúdo só existe em
+      `plugins/btt-sdd/skills/create-project/scaffold/` — não há cópia em
+      `.claude/skills/create-project/` para replicar (mesmo `plugins/btt-sdd/README.md`), então
+      uma mudança ali é editada uma vez só, direto no plugin. Exceção normal: se a própria issue
+      for sobre algo deliberadamente exclusivo deste repositório (como esta skill), não replique
+      para o plugin.
    c. **Se a mudança tocou qualquer arquivo dentro de `plugins/btt-sdd/`**, incremente a versão em
       `plugins/btt-sdd/.claude-plugin/plugin.json` (patch por padrão — `1.X.Y` → `1.X.(Y+1)`; minor
       se a issue introduziu uma capacidade nova, não só um ajuste; pergunte ao usuário só se a

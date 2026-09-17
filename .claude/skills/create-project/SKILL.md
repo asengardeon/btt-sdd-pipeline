@@ -26,11 +26,16 @@ diretamente.
 
 3. **Crie o diretório e inicialize git**: `mkdir` do caminho confirmado, `git init` dentro dele.
 
-4. **Copie o scaffold**: todo o conteúdo de `scaffold/` (relativo a este arquivo `SKILL.md`, ou
-   seja, `.claude/skills/create-project/scaffold/` de onde quer que esta skill esteja instalada)
-   para o diretório novo, preservando a estrutura (`CLAUDE.md`, `README.md`, `.gitignore`,
-   `docs/**`, `specs/_template/**`). Se o usuário deu um nome de projeto, substitua o placeholder
-   `<nome do projeto>` no `README.md` copiado.
+4. **Copie o scaffold**: todo o conteúdo de `plugins/btt-sdd/skills/create-project/scaffold/`
+   (caminho relativo à raiz do repositório onde este arquivo `SKILL.md` vive, ou seja
+   `../../../plugins/btt-sdd/skills/create-project/scaffold/` a partir daqui, de onde quer que
+   esta skill esteja instalada) para o diretório novo, preservando a estrutura (`CLAUDE.md`,
+   `README.md`, `.gitignore`, `docs/**`, `specs/_template/**`). Este repositório não mantém uma
+   cópia própria do scaffold em `.claude/skills/create-project/` — a cópia do plugin é a única
+   fonte, mesma usada por uma instalação standalone do plugin (`docs/GIT-WORKFLOW.md` não exige
+   isso, mas evita duas cópias divergindo silenciosamente; ver `plugins/btt-sdd/README.md`). Se o
+   usuário deu um nome de projeto, substitua o placeholder `<nome do projeto>` no `README.md`
+   copiado.
 
 5. **Gere o primeiro PRD**: siga o processo descrito em `.claude/agents/product-design.md` (o
    mesmo que `/sdd-prd` aciona) usando os requisitos coletados no passo 1, salvando em

@@ -122,8 +122,8 @@ incluindo como instalar o plugin a partir do GitHub ou localmente.
 ## Começando um projeto do zero
 
 `/create-project` pergunta requisitos, cria um diretório novo e separado, copia a estrutura
-genérica de `.claude/skills/create-project/scaffold/` para lá, e inicia o pipeline com o primeiro
-PRD — use isto para adotar o template num projeto novo, não neste repositório.
+genérica de `plugins/btt-sdd/skills/create-project/scaffold/` para lá, e inicia o pipeline com o
+primeiro PRD — use isto para adotar o template num projeto novo, não neste repositório.
 
 ## O exemplo (`specs/0001-example-task-management/`)
 

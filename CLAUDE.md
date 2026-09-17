@@ -115,8 +115,9 @@ passo de sincronização manual. Isso significa duas coisas na prática:
 - `/sdd-prd` e `/sdd-trd` aceitam um **caminho de arquivo explícito** como entrada (ex.:
   `/sdd-trd caminho/para/spec.md`), não só a convenção `specs/<slug>/`.
 - `/create-project` é a forma de começar um projeto novo do zero: pergunta requisitos, cria um
-  diretório separado, copia a estrutura genérica (`.claude/skills/create-project/scaffold/`) para
-  lá, e inicia o pipeline com o primeiro PRD.
+  diretório separado, copia a estrutura genérica (`plugins/btt-sdd/skills/create-project/
+  scaffold/` — única cópia, também usada pela instalação standalone do plugin) para lá, e inicia
+  o pipeline com o primeiro PRD.
 
 Além da junction, o mesmo pipeline também existe empacotado como **plugin instalável** do Claude
 Code, em `plugins/btt-sdd/` (manifesto `.claude-plugin/plugin.json`, mais `.claude-plugin/

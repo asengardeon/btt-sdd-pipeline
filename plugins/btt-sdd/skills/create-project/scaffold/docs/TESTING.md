@@ -127,12 +127,20 @@ pipeline:
   `specs/_template/coverage-summary.template.md`, com o commit SHA do momento da execução.
 - Qualquer etapa seguinte que precise de evidência de teste/cobertura (hoje, principalmente o
   `qa-engineer`) **lê esse arquivo em vez de rodar a suíte de novo**, desde que o campo `Commit`
-  nele bata com o HEAD atual da branch do PR (`git rev-parse HEAD`). Isso é o próprio sinal de que
-  nada mudou desde a geração — a suíte completa já rodou contra exatamente esse código.
-- Se o arquivo não existe, ou o `Commit` gravado é diferente do HEAD atual (alguém commitou depois
-  — ex.: uma correção em resposta a um achado de code review), quem precisa da evidência roda a
-  suíte completa com cobertura e **regrava o arquivo** com o novo commit — para que a etapa
-  seguinte também possa reaproveitar, em vez de cada etapa refazer a mesma checagem de novo.
+  nele bata com o **commit mais recente que tocou `src/`/`frontend/` na branch do PR**
+  (`git log -1 --format=%H -- src/ frontend/`) — **nunca o HEAD literal da branch**
+  (`git rev-parse HEAD`). Como cada etapa do pipeline (`code-review` → `qa` → `security` → `sre`)
+  commita seu próprio relatório em Markdown antes da etapa seguinte rodar, o HEAD sempre avança por
+  um commit docs-only entre uma verificação de frescor e a próxima — comparar contra o HEAD literal
+  nunca bate a partir da segunda etapa de revisão em diante, forçando reexecução completa da suíte
+  mesmo quando nenhum código mudou. Comparar contra o último commit que efetivamente tocou código é
+  o sinal correto de que nada mudou desde a geração — a suíte completa já rodou contra exatamente
+  esse código.
+- Se o arquivo não existe, ou o `Commit` gravado é diferente desse último commit que tocou
+  `src/`/`frontend/` (alguém commitou uma mudança de código depois — ex.: uma correção em resposta
+  a um achado de code review), quem precisa da evidência roda a suíte completa com cobertura e
+  **regrava o arquivo** com o novo commit — para que a etapa seguinte também possa reaproveitar, em
+  vez de cada etapa refazer a mesma checagem de novo.
 - Isso não substitui os testes tocados por incremento durante o TDD (rápidos, parciais, rodados a
   cada red-green-refactor) — só evita repetir a rodada completa final entre backend/frontend-
   developer, `qa-engineer`, e qualquer etapa futura que também precise da evidência.
