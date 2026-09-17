@@ -11,7 +11,7 @@ não um relatório bruto (nunca cole aqui o HTML/XML/JSON original, nem um dump 
 arquivo 100% coberto). Extraia só o que muda uma decisão de aprovação: números agregados e as
 lacunas abaixo do gate. Qualquer etapa seguinte que precise desta evidência **lê este arquivo em
 vez de rodar a suíte de novo**, contanto que o campo `Commit` acima seja igual ao HEAD atual da
-branch (ver `docs/TESTING.md`, seção "Reaproveitamento do artefato de cobertura entre etapas"). Se
+branch (ver `TESTING.md` do pipeline, seção "Reaproveitamento do artefato de cobertura entre etapas"). Se
 divergir, quem precisar da evidência roda a suíte e regrava este arquivo — nunca segue com um
 número desatualizado.
 

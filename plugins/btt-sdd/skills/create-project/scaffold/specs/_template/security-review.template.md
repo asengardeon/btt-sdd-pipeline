@@ -77,7 +77,7 @@ identificável com as ferramentas disponíveis. Se não há scanner automatizado
 **ID no formato `SEC-<AAAA-MM-DD>-<slug-curto>`** (data + slug curto do próprio item — nunca um
 contador sequencial simples como `SEC-1`/`SEC-2`): duas branches de fatia paralelas calculando o
 "próximo número" a partir da própria cópia local já geraram colisão real de ID em merge (mesmo
-critério de `docs/LESSONS-LEARNED.md`, `docs/QUALITY-GATES.md`). Na rara colisão de duas entradas
+critério de `docs/LESSONS-LEARNED.md`, `QUALITY-GATES.md` do pipeline). Na rara colisão de duas entradas
 com data e slug idênticos, acrescente um sufixo numérico ao segundo (`-2`, `-3`, ...) no momento
 do merge.
 
