@@ -27,7 +27,7 @@ criado/atualizado com o mesmo conteúdo — próximas features reaproveitam a pa
 
 ## 3. Visão de arquitetura
 
-Como a feature se encaixa em ports & adapters (`docs/ARCHITECTURE.md`):
+Como a feature se encaixa em ports & adapters (`ARCHITECTURE.md`, do pipeline):
 
 ```
 [adapter de entrada] → [caso de uso] → [port] ← [adapter de saída]
@@ -96,7 +96,7 @@ se houver).
 ## 10. Pilares de engenharia de software
 
 Cada pilar exige resposta explícita — "não se aplica, porque X" é uma resposta válida; em branco
-não é. Detalhe conceitual de cada pilar em `docs/ENGINEERING-PILLARS.md`.
+não é. Detalhe conceitual de cada pilar em `ENGINEERING-PILLARS.md` (do pipeline).
 
 - **Performance**: <latência/throughput esperado, ou "não se aplica, porque..."`>
 - **Escalabilidade**: <a feature introduz estado em memória do processo? aguenta múltiplas
@@ -107,7 +107,7 @@ não é. Detalhe conceitual de cada pilar em `docs/ENGINEERING-PILLARS.md`.
   aceitável/irrelevante — e por quê`>
 - **Observabilidade** (logs/métricas mínimas): <o que precisa ser logado/medido nas fronteiras de
   adapter para diagnosticar problema em produção`>
-- **Manutenibilidade**: <desvio deliberado de SOLID/Clean Code (`docs/ARCHITECTURE.md`), se
+- **Manutenibilidade**: <desvio deliberado de SOLID/Clean Code (`ARCHITECTURE.md`, do pipeline), se
   houver, com justificativa; senão "nenhum desvio"`>
 - **Impacto em infraestrutura para o SRE revisar:** <fila? cache? novo serviço? escalonamento?
   ou "nenhum">
@@ -123,7 +123,7 @@ não é. Detalhe conceitual de cada pilar em `docs/ENGINEERING-PILLARS.md`.
 - Integração: quais adapters, contra o quê (ex.: banco em memória/container de teste).
 - E2E: quais fluxos ponta a ponta.
 - Frontend (se aplicável): componentes/serviços testados com dublê do contrato da seção 8.
-- Meta de cobertura: 80% por pacote (`src/` e, se aplicável, `frontend/` — ver `docs/TESTING.md`).
+- Meta de cobertura: 80% por pacote (`src/` e, se aplicável, `frontend/` — ver `TESTING.md`, do pipeline).
 
 ## 12. Riscos e trade-offs
 
@@ -157,7 +157,7 @@ escreva "não aplicável".
 A coluna **Status** é a fonte de verdade de onde cada tarefa está, mantida **in-place** por quem
 causa cada transição — nunca inferida depois por outra etapa. `architect` inicializa toda tarefa
 nova como `pendente`. Ciclo de vida completo e responsabilidade de cada transição em
-`docs/QUALITY-GATES.md`, seção "Status de tarefas": `pendente` → `em andamento` → `implementado`
+`QUALITY-GATES.md` (do pipeline), seção "Status de tarefas": `pendente` → `em andamento` → `implementado`
 → `aprovado` → `concluído (mergeado)`, com `bloqueado` como estado de exceção (uma revisão
 reprovou; volta a `em andamento` quando a correção começa).
 
@@ -197,7 +197,7 @@ na issue associada (`gh issue comment`), para o TRD e o GitHub nunca divergirem.
 
 Cada fatia vertical da seção 13 é entregue como sua **própria branch/PR**, incremental sobre a
 fatia anterior já mergeada em `main` — nunca uma branch/PR única cobrindo todas as fatias de uma
-vez (ver `docs/GIT-WORKFLOW.md`). A branch da fatia N só é criada depois que o PR da fatia N-1
+vez (ver `GIT-WORKFLOW.md`, do pipeline). A branch da fatia N só é criada depois que o PR da fatia N-1
 está mergeado.
 
 | Fatia | Branch                                              | PR                            | Status                              |

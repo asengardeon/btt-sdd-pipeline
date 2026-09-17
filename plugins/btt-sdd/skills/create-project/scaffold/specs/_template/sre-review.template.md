@@ -44,7 +44,7 @@ Evidência/observações:
 - [ ] Deploy só roda após CI verde
 - [ ] `terraform apply` gated (plan revisável, aprovação manual quando aplicável)
 - [ ] Estratégia de rollback documentada
-- [ ] `main` protegida (GitHub Flow, ver `docs/GIT-WORKFLOW.md`): push direto bloqueado, PR
+- [ ] `main` protegida (GitHub Flow, ver `GIT-WORKFLOW.md`, do pipeline): push direto bloqueado, PR
   obrigatório, status checks do CI obrigatórios
 
 Evidência/observações:
@@ -91,6 +91,6 @@ Evidência/observações:
 
 ## 10. Próximo passo
 
-Se aprovado: esta fatia está pronta para merge em `main` (`docs/GIT-WORKFLOW.md`) — se houver
+Se aprovado: esta fatia está pronta para merge em `main` (`GIT-WORKFLOW.md`, do pipeline) — se houver
 fatias seguintes na feature, elas só começam depois deste merge. Caso contrário: itens acima devem
 ser resolvidos antes.

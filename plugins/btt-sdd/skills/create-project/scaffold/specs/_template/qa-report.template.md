@@ -48,7 +48,7 @@ Resultado da suíte completa (não só os testes novos): `<passou/falhou, X test
 ### 4b. Build/empacotamento real (se a fatia tem trilha de frontend ou gera artefato próprio)
 
 Resultado do comando de build/empacotamento real de produção (`docs/STACK.md`), reaproveitado de
-`specs/<slug>/coverage/<fatia>-<trilha>.md` ou reexecutado nesta rodada — `docs/TESTING.md`, seção
+`specs/<slug>/coverage/<fatia>-<trilha>.md` ou reexecutado nesta rodada — `TESTING.md` (do pipeline), seção
 "Build/empacotamento real como parte da suíte completa". Lint/tipo/teste unitário sozinhos não
 contam como suíte completa quando este campo se aplica. "Não aplicável" se a fatia é backend-only
 sem etapa de empacotamento própria além dos testes.
@@ -70,7 +70,7 @@ se ele não souber responder agora, registre aqui em vez de decidir por conta pr
 formato `QA-<AAAA-MM-DD>-<slug-curto>`** (data + slug curto do próprio item — nunca um contador
 sequencial simples como `QA-1`/`QA-2`): duas branches de fatia paralelas calculando o "próximo
 número" a partir da própria cópia local já geraram colisão real de ID em merge (mesmo critério de
-`docs/LESSONS-LEARNED.md`, `docs/QUALITY-GATES.md`). Na rara colisão de duas entradas com data e
+`docs/LESSONS-LEARNED.md`, `QUALITY-GATES.md` do pipeline). Na rara colisão de duas entradas com data e
 slug idênticos, acrescente um sufixo numérico ao segundo (`-2`, `-3`, ...) no momento do merge.
 
 | ID                              | Pergunta                          | Contexto                              | Status              |
