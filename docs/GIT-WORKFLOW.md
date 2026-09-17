@@ -363,11 +363,7 @@ nem fatia (não é uma feature de produto), então usa uma branch simples em vez
 2. Commite nessa branch, abra o PR, e só mergeie em `main` com decisão explícita do usuário — as
    mesmas regras 1, 4, 6 e 7 acima se aplicam (PR obrigatório, sem push direto, sem force-push).
    Não há gate de QA/segurança/SRE automático para esse tipo de mudança (não é uma feature de
-   produto), mas o PR ainda é o mecanismo de revisão antes do merge. **Se a mudança tocar algum
-   arquivo de `skills/create-project/scaffold/docs/` ou `skills/create-project/scaffold/CLAUDE.md`
-   deste plugin**, acrescente também uma entrada em `plugins/btt-sdd/CHANGELOG.md` no mesmo
-   commit/PR — é o que permite a projetos já scaffolded em versões antigas descobrir e aplicar essa
-   melhoria depois (`docs/DOCS-SYNC.md`).
+   produto), mas o PR ainda é o mecanismo de revisão antes do merge.
 
 ## Exceção histórica
 

@@ -11,9 +11,9 @@ Todo código de produção neste repositório nasce assim:
 3. **Refactor** — com os testes verdes como rede de segurança, elimine duplicação, melhore nomes,
    simplifique — sem mudar comportamento observável.
 
-Isso é responsabilidade de `backend-developer` (`.claude/agents/backend-developer.md`) e, quando a
-feature tem UI, `frontend-developer` (`.claude/agents/frontend-developer.md`), em todo
-`/sdd-implement`.
+Isso é responsabilidade de `backend-developer` (`agents/backend-developer.md`) e, quando a
+feature tem UI, `frontend-developer` (`agents/frontend-developer.md`), em todo
+`/btt-sdd:implement`.
 
 ## Pirâmide de testes mapeada em ports & adapters
 
@@ -45,7 +45,7 @@ que sobe backend+frontend juntos é uma decisão do `architect` a registrar no T
 **"E2E do fluxo humano" sem harness de browser real contra backend real.** Se este projeto não tem
 uma suíte de e2e de browser disponível contra um backend real (nenhum harness documentado aqui ou
 em `docs/STACK.md`), uma tarefa de TRD descrita como "e2e do fluxo humano" não pode presumir
-implicitamente esse tipo de suíte — o `architect` (`.claude/agents/architect.md`, seção "Plano de
+implicitamente esse tipo de suíte — o `architect` (`agents/architect.md`, seção "Plano de
 testes de alto nível") já especifica o mecanismo de verificação alternativo esperado (ex.: um
 teste de integração HTTP encadeando os endpoints reais envolvidos, sem dublê, como prova do
 fluxo) diretamente na tarefa, em vez de deixar para quem implementa decidir ou perguntar no meio
@@ -85,7 +85,7 @@ Docker/emuladores locais — nunca contra o ambiente de produção real:
 - **Serviço de nuvem gerenciado** (S3, filas, etc.): emulador local (`docs/STACK.md`, seção
   "Simulação de nuvem local") — nunca a conta real de produção.
 - **Banco/filas/dependências próprias do projeto**: container de teste (`docker-compose.yml`,
-  `infra/docker/`, `.claude/agents/sre.md`, seção "Docker de desenvolvimento local") — nunca o
+  `infra/docker/`, `agents/sre.md`, seção "Docker de desenvolvimento local") — nunca o
   banco de produção.
 - **Testes de navegação** (e2e via browser automation): sobem a aplicação localmente (Docker ou
   equivalente) e navegam contra esse ambiente controlado — nunca contra a URL de produção real, o
@@ -122,7 +122,7 @@ resultado, tokens). Ela só precisa rodar **uma vez por commit**, não uma vez p
 pipeline:
 
 - `backend-developer`/`frontend-developer` rodam a suíte completa com cobertura ao final da
-  trilha (`.claude/agents/backend-developer.md`, `.claude/agents/frontend-developer.md`) e gravam
+  trilha (`agents/backend-developer.md`, `agents/frontend-developer.md`) e gravam
   o resultado em `specs/<slug>/coverage/<fatia>-<trilha>.md`, a partir de
   `specs/_template/coverage-summary.template.md`, com o commit SHA do momento da execução.
 - Qualquer etapa seguinte que precise de evidência de teste/cobertura (hoje, principalmente o

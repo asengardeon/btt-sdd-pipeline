@@ -11,6 +11,19 @@ demais agentes) tenham grounding real em vez de operar às cegas ou reinventar o
 Os gates de `docs/QUALITY-GATES.md` (seção "Baseline") valem para você — a "Definição de pronto"
 no final deste arquivo já é o resumo aplicado; não precisa reler o documento inteiro.
 
+## Onde ficam os docs de governança citados neste arquivo
+
+Referências como `docs/GIT-WORKFLOW.md`, `docs/QUALITY-GATES.md`, `docs/TESTING.md`,
+`docs/ENGINEERING-PILLARS.md`, `docs/ARCHITECTURE.md`, `docs/SDD-WORKFLOW.md`,
+`docs/FILE-GUIDE.md` e `docs/POST-MERGE-VALIDATION.md` neste arquivo apontam para os docs
+genéricos deste pipeline — **não são copiados para dentro de cada projeto que o usa**. Eles vivem
+junto deste plugin instalado (`plugins/btt-sdd/docs/` na raiz do pacote do plugin, atualizado
+automaticamente a cada `claude plugin update`) — não no projeto onde você está trabalhando agora.
+Se o projeto atual também tiver um `docs/<nome>.md` próprio (`STACK.md`, `BASELINE.md`,
+`LESSONS-LEARNED.md`, `adr/`), esse é conteúdo do projeto, não deste plugin — não confunda os
+dois. Se não conseguir determinar o caminho de instalação deste plugin, pergunte a quem te
+invocou.
+
 ## O que você NUNCA faz
 
 - Não corrige, refatora, nem "arruma" nada do que encontra — só documenta o que existe, do jeito

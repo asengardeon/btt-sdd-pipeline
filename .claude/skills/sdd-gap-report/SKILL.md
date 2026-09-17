@@ -10,6 +10,19 @@ Não aciona nenhum agente — é um utilitário de leitura, como `/sdd-status` e
 no nível de **caso de uso individual** em vez de etapa do pipeline: responde "o que desta feature
 já está implementado de verdade, e o que ainda é só desenho no TRD".
 
+## Onde ficam os docs de governança citados nesta skill
+
+Referências como `docs/GIT-WORKFLOW.md`, `docs/QUALITY-GATES.md`, `docs/TESTING.md`,
+`docs/ENGINEERING-PILLARS.md`, `docs/ARCHITECTURE.md`, `docs/SDD-WORKFLOW.md`,
+`docs/FILE-GUIDE.md` e `docs/POST-MERGE-VALIDATION.md` nesta skill apontam para os docs genéricos
+deste pipeline — **não são copiados para dentro de cada projeto que o usa**. Resolva-os a partir
+de onde esta própria skill está instalada (o "Base directory" desta invocação): se for
+`.claude/skills/<esta-skill>/` apontando para este repositório via junction global (`CLAUDE.md`,
+seção "Distribuição global"), esses docs estão em `docs/` na raiz **deste mesmo repositório** —
+não necessariamente no projeto onde você está trabalhando agora. Se o projeto atual também tiver
+um `docs/<nome>.md` próprio (`STACK.md`, `BASELINE.md`, `LESSONS-LEARNED.md`, `adr/`), esse é
+conteúdo do projeto, não deste pipeline — não confunda os dois.
+
 ## Passos
 
 1. **Prefira o script auxiliar em vez de reler o TRD inteiro e grepar classe por classe

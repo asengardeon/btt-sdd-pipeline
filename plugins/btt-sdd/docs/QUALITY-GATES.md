@@ -3,7 +3,7 @@
 Checklist único e não-negociável. Qualquer agente (ou pessoa) trabalhando neste repositório
 verifica isto antes de avançar uma etapa. Um gate marcado aqui como bloqueante **bloqueia mesmo**
 — não é sugestão, é a definição do que "pronto" significa neste pipeline. Os "Definition of Done"
-de cada agente (`.claude/agents/*.md`) são a aplicação específica destes gates à etapa dele; este
+de cada agente (`agents/*.md`) são a aplicação específica destes gates à etapa dele; este
 documento é a referência única para não duplicar a lista em cada um deles.
 
 ## Governança de decisão (vale para todas as etapas, incluindo a condicional de baseline)
@@ -14,18 +14,18 @@ documento é a referência única para não duplicar a lista em cada um deles.
 - [ ] **"VALIDAR DEPOIS" é sempre uma opção válida.** Quando o usuário não sabe responder agora,
   o agente registra o item na seção "Pendências de validação (VALIDAR DEPOIS)" do artefato, com
   contexto suficiente para retomar sem re-explicar tudo. O item some da lista de pendências só
-  quando resolvido via `/sdd-amend` (ver `docs/SDD-WORKFLOW.md`).
+  quando resolvido via `/btt-sdd:amend` (ver `docs/SDD-WORKFLOW.md`).
 - [ ] **Nenhuma ação ou requisição se repete mais de 3 vezes.** Tentativas de corrigir o mesmo
   teste, rodar o mesmo comando, ou reformular a mesma pergunta contam como a mesma ação. Na 3ª
   falha consecutiva, o agente para e escala ao usuário: o que foi tentado, por que falhou, e o
   que ele recomenda como próximo passo. Isso vale tanto para ações técnicas (fix de teste, `apply`
   de infraestrutura) quanto para tentativas de obter uma resposta clara do usuário.
 - [ ] **Todo plano de ação real (código, infraestrutura) é aprovado antes de executar.** PRD e TRD
-  já são planos por natureza — sua aprovação é o próprio gate. Para `/sdd-implement` e `/sdd-sre`,
+  já são planos por natureza — sua aprovação é o próprio gate. Para `/btt-sdd:implement` e `/btt-sdd:sre`,
   o agente apresenta o plano (incrementos, branch, ou mudança de infra proposta) e obtém aprovação
   explícita do usuário antes de escrever código ou tocar infraestrutura real.
 - [ ] **Artefatos aprovados são editados in-place, nunca recriados do zero.** Mudar uma decisão já
-  aprovada usa `/sdd-amend`, que registra a mudança no "Log de revisões" e só reabre as etapas
+  aprovada usa `/btt-sdd:amend`, que registra a mudança no "Log de revisões" e só reabre as etapas
   posteriores realmente afetadas — etapas anteriores aprovadas continuam válidas.
 - [ ] **Nenhum agente encerra numa branch de feature.** Todo agente que faz `git checkout`/
   `git switch` para uma branch de fatia (implementadores e revisores que commitam achados na
@@ -72,10 +72,10 @@ documento é a referência única para não duplicar a lista em cada um deles.
   de qual projeto está rodando o pipeline agora. Prefixe o título conforme o caso ("Bug:" para
   comportamento incorreto, "Melhoria:" para otimização de fluxo/performance/custo de token,
   "Aprendizado:" para um padrão observado que vale generalizar). Isso **não substitui** a
-  retrospectiva garantida ao final de toda fatia aprovada (`.claude/skills/sdd-sre/SKILL.md`,
+  retrospectiva garantida ao final de toda fatia aprovada (`skills/sre/SKILL.md`,
   seção "Retrospectiva da fatia") — estende a mesma obrigação para qualquer ponto da sessão em que
   o feedback já estiver claro, em vez de represá-lo até aquele checkpoint específico (uma sessão
-  que nunca chega a rodar `/sdd-sre` — ex. `/sdd-prd` isolado, uma investigação, um `/repo-issues`
+  que nunca chega a rodar `/btt-sdd:sre` — ex. `/btt-sdd:prd` isolado, uma investigação, um `/repo-issues`
   — não fica sem esse mecanismo só por não ter atingido o fim de uma fatia). Se `gh` falhar (comum
   sem acesso a este repositório específico, ex. plugin instalado por outro operador), relate o
   feedback como texto ao usuário em vez de bloquear o que estava fazendo — mesma tolerância de
@@ -137,7 +137,7 @@ confirmado ainda").
   na 2ª ocorrência), o agente que a reconfirma não só acrescenta a ocorrência à tabela — aciona
   `AskUserQuestion` oferecendo resolver a pendência ali mesmo, se tiver a capacidade técnica para
   isso (ex.: `sre` configurando proteção de branch/environment via API do GitHub —
-  `.claude/agents/sre.md`, seção "Áreas de responsabilidade" — sempre sujeito a aprovação
+  `agents/sre.md`, seção "Áreas de responsabilidade" — sempre sujeito a aprovação
   explícita antes de qualquer mudança real, nunca aplicado sozinho), em vez de silenciar a
   repetição como mais uma linha na tabela. Sem essa capacidade, ainda assim escala explicitamente
   ao usuário. Uma lição sobre configuração externa nunca se resolve sozinha só por ser lida no
@@ -188,18 +188,18 @@ gravada por quem causa a transição.
   motivo em uma linha) as tarefas da fatia cujo veredito desta rodada foi reprovado.
 - [ ] `sre` atualiza para `aprovado` as tarefas da fatia ao aprová-la (ou aprovar com ressalvas) —
   o último gate antes do merge.
-- [ ] `/sdd-implement`, ao confirmar (pré-condição antes de iniciar a fatia seguinte) que o PR de
+- [ ] `/btt-sdd:implement`, ao confirmar (pré-condição antes de iniciar a fatia seguinte) que o PR de
   uma fatia já foi mergeado em `main`, atualiza essa fatia para `concluído (mergeado)`.
 - [ ] **Caso especial: a última fatia de uma spec nunca tem "fatia seguinte" para disparar a regra
   acima.** A promoção para `concluído (mergeado)` fica presa em `aprovado` para sempre se nada mais
-  a confirmar — `/sdd-implement`, passo 2a, cobre isso: ao ser invocado sem nenhuma fatia pendente,
+  a confirmar — `/btt-sdd:implement`, passo 2a, cobre isso: ao ser invocado sem nenhuma fatia pendente,
   confirma o merge real da última fatia (`gh pr view <N> --json state,mergedAt`) e promove o Status
   retroativamente se ainda não tiver sido feito, antes de simplesmente informar "nada a fazer". Já
   causou um falso-positivo sistemático em 7 specs de um mesmo projeto — todas 100% mergeadas,
-  reportadas como "próxima fatia pendente" indefinidamente por `/sdd-status`/`/sdd-pending`.
+  reportadas como "próxima fatia pendente" indefinidamente por `/btt-sdd:status`/`/btt-sdd:pending`.
 - [ ] Se a tarefa tem Issue GitHub associada, a mesma transição é comentada na issue (`gh issue
   comment`) pelo mesmo agente/skill que a causou.
-- [ ] `/sdd-implement`, ao final de cada rodada de implementação, apresenta ao usuário uma tabela
+- [ ] `/btt-sdd:implement`, ao final de cada rodada de implementação, apresenta ao usuário uma tabela
   com o Status atual de **todas** as tarefas da spec (não só as desta fatia).
 
 ## Baseline (condicional, `codebase-archaeologist`)
@@ -216,7 +216,7 @@ gravada por quem causa a transição.
 - [ ] Seção "Fora de escopo" preenchida explicitamente.
 - [ ] Seção "Indicadores técnicos a observar" preenchida (volumetria, segurança, legal) — mesmo
   que a resposta seja "nenhum indicador relevante", isso precisa estar escrito, não implícito.
-- [ ] Se a feature tem UI, o usuário foi consultado (via `AskUserQuestion`, `/sdd-prd` passo 2b)
+- [ ] Se a feature tem UI, o usuário foi consultado (via `AskUserQuestion`, `/btt-sdd:prd` passo 2b)
   sobre ver opções de wireframe/protótipo antes do PRD — aceite ou recusa, nunca silenciado; seção
   "Wireframes/Protótipos de tela" preenchida de acordo (ou "não aplicável" se a feature não tem UI).
   Se opções foram geradas, o(s) arquivo(s)-fonte `.dc.html` estão salvos em
@@ -251,11 +251,11 @@ gravada por quem causa a transição.
   estruturada da spec de origem** — não só as de tarefa do TRD. `architect` já garante isso para as
   issues de tarefa via o milestone por spec (acima). Reaproveite esse mesmo milestone (mesmo
   `<slug>`) sempre que outra issue do pipeline se referir à mesma spec/projeto — ex.: a issue de
-  `/sdd-hotfix` (`.claude/skills/sdd-hotfix/SKILL.md`, passo 1b) quando o bug tem spec relacionada.
+  `/btt-sdd:hotfix` (`skills/hotfix/SKILL.md`, passo 1b) quando o bug tem spec relacionada.
   Se ainda não existir nenhum milestone para essa spec (spec sem decomposição de tarefas em issues),
   aplique em vez disso um label `spec:<slug>` (criando-o se faltar). Uma issue aberta sem nenhuma
   spec relacionada (melhoria pontual sem origem) não precisa dessa identificação.
-- [ ] Se o TRD depende de código pré-existente sem documentação suficiente, `/sdd-baseline` rodou
+- [ ] Se o TRD depende de código pré-existente sem documentação suficiente, `/btt-sdd:baseline` rodou
   antes (ou a documentação já era suficiente, explicitamente constatado).
 - [ ] Nome de branch GitHub Flow definido **por fatia** (`docs/GIT-WORKFLOW.md`) — uma branch/PR
   por fatia, nunca uma única para a feature inteira quando há mais de uma fatia.
@@ -268,16 +268,16 @@ gravada por quem causa a transição.
   aplicável, `frontend/` separadamente).
 - [ ] Lint sem erros.
 - [ ] Nenhuma violação de fronteira ports & adapters (domain/application sem import de infra).
-- [ ] **Antes de criar a branch, `/sdd-implement` confirmou que toda tarefa desta fatia tem a
+- [ ] **Antes de criar a branch, `/btt-sdd:implement` confirmou que toda tarefa desta fatia tem a
   coluna "Issue GitHub" preenchida no TRD — nenhuma fatia começa sem isso.** O mesmo vale para
-  `/sdd-hotfix`: a issue do bug/ajuste existe antes da branch ser criada.
+  `/btt-sdd:hotfix`: a issue do bug/ajuste existe antes da branch ser criada.
 - [ ] Se a feature é full-stack: todo adapter de entrada que o frontend consome implementa
   exatamente o contrato do TRD — nenhum campo/rota inventado por qualquer um dos dois lados.
 - [ ] Branch da fatia criada a partir de `main` atualizada (só depois do PR da fatia anterior já
   mergeado, se houver uma); PR aberto (única branch/PR por fatia, mesmo quando backend e frontend
   desenvolvem em paralelo dentro dela).
 - [ ] Plano de implementação foi aprovado pelo usuário antes do primeiro commit de código (plano
-  combinado quando full-stack, orquestrado por `/sdd-implement`).
+  combinado quando full-stack, orquestrado por `/btt-sdd:implement`).
 - [ ] Resultado da suíte completa com cobertura gravado em
   `specs/<slug>/coverage/<fatia>-<trilha>.md` (`docs/TESTING.md`), com o commit SHA da execução —
   formato condensado, nunca o relatório bruto (HTML) colado — para as etapas seguintes
@@ -339,7 +339,7 @@ gravada por quem causa a transição.
 ## Segurança (`security-engineer`)
 
 - [ ] **Critério objetivo para segurança obrigatória, mesmo numa correção pontual pequena** (fora
-  do fluxo normal de fatia — ex. `/sdd-hotfix`): `security-engineer` roda sempre que o diff
+  do fluxo normal de fatia — ex. `/btt-sdd:hotfix`): `security-engineer` roda sempre que o diff
   tocar **qualquer um** dos itens abaixo, independente do tamanho da mudança — nunca uma decisão
   de "merece ou não" reavaliada caso a caso: autenticação; autorização; gestão de sessão; dados
   pessoais/sensíveis; ou qualquer ponto de entrada que aceita um identificador externo (e-mail,
@@ -365,7 +365,7 @@ gravada por quem causa a transição.
   — push/PR que só toca esses caminhos pula lint/testes/build (nenhum código executável mudou,
   zero risco de qualidade). Sem esse filtro, cada push de um artefato de revisão
   (`code-review.md`/`qa-report.md`/`security-review.md`/`sre-review.md`) dispara um run completo
-  desnecessário (`.claude/agents/sre.md`, área "CI").
+  desnecessário (`agents/sre.md`, área "CI").
 - [ ] `main` protegida: sem push direto, PR obrigatório, status checks obrigatórios (verificado,
   não necessariamente configurado pelo agente — configuração real é do administrador do repo).
 - [ ] Deploy só roda após CI verde.
@@ -373,7 +373,7 @@ gravada por quem causa a transição.
   por um cliente já implantado que ainda não foi atualizado para enviá-lo, e os gates de deploy
   automático relevantes já estão ligados: bloqueante até haver um default retrocompatível nesta
   fatia, ou confirmação explícita do usuário aceitando a janela de quebra em produção — nunca uma
-  nota não-bloqueante de coordenação de deploy (`.claude/agents/sre.md`, área "CD e GitHub Flow").
+  nota não-bloqueante de coordenação de deploy (`agents/sre.md`, área "CD e GitHub Flow").
 - [ ] Nenhuma alteração de infraestrutura real (`terraform apply`) roda sem plano revisado
   (`terraform plan`) e aprovação explícita do usuário.
 - [ ] Docker: build multi-stage, imagem mínima, usuário não-root, sem segredo hardcoded.
@@ -396,13 +396,13 @@ gravada por quem causa a transição.
 - [ ] Se houver fatia seguinte pendente na feature, ela só começa depois deste merge
   (`docs/GIT-WORKFLOW.md`).
 - [ ] Nenhum item "VALIDAR DEPOIS" bloqueante (marcado como tal pelo usuário) segue em aberto.
-- [ ] **Retrospectiva da fatia conduzida — em toda fatia aprovada, não só a última.** `/sdd-sre`
-  (`.claude/skills/sdd-sre/SKILL.md`, passo 5c) avalia a execução da rodada e abre issues de
+- [ ] **Retrospectiva da fatia conduzida — em toda fatia aprovada, não só a última.** `/btt-sdd:sre`
+  (`skills/sre/SKILL.md`, passo 5c) avalia a execução da rodada e abre issues de
   melhoria/aprendizado em `asengardeon/btt-sdd-pipeline` **antes** de informar o resultado ao
   usuário (passo 6) — nunca depois, e nunca pulado só porque a fatia já foi aprovada. "Nenhuma
   sugestão/aprendizado concreto desta fatia" é uma conclusão válida do passo; "não avaliei" não é.
 - [ ] Se esta é a **última fatia pendente** da feature (spec finalizada): `tech-writer` foi
-  acionado para atualizar a documentação (`/sdd-sre`, passo 5b) **e** o teste geral obrigatório de
+  acionado para atualizar a documentação (`/btt-sdd:sre`, passo 5b) **e** o teste geral obrigatório de
   fim de spec contra produção real foi conduzido depois do merge
   (`docs/POST-MERGE-VALIDATION.md`, seção "Teste geral obrigatório ao finalizar uma spec") — a
   spec só é considerada de fato concluída com os dois.

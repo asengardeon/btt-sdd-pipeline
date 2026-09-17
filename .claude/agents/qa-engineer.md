@@ -10,6 +10,20 @@ etapa: validar de forma independente e objetiva, contra o PR aberto pela etapa d
 de segurança. Os gates de `docs/QUALITY-GATES.md` (seção "QA") valem para você — a "Definição de
 pronto" no final deste arquivo já é o resumo aplicado; não precisa reler o documento inteiro.
 
+## Onde ficam os docs de governança citados neste arquivo
+
+Referências como `docs/GIT-WORKFLOW.md`, `docs/QUALITY-GATES.md`, `docs/TESTING.md`,
+`docs/ENGINEERING-PILLARS.md`, `docs/ARCHITECTURE.md`, `docs/SDD-WORKFLOW.md`,
+`docs/FILE-GUIDE.md` e `docs/POST-MERGE-VALIDATION.md` neste arquivo apontam para os docs
+genéricos deste pipeline — **não são copiados para dentro de cada projeto que o usa**. Eles vivem
+junto da distribuição do próprio pipeline: se você foi carregado via junction global
+(`.claude/agents/<seu-nome>.md` apontando para este repositório, `CLAUDE.md`, seção "Distribuição
+global"), esses docs estão em `docs/` na raiz **deste mesmo repositório** — não necessariamente no
+projeto onde você está trabalhando agora. Se o projeto atual também tiver um `docs/<nome>.md`
+próprio (`STACK.md`, `BASELINE.md`, `LESSONS-LEARNED.md`, `adr/`), esse é conteúdo do projeto, não
+deste pipeline — não confunda os dois. Se não conseguir determinar de onde você foi carregado,
+pergunte a quem te invocou.
+
 ## Pré-condição
 
 Você exige `specs/<slug>/code-review.md` com veredito aprovado (ou aprovado com ressalvas

@@ -14,10 +14,15 @@ e `docs/SDD-WORKFLOW.md`; este documento é sobre *o que cada coisa é*.
 
 Os agentes (`product-design`, `architect`, `backend-developer`, `frontend-developer`,
 `code-reviewer`, `qa-engineer`, `security-engineer`, `sre`, `codebase-archaeologist`) e as skills
-(`/sdd-*`, `/create-project`) **não vivem neste repositório** — estão instalados globalmente no computador
-onde este projeto foi criado, e funcionam aqui porque este repositório segue a mesma estrutura de
-`specs/`, `docs/`, `CLAUDE.md` que eles esperam. Não é necessário (nem esperado) copiar
-`.claude/agents/` ou `.claude/skills/` para dentro deste projeto.
+(`/btt-sdd:*`) **não vivem neste projeto** — vêm do plugin `btt-sdd` instalado via
+`claude plugin install`, e funcionam aqui porque este projeto segue a mesma estrutura de
+`specs/`, `docs/`, `CLAUDE.md` que eles esperam. Os docs de governança genéricos do pipeline
+(`GIT-WORKFLOW.md`, `QUALITY-GATES.md`, `TESTING.md`, `ENGINEERING-PILLARS.md`,
+`ARCHITECTURE.md`, `SDD-WORKFLOW.md`, `FILE-GUIDE.md`, `POST-MERGE-VALIDATION.md`) também vêm do
+plugin, não deste projeto — o `docs/` deste projeto só tem conteúdo próprio (`STACK.md`,
+`BASELINE.md`, `LESSONS-LEARNED.md`, `adr/`). Não é necessário (nem esperado) copiar `agents/`,
+`skills/` ou os docs genéricos do plugin para dentro deste projeto — `claude plugin update`
+mantém tudo isso sempre atualizado sozinho.
 
 ## `docs/` — documentação de referência
 
@@ -39,7 +44,7 @@ onde este projeto foi criado, e funcionam aqui porque este repositório segue a 
   fonte que evita perguntar de novo em features seguintes.
 - **`POST-MERGE-VALIDATION.md`** — checklist leve para validação manual contra produção real
   depois de um merge (sessão autenticada real, confirmação de deploy efetivo, DNS/certificados,
-  limpeza de dados de teste, e o lembrete de fechar itens "VALIDAR DEPOIS" via `/sdd-amend`), mais
+  limpeza de dados de teste, e o lembrete de fechar itens "VALIDAR DEPOIS" via `/btt-sdd:amend`), mais
   o teste geral obrigatório de fim de spec.
 - **`FILE-GUIDE.md`** — este arquivo.
 - **`adr/`** — Architecture Decision Records. `0001-...md` é o próprio ADR que estabelece a
@@ -55,20 +60,20 @@ onde este projeto foi criado, e funcionam aqui porque este repositório segue a 
   (`docs/TESTING.md`).
 - **Cada feature** ganha uma pasta `NNNN-slug-em-kebab-case/` com os artefatos que forem sendo
   produzidos por cada etapa, incluindo uma subpasta `coverage/` com os resumos de cobertura por
-  fatia/trilha e, quando a feature tem UI e o usuário aceitou ver opções (`/sdd-prd`, passo 2b),
+  fatia/trilha e, quando a feature tem UI e o usuário aceitou ver opções (`/btt-sdd:prd`, passo 2b),
   uma subpasta `wireframes/` com o(s) arquivo(s)-fonte `.dc.html` das opções geradas — salvos
   junto da spec para conferência futura mesmo que o Artifact publicado não esteja mais acessível.
 
 ## `src/`, `frontend/`, `tests/` — ainda não existem
 
 Este projeto foi criado por `/create-project` e ainda não tem stack decidida. Essas pastas são
-criadas por `backend-developer`/`frontend-developer` na primeira vez que `/sdd-implement` roda,
+criadas por `backend-developer`/`frontend-developer` na primeira vez que `/btt-sdd:implement` roda,
 seguindo a convenção descrita em `docs/ARCHITECTURE.md` (ports & adapters em `src/`; componentes/
 serviços em `frontend/`, se a feature tiver UI).
 
 ## `infra/`, `.github/workflows/` — ainda não existem
 
-Criados pelo `sre` (`/sdd-sre`) quando a primeira feature chega a essa etapa, depois que a stack
+Criados pelo `sre` (`/btt-sdd:sre`) quando a primeira feature chega a essa etapa, depois que a stack
 já foi decidida no TRD — não faz sentido escolher Docker/Terraform antes de saber a linguagem.
 
 ## Arquivos de configuração da stack

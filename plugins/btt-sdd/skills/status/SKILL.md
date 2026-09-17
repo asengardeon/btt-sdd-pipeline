@@ -8,6 +8,19 @@ allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/sdd-status.sh *) PowerShell(${CL
 
 Não aciona nenhum agente — é um utilitário de leitura.
 
+## Onde ficam os docs de governança citados nesta skill
+
+Referências como `docs/GIT-WORKFLOW.md`, `docs/QUALITY-GATES.md`, `docs/TESTING.md`,
+`docs/ENGINEERING-PILLARS.md`, `docs/ARCHITECTURE.md`, `docs/SDD-WORKFLOW.md`,
+`docs/FILE-GUIDE.md` e `docs/POST-MERGE-VALIDATION.md` nesta skill apontam para os docs genéricos
+deste pipeline — **não são copiados para dentro de cada projeto que o usa**. Resolva-os a partir
+de onde esta própria skill está instalada (o "Base directory" desta invocação, dentro do plugin
+`btt-sdd`): esses docs estão em `docs/` na raiz **deste plugin instalado**, atualizado
+automaticamente a cada `claude plugin update` — não no projeto onde você está trabalhando agora.
+Se o projeto atual também tiver um `docs/<nome>.md` próprio (`STACK.md`, `BASELINE.md`,
+`LESSONS-LEARNED.md`, `adr/`), esse é conteúdo do projeto, não deste plugin — não confunda os
+dois.
+
 ## Passos
 
 1. **Prefira o script auxiliar em vez de ler cada artefato inteiro** (economiza tokens): rode
@@ -26,15 +39,6 @@ Não aciona nenhum agente — é um utilitário de leitura.
    que não interessam); senão, rode sem argumento para ver todas.
 5. Para o detalhe de uma pendência específica, aponte o usuário para `/btt-sdd:pending` em
    vez de listar tudo aqui.
-6. **Docs desatualizados em relação à versão instalada do plugin** (útil em projetos criados há um
-   tempo, depois que o plugin evoluiu — `docs/GIT-WORKFLOW.md`/`QUALITY-GATES.md`/etc. podem ter
-   ganhado seções novas que este projeto nunca recebeu): rode com a flag `--check-docs` (bash) /
-   `-CheckDocs` (PowerShell). Compara cada `docs/<arquivo>.md` do projeto contra o equivalente no
-   scaffold de `/btt-sdd:create-project` da versão instalada e só sinaliza divergência (arquivo +
-   versão do scaffold usada na comparação) — nunca aplica merge automático; cabe ao usuário revisar
-   e decidir se quer atualizar manualmente. Não é o comportamento padrão (custo extra de I/O) — só
-   rode com essa flag quando o usuário perguntar especificamente sobre isso, ou quando uma sessão
-   notar algo que parece um gap de instrução ausente no projeto.
 
 ### Fallback sem o script (comportamento anterior)
 
