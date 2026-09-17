@@ -16,6 +16,14 @@ de todas as versões passadas). Projetos scaffolded antes de `1.14.0` que quiser
 mais antigas precisam comparar manualmente contra a versão atual do template uma única vez, antes
 que `/sdd-sync-docs` passe a cobrir o resto a partir daqui em diante.
 
+## 1.22.11 — 2026-09-17
+
+- `docs/GIT-WORKFLOW.md` e `CLAUDE.md`, seção "Mudanças no próprio pipeline"/regra 5: novo
+  requisito — confirmar (ou criar) uma issue do GitHub descrevendo o porquê da mudança antes de
+  criar a branch, e referenciar `Closes #N` no PR. Estende a exigência já aplicada a `/sdd-hotfix`
+  para qualquer mudança de manutenção no próprio pipeline (agentes/skills/docs/templates), que até
+  então não tinha esse gate. (issue #199)
+
 ## 1.22.4 — 2026-09-15
 
 - `docs/QUALITY-GATES.md`, seção "Revisão de código": novo item — uma fatia que estende um
