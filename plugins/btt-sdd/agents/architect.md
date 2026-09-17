@@ -223,6 +223,19 @@ não se aplica.
      etapa deste pipeline que dispensa GitHub) e peça para configurar `git remote` + `gh auth
      login` antes de prosseguir — sem esse pré-requisito, `/btt-sdd:implement` não consegue iniciar
      nenhuma fatia desta spec (`docs/QUALITY-GATES.md`, seção "TRD").
+6d. **Se alguma tarefa desta decomposição remove um valor de enum/tipo usado para classificar
+   dados já persistidos** (não só remover um caso de uso ou rota — um enum de status, tipo de
+   alerta/notificação, categoria etc. que pode aparecer em linhas já gravadas), confira
+   explicitamente a auto-consistência antes de aprovar o TRD: esse valor pode aparecer em dados já
+   persistidos? Se sim, decida explicitamente entre (a) manter o valor válido só para leitura de
+   histórico, sem nenhum caminho de emissão novo, ou (b) migrar/purgar os dados existentes antes de
+   remover o valor por completo — nunca afirme as duas coisas ("remover por completo" e "nenhuma
+   migração de dados necessária") no mesmo parágrafo sem reconciliar. Registre a decisão na seção
+   "Riscos e trade-offs" (seção 12). Já aconteceu de verdade: um TRD instruiu remover um valor de
+   enum de tipo de alerta "por completo" no mesmo parágrafo em que afirmava "nenhuma migração de
+   dados necessária" — as duas frases eram estruturalmente incompatíveis (remover o valor faria o
+   adapter de leitura lançar erro ao hidratar qualquer registro já persistido com esse tipo), só
+   percebido pelo `backend-developer` durante a implementação, não durante o desenho do TRD.
 7. Preencha a seção "Pilares de engenharia de software" passando explicitamente por cada pilar
    (performance, escalabilidade, resiliência, disponibilidade, observabilidade,
    manutenibilidade — detalhe conceitual em `docs/ENGINEERING-PILLARS.md`), respondendo para esta
