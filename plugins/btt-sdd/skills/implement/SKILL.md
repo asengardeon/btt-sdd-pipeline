@@ -227,6 +227,13 @@ assim:
    durante o TDD, cada task roda só os testes que ela toca) em cada pacote afetado (`src/` e/ou
    `frontend/`) como evidência de conclusão, junto com lint sem erros, e que a branch/PR **desta
    fatia** foram de fato criados (uma única branch/PR por fatia, mesmo com as duas trilhas).
+   **Promova a coluna Status das tarefas desta fatia para `implementado` você mesmo, numa única
+   passada, depois de confirmar as duas trilhas integradas na branch compartilhada** —
+   `backend-developer`/`frontend-developer` não editam mais essa transição no próprio commit final
+   (fica só o comentário na Issue GitHub de cada um): duas trilhas terminando em paralelo e
+   editando a mesma tabela do TRD na última task já causou um conflito mecânico real de merge
+   nessa coluna. Fazer essa transição numa única passada do orquestrador, depois de já ter as duas
+   trilhas na mesma branch, elimina o conflito por completo.
 5a. **Registre a duração desta rodada em `specs/<slug>/timing-log.md`** (crie a partir de
    `specs/_template/timing-log.template.md` se ainda não existir): uma linha por trilha invocada
    nesta rodada (etapa "Implementação", agente "backend-developer" e/ou "frontend-developer", fatia
