@@ -211,9 +211,17 @@ por uma sessão do Claude Code mantendo o próprio pipeline. Esse tipo de mudan�
 nem fatia (não é uma feature de produto), então usa uma branch simples em vez do padrão
 `feature/<NNNN-slug>/<fatia>`:
 
-1. Antes de editar qualquer arquivo, crie uma branch a partir de `main` atualizada, com o prefixo
-   que descreve a natureza da mudança — mesma taxonomia dos tipos de commit já usados no
-   histórico deste repositório (`feat:`, `fix:`, `chore:`, `perf:`, etc.):
+1. **Confirme que existe uma issue do GitHub descrevendo o porquê desta mudança antes de criar a
+   branch.** Mesma exigência já aplicada a `/sdd-hotfix` (`docs/QUALITY-GATES.md`, seção
+   "Implementação" — "a issue do bug/ajuste existe antes da branch ser criada"), estendida a
+   qualquer mudança no próprio pipeline: o diff mostra *o quê* mudou, mas só a issue registra *por
+   quê* — histórico de revisão sem isso vira uma sequência de commits sem contexto recuperável
+   meses depois. Se a mudança já nasceu de uma issue existente, reaproveite-a. Se não existir
+   nenhuma, crie uma (`gh issue create`) antes de prosseguir — nunca abra a branch/PR primeiro e a
+   issue depois, como formalidade retroativa.
+2. Crie uma branch a partir de `main` atualizada, com o prefixo que descreve a natureza da
+   mudança — mesma taxonomia dos tipos de commit já usados no histórico deste repositório
+   (`feat:`, `fix:`, `chore:`, `perf:`, etc.):
 
    | Prefixo         | Quando usar                                                              |
    |------------------|---------------------------------------------------------------------------|
@@ -228,14 +236,15 @@ nem fatia (não é uma feature de produto), então usa uma branch simples em vez
    | `ci/<slug>`      | Mudança em pipelines de CI/CD (`.github/workflows/`).                    |
 
    `<slug>` é um nome curto em kebab-case descrevendo a mudança (ex.: `chore/reduz-tokens-agentes`).
-2. Commite nessa branch, abra o PR, e só mergeie em `main` com decisão explícita do usuário — as
-   mesmas regras 1, 4, 6 e 7 acima se aplicam (PR obrigatório, sem push direto, sem force-push).
-   Não há gate de QA/segurança/SRE automático para esse tipo de mudança (não é uma feature de
-   produto), mas o PR ainda é o mecanismo de revisão antes do merge. **Se a mudança tocar algum
-   arquivo de `skills/create-project/scaffold/docs/` ou `skills/create-project/scaffold/CLAUDE.md`
-   deste plugin**, acrescente também uma entrada em `plugins/btt-sdd/CHANGELOG.md` no mesmo
-   commit/PR — é o que permite a projetos já scaffolded em versões antigas descobrir e aplicar essa
-   melhoria depois (`docs/DOCS-SYNC.md`).
+3. Commite nessa branch, abra o PR **referenciando `Closes #N` da issue confirmada/criada no passo
+   1**, e só mergeie em `main` com decisão explícita do usuário — as mesmas regras 1, 4, 6 e 7
+   acima se aplicam (PR obrigatório, sem push direto, sem force-push). Não há gate de QA/segurança/
+   SRE automático para esse tipo de mudança (não é uma feature de produto), mas o PR ainda é o
+   mecanismo de revisão antes do merge. **Se a mudança tocar algum arquivo de
+   `skills/create-project/scaffold/docs/` ou `skills/create-project/scaffold/CLAUDE.md` deste
+   plugin**, acrescente também uma entrada em `plugins/btt-sdd/CHANGELOG.md` no mesmo commit/PR —
+   é o que permite a projetos já scaffolded em versões antigas descobrir e aplicar essa melhoria
+   depois (`docs/DOCS-SYNC.md`).
 
 ## Exceção histórica
 
