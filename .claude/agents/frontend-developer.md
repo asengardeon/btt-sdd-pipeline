@@ -167,15 +167,17 @@ qualquer código:
    de reportar a trilha como pronta você ainda precisar commitar de novo nessa branch (ex.:
    corrigindo um achado de code review), rode a suíte completa de novo ao final e regrave esse
    arquivo com o novo commit — nunca deixe um resumo apontando para um commit antigo. **Exceção:
-   se o commit adicional é só documentação** (ex.: a própria atualização da coluna Status do TRD
-   abaixo, ou um ajuste de texto em `docs/`/`specs/`, sem tocar código-fonte nem teste), não é
-   preciso rodar a suíte de novo — só atualize o campo `Commit` de `coverage/<fatia>-frontend.md`
-   para o SHA final, no mesmo commit de documentação, já que o conteúdo verificado não mudou (isso
-   evita forçar `code-reviewer`/`qa-engineer` a reexecutar a suíte inteira só por um metadado
-   desatualizado, sem incerteza real sobre o código — já causou reverificação redundante em duas
-   fatias seguidas de uma sessão real). Neste mesmo momento, atualize a coluna Status das tarefas
-   de frontend desta fatia no TRD para `implementado`, refletindo a mesma transição na Issue
-   GitHub associada, se houver.
+   se o commit adicional é só documentação** (ex.: um ajuste de texto em `docs/`/`specs/`, sem
+   tocar código-fonte nem teste), não é preciso rodar a suíte de novo — só atualize o campo
+   `Commit` de `coverage/<fatia>-frontend.md` para o SHA final, no mesmo commit de documentação, já
+   que o conteúdo verificado não mudou (isso evita forçar `code-reviewer`/`qa-engineer` a
+   reexecutar a suíte inteira só por um metadado desatualizado, sem incerteza real sobre o código —
+   já causou reverificação redundante em duas fatias seguidas de uma sessão real). Neste mesmo
+   momento, comente a transição para `implementado` na Issue GitHub associada, se houver — **mas
+   não edite a coluna Status do TRD para `implementado` aqui**: duas trilhas terminando em paralelo
+   e editando a mesma tabela na última task já causou um conflito mecânico real de merge nessa
+   coluna. Quem promove a tabela para `implementado` é o orquestrador de `/sdd-implement`, numa
+   única passada, depois de confirmar as duas trilhas integradas (passo 5 dessa skill).
 5a. **Nunca declare "suíte completa, N erros pré-existentes/não relacionados" sem reconciliar a
    composição desse N.** Liste nominalmente quais testes/arquivos compõem as falhas (rode com
    output não truncado, ou salve em arquivo e grepe a lista completa de `FAIL`/`ERROR` em vez de
@@ -193,8 +195,8 @@ qualquer código:
    perdido por um `fetch`+`rebase` concorrente no meio da sessão (`docs/GIT-WORKFLOW.md`, seção
    "Reconciliação para a branch compartilhada da fatia"). Depois do push final desta trilha, rode
    `git fetch origin <branch>` e confirme que cada arquivo citado no seu resumo (o commit de
-   `coverage/<fatia>-frontend.md`, a atualização da coluna Status no TRD, etc.) está de fato
-   presente em `origin/<branch>` — ex.: `git diff origin/<branch> -- <arquivo>` vazio, ou `git log
+   `coverage/<fatia>-frontend.md`, a transição para `em andamento` na coluna Status do TRD, etc.)
+   está de fato presente em `origin/<branch>` — ex.: `git diff origin/<branch> -- <arquivo>` vazio, ou `git log
    origin/<branch> -1 --stat` incluindo o commit esperado. Se algo estiver faltando, refaça o
    commit/push antes de declarar sucesso — nunca reporte "commitado e enviado" só porque o comando
    `git push` não retornou erro.
