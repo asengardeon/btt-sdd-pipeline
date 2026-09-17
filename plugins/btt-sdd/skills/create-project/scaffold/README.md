@@ -6,7 +6,8 @@ Spec-Driven Development**) para o Claude Code: cada feature nasce de um PRD, pas
 validada por QA e segurança, e liberada por SRE — com um agente dedicado a cada etapa.
 
 Comece por `CLAUDE.md` — é o arquivo que o Claude Code lê automaticamente e que explica todo o
-pipeline. Para a explicação de cada arquivo/pasta, veja `docs/FILE-GUIDE.md`.
+pipeline. Para a explicação de cada arquivo/pasta, veja `FILE-GUIDE.md` do pipeline (bundled com
+os agentes/skills, não copiado para dentro deste projeto — ver `CLAUDE.md` para onde encontrá-lo).
 
 ## Pipeline
 
