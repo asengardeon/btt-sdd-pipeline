@@ -77,6 +77,7 @@ Cada agente vive em `.claude/agents/<nome>.md` e é acionado por uma skill em
 | `/sdd-amend`        | (nenhum, utilitário)                             | emenda um artefato já aprovado sem reiniciar o pipeline |
 | `/sdd-pending`      | (nenhum, utilitário)                             | lista itens "VALIDAR DEPOIS" em aberto |
 | `/sdd-gap-report`   | (nenhum, utilitário)                             | compara casos de uso do TRD (seção 6) com o código real |
+| `/sdd-project-conventions` | codebase-archaeologist                    | `docs/PROJECT-CONVENTIONS.md` (condicional) — particularidades do projeto vs. padrão do pipeline (git workflow, estrutura etc.) |
 | `/sdd-docs`         | tech-writer (utilitário, sem etapa fixa; também acionado automaticamente por `/sdd-sre` ao aprovar a última fatia pendente de uma spec) | README, docs/, ADRs, ou exemplos de código documentados |
 
 **As etapas 4-7 (revisão) sempre passam pela skill própria — nunca invoque `code-reviewer`,
@@ -207,7 +208,10 @@ em `asengardeon/btt-sdd-pipeline` assim que fica claro, não só quando uma fati
 - `docs/` — arquitetura, workflow SDD, política de testes, pilares de engenharia, gates críticos,
   fluxo de Git e guia arquivo-a-arquivo. Inclui `docs/LESSONS-LEARNED.md` (condicional): padrões
   de achados já repetidos entre features, que `backend-developer`/`frontend-developer` aplicam
-  desde o início da implementação seguinte — critério de promoção em `docs/QUALITY-GATES.md`.
+  desde o início da implementação seguinte — critério de promoção em `docs/QUALITY-GATES.md`. Inclui
+  também `docs/PROJECT-CONVENTIONS.md` (condicional, mesmo padrão de `BASELINE.md`): particularidades
+  deste projeto em relação ao padrão genérico do próprio pipeline (git workflow, estrutura de
+  pastas etc.), geradas/atualizadas pelo `codebase-archaeologist` via `/sdd-project-conventions`.
 
 ## Nota sobre a stack
 

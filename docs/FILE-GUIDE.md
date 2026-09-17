@@ -40,9 +40,12 @@ vez de assumir (regra de governança em `docs/QUALITY-GATES.md`), sempre oferece
 DEPOIS" como opção quando cabível.
 
 - **`codebase-archaeologist.md`** — etapa **condicional** (etapa 0): produz `docs/BASELINE.md`
-  quando falta documentação base sobre código já existente. Tem `Bash` para ler histórico/rodar
-  testes existentes sem alterá-los, e `Write`/`Edit` só para documentação — nunca corrige/refatora
-  código.
+  quando falta documentação base sobre código já existente. Também produz/atualiza
+  `docs/PROJECT-CONVENTIONS.md` (acionado por `/sdd-project-conventions`, por `/create-project`, ou
+  oportunisticamente junto de uma rodada de `/sdd-baseline`) — responsabilidade separada: registra
+  só as particularidades deste projeto em relação ao padrão genérico do pipeline (git workflow,
+  estrutura de pastas), nunca o sistema em si. Tem `Bash` para ler histórico/rodar testes
+  existentes sem alterá-los, e `Write`/`Edit` só para documentação — nunca corrige/refatora código.
 - **`product-design.md`** — gera o PRD a partir de um pedido, incluindo a ordem de valor entre
   histórias. Não roda comandos (sem acesso a `Bash`) porque essa etapa é puramente de produto.
 - **`architect.md`** — gera o TRD a partir do PRD aprovado (e de `docs/BASELINE.md`, quando
@@ -93,6 +96,10 @@ Cada subpasta é uma skill invocável como slash command (`/nome-da-pasta`). O a
 tipicamente: validar pré-condição, invocar o agente correspondente, e comunicar o resultado.
 
 - **`sdd-baseline/`** → `/sdd-baseline` — aciona `codebase-archaeologist` (condicional).
+- **`sdd-project-conventions/`** → `/sdd-project-conventions` — utilitário sem posição fixa numa
+  etapa; aciona `codebase-archaeologist` numa responsabilidade separada de `/sdd-baseline`, para
+  produzir/atualizar `docs/PROJECT-CONVENTIONS.md` (particularidades do projeto vs. padrão do
+  pipeline).
 - **`sdd-prd/`** → `/sdd-prd` — aciona `product-design`. Aceita um caminho de arquivo explícito
   como entrada, além de texto livre.
 - **`sdd-trd/`** → `/sdd-trd` — aciona `architect`. Aceita um caminho de arquivo explícito como
@@ -155,6 +162,11 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
 - **`BASELINE.md`** — **gerado condicionalmente** pelo `codebase-archaeologist` (não existe por
   padrão neste repositório, já que ele nasceu 100% documentado pelo próprio pipeline). Quando
   existe, descreve um sistema/código pré-existente "como é" (as-is), não como deveria ser.
+- **`PROJECT-CONVENTIONS.md`** — **gerado condicionalmente** pelo `codebase-archaeologist` (via
+  `/sdd-project-conventions`, `/create-project`, ou junto de uma rodada de `/sdd-baseline`); mesmo
+  padrão de ausência-por-padrão de `BASELINE.md`. Diferente dele: não descreve o sistema, descreve
+  como este projeto particulariza o próprio pipeline (git workflow, estrutura de pastas,
+  nomenclatura) em relação ao padrão genérico — só as divergências, nunca o óbvio.
 - **`STACK.md`** — criado/atualizado pelo `architect` na primeira vez que a stack tecnológica é
   decidida neste repositório (etapa 2 do processo em `.claude/agents/architect.md`) — não é criado
   pelo `/create-project`, sua ausência é o próprio sinal de "stack ainda não decidida". Existe

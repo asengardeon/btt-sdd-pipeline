@@ -38,6 +38,12 @@ mantém tudo isso sempre atualizado sozinho.
 - **`BASELINE.md`** — **gerado condicionalmente** pelo `codebase-archaeologist`, só se este
   projeto vier a incorporar código pré-existente sem documentação suficiente. Não existe por
   padrão num projeto criado do zero.
+- **`PROJECT-CONVENTIONS.md`** — **gerado condicionalmente** pelo `codebase-archaeologist` (via
+  `/btt-sdd:project-conventions`, `/btt-sdd:create-project`, ou junto de uma rodada de
+  `/btt-sdd:baseline`); mesmo padrão de ausência-por-padrão de `BASELINE.md`. Diferente dele: não
+  descreve o sistema, descreve como este projeto particulariza o próprio pipeline (git workflow,
+  estrutura de pastas, nomenclatura) em relação ao padrão genérico do plugin — só as divergências,
+  nunca o óbvio.
 - **`STACK.md`** — **gerado condicionalmente** pelo `architect`, na primeira vez que a stack
   tecnológica é decidida neste projeto (linguagem, framework, persistência). Não é criado por
   `/create-project` — sua ausência é o sinal de "stack ainda não decidida". Quando existe, é a
