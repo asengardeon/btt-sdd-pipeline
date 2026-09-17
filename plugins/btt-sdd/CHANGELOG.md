@@ -33,6 +33,28 @@ seção de todas as versões passadas).
   `docs/TESTING.md` e `docs/QUALITY-GATES.md`; (c) as colunas `Profundidade`/`Commit` no histórico
   de aprovações por fatia de `security-review.template.md`/`sre-review.template.md`.
 
+## 1.22.12 — 2026-09-17
+
+- **Estrutural, sem impacto para quem já scaffolded**: este repositório deixou de manter uma
+  segunda cópia local do scaffold (`.claude/skills/create-project/scaffold/`) — `/create-project`
+  agora lê direto do scaffold deste plugin, que passa a ser a única fonte, mesmo quando invocado
+  via junction sem o plugin instalado. Isso não muda o conteúdo entregue a um projeto novo.
+- Reconciliação de conteúdo que havia divergido entre as duas cópias antes desta unificação (issue
+  #201) — projetos scaffolded a partir da cópia local (agora removida) estavam sem: (a) os itens
+  de governança "Nenhum agente encerra numa branch de feature" e "Nenhum agente aprova/reprova o
+  próprio trabalho" em `docs/QUALITY-GATES.md`; (b) a correção de frescor de cobertura por commit
+  mais recente que tocou `src/`/`frontend/` em vez de HEAD literal (issue #172) em
+  `docs/TESTING.md` e `docs/QUALITY-GATES.md`; (c) as colunas `Profundidade`/`Commit` no histórico
+  de aprovações por fatia de `security-review.template.md`/`sre-review.template.md`.
+
+## 1.22.11 — 2026-09-17
+
+- `docs/GIT-WORKFLOW.md` e `CLAUDE.md`, seção "Mudanças no próprio pipeline"/regra 5: novo
+  requisito — confirmar (ou criar) uma issue do GitHub descrevendo o porquê da mudança antes de
+  criar a branch, e referenciar `Closes #N` no PR. Estende a exigência já aplicada a `/sdd-hotfix`
+  para qualquer mudança de manutenção no próprio pipeline (agentes/skills/docs/templates), que até
+  então não tinha esse gate. (issue #199)
+
 ## 1.22.4 — 2026-09-15
 
 - `docs/QUALITY-GATES.md`, seção "Revisão de código": novo item — uma fatia que estende um
