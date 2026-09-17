@@ -62,7 +62,10 @@ dois.
    passo 3, o horário atual, e a diferença calculada (etapa "Segurança", agente
    "security-engineer", fatia desta rodada). Commit e envie (push) essa atualização junto com o
    resto do que esta rodada já for commitar (`docs/GIT-WORKFLOW.md`, regra 4, sobre agrupar pushes
-   relacionados).
+   relacionados). **Vale também quando esta invocação é só uma reverificação pontual de um achado
+   específico** (`security-engineer.md`, seção "Escopo de uma rodada de reverificação de achado
+   específico") — nunca pule este registro por ser "só uma reverificação", senão o `timing-log.md`
+   da fatia fica sistematicamente incompleto.
 4. Mostre ao usuário o veredito geral e os achados por área (OWASP, segredos, autenticação,
    validação de entrada, dependências).
 5. Se reprovado, informe que a feature volta para `/btt-sdd:implement` com os achados listados —

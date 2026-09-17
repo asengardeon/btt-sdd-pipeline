@@ -62,7 +62,11 @@ conteúdo do projeto, não deste pipeline — não confunda os dois.
    `specs/_template/timing-log.template.md` se ainda não existir): uma linha com o horário do
    passo 3, o horário atual, e a diferença calculada (etapa "QA", agente "qa-engineer", fatia desta
    rodada). Commit e envie (push) essa atualização junto com o resto do que esta rodada já for
-   commitar (`docs/GIT-WORKFLOW.md`, regra 4, sobre agrupar pushes relacionados).
+   commitar (`docs/GIT-WORKFLOW.md`, regra 4, sobre agrupar pushes relacionados). **Vale também
+   quando esta invocação é só uma reverificação pontual de um achado específico**
+   (`qa-engineer.md`, seção "Escopo de uma rodada de reverificação de achado específico") — nunca
+   pule este registro por ser "só uma reverificação", senão o `timing-log.md` da fatia fica
+   sistematicamente incompleto.
 4. Mostre ao usuário o veredito geral (aprovado/reprovado) e os pontos principais do relatório.
 5. Se reprovado, informe que a feature volta para `/sdd-implement` com os achados listados — e
    siga a seção "Retomando para corrigir achados de revisão" de

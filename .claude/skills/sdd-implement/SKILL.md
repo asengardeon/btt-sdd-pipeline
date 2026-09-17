@@ -61,6 +61,16 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    → green → refactor) e ainda roda a suíte completa com cobertura ao final, como no passo 5
    abaixo. A próxima rodada da mesma etapa de revisão que reprovou continua verificando o
    resultado de forma independente.
+3b. **Registre esta invocação em `specs/<slug>/timing-log.md` também**, mesmo sendo uma correção ou
+   reverificação pontual fora dos passos numerados 1-5 (etapa "Correção pontual" ou "Reverificação
+   pontual", agente, fatia) — mesmo mecanismo do passo 5a abaixo (horário de início antes de
+   invocar, horário atual ao terminar, diferença calculada). Vale tanto para a invocação de
+   correção (`backend-developer`/`frontend-developer`, este passo) quanto para a reverificação
+   pontual equivalente na etapa de revisão que a pediu (`code-reviewer`/`qa-engineer`/
+   `security-engineer`/`sre` — mesma observação nas skills dessas etapas). Sem isso, o
+   `timing-log.md` de uma fatia com achados fica sistematicamente incompleto, reduzindo a precisão
+   de qualquer análise de performance futura (ex.: a retrospectiva do próprio `sre`, que lê este
+   arquivo).
 4. **Enquanto o agente retomado ainda está ativo, não dispare outra tarefa que também vá tocar
    `checkout`/`commit`/`push` na mesma branch** (ex.: uma nova rodada de revisão independente,
    ou uma verificação sua própria via `Bash`) sem isolamento — mesma regra de
