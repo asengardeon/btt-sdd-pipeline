@@ -18,9 +18,14 @@ aprovações por fatia" abaixo para o veredito de fatias anteriores já mergeada
 Uma linha por rodada de revisão (uma por fatia) — nunca sobrescreva o veredito de uma fatia já
 aprovada e mergeada, acrescente uma linha nova.
 
-| Fatia | PR      | Veredito | Data |
-|-------|---------|----------|------|
-| F-1   | `<link>` | `<veredito>` | `<data>` |
+| Fatia | PR      | Veredito | Profundidade | Commit | Data |
+|-------|---------|----------|--------------|--------|------|
+| F-1   | `<link>` | `<veredito>` | `<completo\|fast-path>` | `<sha>` | `<data>` |
+
+`Profundidade`: `completo` (todas as áreas revisadas de verdade) ou `fast-path` (áreas sem
+superfície tocada foram condensadas — critério em `.claude/agents/security-engineer.md`). Na
+fatia final que fecha o spec, é sempre `completo`. `Commit`: SHA do HEAD no momento desta revisão
+— usado para calcular o diff acumulado na auditoria final.
 
 ## 2. Superfície de ataque (resumo)
 

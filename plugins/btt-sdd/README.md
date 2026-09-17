@@ -116,10 +116,15 @@ atualiza este plugin automaticamente.** Ao mudar algo relevante lá, replique aq
    disponível, siga..."), troque pela referência genérica ao nome do agente (esse caminho não
    existe no contexto de um projeto onde o plugin foi instalado).
 
-`skills/create-project/scaffold/` é a exceção — é conteúdo genérico que vai para o projeto-alvo
-tal como está, sem menção a comandos deste plugin (usa a convenção `/sdd-*` sem namespace, igual
-à raiz deste repositório), então uma cópia direta de
-`.claude/skills/create-project/scaffold/` sempre basta.
+`skills/create-project/scaffold/` **não é mais uma cópia a manter sincronizada — é a única
+cópia que existe.** `.claude/skills/create-project/` (a raiz deste repositório) não tem scaffold
+próprio: seu `SKILL.md` lê o conteúdo direto daqui (`plugins/btt-sdd/skills/create-project/
+scaffold/`, caminho relativo a partir de onde o `SKILL.md` da raiz vive) no momento de rodar
+`/create-project`/`/btt-sdd:create-project`, em vez de manter duas árvores de arquivos em
+paralelo. Isso elimina a classe de bug em que as duas cópias divergiam silenciosamente sem
+nenhum mecanismo de sincronização (histórico: `/repo-issues`, issue #201). Editar algo aqui
+já vale para os dois caminhos de distribuição — não precisa (nem deve) copiar de volta para
+`.claude/skills/create-project/`, porque esse diretório não tem mais `scaffold/` nenhum.
 
 **`.claude/skills/repo-issues/` é a segunda exceção — deliberadamente nunca replicada aqui.** É
 manutenção deste repositório sobre si mesmo (lê/aplica issues de `asengardeon/btt-sdd-pipeline`,

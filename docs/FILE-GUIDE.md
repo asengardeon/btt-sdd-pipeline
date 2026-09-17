@@ -18,11 +18,14 @@ e `docs/SDD-WORKFLOW.md`; este documento é sobre *o que cada coisa é*.
 
 Mesmo pipeline de `.claude/agents/`/`.claude/skills/` (ver seções abaixo), empacotado no formato
 de plugin do Claude Code (`.claude-plugin/plugin.json` + `agents/` + `skills/`, incluindo
-`create-project/scaffold/`). É uma **cópia própria**, não um link para `.claude/` — necessária
-porque comandos instalados via plugin ganham o namespace `btt-sdd:` (`/btt-sdd:trd`, não
-`/sdd-trd`), então toda referência interna a um comando `/sdd-*` dentro dos arquivos do plugin já
-vem com esse prefixo. `plugins/btt-sdd/README.md` documenta o processo de replicar uma edição de
-`.claude/agents/*.md`/`.claude/skills/*` para cá quando necessário. Instalação local testada e
+`create-project/scaffold/`). Agentes e skills são uma **cópia própria** de `.claude/`, não um
+link — necessária porque comandos instalados via plugin ganham o namespace `btt-sdd:`
+(`/btt-sdd:trd`, não `/sdd-trd`), então toda referência interna a um comando `/sdd-*` dentro dos
+arquivos do plugin já vem com esse prefixo. `plugins/btt-sdd/README.md` documenta o processo de
+replicar uma edição de `.claude/agents/*.md`/`.claude/skills/*` para cá quando necessário.
+**`create-project/scaffold/` é diferente**: não existe cópia em `.claude/skills/create-project/`
+para começo de conversa — esta é a única cópia, lida diretamente pela raiz do repositório em
+tempo de execução (`.claude/skills/create-project/SKILL.md`). Instalação local testada e
 confirmada funcionando (ver `CLAUDE.md`, seção "Distribuição global").
 
 ## `.claude/agents/` — os agentes do pipeline (7 + 1 condicional)
@@ -125,11 +128,14 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
   do plugin quando a mudança tocar conteúdo empacotado.
 - **`create-project/`** → `/create-project` — skill global (ver "Distribuição global" em
   `CLAUDE.md`): pergunta nome, diretório e requisitos, cria um projeto novo em diretório separado
-  (fora deste repositório), copia o conteúdo genérico de `create-project/scaffold/` para lá, e
-  inicia o pipeline com o primeiro PRD. Não aciona um subagente próprio — usa o processo do
-  `product-design` diretamente. `create-project/scaffold/` é uma cópia genérica (sem menção ao
-  exemplo Python deste repo) dos arquivos estruturais stack-agnósticos — não inclui `infra/`,
-  `.github/workflows/`, `src/`/`tests/`, que dependem da stack decidida só no TRD.
+  (fora deste repositório), copia o conteúdo genérico de `plugins/btt-sdd/skills/create-project/
+  scaffold/` para lá, e inicia o pipeline com o primeiro PRD. Não aciona um subagente próprio —
+  usa o processo do `product-design` diretamente. Esse diretório (`create-project/`, na raiz)
+  não tem `scaffold/` próprio — só o `SKILL.md`, que lê o conteúdo direto do plugin em tempo de
+  execução (única cópia, evita duas árvores divergindo silenciosamente). O scaffold em si é uma
+  cópia genérica (sem menção ao exemplo Python deste repo) dos arquivos estruturais
+  stack-agnósticos — não inclui `infra/`, `.github/workflows/`, `src/`/`tests/`, que dependem da
+  stack decidida só no TRD.
 
 ## `docs/` — documentação de referência
 
