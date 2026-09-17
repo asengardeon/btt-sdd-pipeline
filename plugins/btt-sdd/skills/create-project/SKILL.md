@@ -38,12 +38,20 @@ diretamente.
    conforme o pipeline avança). Se o usuário deu um nome de projeto, substitua o placeholder
    `<nome do projeto>` no `README.md` copiado.
 
-5. **Gere o primeiro PRD**: siga o mesmo processo descrito no agente `product-design` (o mesmo
+5. **Semeie `docs/PROJECT-CONVENTIONS.md`**: invoque o `codebase-archaeologist` (mesmo processo de
+   `/btt-sdd:project-conventions`) contra o diretório recém-criado, para registrar desde já
+   qualquer particularidade que já exista neste momento (ex.: convenção de nomenclatura pedida pelo
+   usuário nos requisitos coletados). Num projeto novo, sem histórico de branch e sem estrutura
+   além do scaffold genérico, o resultado mais comum é "nenhuma particularidade a registrar ainda"
+   — não crie o arquivo nesse caso; ele nasce mais tarde, via `/btt-sdd:project-conventions` ou
+   `/btt-sdd:baseline`, assim que o projeto acumular convenções reais.
+
+6. **Gere o primeiro PRD**: siga o mesmo processo descrito no agente `product-design` (o mesmo
    que `/btt-sdd:prd` aciona) usando os requisitos coletados no passo 1, salvando em
    `<diretório novo>/specs/0001-<slug>/prd.md`. Aplique a mesma governança de não-suposição —
    pergunte o que for ambíguo, com "VALIDAR DEPOIS" como opção.
 
-6. **Pare aqui.** Não continue o pipeline sozinho (TRD, implementação, etc.) — cada etapa exige
+7. **Pare aqui.** Não continue o pipeline sozinho (TRD, implementação, etc.) — cada etapa exige
    aprovação explícita do usuário (`docs/QUALITY-GATES.md`). Apresente um resumo do PRD gerado,
    peça aprovação, e quando aprovado informe que o próximo passo é `cd` para o diretório novo e
    rodar `/btt-sdd:trd` lá dentro.

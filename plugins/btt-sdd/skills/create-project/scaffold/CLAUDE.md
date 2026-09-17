@@ -12,13 +12,15 @@ do plugin `btt-sdd` instalado (`claude plugin install`) ou da distribuição glo
 e se mantêm sempre atualizados sozinhos (`claude plugin update`, ou live via junction). Não há
 cópia local desses docs para sincronizar. O `docs/` deste projeto só tem conteúdo que é
 genuinamente dele: `STACK.md` (decisão de stack, criada pelo `architect` no primeiro TRD),
-`BASELINE.md` (condicional), `LESSONS-LEARNED.md` (condicional) e `adr/` (decisões de arquitetura
-específicas deste projeto).
+`BASELINE.md` (condicional), `PROJECT-CONVENTIONS.md` (condicional — particularidades deste
+projeto em relação ao padrão genérico do pipeline: git workflow, estrutura de pastas etc.),
+`LESSONS-LEARNED.md` (condicional) e `adr/` (decisões de arquitetura específicas deste projeto).
 
 Comandos disponíveis: `/sdd-prd`, `/sdd-trd`, `/sdd-implement`, `/sdd-code-review`, `/sdd-qa`,
-`/sdd-security`, `/sdd-sre`, `/sdd-baseline`, `/sdd-hotfix`, `/sdd-status`, `/sdd-amend`,
-`/sdd-pending`, `/sdd-gap-report` (ou os equivalentes `/btt-sdd:*` se instalado via plugin). Cada
-um explica seu próprio papel quando invocado — não precisa memorizar a lista aqui.
+`/sdd-security`, `/sdd-sre`, `/sdd-baseline`, `/sdd-project-conventions`, `/sdd-hotfix`,
+`/sdd-status`, `/sdd-amend`, `/sdd-pending`, `/sdd-gap-report` (ou os equivalentes `/btt-sdd:*` se
+instalado via plugin). Cada um explica seu próprio papel quando invocado — não precisa memorizar a
+lista aqui.
 
 ## Próximo passo
 

@@ -170,6 +170,16 @@ próximo comando a rodar, quantas pendências VALIDAR DEPOIS existem e se alguma
 todas as features (e em `docs/BASELINE.md`, quando existir). Use a qualquer momento para se
 orientar.
 
+## Utilitário: `/btt-sdd:project-conventions`
+
+Sem posição fixa numa etapa, no mesmo espírito de `/btt-sdd:docs`. Aciona `codebase-archaeologist`
+numa responsabilidade separada da Etapa 0: em vez de documentar o sistema (`docs/BASELINE.md`),
+documenta como **este projeto** particulariza o próprio pipeline — modelo de workflow de Git,
+estrutura de pastas, nomenclatura — em relação ao padrão genérico, produzindo/atualizando
+`docs/PROJECT-CONVENTIONS.md` só com as divergências reais. Roda sozinho a qualquer momento,
+automaticamente ao final de `/btt-sdd:create-project`, ou de carona numa rodada de
+`/btt-sdd:baseline` que já está inspecionando o projeto.
+
 ## Flexibilidade de entrada e uso em qualquer projeto
 
 Os agentes e skills deste pipeline estão instalados globalmente (ver "Distribuição global" em
