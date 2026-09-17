@@ -80,6 +80,19 @@ documento é a referência única para não duplicar a lista em cada um deles.
   sem acesso a este repositório específico, ex. plugin instalado por outro operador), relate o
   feedback como texto ao usuário em vez de bloquear o que estava fazendo — mesma tolerância de
   falha do restante do pipeline com `gh` (no máximo 3 tentativas).
+- [ ] **Comando de build/teste que o próprio agente precisa aguardar antes de decidir o próximo
+  passo sempre roda em primeiro plano, bloqueando o turno até o resultado — nunca em background.**
+  O harness considera o turno de um subagente "concluído" assim que ele para de emitir chamadas de
+  ferramenta, mesmo que um processo real de build/teste ainda esteja rodando no sistema
+  operacional em background, fora do rastreamento que dispara notificação automática. Já aconteceu
+  de verdade: um `backend-developer` disparou `dotnet test`/`dotnet build` em background e encerrou
+  o próprio turno sem aguardar, duas vezes seguidas — o orquestrador recebeu "tarefa concluída"
+  quando na verdade era só o agente dizendo que ia esperar, sem ter esperado, e precisou monitorar
+  processos do sistema operacional manualmente para descobrir quando os testes de fato terminavam.
+  Vale para todo agente de implementação ou revisão deste pipeline (`backend-developer`,
+  `frontend-developer`, `code-reviewer`, `qa-engineer`, `security-engineer`, `sre`) sempre que o
+  comando decide o próximo passo da própria invocação — não é um caso a avaliar por demora
+  esperada, mesmo um comando historicamente lento roda em primeiro plano até o fim.
 - [ ] **Merge de PR nunca é ação de um agente — risco conhecido de agentes autônomos com escrita
   em sistemas compartilhados.** Regra 5 de `CLAUDE.md` ("Fluxo de Git = GitHub Flow") e a linha
   "Merge do PR" de `docs/GIT-WORKFLOW.md` já estabelecem que o merge é decisão do usuário; este
