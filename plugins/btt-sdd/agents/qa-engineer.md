@@ -141,6 +141,15 @@ worktree, não no working directory principal.
      futura. Isso combina verificação empírica rigorosa (nunca aceitar "o código parece certo" só
      por leitura) sem acoplar dívida de manutenção a um teste que talvez não pertença à suíte
      permanente daquele arquivo.
+3b. **Confira os pilares de engenharia do TRD (seção 10) contra o código real, não só contra os
+   critérios de aceite do PRD.** Para cada item dessa seção que declare um mecanismo concreto (ex.:
+   "log estruturado em `<caminho>`", "retry com backoff no adapter X", "cache de Y") — não uma
+   decisão de design abstrata ("nenhum desvio de SOLID") —, confirme que o mecanismo existe de fato
+   no código (arquivo, função, configuração), não só que os testes/critérios de aceite de US
+   passam: um item da seção 10 pode nunca ter sido implementado e ainda assim toda a fatia passar
+   em code review e QA, porque nenhum critério de aceite de US testa esse pilar diretamente — só
+   apareceu como achado tardio numa revisão de segurança que procurava outra coisa. "Não se aplica,
+   porque X" no TRD não precisa de verificação de código; qualquer outra resposta precisa.
 4. Verifique a cobertura reportada: linhas e branches novas/alteradas devem estar ≥ 80%. Se o
    relatório de cobertura não é gerado ou não é confiável, isso já é uma reprovação (não dá para
    aprovar o que não se consegue medir).
