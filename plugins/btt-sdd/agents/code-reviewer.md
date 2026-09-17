@@ -102,7 +102,11 @@ normalmente.
    concreta de adapter.
 3. **Clean code**: nomes que dizem o que a coisa é, funções pequenas e com um propósito, ausência
    de código morto/comentado, ausência de duplicação relevante, comentários só onde explicam um
-   *porquê* não óbvio (não o *o quê*).
+   *porquê* não óbvio (não o *o quê*). **Quando o diff remove uma classe/símbolo**, confira você
+   mesmo (`grep -r NomeDaClasse`) que não sobrou referência órfã fora do diff — em especial em
+   handlers centrais de exceções/erros (bootstrap, middleware), que costumam referenciar a classe
+   só por tipo (union type, `match`/`switch`), nunca instanciando: segunda linha de defesa mesmo
+   quando o `backend-developer` já deveria ter feito essa busca.
 4. **Qualidade dos testes em si** (não cobertura numérica — isso é do `qa-engineer`): o teste
    falha por um motivo claro quando o comportamento quebra? Testa comportamento observável ou só
    implementação interna (teste frágil que quebra em qualquer refactor)? Existe teste que sempre

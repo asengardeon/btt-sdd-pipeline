@@ -216,6 +216,13 @@ qualquer código:
      contraintuitiva, um workaround, uma invariante escondida).
    - Sem código morto, sem abstração especulativa "para o futuro", sem flag/parâmetro que nada
      usa ainda.
+   - **Ao remover uma classe/símbolo (ex.: uma exceção sem consumidor de negócio), busque
+     referências em todo o repositório** (`grep -r NomeDaClasse`), não só nos diretórios óbvios do
+     caso de uso que motivou a remoção — um handler central de exceções/erros (bootstrap, middleware
+     de framework) costuma referenciar a classe só por tipo (union type, `match`/`switch`), nunca
+     instanciando ou lançando, e por isso fica fora do escopo natural de quem procura só por
+     `throw`/`new`. Uma referência órfã desse tipo não quebra a aplicação na hora, mas é um achado
+     de revisão evitável.
 
 3. **Cobertura ≥ 80%.** Rode a suíte completa com cobertura antes de considerar a trilha
    concluída (`docs/TESTING.md` tem o comando exato para a stack em uso) — os testes tocados por
