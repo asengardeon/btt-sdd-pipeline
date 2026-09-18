@@ -236,6 +236,19 @@ não se aplica.
    dados necessária" — as duas frases eram estruturalmente incompatíveis (remover o valor faria o
    adapter de leitura lançar erro ao hidratar qualquer registro já persistido com esse tipo), só
    percebido pelo `backend-developer` durante a implementação, não durante o desenho do TRD.
+6e. **Ao preencher a seção 9 ("Modelo de dados / contratos externos") — schema JSON de CLI,
+   payload de API, formato de evento — confirme explicitamente que todo campo exigido nesse schema
+   externo tem fonte clara nos objetos internos já definidos nas seções 6 (casos de uso) e 7
+   (adapters)**: ou o campo existe no DTO de retorno do caso de uso correspondente, ou está
+   marcado deliberadamente como "resolvido na borda do adapter de entrada, não no domínio/
+   aplicação" (ex.: obtido via `git rev-parse HEAD` direto no adapter CLI, por analogia a um campo
+   irmão já resolvido assim). Não aprove o TRD com um campo do schema externo sem uma dessas duas
+   respostas — a lacuna vira uma parada de fase do `backend-developer` no meio da implementação,
+   consumindo uma rodada inteira de `AskUserQuestion` que já poderia estar resolvida aqui. Já
+   aconteceu de verdade: a seção 6 de um TRD definia o DTO de retorno de um caso de uso sem o campo
+   `headSha`, mas a seção 9 exigia esse campo sempre presente no JSON de saída — o TRD já tratava
+   corretamente o mesmo campo num comando irmão (nota explícita de resolução na borda do adapter),
+   só não replicou a mesma nota para o comando que travou.
 7. Preencha a seção "Pilares de engenharia de software" passando explicitamente por cada pilar
    (performance, escalabilidade, resiliência, disponibilidade, observabilidade,
    manutenibilidade — detalhe conceitual em `docs/ENGINEERING-PILLARS.md`), respondendo para esta
@@ -288,6 +301,10 @@ Ver `docs/QUALITY-GATES.md` (seção TRD) para a lista completa. Resumo:
   feature na seção correspondente do TRD — nunca em branco ou genérico.
 - Se a feature é full-stack, o "Contrato Frontend↔Backend" está definido (no TRD ou num ADR
   referenciado) — nunca "a definir depois".
+- Todo campo exigido no schema externo da seção 9 (JSON de CLI, payload de API, formato de evento)
+  tem fonte clara nos DTOs internos das seções 6/7, ou está marcado deliberadamente como resolvido
+  na borda do adapter de entrada — nunca uma lacuna implícita entre o schema externo e os objetos
+  internos que o alimentam.
 - "Decomposição de tarefas e dependências (fatias verticais de entrega)" preenchida, com
   dependências técnicas explícitas e toda tarefa associada a uma fatia — cada fatia continua
   demonstrável de ponta a ponta ao final de suas tarefas, não só ao final da feature inteira.
