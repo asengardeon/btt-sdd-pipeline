@@ -28,7 +28,7 @@ validam objetivamente contra critérios escritos".
 - **Gate de saída**: `docs/BASELINE.md` existe para a área relevante, ou a suficiência foi
   constatada explicitamente — nunca um silêncio sem conclusão.
 
-## As 7 etapas
+## As 7 etapas (+ 4b condicional: revisão de UX)
 
 ### 1. Produto & Design → PRD
 
@@ -100,11 +100,34 @@ validam objetivamente contra critérios escritos".
 - **Gate de saída**: veredito geral aprovado, ou aprovado com ressalvas não-bloqueantes aceitas
   pelo usuário (senão volta para a etapa 3).
 
+### 4b. UX/Usabilidade (condicional) → Revisão de designer sênior
+
+- **Agente**: `.claude/agents/ux-designer.md`
+- **Skill**: `/sdd-ux-review`
+- **Quando roda**: só quando a fatia toca alguma tela/fluxo com superfície de UI perceptível pelo
+  usuário final (layout, navegação, visibilidade condicional de controles, estado vazio/erro,
+  conteúdo de mídia) — mesmo critério condicional usado para a etapa 0. Uma fatia 100%
+  backend/infra sem tela afetada pula esta etapa, registrando a decisão como "não aplicável"
+  (mesmo padrão já usado para QA pulado em `/sdd-hotfix`).
+- **Entrada**: revisão de código aprovada + PRD + TRD.
+- **Saída**: `specs/<slug>/ux-review.md` — veredito sobre consistência e padrões, visibilidade do
+  estado do sistema e prevenção de erro, controle/liberdade do usuário e navegabilidade,
+  consciência de estado/ciclo de vida do domínio, robustez de conteúdo gerado pelo usuário,
+  hierarquia de informação, e alvo de toque/acessibilidade básica — heurísticas de Nielsen
+  aplicadas concretamente à feature, com preferência por navegar o fluxo real (automação de
+  navegador, quando disponível) em vez de só ler o diff. Foca em **usabilidade e navegabilidade
+  percebidas**; não julga critério de aceite (isso é o QA na etapa seguinte) nem qualidade de
+  código (isso é o `code-reviewer` na etapa anterior).
+- **Gate de saída**: veredito geral aprovado, ou aprovado com ressalvas não-bloqueantes aceitas
+  pelo usuário (senão volta para a etapa 3), ou etapa marcada "não aplicável" quando a fatia não
+  tem superfície de UI.
+
 ### 5. QA → Validação objetiva
 
 - **Agente**: `.claude/agents/qa-engineer.md`
 - **Skill**: `/sdd-qa`
-- **Entrada**: revisão de código aprovada + PRD + TRD.
+- **Entrada**: revisão de código aprovada (e revisão de UX aprovada, ou não aplicável, quando a
+  fatia tem UI) + PRD + TRD.
 - **Saída**: `specs/<slug>/qa-report.md` — veredito por critério de aceite, cobertura vs. gate de
   80%, achados de regressão e de violação de fronteira arquitetural.
 - **Gate de saída**: veredito geral aprovado (senão volta para a etapa 3).
@@ -199,7 +222,8 @@ disfarçado.
 ## Ciclo de feedback
 
 Se a revisão de código reprova, a feature volta para `/sdd-implement` com os achados específicos.
-Se o QA reprova, a feature volta para `/sdd-implement` com achados específicos. Se a segurança
+Se a revisão de UX reprova (quando aplicável), também volta para `/sdd-implement` com os achados
+de usabilidade. Se o QA reprova, a feature volta para `/sdd-implement` com achados específicos. Se a segurança
 reprova, também volta para `/sdd-implement` (com os achados de segurança). Se o SRE reprova (ou
 aprova com ressalvas bloqueantes), os itens voltam para quem for responsável — pode ser
 `backend-developer`/`frontend-developer` (ex.: falta observabilidade no código) ou ajuste direto
@@ -236,9 +260,10 @@ migre para `/sdd-prd`.
 Detalhe completo em `docs/GIT-WORKFLOW.md`. Resumo: a etapa 0 e o PRD/TRD não têm branch (são
 documentos). Cada **fatia vertical** do TRD é sua própria branch/PR: `/sdd-implement` cria a
 branch da fatia (só depois do PR da fatia anterior já mergeado) e abre PR draft cedo. Revisão de
-código, QA, segurança e SRE revisam contra o PR dessa fatia. Merge para `main` só acontece depois
-de revisão de código, QA, segurança e SRE aprovados **para aquela fatia**, é uma decisão do
-usuário (nenhum agente mergeia sozinho), e dispara o CD — liberando a fatia seguinte para começar.
+código, UX (quando aplicável), QA, segurança e SRE revisam contra o PR dessa fatia. Merge para
+`main` só acontece depois de revisão de código, UX (quando aplicável), QA, segurança e SRE
+aprovados **para aquela fatia**, é uma decisão do usuário (nenhum agente mergeia sozinho), e
+dispara o CD — liberando a fatia seguinte para começar.
 
 ## Exemplo completo
 
