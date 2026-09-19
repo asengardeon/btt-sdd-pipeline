@@ -33,8 +33,9 @@ dois.
    `${CLAUDE_SKILL_DIR}/scripts/sdd-pending.ps1 [-Slug <slug>]` (PowerShell) — o script roda a
    partir de onde estiver instalado, mas lê `specs/`/`docs/` relativos ao diretório de trabalho
    atual, que deve ser a raiz do projeto. Ele devolve duas tabelas:
-   - **Pendências VALIDAR DEPOIS**: varre `prd.md`, `trd.md`, `code-review.md`, `qa-report.md`,
-     `security-review.md`, `sre-review.md` e `docs/BASELINE.md`, filtra só os itens com status
+   - **Pendências VALIDAR DEPOIS**: varre `prd.md`, `trd.md`, `code-review.md`, `ux-review.md`,
+     `qa-report.md`, `security-review.md`, `sre-review.md` e `docs/BASELINE.md`, filtra só os itens
+     com status
      "pendente" e devolve feature | artefato | ID | pergunta | contexto — já deduplicada (linhas
      que só repetem uma referência a uma rodada anterior sem conteúdo novo, ex. "ver rodada
      anterior", são colapsadas na ocorrência mais informativa da mesma pergunta).
@@ -68,7 +69,7 @@ dois.
 ### Fallback sem o script (comportamento anterior)
 
 1. Para cada diretório em `specs/` (exceto `_template`), leia a seção "Pendências de validação
-   (VALIDAR DEPOIS)" de `prd.md`, `trd.md`, `code-review.md`, `qa-report.md`,
+   (VALIDAR DEPOIS)" de `prd.md`, `trd.md`, `code-review.md`, `ux-review.md`, `qa-report.md`,
    `security-review.md` e `sre-review.md` (os que existirem). Se `docs/BASELINE.md` existir, leia
    a mesma seção nele também (pendências do arqueólogo não são por feature).
 2. Filtre só os itens com status "pendente" (ignore os já marcados "validado").

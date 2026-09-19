@@ -11,7 +11,7 @@
 
 SPECS_DIR="specs"
 FILTER="${1:-}"
-FILES=(prd.md trd.md code-review.md qa-report.md security-review.md sre-review.md)
+FILES=(prd.md trd.md code-review.md ux-review.md qa-report.md security-review.md sre-review.md)
 
 print_rows() {
   # $1 = rótulo do artefato exibido na tabela, $2 = caminho do arquivo

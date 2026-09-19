@@ -145,13 +145,14 @@ has_fatia_pendente() {
   if [ "$found" = "1" ]; then echo 1; else echo 0; fi
 }
 
-STAGES=(prd trd code-review qa-report security-review sre-review)
+STAGES=(prd trd code-review ux-review qa-report security-review sre-review)
 
 label() {
   case "$1" in
     prd) echo "PRD" ;;
     trd) echo "TRD" ;;
     code-review) echo "Code review" ;;
+    ux-review) echo "UX review" ;;
     qa-report) echo "QA" ;;
     security-review) echo "Segurança" ;;
     sre-review) echo "SRE" ;;
@@ -162,7 +163,8 @@ next_cmd() {
   case "$1" in
     prd) echo "/sdd-trd" ;;
     trd) echo "/sdd-implement" ;;
-    code-review) echo "/sdd-qa" ;;
+    code-review) echo "/sdd-ux-review" ;;
+    ux-review) echo "/sdd-qa" ;;
     qa-report) echo "/sdd-security" ;;
     security-review) echo "/sdd-sre" ;;
     sre-review) echo "(pipeline concluído)" ;;
@@ -211,6 +213,12 @@ for dir in "$SPECS_DIR"/*/; do
       # reabrir QA é escolha explícita do usuário, não o fluxo padrão.
       current="QA pulado (justificado)"
       next="(nenhum — decisão registrada)"
+    elif [ "$stage" = "ux-review" ] && grep -qiE '^#{1,4}[[:space:]]*Decis.*o:[[:space:]]*UX review pulado' "$file" 2>/dev/null; then
+      # UX review formalmente pulada (justificada, .claude/skills/sdd-ux-review/SKILL.md,
+      # passo 3) — fatia sem superfície de UI perceptível. Diferente de "QA pulado" acima,
+      # não é um estado terminal: o pipeline segue normalmente para /sdd-qa.
+      current="UX review pulada (não aplicável)"
+      next="$(next_cmd "$stage")"
     else
       verdict="$(latest_verdict "$file")"
       case "$verdict" in
