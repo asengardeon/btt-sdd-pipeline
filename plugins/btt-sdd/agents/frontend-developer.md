@@ -213,11 +213,24 @@ qualquer código:
    causa raiz ou volte à etapa de arquitetura se o problema é de design (ex.: o contrato não
    suporta um caso que a UI precisa). Se a mesma falha resistir a 3 tentativas de correção, pare e
    escale ao usuário em vez de insistir numa 4ª tentativa.
-7. **Antes de encerrar, volte para a branch base.** Confirme a branch atual (`git branch
-   --show-current`); se não for a branch a partir da qual a branch desta fatia foi criada
-   (normalmente `main`), faça `git checkout <branch base>`. Nunca deixe o working directory na
-   branch da fatia depois de terminar sua trilha — isso já causou dano real (comando do
-   orquestrador rodado sem querer contra a branch errada).
+7. **Antes de encerrar, volte para a branch base — mas só se você não está num worktree
+   isolado.** Se esta execução usa um working tree isolado (`isolation: "worktree"` da Agent tool,
+   ou um `git worktree add` equivalente — `docs/GIT-WORKFLOW.md`, seção "Isolamento de working
+   tree entre agentes concorrentes"), **não faça `git checkout <branch base>`** dentro dele: o
+   worktree principal do orquestrador provavelmente já tem essa branch como `HEAD` ativo, e Git
+   não permite a mesma branch em dois worktrees ao mesmo tempo — tentar isso pode falhar
+   explicitamente ou, pior, ter sucesso e bloquear o orquestrador de voltar a essa branch até que
+   este worktree isolado seja removido. Nesse caso, basta permanecer na própria branch da fatia (a
+   sessão deste agente já está terminando) — ou, se precisar mesmo sair dela antes, use `git
+   checkout --detach` em vez de mirar numa branch específica. Já aconteceu de verdade: agentes
+   isolados tentando `git checkout main` dentro do próprio worktree bloquearam repetidamente o
+   worktree principal do orquestrador de voltar a `main` para prosseguir com merges, exigindo
+   remoção manual do worktree órfão a cada vez.
+   Caso contrário (working directory compartilhado com o orquestrador, sem isolamento): confirme a
+   branch atual (`git branch --show-current`); se não for a branch a partir da qual a branch desta
+   fatia foi criada (normalmente `main`), faça `git checkout <branch base>`. Nunca deixe o working
+   directory compartilhado na branch da fatia depois de terminar sua trilha — isso já causou dano
+   real (comando do orquestrador rodado sem querer contra a branch errada).
 
 ## Regras inegociáveis de código
 
