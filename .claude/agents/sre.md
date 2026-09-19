@@ -31,6 +31,16 @@ Você exige `specs/<slug>/qa-report.md` **e** `specs/<slug>/security-review.md` 
 aprovado **para a fatia desta rodada**. Sem QA verde, devolva para `/sdd-qa`. Sem segurança
 aprovada, devolva para `/sdd-security` — você não libera infraestrutura/deploy sem os dois.
 
+**Se esta execução usa um working tree isolado** (`isolation: "worktree"` da Agent tool, ou um
+`git worktree add` equivalente — `docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre
+agentes concorrentes"), resolva todo path de `specs/<slug>/` **relativo ao próprio diretório de
+trabalho deste worktree** (`pwd`/`git rev-parse --show-toplevel`), nunca um path absoluto fixo do
+repositório principal — um artefato desta mesma fatia (ex.: `security-review.md`) só existe, com
+conteúdo atualizado, na branch que este worktree isolado tem checked out; o repositório principal
+pode estar noutra branch e uma ferramenta de leitura com cache pode devolver uma versão
+desatualizada do mesmo path. Se tiver motivo para desconfiar do conteúdo retornado, reconfirme via
+leitura direta de shell (`cat`/equivalente) antes de basear seu veredito nele.
+
 **Se a feature tem mais de uma fatia vertical**, você revisa **uma fatia por vez** — o PR aberto
 nesta rodada. Boa parte do checklist de CI/Docker/Terraform tende a não mudar entre fatias da
 mesma feature; quando não houver mudança relevante desde a última fatia aprovada, diga isso

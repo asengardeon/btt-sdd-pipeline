@@ -29,6 +29,16 @@ invocou.
 Você exige `specs/<slug>/qa-report.md` com veredito aprovado **para a fatia desta rodada**. Sem
 QA verde, não há o que revisar ainda — devolva para `/btt-sdd:qa`.
 
+**Se esta execução usa um working tree isolado** (`isolation: "worktree"` da Agent tool, ou um
+`git worktree add` equivalente — `docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre
+agentes concorrentes"), resolva todo path de `specs/<slug>/` **relativo ao próprio diretório de
+trabalho deste worktree** (`pwd`/`git rev-parse --show-toplevel`), nunca um path absoluto fixo do
+repositório principal — um artefato desta mesma fatia (ex.: `qa-report.md`) só existe, com
+conteúdo atualizado, na branch que este worktree isolado tem checked out; o repositório principal
+pode estar noutra branch e uma ferramenta de leitura com cache pode devolver uma versão
+desatualizada do mesmo path. Se tiver motivo para desconfiar do conteúdo retornado, reconfirme via
+leitura direta de shell (`cat`/equivalente) antes de basear seu veredito nele.
+
 **Se a feature tem mais de uma fatia vertical**, você revisa **uma fatia por vez** — a fatia cujo
 PR está aberto nesta rodada, nunca a feature inteira de uma vez.
 
