@@ -14,7 +14,7 @@ pular, veja `docs/QUALITY-GATES.md`. Para o fluxo de branch/PR, veja `docs/GIT-W
 os pilares de engenharia (escalabilidade, resiliência etc.) que o TRD precisa endereçar, veja
 `docs/ENGINEERING-PILLARS.md`.
 
-## O pipeline (7 etapas, + 1 etapa condicional)
+## O pipeline (7 etapas, + 2 etapas condicionais)
 
 ```
 [0] codebase-archaeologist ──▶ docs/BASELINE.md  (SÓ quando falta documentação base — condicional)
@@ -39,6 +39,10 @@ ideia/pedido
                               ports & adapters, SOLID, clean code, qualidade dos testes
    │
    ▼
+[4b] ux-designer        ──▶  UX review (specs/<slug>/ux-review.md) — SÓ quando a fatia tem
+                              superfície de UI perceptível pelo usuário final — condicional
+   │
+   ▼
 [5] qa-engineer         ──▶  QA report (specs/<slug>/qa-report.md)
    │
    ▼
@@ -50,13 +54,17 @@ ideia/pedido
 
 Cada etapa só começa com o artefato aprovado da etapa anterior. Nenhuma etapa pula a anterior:
 backend/frontend não implementam sem TRD aprovado, o QA não assina sem os testes rodando, a
-segurança não aprova sem QA verde, o SRE não aprova pipeline/infra sem QA e segurança aprovados.
+segurança não aprova sem QA verde, o SRE não aprova pipeline/infra sem QA e segurança aprovados. A
+etapa [4b] é condicional: só roda quando a fatia toca alguma tela/fluxo com superfície de UI
+perceptível pelo usuário final; uma fatia 100% backend/infra pula direto de [4] para [5],
+registrando a decisão como "não aplicável" em vez de omiti-la silenciosamente.
 
 **Quando o TRD tem mais de uma fatia vertical de entrega** (seção "Decomposição de tarefas e
-dependências (fatias verticais de entrega)"), as etapas [3] a [7] se repetem **por fatia**, em
-loop: cada fatia é sua própria branch/PR, passa por code review/QA/segurança/SRE, e só é mergeada
-em `main` antes da fatia seguinte começar — nunca se implementam todas as fatias de uma vez para
-só depois revisar tudo junto. Detalhe completo em `docs/GIT-WORKFLOW.md`.
+dependências (fatias verticais de entrega)"), as etapas [3] a [7] (incluindo [4b] quando aplicável)
+se repetem **por fatia**, em loop: cada fatia é sua própria branch/PR, passa por code review/UX
+(quando aplicável)/QA/segurança/SRE, e só é mergeada em `main` antes da fatia seguinte começar —
+nunca se implementam todas as fatias de uma vez para só depois revisar tudo junto. Detalhe completo
+em `docs/GIT-WORKFLOW.md`.
 
 Cada agente vive em `.claude/agents/<nome>.md` e é acionado por uma skill em
 `.claude/skills/sdd-*`. Use os comandos:
@@ -69,6 +77,7 @@ Cada agente vive em `.claude/agents/<nome>.md` e é acionado por uma skill em
 | `/sdd-trd`          | architect                                        | `specs/<slug>/trd.md`          |
 | `/sdd-implement`    | backend-developer e/ou frontend-developer         | branch + PR + código + testes  |
 | `/sdd-code-review`  | code-reviewer                                    | `specs/<slug>/code-review.md`  |
+| `/sdd-ux-review`    | ux-designer                                      | `specs/<slug>/ux-review.md` (condicional — só com superfície de UI perceptível) |
 | `/sdd-qa`           | qa-engineer                                      | `specs/<slug>/qa-report.md`    |
 | `/sdd-security`     | security-engineer                                | `specs/<slug>/security-review.md` |
 | `/sdd-sre`          | sre                                              | `specs/<slug>/sre-review.md`   |
@@ -80,12 +89,12 @@ Cada agente vive em `.claude/agents/<nome>.md` e é acionado por uma skill em
 | `/sdd-project-conventions` | codebase-archaeologist                    | `docs/PROJECT-CONVENTIONS.md` (condicional) — particularidades do projeto vs. padrão do pipeline (git workflow, estrutura etc.) |
 | `/sdd-docs`         | tech-writer (utilitário, sem etapa fixa; também acionado automaticamente por `/sdd-sre` ao aprovar a última fatia pendente de uma spec) | README, docs/, ADRs, ou exemplos de código documentados |
 
-**As etapas 4-7 (revisão) sempre passam pela skill própria — nunca invoque `code-reviewer`,
-`qa-engineer`, `security-engineer` ou `sre` diretamente via Agent tool fora de
-`/sdd-code-review`/`/sdd-qa`/`/sdd-security`/`/sdd-sre`.** Isso é diferente da etapa 3
-(`backend-developer`/`frontend-developer`), onde a invocação direta via Agent tool **é** o padrão
-correto (`/sdd-implement` não tem um agente intermediário). Nas etapas de revisão, a skill carrega
-lógica própria que o agente sozinho não replica — ex. `/sdd-sre` aciona `tech-writer`
+**As etapas 4-7 e 4b (revisão) sempre passam pela skill própria — nunca invoque `code-reviewer`,
+`ux-designer`, `qa-engineer`, `security-engineer` ou `sre` diretamente via Agent tool fora de
+`/sdd-code-review`/`/sdd-ux-review`/`/sdd-qa`/`/sdd-security`/`/sdd-sre`.** Isso é diferente da
+etapa 3 (`backend-developer`/`frontend-developer`), onde a invocação direta via Agent tool **é** o
+padrão correto (`/sdd-implement` não tem um agente intermediário). Nas etapas de revisão, a skill
+carrega lógica própria que o agente sozinho não replica — ex. `/sdd-sre` aciona `tech-writer`
 automaticamente na última fatia e conduz a retrospectiva obrigatória de toda fatia (seção
 "Manutenção deste repositório" abaixo). Pular a skill e chamar o agente direto já fez essas duas
 coisas serem puladas silenciosamente numa sessão real, só percebido depois do merge.

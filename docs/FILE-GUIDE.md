@@ -28,7 +28,7 @@ para começo de conversa — esta é a única cópia, lida diretamente pela raiz
 tempo de execução (`.claude/skills/create-project/SKILL.md`). Instalação local testada e
 confirmada funcionando (ver `CLAUDE.md`, seção "Distribuição global").
 
-## `.claude/agents/` — os agentes do pipeline (7 + 1 condicional)
+## `.claude/agents/` — os agentes do pipeline (7 + 2 condicionais)
 
 Cada arquivo `.md` aqui define um **subagente** invocável pela ferramenta Agent/Task do Claude
 Code. O nome do arquivo (sem `.md`) é o `subagent_type`. O frontmatter YAML no topo declara nome,
@@ -69,8 +69,14 @@ DEPOIS" como opção quando cabível.
   contrato Frontend↔Backend quando full-stack. Tem `Bash` para ler o diff do PR, rodar lint, e
   commitar/enviar (push) o próprio `code-review.md` na branch do PR antes de terminar; `Write`/
   `Edit` só para esse arquivo — não corrige código de produção, reporta.
+- **`ux-designer.md`** — etapa **condicional** (4b): designer de produto sênior avaliando
+  usabilidade/navegabilidade (heurísticas de Nielsen) de uma fatia com superfície de UI
+  perceptível, entre a revisão de código e o QA. Prefere navegar o fluxo real (automação de
+  navegador, quando disponível) a inferir comportamento só pelo JSX/CSS. Mesma lógica de `Write`/
+  `Edit` restrito ao próprio `ux-review.md` de `code-reviewer.md` — não corrige código, reporta.
+  Fatia 100% backend sem tela afetada pula esta etapa.
 - **`qa-engineer.md`** — valida a implementação contra PRD/TRD e o PR aberto, depois da revisão
-  de código aprovada. Tem `Bash` para rodar a suíte de testes e o relatório de cobertura quando
+  de código (e de UX, quando aplicável) aprovada. Tem `Bash` para rodar a suíte de testes e o relatório de cobertura quando
   precisa (o resumo já gerado pela implementação em `specs/<slug>/coverage/` é reaproveitado
   quando ainda corresponde ao commit atual — `docs/TESTING.md`), e para commitar/enviar (push) o
   próprio `qa-report.md` na branch do PR antes de terminar; `Write`/`Edit` só para esse arquivo —
@@ -107,6 +113,9 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
 - **`sdd-implement/`** → `/sdd-implement` — aciona `backend-developer` e/ou `frontend-developer`;
   quando os dois, orquestra um plano combinado e os invoca em paralelo.
 - **`sdd-code-review/`** → `/sdd-code-review` — aciona `code-reviewer`.
+- **`sdd-ux-review/`** → `/sdd-ux-review` — etapa **condicional** (4b); aciona `ux-designer` só
+  quando a fatia tem superfície de UI perceptível pelo usuário final; registra "não aplicável" em
+  `ux-review.md` caso contrário.
 - **`sdd-qa/`** → `/sdd-qa` — aciona `qa-engineer`.
 - **`sdd-security/`** → `/sdd-security` — aciona `security-engineer`.
 - **`sdd-sre/`** → `/sdd-sre` — aciona `sre`.
@@ -194,10 +203,11 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
 ## `specs/` — os artefatos do pipeline SDD, um diretório por feature
 
 - **`_template/`** — os modelos (`prd.template.md`, `trd.template.md`,
-  `code-review.template.md`, `qa-report.template.md`, `security-review.template.md`,
-  `sre-review.template.md`, `coverage-summary.template.md`) que os agentes preenchem. Não é uma
-  feature, é a fôrma usada por todas. Todos os artefatos de revisão têm uma seção "Pendências de
-  validação (VALIDAR DEPOIS)" e um "Log de revisões" (preenchido pelo `/sdd-amend`); o PRD também
+  `code-review.template.md`, `ux-review.template.md`, `qa-report.template.md`,
+  `security-review.template.md`, `sre-review.template.md`, `coverage-summary.template.md`) que os
+  agentes preenchem. Não é uma feature, é a fôrma usada por todas. Todos os artefatos de revisão
+  têm uma seção "Pendências de validação (VALIDAR DEPOIS)" e um "Log de revisões" (preenchido pelo
+  `/sdd-amend`); o PRD também
   tem "Indicadores técnicos a observar" (volumetria, segurança, legal) e "Ordem de valor /
   dependências entre histórias"; o TRD tem "Pilares de engenharia de software", "Contrato
   Frontend↔Backend (API)", "Decomposição de tarefas e dependências" e "Controle de versão (GitHub

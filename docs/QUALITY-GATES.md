@@ -36,7 +36,8 @@ documento é a referência única para não duplicar a lista em cada um deles.
   espúrio).
 - [ ] **Nenhum agente aprova/reprova o próprio trabalho.** Um agente implementador
   (`backend-developer`/`frontend-developer`, ou `sre` fazendo um ajuste pontual de infra) nunca
-  escreve veredito em `code-review.md`/`qa-report.md`/`security-review.md`/`sre-review.md` na
+  escreve veredito em `code-review.md`/`ux-review.md`/`qa-report.md`/`security-review.md`/
+  `sre-review.md` na
   mesma rodada em que implementou a correção — mesmo sendo tecnicamente o mesmo tipo de agente que
   normalmente revisaria aquilo. O gate exige uma instância nova e independente do agente de
   revisão correspondente, invocada depois.
@@ -100,7 +101,8 @@ documento é a referência única para não duplicar a lista em cada um deles.
   quando na verdade era só o agente dizendo que ia esperar, sem ter esperado, e precisou monitorar
   processos do sistema operacional manualmente para descobrir quando os testes de fato terminavam.
   Vale para todo agente de implementação ou revisão deste pipeline (`backend-developer`,
-  `frontend-developer`, `code-reviewer`, `qa-engineer`, `security-engineer`, `sre`) sempre que o
+  `frontend-developer`, `code-reviewer`, `ux-designer`, `qa-engineer`, `security-engineer`, `sre`)
+  sempre que o
   comando decide o próximo passo da própria invocação — não é um caso a avaliar por demora
   esperada, mesmo um comando historicamente lento roda em primeiro plano até o fim.
 - [ ] **Merge de PR nunca é ação de um agente — risco conhecido de agentes autônomos com escrita
@@ -207,8 +209,9 @@ gravada por quem causa a transição.
 - [ ] `backend-developer`/`frontend-developer` atualizam, in-place no TRD, para `em andamento` ao
   começar a Fase 2 (execução) das tarefas da fatia — inclusive ao retomar uma tarefa que estava
   `bloqueado` — e para `implementado` ao concluir sua trilha.
-- [ ] `code-reviewer`/`qa-engineer`/`security-engineer`/`sre` atualizam para `bloqueado` (com o
-  motivo em uma linha) as tarefas da fatia cujo veredito desta rodada foi reprovado.
+- [ ] `code-reviewer`/`ux-designer`/`qa-engineer`/`security-engineer`/`sre` atualizam para
+  `bloqueado` (com o motivo em uma linha) as tarefas da fatia cujo veredito desta rodada foi
+  reprovado.
 - [ ] `sre` atualiza para `aprovado` as tarefas da fatia ao aprová-la (ou aprovar com ressalvas) —
   o último gate antes do merge.
 - [ ] `/sdd-implement`, ao confirmar (pré-condição antes de iniciar a fatia seguinte) que o PR de
@@ -350,10 +353,34 @@ gravada por quem causa a transição.
 - [ ] `code-review.md` commitado (só esse arquivo, nunca `git add -A`/`.`) e enviado (push) na
   branch do PR pelo próprio `code-reviewer` antes de devolver o resultado.
 
+## UX / Usabilidade (`ux-designer`, condicional)
+
+- [ ] **Critério objetivo para UX review obrigatória**: sempre que o diff da fatia tocar alguma
+  tela/fluxo com superfície de UI perceptível pelo usuário final (layout, navegação, visibilidade
+  condicional de controles, estado vazio/erro, conteúdo de mídia) — nunca uma decisão de "merece
+  ou não" reavaliada caso a caso. Fatia 100% backend/infra sem nenhuma tela afetada marca a etapa
+  como "não aplicável", registrado em `ux-review.md` sob o heading padronizado `## Decisão: UX
+  review pulado (justificado)`, nunca simplesmente omitida.
+- [ ] `code-review.md` com veredito aprovado (ou aprovado com ressalvas aceitas pelo usuário) —
+  sem isso, a UX review não começa.
+- [ ] Cada uma das 7 áreas de revisão (consistência e padrões; visibilidade do estado do sistema e
+  prevenção de erro; controle/liberdade do usuário e navegabilidade; consciência de estado/ciclo
+  de vida do domínio; robustez de conteúdo gerado pelo usuário; hierarquia de informação; alvo de
+  toque/acessibilidade básica) tem veredito com evidência ou "sem achados" — nunca em branco.
+- [ ] O método usado nesta rodada (verificação ao vivo via automação de navegador, ou leitura de
+  código na ausência dela) está documentado em `ux-review.md` — um veredito baseado só em leitura
+  estática nunca é apresentado como equivalente a uma verificação ao vivo.
+- [ ] `ux-review.md` referencia o PR e a fatia desta rodada.
+- [ ] `ux-review.md` commitado (só esse arquivo, nunca `git add -A`/`.`) e enviado (push) na
+  branch do PR pelo próprio `ux-designer` antes de devolver o resultado.
+
 ## QA
 
 - [ ] `code-review.md` com veredito aprovado (ou aprovado com ressalvas aceitas pelo usuário) —
   sem isso, o QA não começa.
+- [ ] Se a fatia tem superfície de UI perceptível (UX review não marcada "não aplicável"),
+  `ux-review.md` com veredito aprovado (ou aprovado com ressalvas aceitas pelo usuário) — sem
+  isso, o QA não começa.
 - [ ] Cobertura medida e comparada ao gate de 80% — sem relatório de cobertura confiável, não há
   aprovação possível.
 - [ ] Se a fatia tem trilha de frontend, ou gera qualquer outro artefato de build/empacotamento
@@ -410,7 +437,8 @@ gravada por quem causa a transição.
 - [ ] `ci.yml` tem filtro de `paths`/`paths-ignore` cobrindo `specs/**`, `docs/**` e `*.md` da raiz
   — push/PR que só toca esses caminhos pula lint/testes/build (nenhum código executável mudou,
   zero risco de qualidade). Sem esse filtro, cada push de um artefato de revisão
-  (`code-review.md`/`qa-report.md`/`security-review.md`/`sre-review.md`) dispara um run completo
+  (`code-review.md`/`ux-review.md`/`qa-report.md`/`security-review.md`/`sre-review.md`) dispara um
+  run completo
   desnecessário (`.claude/agents/sre.md`, área "CI").
 - [ ] `main` protegida: sem push direto, PR obrigatório, status checks obrigatórios (verificado,
   não necessariamente configurado pelo agente — configuração real é do administrador do repo).
@@ -444,7 +472,8 @@ gravada por quem causa a transição.
 
 ## Merge para `main` (por fatia)
 
-- [ ] PR desta fatia aberto, CI verde, revisão de código aprovada, QA aprovado, segurança
+- [ ] PR desta fatia aberto, CI verde, revisão de código aprovada, revisão de UX aprovada (ou
+  marcada "não aplicável" quando a fatia não tem superfície de UI), QA aprovado, segurança
   aprovada, SRE aprovado (ou aprovado com ressalvas não-bloqueantes explicitamente aceitas pelo
   usuário em qualquer uma dessas etapas) — tudo escopado a esta fatia, não à feature inteira.
 - [ ] Se houver fatia seguinte pendente na feature, ela só começa depois deste merge

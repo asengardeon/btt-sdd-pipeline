@@ -16,7 +16,8 @@ genuinamente dele: `STACK.md` (decisão de stack, criada pelo `architect` no pri
 projeto em relação ao padrão genérico do pipeline: git workflow, estrutura de pastas etc.),
 `LESSONS-LEARNED.md` (condicional) e `adr/` (decisões de arquitetura específicas deste projeto).
 
-Comandos disponíveis: `/sdd-prd`, `/sdd-trd`, `/sdd-implement`, `/sdd-code-review`, `/sdd-qa`,
+Comandos disponíveis: `/sdd-prd`, `/sdd-trd`, `/sdd-implement`, `/sdd-code-review`,
+`/sdd-ux-review` (condicional — só quando a fatia tem superfície de UI perceptível), `/sdd-qa`,
 `/sdd-security`, `/sdd-sre`, `/sdd-baseline`, `/sdd-project-conventions`, `/sdd-hotfix`,
 `/sdd-status`, `/sdd-amend`, `/sdd-pending`, `/sdd-gap-report` (ou os equivalentes `/btt-sdd:*` se
 instalado via plugin). Cada um explica seu próprio papel quando invocado — não precisa memorizar a
