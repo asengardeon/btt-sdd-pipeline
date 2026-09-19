@@ -134,6 +134,21 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    necessária (ex.: um ajuste em `cd.yml`, `Dockerfile`, `infra/terraform/`), caso em que essa
    mudança pontual vira sua própria branch/PR e passa pelo pipeline completo (code review, QA,
    segurança, SRE) normalmente, em vez de ser commitada solta.
+2b-ter. **Antes de invocar qualquer agente para a fatia escolhida, confirme que não existe já um
+   PR aberto e totalmente aprovado cobrindo as mesmas tarefas** — independente de a coluna "Issue
+   GitHub" estar preenchida (esse é o gate do passo 2c-ter, condição diferente). Rode `gh pr list
+   --state open --search "<slug> Fatia N"` (ajustando o padrão ao texto real usado nos PRs deste
+   projeto). Se encontrar um PR aberto cujos artefatos de revisão (`code-review.md`/`qa-report.md`/
+   `security-review.md`/`sre-review.md`) já estão todos aprovados para essa fatia, isso é
+   **trabalho pronto aguardando merge, não trabalho pendente** — pare aqui, não invoque
+   `backend-developer`/`frontend-developer`, informe o usuário do PR encontrado e sugira mergear em
+   vez de reimplementar (o merge em si continua sendo decisão do usuário, `docs/GIT-WORKFLOW.md`).
+   Só prossiga para os passos seguintes quando essa checagem não encontrar nenhum PR aberto já
+   aprovado para a fatia. Já aconteceu de verdade: a tabela do TRD reportava a fatia F-1 inteira
+   como `pendente` porque a promoção de Status só dispara ao confirmar merge da fatia anterior
+   antes de iniciar a próxima (passo 2c) — mas o PR da fatia já existia, com code review, QA,
+   segurança e SRE todos aprovados e CI verde, só faltando o merge; sem uma checagem manual, o
+   trabalho teria sido reimplementado do zero.
 2c. **Antes de criar a branch desta rodada**, se a fatia não é a primeira, confirme que o PR da
    fatia anterior já foi mergeado em `main` (`docs/GIT-WORKFLOW.md`, regra 3, tem o comando). Se
    não estiver, **pare aqui** e informe o usuário — não invoque os agentes de desenvolvimento
