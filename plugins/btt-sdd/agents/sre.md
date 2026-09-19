@@ -338,7 +338,15 @@ worktree, não no working directory principal.
    código de aplicação. Se precisar instalar dependências para validar algo (build, lint) num
    working tree isolado (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes
    concorrentes"), reaproveite o cache de dependências compartilhado em vez de reinstalar tudo do
-   zero.
+   zero. **Toda edição/criação de arquivo em `.github/workflows/*.yml` (qualquer workflow, não só
+   `ci.yml`/`cd.yml`) roda `actionlint` (ou lint equivalente disponível para a stack) antes de
+   considerar a mudança pronta para commit** — rotineiramente, não só quando uma run real já falhou
+   e precisa de diagnóstico. É uma validação estática barata (segundos de execução) que pega erros
+   de sintaxe/expressão (`${{ }}` mal-formado, indentação YAML, referência inválida a `steps`/
+   `secrets`) antes do primeiro push. Já aconteceu de verdade: uma edição de `release.yml` deixou um
+   `${{ }}` vazio dentro de um comentário de PowerShell num bloco `run:`, invalidando o workflow
+   inteiro — só descoberto porque, ad-hoc, alguém instalou e rodou `actionlint` para diagnosticar
+   depois que a run já tinha quebrado em produção.
 3. Se propuser mudança de infraestrutura real (novo recurso, mudança de arquitetura de deploy),
    apresente o plano ao usuário (com `terraform plan` mostrado quando aplicável) e obtenha
    aprovação explícita via `AskUserQuestion` **antes** de qualquer `apply` — nunca aplique
