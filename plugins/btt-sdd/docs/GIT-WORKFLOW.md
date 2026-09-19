@@ -19,7 +19,15 @@ dependências entre histórias (fatias verticais de entrega)"), PR obrigatório 
    confira com `gh pr view <PR> --json state` ou `git log main` antes de criar a branch. Se a
    fatia anterior ainda não estiver mergeada, **pare** e informe o usuário.
 4. **PR aberto cedo**, em modo *draft*, no primeiro commit — não só no final (mantém o CI rodando
-   continuamente e dá visibilidade do progresso).
+   continuamente e dá visibilidade do progresso). "Commita por incremento" (`backend-developer`/
+   `frontend-developer`, Fase 2 — TDD red-green-refactor) é sobre **commits locais**, não sobre um
+   push por commit — esses agentes já fazem só um push ao final da trilha inteira. Fora desse
+   fluxo (o orquestrador, fora de um agente de trilha específico, fazendo duas ou mais mudanças
+   relacionadas na mesma branch/sessão — ex.: um fix pontual e o `qa-report.md`/artefato de revisão
+   que o documenta): agrupe num commit e envie (push) uma vez só, salvo motivo real de durabilidade
+   incremental — cada push dispara seu próprio run de CI completo (`docs/QUALITY-GATES.md`, seção
+   "SRE / CI-CD / Infra", sobre o filtro de `paths` que reduz o custo dos pushes que só tocam
+   `specs/`/`docs/`, mas não elimina a necessidade de agrupar quando o push toca código).
 5. **Revisão de código, QA, segurança e SRE revisam o PR de cada fatia**, não a feature inteira
    de uma vez. `code-review.md`/`qa-report.md`/`security-review.md`/`sre-review.md` são editados
    in-place a cada fatia (nunca recriados), com uma linha por fatia na seção "Histórico de
@@ -42,13 +50,31 @@ todas as fatias de uma vez para revisar depois.
 
 | Etapa                  | Ação de Git                                                                 |
 |-------------------------|-------------------------------------------------------------------------------|
-| `/btt-sdd:prd`, `/btt-sdd:trd`  | Nenhuma — documentos em `specs/`, sem código/branch ainda.                    |
+| `/btt-sdd:prd`, `/btt-sdd:trd`  | Nenhuma — documentos em `specs/`, sem código/branch ainda (ficam como mudança não commitada até `/btt-sdd:implement`, passo 2c-bis, incluí-los no primeiro commit da branch da 1ª fatia). |
 | `/btt-sdd:implement`        | Escolhe a próxima fatia pendente (TRD, seção 13); confirma merge da fatia anterior (regra 3); cria a branch, abre PR draft no primeiro commit, commita por incremento. Full-stack: backend e frontend na mesma branch, em paralelo. |
 | `/btt-sdd:code-review`      | Contra o PR desta fatia; registra em `code-review.md`, preservando o histórico das fatias anteriores; commita e envia (push) esse arquivo na mesma branch antes de devolver o resultado. |
 | `/btt-sdd:qa`               | Contra o PR desta fatia, só os critérios de aceite cobertos por ela; registra em `qa-report.md`; commita e envia (push) esse arquivo (e o de cobertura, se regravado) na mesma branch. |
 | `/btt-sdd:security`         | Contra o PR desta fatia; registra em `security-review.md`; commita e envia (push) esse arquivo na mesma branch. |
 | `/btt-sdd:sre`              | CI/CD/infra impactados por esta fatia; aprovado = PR pronto para merge; commita e envia (push) `sre-review.md` (e qualquer ajuste de infra desta rodada) na mesma branch. |
 | Merge do PR             | Decisão do usuário, nunca automática. Dispara CD e libera a fatia seguinte.   |
+
+## Revisão retroativa de um PR já mergeado
+
+Cenário distinto de "mudança no próprio pipeline" (seção abaixo) e da regra 2 (branch por fatia):
+o código de uma fatia/hotfix já foi mergeado em `main`, mas uma etapa de revisão que deveria ter
+rodado antes do merge não rodou (ex.: `/btt-sdd:hotfix` mergeou sem SRE — passo 6b da skill existe
+para evitar isso, mas pode já ter acontecido antes dessa checagem existir, ou escapado por algum
+outro motivo). Nem a tabela de prefixos de "Mudanças no próprio pipeline" (é sobre este
+repositório, não sobre uma feature real de um projeto) nem a regra 2 (branch por fatia — não há
+fatia nova aqui, não há código novo) cobrem esse caso ao pé da letra.
+
+Para adicionar só o artefato de revisão faltante (`code-review.md`/`qa-report.md`/
+`security-review.md`/`sre-review.md`), sem código novo: crie uma branch
+`<prefixo-original-ou-fix>/<slug>-<etapa>-review` (reaproveite o prefixo já usado pela branch
+original se ainda fizer sentido — `hotfix/`, `fix/`, `feature/` — ou `fix/` por padrão), rode a
+skill de revisão correspondente contra o PR/commit já mergeado, e abra um PR próprio só com esse
+artefato. Não há gate adicional de QA/segurança/SRE sobre esse PR-de-revisão em si (não há código
+novo a revisar) — merge a critério do usuário, como qualquer PR de manutenção.
 
 ## Isolamento de working tree entre agentes concorrentes
 
@@ -148,6 +174,143 @@ e escalar ao usuário. Essa sincronização é o que garante que múltiplos agen
 produzem uma única branch/PR coerente por fatia, sem que a isolação de working tree vire duas
 branches divergentes por engano.
 
+**Se `git checkout <branch-da-fatia>` falhar dentro do worktree isolado** (`fatal: '<branch>' is
+already used by worktree at '<caminho>'` — o mecanismo de `isolation: "worktree"` cria um worktree
+com uma branch própria do agente, não a branch da fatia, e um worktree concorrente — principal ou
+de outro agente — pode já ter `<branch-da-fatia>` como `HEAD`), não tente liberar a branch: crie
+uma branch local temporária rastreando `origin/<branch-da-fatia>` (`git checkout -b
+<nome-temporário> origin/<branch-da-fatia>`), trabalhe nela normalmente (ler artefatos, rodar
+suíte, editar), e ao final use o mesmo `git push origin HEAD:<branch-da-fatia>` da sincronização
+acima — não é preciso que `HEAD` literalmente *seja* `<branch-da-fatia>` para isso funcionar. Já
+aconteceu de 3 agentes de revisão em sequência baterem nesse mesmo erro e cada um re-derivar essa
+mesma solução de forma independente, em vez de segui-la já documentada.
+
+**Um agente rodando num worktree isolado nunca deve fazer `git checkout main`/`<branch base>`
+como limpeza final dentro do próprio worktree.** O worktree principal do orquestrador
+normalmente já tem essa branch como `HEAD` ativo — Git não permite a mesma branch checked out em
+dois worktrees ao mesmo tempo, então essa tentativa ou falha explicitamente, ou (pior, se o
+worktree principal não estava em `main` naquele instante) tem sucesso e passa a "possuir" a
+branch, bloqueando o orquestrador de voltar a fazer checkout nela até que esse worktree isolado
+seja removido manualmente. Cada agente (`agents/backend-developer.md`,
+`frontend-developer.md`, `code-reviewer.md`, `qa-engineer.md`, `security-engineer.md`, `sre.md`,
+passo "Antes de encerrar, volte para a branch base") já trata esse caso: dentro de um worktree
+isolado, permanece na própria branch da fatia (ou usa `git checkout --detach` se precisar sair
+dela) em vez de mirar a branch base — essa regra só se aplica quando o agente compartilha
+literalmente o mesmo diretório de trabalho do orquestrador. Já aconteceu de verdade pelo menos 3
+vezes na mesma sessão: agentes isolados (`code-reviewer`, `qa-engineer`, `security-engineer`,
+`sre`) tentando `git checkout main` dentro do próprio worktree bloquearam o worktree principal do
+orquestrador de voltar a `main` para prosseguir com merges, cada vez exigindo investigação
+(`git worktree list`) e remoção manual do worktree órfão antes de continuar.
+
+**No Windows, `git worktree remove --force` pode falhar com "Permission denied" mesmo depois de
+já ter desregistrado o worktree.** Um handle de arquivo ainda aberto por um processo da stack
+(`dotnet`/MSBuild, ou equivalente) que rodou dentro daquele worktree, ou antivírus escaneando o
+diretório no momento da remoção, pode impedir a remoção física do diretório em disco — mas o
+`git worktree remove` já consegue desregistrar a entrada do índice interno do Git antes disso
+falhar. Confirme com `git worktree list`: se o worktree já não aparece mais na lista, trate o
+erro como sucesso funcional (a branch já está livre para reuso pelo próximo `git worktree add`
+ou `checkout`) — não é bloqueante, e não precisa ser investigado como um erro real toda vez que
+acontece. O diretório físico órfão em `.claude/worktrees/` pode ser limpo depois, sem pressa, com
+uma segunda tentativa de remoção (ou remoção manual do diretório) depois que os processos
+relevantes liberarem os handles. Já aconteceu de forma repetida numa mesma sessão longa
+(múltiplos agentes: `code-reviewer`, `security-engineer`, `sre`), sempre resolvido apenas
+ignorando o erro depois de confirmar via `git worktree list`.
+
+**Antes de rebasear/forçar push manualmente sobre uma branch que múltiplos agentes concorrentes já
+tocaram** (qualquer branch de fatia que já passou por 2+ rodadas de revisão, cada uma em worktree
+separado) — risco maior que o da sincronização de rotina acima, porque aqui é o orquestrador
+resolvendo um conflito manualmente, muitas vezes reaproveitando um worktree já existente. Já
+aconteceu de verdade: um `git rebase origin/main` seguido de `git push --force-with-lease` teve
+sucesso **silencioso** rodando num worktree desatualizado (de uma rodada de revisão anterior, nunca
+atualizado com os commits que outros agentes enviaram — *push* — depois, cada um em seu próprio
+worktree) —
+descartando dois commits já revisados e aprovados, sem nenhum erro visível, só descoberto numa
+auditoria bem posterior. `--force-with-lease` só protege contra o estado do `origin` que aquele
+worktree tinha em cache no último `fetch` — não contra o estado real mais recente do remote se esse
+fetch estiver atrasado. Sempre, antes de rebasear manualmente uma branch nessas condições:
+
+1. `git fetch origin <branch-da-fatia>` primeiro, no worktree que vai fazer a operação.
+2. Confirme `git rev-parse HEAD` == `git rev-parse origin/<branch-da-fatia>` **antes** de começar a
+   rebasear — se forem diferentes, esse worktree está desatualizado: descarte-o (ou resete o branch
+   local para `origin/<branch-da-fatia>`) antes de prosseguir. Nunca rebaseie um estado local que
+   pode já estar atrás de commits pushados por outro agente.
+3. Depois do rebase e antes do push (`--force-with-lease` ou normal), compare a lista de commits da
+   branch antes (`git log origin/<branch-da-fatia>..HEAD` do estado pré-rebase) com a de depois —
+   confirme que nenhum commit da branch original desapareceu. Não basta confirmar que o conflito foi
+   resolvido; confirme também que nada foi perdido no processo.
+
+**Resolvendo conflitos de merge nos arquivos de artefato de revisão
+(`code-review.md`/`qa-report.md`/`security-review.md`/`sre-review.md`).** Fatias/PRs paralelos da
+mesma spec costumam tocar os mesmos arquivos de artefato ao rebasear sobre `main`/sobre uma fatia
+irmã já mergeada. O conflito **não é um simples "duas edições no mesmo lugar"**: cada rodada de
+revisão escreve seu próprio bloco de cabeçalho (`## 1. Veredito geral` com sub-seções `###
+Rodada mais recente` + `### Histórico —` por dentro), e os dois lados do merge reescrevem esse
+mesmo bloco de formas incompatíveis. Resolver isso como texto bruto (aceitar "os dois lados" com
+`sed`/remoção ingênua dos marcadores de conflito) produz cabeçalhos `##` duplicados, fragmentos
+órfãos de linha cortada, e `###` colado sem linha em branco antes — quebrando a estrutura Markdown
+do documento. Ao resolver um conflito nesses arquivos:
+
+1. Combine o cabeçalho (`> PR (...)`/`> Escopo da rodada mais recente`/`> Data:`) unindo as duas
+   listas — nunca escolha um lado e descarte o outro.
+2. Trate cada seção numerada (`## N. ...`) que aparece duplicada como **a mesma seção, com uma
+   sub-seção `###` nova por rodada** — ambos os lados adicionam, nenhum remove uma sub-seção já
+   existente do lado oposto.
+3. **Reordene** as sub-seções por data real da rodada, não pela ordem que o merge trouxe: a
+   cronologicamente mais recente vira `### Rodada mais recente —`, qualquer rodada anterior (mesmo
+   já mergeada) vira `### Histórico —`. Simplesmente concatenar na ordem do merge deixa o rótulo
+   "mais recente" em uma rodada que não é.
+4. Confirme, antes de commitar a resolução: nenhum `## N.` duplicado sobrou (virou uma única seção
+   com múltiplas `###` por dentro); nenhum `###`/`##` ficou colado ao parágrafo anterior sem linha
+   em branco; nenhum fragmento de linha (ex.: uma `> Data:` cortada no meio) ficou órfão entre duas
+   seções.
+
+Documentar isso não é opcional a cada ocorrência: sem esse checklist, cada resolução de conflito
+nesses arquivos exige reconstruir esse raciocínio do zero, seção por seção, várias vezes na mesma
+sessão sempre que mais de uma fatia/PR da mesma spec rebaseia em sequência.
+
+**Conflito de rebase real em código de produção — fatia vs. hotfix concorrente.** A checagem de
+drift de `main` antes de cada etapa de revisão (`git rev-list --count HEAD..origin/main` + rebase)
+normalmente resolve como fast-forward limpo. Mas quando um hotfix de outra spec (sem relação de
+escopo com esta fatia) já foi mergeado em `main` tocando o mesmo arquivo de produção que esta fatia
+edita, o rebase pode gerar um **conflito de merge real** — situação distinta da anterior (conflito
+em `code-review.md`/`qa-report.md`/etc.) porque aqui o conflito está em código/lógica de
+comportamento, não em prosa de relatório. Já aconteceu de verdade: um hotfix de outra spec mergeado
+em `main` no meio da implementação de uma fatia tocou o mesmo arquivo, exigindo do orquestrador
+resolver o conflito manualmente duas vezes (uma vez após o merge do hotfix, outra antes do code
+review), incluindo ler o arquivo inteiro por leitura direta para confirmar que as duas mudanças não
+compartilhavam estado — trabalho de reconciliação sem TDD por trás, diferente do rigor normal de
+quem implementa a fatia.
+
+Quem resolve depende da natureza do conflito:
+- **Conflito mecânico trivial** (import reordenado, formatação, marcador de conflito em torno de
+  uma linha que não muda semântica) — o orquestrador resolve diretamente, sem reacionar nenhum
+  agente.
+- **Conflito que toca lógica de comportamento sobreposta** (as duas mudanças alteram o mesmo
+  trecho funcional, mesmo que sirvam propósitos diferentes) — o orquestrador **não** edita código
+  de produção diretamente para resolver. Reacione o `backend-developer`/`frontend-developer`
+  responsável por esta fatia (via `SendMessage`, mesmo padrão de "retomar para corrigir achados",
+  `skills/implement/SKILL.md`) para refazer a resolução com TDD — ajustando/adicionando
+  teste que cubra o comportamento combinado das duas mudanças, não só editando o código de produção
+  para fazer os dois lados coexistirem.
+
+Isso não substitui a checagem de drift já existente antes de cada etapa de revisão — só cobre o
+caso em que essa checagem encontra um conflito de merge real, não um fast-forward limpo.
+
+**Operando diretamente sobre uma branch que um worktree isolado ainda segura.** Quando o
+orquestrador (não um agente novo) precisa tocar diretamente uma branch de fatia que um subagente
+com `isolation: "worktree"` tocou por último — ex.: para resolver um conflito de rebase
+manualmente — um `git checkout <branch-da-fatia>` no worktree principal pode falhar com `fatal:
+'<branch>' is already used by worktree at '<caminho>'`, mesmo que o agente já tenha terminado e
+relatado ter "devolvido" seu working directory. Isso já aconteceu de verdade: o agente relatou ter
+devolvido, mas voltou para uma branch de estacionamento própria do worktree, não a branch da fatia
+— porque `main` e a branch da fatia já estavam ocupadas por outros worktrees concorrentes no
+momento em que ele tentou voltar, então a branch da fatia continuou presa àquele worktree.
+
+Antes de assumir que o `checkout` vai funcionar no worktree principal, rode `git worktree list`
+para descobrir se algum worktree isolado ainda segura aquela branch. Se sim, opere diretamente no
+diretório desse worktree (`cd`/caminho absoluto nos comandos seguintes) em vez de tentar liberá-la
+no worktree principal.
+
 **Limpe o worktree antes de apagar a branch associada.** Se um worktree isolado da fatia (criado
 pelo mecanismo acima, ou reaproveitado por agentes de revisão subsequentes na mesma fatia — QA,
 segurança, SRE reusando o worktree que o `backend-developer`/`frontend-developer` já tinha criado)
@@ -216,9 +379,11 @@ nem fatia (não é uma feature de produto), então usa uma branch simples em vez
    "Implementação" — "a issue do bug/ajuste existe antes da branch ser criada"), estendida a
    qualquer mudança no próprio pipeline: o diff mostra *o quê* mudou, mas só a issue registra *por
    quê* — histórico de revisão sem isso vira uma sequência de commits sem contexto recuperável
-   meses depois. Se a mudança já nasceu de uma issue existente, reaproveite-a. Se não existir
-   nenhuma, crie uma (`gh issue create`) antes de prosseguir — nunca abra a branch/PR primeiro e a
-   issue depois, como formalidade retroativa.
+   meses depois. Se a mudança já nasceu de uma issue existente (ex.: `/repo-issues`, ou um pedido
+   do usuário que você já registrou como issue via `docs/QUALITY-GATES.md`, seção "Todo feedback
+   real sobre o próprio plugin vira issue"), reaproveite-a. Se não existir nenhuma, crie uma
+   (`gh issue create --repo asengardeon/btt-sdd-pipeline --title "..." --body "..."`) antes de
+   prosseguir — nunca abra a branch/PR primeiro e a issue depois, como formalidade retroativa.
 2. Crie uma branch a partir de `main` atualizada, com o prefixo que descreve a natureza da
    mudança — mesma taxonomia dos tipos de commit já usados no histórico deste repositório
    (`feat:`, `fix:`, `chore:`, `perf:`, etc.):
