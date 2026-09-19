@@ -48,6 +48,9 @@ DEPOIS" como opção quando cabível.
   existentes sem alterá-los, e `Write`/`Edit` só para documentação — nunca corrige/refatora código.
 - **`product-design.md`** — gera o PRD a partir de um pedido, incluindo a ordem de valor entre
   histórias. Não roda comandos (sem acesso a `Bash`) porque essa etapa é puramente de produto.
+  Quando a feature tem alteração de UI, registra também o parecer de navegabilidade/usabilidade que
+  `ux-designer` (em modo consultoria) deu sobre os wireframes ou a descrição das telas — subseção
+  "Parecer de UX" da seção 7 do PRD.
 - **`architect.md`** — gera o TRD a partir do PRD aprovado (e de `docs/BASELINE.md`, quando
   existir), incluindo a decisão de stack tecnológica (reaproveitando `docs/STACK.md` ou
   `~/.claude/stack-defaults.md` quando existirem, perguntando só se nenhum dos dois existir), os
@@ -69,12 +72,15 @@ DEPOIS" como opção quando cabível.
   contrato Frontend↔Backend quando full-stack. Tem `Bash` para ler o diff do PR, rodar lint, e
   commitar/enviar (push) o próprio `code-review.md` na branch do PR antes de terminar; `Write`/
   `Edit` só para esse arquivo — não corrige código de produção, reporta.
-- **`ux-designer.md`** — etapa **condicional** (4b): designer de produto sênior avaliando
-  usabilidade/navegabilidade (heurísticas de Nielsen) de uma fatia com superfície de UI
-  perceptível, entre a revisão de código e o QA. Prefere navegar o fluxo real (automação de
-  navegador, quando disponível) a inferir comportamento só pelo JSX/CSS. Mesma lógica de `Write`/
-  `Edit` restrito ao próprio `ux-review.md` de `code-reviewer.md` — não corrige código, reporta.
-  Fatia 100% backend sem tela afetada pula esta etapa.
+- **`ux-designer.md`** — designer de produto sênior em **dois modos**: (1) etapa **condicional**
+  (4b) — revisão pós-implementação de usabilidade/navegabilidade (heurísticas de Nielsen) de uma
+  fatia com superfície de UI perceptível, entre a revisão de código e o QA, com veredito formal em
+  `ux-review.md`; prefere navegar o fluxo real (automação de navegador, quando disponível) a
+  inferir comportamento só pelo JSX/CSS; mesma lógica de `Write`/`Edit` restrito ao próprio
+  `ux-review.md` de `code-reviewer.md` — não corrige código, reporta; fatia 100% backend sem tela
+  afetada pula esta etapa. (2) consultoria na etapa de PRD (`/sdd-prd`, passo 2b) — quando a
+  feature tem alteração de UI, parecer de navegabilidade/usabilidade sobre wireframes ou telas
+  descritas, sem veredito nem artefato próprio, sem escrever/editar nenhum arquivo.
 - **`qa-engineer.md`** — valida a implementação contra PRD/TRD e o PR aberto, depois da revisão
   de código (e de UX, quando aplicável) aprovada. Tem `Bash` para rodar a suíte de testes e o relatório de cobertura quando
   precisa (o resumo já gerado pela implementação em `specs/<slug>/coverage/` é reaproveitado

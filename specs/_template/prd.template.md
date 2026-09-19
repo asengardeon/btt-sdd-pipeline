@@ -63,6 +63,12 @@ de UI final (isso continua com `architect`/`frontend-developer` no TRD/implement
   opções geradas, salva junto da spec para conferência futura mesmo se o Artifact publicado não
   estiver mais acessível (republique esse arquivo via Artifact para ver de novo). `<preencher ou
   "não aplicável">`
+- **Parecer de UX (`ux-designer`)**: consultoria de navegabilidade/usabilidade coletada por
+  `/sdd-prd` (passo 2b) antes das histórias serem escritas em detalhe — por opção de wireframe
+  quando houve mais de uma, ou sobre a descrição textual das telas/fluxos quando o usuário optou
+  por não ver wireframes. Informativo, não um veredito — não bloqueia a aprovação do PRD.
+  `<transcrever o parecer recebido, "sem observações relevantes", ou "não aplicável (feature sem
+  alteração de UI)">`
 
 ## 8. Métricas de sucesso
 

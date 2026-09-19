@@ -24,6 +24,7 @@ ideia/pedido
    │
    ▼
 [1] product-design    ──▶  PRD  (specs/<slug>/prd.md) — inclui ordem de valor entre histórias
+    (+ ux-designer em modo consultoria sobre wireframes/telas, SÓ com alteração de UI)
    │
    ▼
 [2] architect          ──▶  TRD  (specs/<slug>/trd.md)  [+ ADR se relevante]
@@ -73,7 +74,7 @@ Cada agente vive em `.claude/agents/<nome>.md` e é acionado por uma skill em
 |--------------------|------------------------------------------------|---------------------------------|
 | `/create-project`   | (usa `product-design`)                          | um projeto novo, do zero, num diretório separado |
 | `/sdd-baseline`     | codebase-archaeologist                          | `docs/BASELINE.md` (condicional) |
-| `/sdd-prd`          | product-design                                  | `specs/<slug>/prd.md`          |
+| `/sdd-prd`          | product-design (+ ux-designer em modo consultoria, condicional — só com alteração de UI) | `specs/<slug>/prd.md`          |
 | `/sdd-trd`          | architect                                        | `specs/<slug>/trd.md`          |
 | `/sdd-implement`    | backend-developer e/ou frontend-developer         | branch + PR + código + testes  |
 | `/sdd-code-review`  | code-reviewer                                    | `specs/<slug>/code-review.md`  |

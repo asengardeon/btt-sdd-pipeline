@@ -41,7 +41,12 @@ validam objetivamente contra critérios escritos".
   dependências entre histórias", a visão de produto de quais histórias dependem de outras. Se a
   feature tem UI, `/sdd-prd` oferece ao usuário ver opções de wireframe/protótipo de baixa
   fidelidade das telas principais (via skill `design`, publicado como Artifact) antes de escrever
-  as histórias em detalhe — seção "Wireframes/Protótipos de tela" do PRD.
+  as histórias em detalhe — seção "Wireframes/Protótipos de tela" do PRD. **Quando a feature tem
+  alteração de UI de verdade**, `ux-designer` (`.claude/agents/ux-designer.md`) participa nesse
+  mesmo momento em modo consultoria — nunca a revisão formal pós-implementação (etapa 4b) —
+  dando parecer de navegabilidade/usabilidade sobre as opções de wireframe ou sobre a descrição
+  textual das telas quando o usuário recusa ver wireframes, registrado na subseção "Parecer de UX"
+  do PRD. Sem alteração de UI, `ux-designer` não participa desta etapa.
 - **Gate de saída**: aprovação explícita do usuário.
 
 ### 2. Arquitetura → TRD

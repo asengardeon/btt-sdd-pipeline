@@ -253,6 +253,12 @@ gravada por quem causa a transição.
   Artifact publicado não estiver mais acessível. Se `docs/DESIGN-SYSTEM.md` ainda não existir neste
   projeto, o usuário foi consultado sobre estabelecer um antes de gerar as opções (aceite ou
   recusa, nunca silenciado) — campo "Sistema de design usado" preenchido de acordo.
+- [ ] **Se a feature tem alteração de UI de verdade** (mesmo gate do bullet acima), `ux-designer`
+  foi acionado em modo consultoria (`.claude/agents/ux-designer.md`, seção "Pré-condição (modo
+  consultoria de PRD)") — independente de o usuário ter topado ver wireframes ou não — e a
+  subseção "Parecer de UX" do PRD está preenchida com o parecer recebido, "sem observações
+  relevantes", ou "não aplicável" só quando a feature genuinamente não tem UI. Esse parecer é
+  informativo, nunca um veredito — não é gate de aprovação em si, só precisa estar registrado.
 - [ ] Aprovação explícita do usuário registrada.
 
 ## TRD
