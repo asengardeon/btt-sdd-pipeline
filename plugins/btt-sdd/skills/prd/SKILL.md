@@ -30,11 +30,22 @@ dois.
 2. Determine o próximo número sequencial de spec olhando os diretórios existentes em `specs/`
    (ex.: se o maior é `0001-...`, o próximo é `0002-...`) e um slug curto em kebab-case para a
    feature.
-2b. **Feature com UI → ofereça wireframes/protótipos antes do PRD.** Se o pedido descreve tela(s)
-   nova(s) ou mudança visual relevante em tela existente, pergunte ao usuário via
-   `AskUserQuestion` se ele quer ver 2-3 opções de wireframe/protótipo de baixa fidelidade das
-   telas principais antes de escrever as histórias de usuário em detalhe — com "não, seguir direto
-   para o PRD" sempre disponível como opção. Se o usuário topar:
+2b. **Feature com UI → ofereça wireframes/protótipos antes do PRD, com apoio de `ux-designer`.**
+   Se o pedido descreve tela(s) nova(s) ou mudança visual relevante em tela existente, pergunte ao
+   usuário via `AskUserQuestion` se ele quer ver 2-3 opções de wireframe/protótipo de baixa
+   fidelidade das telas principais antes de escrever as histórias de usuário em detalhe — com "não,
+   seguir direto para o PRD" sempre disponível como opção.
+
+   **Sempre que este passo dispara** (a feature tem alteração de UI de verdade — o mesmo gate
+   acima, não uma condição extra), a consultoria de `ux-designer` (modo "consultoria de PRD", ver o
+   agente `ux-designer` deste plugin) roda também, **independente da resposta do usuário sobre ver
+   wireframes** — sem alteração de UI, não invoque `ux-designer` nesta etapa. Invoque-o via Agent
+   tool (`subagent_type: "ux-designer"`); ele não exige branch/PR nem produz artefato próprio
+   nesse modo, então não precisa de `isolation: "worktree"` aqui. Só o modo consultoria — nunca
+   confunda com o modo revisão pós-implementação (`/btt-sdd:ux-review`, etapa 4b), que continua
+   existindo sem alteração e é o gate real depois da implementação.
+
+   Se o usuário topar ver wireframes:
    - **Confira `docs/DESIGN-SYSTEM.md` antes de gerar qualquer opção.** Se existir, reaproveite as
      decisões de lá (paleta de cores, tipografia, tom/estilo visual, referências) como direção para
      a skill `design` — as opções nascem já dentro da identidade visual do projeto, não com a
@@ -51,26 +62,40 @@ dois.
      padrão da skill `design` nesta rodada, sem criar o arquivo — será oferecido de novo na próxima
      feature com UI.
    - Use a skill `design` para gerar 2-3 opções de layout/fluxo das telas principais descritas no
-     pedido (aplicando o sistema de design acima, quando houver), publicadas como Artifact, e
-     pergunte ao usuário qual prefere (ou se quer combinar elementos de mais de uma). Isso é uma
-     exploração visual rápida para alinhar direção cedo — não substitui o desenho técnico de UI que
-     fica com `architect`/`frontend-developer` depois.
+     pedido (aplicando o sistema de design acima, quando houver), publicadas como Artifact.
+   - **Antes de perguntar ao usuário qual opção prefere**, passe as opções geradas (referência do
+     Artifact e/ou os arquivos `.dc.html`) para `ux-designer` (modo consultoria, ver acima) revisar
+     — navegabilidade, consistência, hierarquia de informação e as demais áreas da seção "Áreas de
+     revisão" daquele agente, escopadas ao que é avaliável em wireframe de baixa fidelidade. Inclua
+     o parecer de cada opção (ou "sem observações relevantes") junto da descrição de cada uma na
+     `AskUserQuestion` que apresenta as opções ao usuário. Isso é uma exploração visual rápida para
+     alinhar direção cedo, agora informada por navegabilidade/usabilidade — não substitui o desenho
+     técnico de UI que fica com `architect`/`frontend-developer` depois, nem a escolha final, que
+     continua sendo do usuário.
+
+   Se o usuário recusar ver wireframes (mas a feature ainda tem alteração de UI, ou seja, este
+   passo 2b disparou): passe a descrição textual das telas/fluxos do próprio pedido para
+   `ux-designer` (modo consultoria) mesmo assim — não pule a consultoria só porque não houve
+   exploração visual. Leve o parecer para o passo 3 abaixo junto do restante do resultado.
+
    **Salve o(s) arquivo(s)-fonte `.dc.html` junto da spec**, não só a URL do Artifact (que pode
    ficar indisponível depois): copie-o(s) para `specs/<NNNN-slug>/wireframes/` (crie o diretório se
    não existir), com nome descritivo (ex.: `opcoes-tela-<nome>.dc.html`) — é esse arquivo local que
    garante a conferência futura mesmo sem acesso ao Artifact publicado; para ver de novo mais
    tarde, republique esse mesmo arquivo via Artifact em vez de recriar do zero. Leve o resultado
-   (opção escolhida, URL do Artifact, caminho do arquivo salvo, e se `docs/DESIGN-SYSTEM.md` já
-   existia, foi estabelecido nesta rodada, ou foi recusado — ou a recusa das opções em si) para o
-   passo 3 abaixo. Se a feature não tem UI, pule este passo sem perguntar.
+   (opção escolhida, URL do Artifact, caminho do arquivo salvo, o parecer de UX coletado nesta
+   etapa, e se `docs/DESIGN-SYSTEM.md` já existia, foi estabelecido nesta rodada, ou foi recusado —
+   ou a recusa das opções em si) para o passo 3 abaixo. Se a feature não tem UI, pule este passo
+   inteiro (inclusive a consultoria de `ux-designer`) sem perguntar.
 3. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 3c para
    registrar a duração desta invocação. Invoque o agente `product-design` (Agent tool,
    `subagent_type: "product-design"`) passando: o pedido do usuário, o número/slug decidido, o
    resultado do passo 2b (opção de wireframe escolhida com a referência do Artifact, o caminho do
-   arquivo salvo em `specs/<NNNN-slug>/wireframes/`, e o status do sistema de design usado, recusa
-   explícita do usuário, ou "não aplicável" se a feature não tem UI), e instrução explícita para
-   salvar o PRD em `specs/<NNNN-slug>/prd.md` usando `specs/_template/prd.template.md` como
-   estrutura — incluindo a seção "Wireframes/Protótipos de tela".
+   arquivo salvo em `specs/<NNNN-slug>/wireframes/`, o status do sistema de design usado, recusa
+   explícita do usuário, o parecer de `ux-designer` coletado no passo 2b, ou "não aplicável" se a
+   feature não tem UI), e instrução explícita para salvar o PRD em `specs/<NNNN-slug>/prd.md`
+   usando `specs/_template/prd.template.md` como estrutura — incluindo a seção
+   "Wireframes/Protótipos de tela" e sua subseção "Parecer de UX (ux-designer)".
 3b. **Se `product-design` estiver rodando como subagente assíncrono/em background e devolver uma
    pergunta/lista de perguntas em texto puro** (sinal de que `AskUserQuestion` não estava
    disponível para ele nesse modo — mesmo padrão já documentado para `sre`/`/btt-sdd:sre`,
@@ -97,5 +122,8 @@ dois.
 
 Se o Agent tool não estiver disponível na sessão, siga o mesmo processo descrito no agente
 `product-design` diretamente, você mesmo, com o mesmo rigor — o passo 2b acima (oferta de
-wireframes/protótipos) continua sendo sua responsabilidade, já que ele depende de ferramentas
-(`AskUserQuestion`, `Artifact`, skill `design`) que este agente sozinho não tem.
+wireframes/protótipos, incluindo a consultoria de `ux-designer`) continua sendo sua
+responsabilidade, já que ele depende de ferramentas (`AskUserQuestion`, `Artifact`, skill `design`,
+Agent tool) que este agente sozinho não tem. Sem Agent tool, siga o processo descrito no agente
+`ux-designer`, seção "Processo (modo consultoria de PRD)", você mesmo, em vez de pular a
+consultoria.

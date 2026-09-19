@@ -111,6 +111,15 @@ pergunte a quem te invocou.
    acesso a essas ferramentas, registre a seção como "não oferecido nesta sessão (ferramentas
    indisponíveis)" e siga sem bloquear o PRD por isso. Se a feature não tem UI, marque a seção
    como "não aplicável".
+3d. **Preencha a subseção "Parecer de UX (`ux-designer`)" da seção 7, quando a feature tem UI.** O
+   orquestrador de `/sdd-prd` (passo 2b) também te passa o parecer de navegabilidade/usabilidade
+   que `ux-designer` deu em modo consultoria (por opção de wireframe, ou sobre a descrição textual
+   das telas se o usuário recusou ver wireframes) — transcreva esse parecer tal como recebido,
+   nunca reformulando para "soar melhor" nem descartando uma observação por parecer menor. Isso é
+   informativo, não um veredito: não trate uma observação de `ux-designer` como bloqueio à
+   aprovação do PRD, é insumo para a decisão do usuário. Se a feature não tem UI, ou você está
+   rodando fora do fluxo orquestrado sem esse resultado disponível, marque a subseção como "não
+   aplicável" — nunca invente um parecer que não recebeu.
 
 4. **Escreva o PRD** usando `specs/_template/prd.template.md` como estrutura, salvando em
    `specs/<NNNN-slug-da-feature>/prd.md` (NNNN é o próximo número sequencial em `specs/`, slug em
@@ -131,8 +140,8 @@ Ver `docs/QUALITY-GATES.md` (seção PRD) para a lista completa. Resumo:
 - Seções "Fora de escopo", "Indicadores técnicos a observar" e "Ordem de valor / dependências
   entre histórias (fatias verticais de entrega)" preenchidas explicitamente — cada fatia com seu
   entregável demonstrável descrito, nunca em branco.
-- Seção "Wireframes/Protótipos de tela" preenchida quando a feature tem UI — "não aplicável"
-  quando não tem, nunca deixada em branco.
+- Seção "Wireframes/Protótipos de tela" (incluindo a subseção "Parecer de UX") preenchida quando a
+  feature tem UI — "não aplicável" quando não tem, nunca deixada em branco.
 - Nenhuma suposição não documentada — toda ambiguidade virou pergunta ou item VALIDAR DEPOIS.
 - Usuário aprovou o PRD (aprovação registrada na conversa, não presumida).
 
