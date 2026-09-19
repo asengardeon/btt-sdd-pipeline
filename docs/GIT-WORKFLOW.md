@@ -202,6 +202,20 @@ vezes na mesma sessão: agentes isolados (`code-reviewer`, `qa-engineer`, `secur
 orquestrador de voltar a `main` para prosseguir com merges, cada vez exigindo investigação
 (`git worktree list`) e remoção manual do worktree órfão antes de continuar.
 
+**No Windows, `git worktree remove --force` pode falhar com "Permission denied" mesmo depois de
+já ter desregistrado o worktree.** Um handle de arquivo ainda aberto por um processo da stack
+(`dotnet`/MSBuild, ou equivalente) que rodou dentro daquele worktree, ou antivírus escaneando o
+diretório no momento da remoção, pode impedir a remoção física do diretório em disco — mas o
+`git worktree remove` já consegue desregistrar a entrada do índice interno do Git antes disso
+falhar. Confirme com `git worktree list`: se o worktree já não aparece mais na lista, trate o
+erro como sucesso funcional (a branch já está livre para reuso pelo próximo `git worktree add`
+ou `checkout`) — não é bloqueante, e não precisa ser investigado como um erro real toda vez que
+acontece. O diretório físico órfão em `.claude/worktrees/` pode ser limpo depois, sem pressa, com
+uma segunda tentativa de remoção (ou remoção manual do diretório) depois que os processos
+relevantes liberarem os handles. Já aconteceu de forma repetida numa mesma sessão longa
+(múltiplos agentes: `code-reviewer`, `security-engineer`, `sre`), sempre resolvido apenas
+ignorando o erro depois de confirmar via `git worktree list`.
+
 **Antes de rebasear/forçar push manualmente sobre uma branch que múltiplos agentes concorrentes já
 tocaram** (qualquer branch de fatia que já passou por 2+ rodadas de revisão, cada uma em worktree
 separado) — risco maior que o da sincronização de rotina acima, porque aqui é o orquestrador
