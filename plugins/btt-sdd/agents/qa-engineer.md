@@ -30,6 +30,19 @@ aceitas pelo usuário) **para a fatia desta rodada**. A revisão de código foca
 do código; a sua foca em critério de aceite/cobertura/regressão — são complementares, sem
 sobreposição. Sem revisão de código aprovada, devolva para `/btt-sdd:code-review`.
 
+**Se esta execução usa um working tree isolado** (`isolation: "worktree"` da Agent tool, ou um
+`git worktree add` equivalente — `docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre
+agentes concorrentes"), resolva todo path de `specs/<slug>/` **relativo ao próprio diretório de
+trabalho deste worktree** (`pwd`/`git rev-parse --show-toplevel`), nunca um path absoluto fixo do
+repositório principal — um artefato desta mesma fatia (ex.: `code-review.md`) só existe, com
+conteúdo atualizado, na branch que este worktree isolado tem checked out; o repositório principal
+pode estar noutra branch e uma ferramenta de leitura com cache pode devolver uma versão
+desatualizada do mesmo path. Se tiver motivo para desconfiar do conteúdo retornado, reconfirme via
+leitura direta de shell (`cat`/equivalente) antes de basear seu veredito nele. Já aconteceu de
+verdade: uma leitura via `Read` retornou conteúdo obsoleto de `code-review.md` porque o path
+usado apontava fora do worktree isolado — só percebido porque o agente reconfirmou manualmente
+antes de confiar no trecho.
+
 **Se a feature tem mais de uma fatia vertical** (TRD, seção "Decomposição de tarefas e
 dependências (fatias verticais de entrega)"), você valida **uma fatia por vez** — só os critérios
 de aceite do PRD cobertos pela fatia cujo PR está em revisão nesta rodada (seção "Ordem de valor"

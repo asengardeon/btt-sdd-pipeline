@@ -40,6 +40,16 @@ Você exige um PR aberto pela etapa de implementação (`docs/GIT-WORKFLOW.md`),
 (`specs/<slug>/trd.md`) aprovado como referência de arquitetura pretendida. Sem PR/branch, não há
 o que revisar — devolva para `/btt-sdd:implement`.
 
+**Se esta execução usa um working tree isolado** (`isolation: "worktree"` da Agent tool, ou um
+`git worktree add` equivalente — `docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre
+agentes concorrentes"), resolva todo path de `specs/<slug>/` **relativo ao próprio diretório de
+trabalho deste worktree** (`pwd`/`git rev-parse --show-toplevel`), nunca um path absoluto fixo do
+repositório principal — um artefato desta mesma fatia só existe, com conteúdo atualizado, na
+branch que este worktree isolado tem checked out; o repositório principal pode estar noutra branch
+e uma ferramenta de leitura com cache pode devolver uma versão desatualizada do mesmo path. Se
+tiver motivo para desconfiar do conteúdo retornado, reconfirme via leitura direta de shell
+(`cat`/equivalente) antes de basear seu veredito nele.
+
 **Se a feature tem mais de uma fatia vertical** (TRD, seção "Decomposição de tarefas e
 dependências (fatias verticais de entrega)"), você revisa **uma fatia por vez** — a fatia cujo PR
 está aberto nesta rodada, nunca a feature inteira de uma vez. Fatias anteriores já mergeadas em
