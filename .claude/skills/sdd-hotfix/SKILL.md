@@ -42,10 +42,10 @@ conteúdo do projeto, não deste pipeline — não confunda os dois.
 
 1. **Identifique a spec relacionada, se houver.** Se o bug está numa área de código que uma spec
    existente em `specs/` introduziu ou alterou por último, essa é a spec relacionada — os
-   artefatos desta rodada (`code-review.md`/`qa-report.md`/`security-review.md`/`sre-review.md`)
-   são editados **in-place** nela, com uma linha nova na respectiva "Histórico de aprovações por
-   fatia" usando `hotfix-<data>` (ex.: `hotfix-2026-09-01`) no lugar do identificador de fatia
-   (`F-N`). Se não há nenhuma spec relacionada (melhoria pontual sem origem), crie um diretório
+   artefatos desta rodada (`code-review.md`/`ux-review.md`/`qa-report.md`/`security-review.md`/
+   `sre-review.md`) são editados **in-place** nela, com uma linha nova na respectiva "Histórico de
+   aprovações por fatia" usando `hotfix-<data>` (ex.: `hotfix-2026-09-01`) no lugar do
+   identificador de fatia (`F-N`). Se não há nenhuma spec relacionada (melhoria pontual sem origem), crie um diretório
    dedicado `specs/<NNNN>-<slug-curto>/` (próximo número sequencial livre em `specs/`) contendo só
    os artefatos de revisão que se aplicarem — sem `prd.md`/`trd.md`.
 1b. **Gate obrigatório: confirme/crie a Issue GitHub deste hotfix antes de criar a branch.**
@@ -113,6 +113,12 @@ conteúdo do projeto, não deste pipeline — não confunda os dois.
      `/sdd-status`/`/sdd-pending` (`skills/status/scripts/sdd-status.sh`/`.ps1`) reconhecerem isso
      como um estado terminal válido em vez de "veredito não identificado", evitando que o usuário
      seja questionado à toa sobre algo já decidido e justificado.
+   - **UX/Usabilidade: sempre que o diff alterar uma tela/fluxo com superfície de UI perceptível
+     pelo usuário final** (layout, navegação, visibilidade condicional de controles, estado
+     vazio/erro, conteúdo de mídia) — roda `/sdd-ux-review` contra o PR desta rodada. Uma correção
+     puramente de backend/infra sem nenhuma tela afetada pula esta etapa, registrando a decisão no
+     mesmo padrão já usado para QA pulado (heading padronizado `## Decisão: UX review pulado
+     (justificado)`, com a justificativa completa) no `ux-review.md` desta rodada.
    - **Segurança: sempre que o diff tocar qualquer item do critério objetivo de
      `docs/QUALITY-GATES.md` (seção "Segurança (`security-engineer`)")** — autenticação,
      autorização, gestão de sessão, dados pessoais/sensíveis, ou qualquer ponto de entrada
@@ -125,16 +131,16 @@ conteúdo do projeto, não deste pipeline — não confunda os dois.
    Apresente essa decisão (quais revisões rodam e por quê) ao usuário via `AskUserQuestion` antes
    de prosseguir, oferecendo a opção de rodar uma revisão adicional mesmo que o critério acima não
    a exija.
-6. **Rode cada revisão decidida no passo 5** normalmente (`/sdd-code-review`, `/sdd-qa`,
-   `/sdd-security`, `/sdd-sre`), contra o PR desta rodada — cada uma edita in-place o artefato
+6. **Rode cada revisão decidida no passo 5** normalmente (`/sdd-code-review`, `/sdd-ux-review`,
+   `/sdd-qa`, `/sdd-security`, `/sdd-sre`), contra o PR desta rodada — cada uma edita in-place o artefato
    identificado no passo 1, com a linha `hotfix-<data>` no histórico de aprovações. Mesma regra de
    "Auto-aprovação nunca é o gate real" (`.claude/skills/sdd-implement/SKILL.md`) — nenhum agente
    que implementou a correção escreve o próprio veredito.
 6b. **Antes de informar que o merge fica a critério do usuário, confirme explicitamente que toda
    revisão decidida como aplicável no passo 5 já rodou com veredito aprovado** — não confie em
    lembrar de tê-las rodado todas. Releia a decisão do passo 5 contra o estado real dos artefatos
-   (`code-review.md`/`qa-report.md`/`security-review.md`/`sre-review.md`, seção "Histórico de
-   aprovações por fatia", linha `hotfix-<data>`): se qualquer revisão marcada como aplicável ainda
+   (`code-review.md`/`ux-review.md`/`qa-report.md`/`security-review.md`/`sre-review.md`, seção
+   "Histórico de aprovações por fatia", linha `hotfix-<data>`): se qualquer revisão marcada como aplicável ainda
    não tem veredito aprovado para esta rodada, **não prossiga para o passo 7** — rode a revisão
    faltante agora, ou, se por algum motivo ela não puder rodar ainda, avise isso em destaque ao
    usuário antes de qualquer menção a merge, nunca como nota de rodapé. Já aconteceu de verdade: um
