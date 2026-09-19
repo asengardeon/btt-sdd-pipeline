@@ -185,6 +185,23 @@ acima — não é preciso que `HEAD` literalmente *seja* `<branch-da-fatia>` par
 aconteceu de 3 agentes de revisão em sequência baterem nesse mesmo erro e cada um re-derivar essa
 mesma solução de forma independente, em vez de segui-la já documentada.
 
+**Um agente rodando num worktree isolado nunca deve fazer `git checkout main`/`<branch base>`
+como limpeza final dentro do próprio worktree.** O worktree principal do orquestrador
+normalmente já tem essa branch como `HEAD` ativo — Git não permite a mesma branch checked out em
+dois worktrees ao mesmo tempo, então essa tentativa ou falha explicitamente, ou (pior, se o
+worktree principal não estava em `main` naquele instante) tem sucesso e passa a "possuir" a
+branch, bloqueando o orquestrador de voltar a fazer checkout nela até que esse worktree isolado
+seja removido manualmente. Cada agente (`.claude/agents/backend-developer.md`,
+`frontend-developer.md`, `code-reviewer.md`, `qa-engineer.md`, `security-engineer.md`, `sre.md`,
+passo "Antes de encerrar, volte para a branch base") já trata esse caso: dentro de um worktree
+isolado, permanece na própria branch da fatia (ou usa `git checkout --detach` se precisar sair
+dela) em vez de mirar a branch base — essa regra só se aplica quando o agente compartilha
+literalmente o mesmo diretório de trabalho do orquestrador. Já aconteceu de verdade pelo menos 3
+vezes na mesma sessão: agentes isolados (`code-reviewer`, `qa-engineer`, `security-engineer`,
+`sre`) tentando `git checkout main` dentro do próprio worktree bloquearam o worktree principal do
+orquestrador de voltar a `main` para prosseguir com merges, cada vez exigindo investigação
+(`git worktree list`) e remoção manual do worktree órfão antes de continuar.
+
 **Antes de rebasear/forçar push manualmente sobre uma branch que múltiplos agentes concorrentes já
 tocaram** (qualquer branch de fatia que já passou por 2+ rodadas de revisão, cada uma em worktree
 separado) — risco maior que o da sincronização de rotina acima, porque aqui é o orquestrador
