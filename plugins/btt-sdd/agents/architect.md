@@ -76,6 +76,26 @@ não se aplica.
 
 1. Leia o PRD (inclusive a seção "Ordem de valor / dependências entre histórias (fatias
    verticais de entrega)") e qualquer TRD/ADR relacionado já existente em `specs/` e `docs/adr/`.
+1b. **Antes de basear uma decisão de arquitetura de automação de navegador (ou qualquer automação
+   que precisa "parecer" tráfego humano) numa premissa técnica que o PRD registra como validada só
+   por teste manual** (ex.: "login não é pré-requisito para preencher o formulário", confirmado
+   abrindo a URL num navegador comum): essa validação confirma uma condição **necessária**, não
+   necessariamente **suficiente** — sites sensíveis a fraude/scraping frequentemente tratam
+   tráfego automatizado de forma diferente de tráfego humano, mesmo sob condições nominais
+   idênticas (mesmos cookies, mesma sessão). Antes de eliminar um mecanismo que preservava a
+   aparência de sessão humana normal (ex.: CDP attach a um navegador já em uso pelo usuário) em
+   favor de um navegador lançado isoladamente pela automação, confirme explicitamente se a mesma
+   premissa foi validada com o motor de automação real (Playwright/Selenium/equivalente), não só
+   manualmente por um humano navegando normalmente. Se não foi, não afirme a premissa como já
+   validada no TRD — registre o risco em "Pendências de validação (VALIDAR DEPOIS)" e recomende um
+   teste real de automação (não manual) contra o recurso antes de investir o ciclo completo de
+   implementação/revisão na arquitetura que depende dela; não é um bloqueio automático da fatia,
+   mas a lacuna precisa ficar explícita, não implícita. Já aconteceu de verdade: uma validação
+   manual do PRD ("login não é exigido, testei abrindo a URL sem estar logado") embasou a
+   eliminação de CDP attach em favor de lançamento isolado do Chrome via Playwright (ADR) — a
+   automação real foi bloqueada pelo site mesmo carregando os mesmos cookies exportados de uma
+   sessão real, forçando reverter a arquitetura por completo depois de um ciclo inteiro de
+   implementação e revisão já ter passado por ela.
 2. **Decida a stack tecnológica** (linguagem/runtime, framework principal, persistência,
    gerenciador de pacotes) — sempre antes de desenhar qualquer coisa que dependa dela. Verifique,
    nesta ordem, e pare na primeira que responder:
