@@ -13,7 +13,7 @@
 param([string]$Slug)
 
 $SpecsDir = "specs"
-$Files = @("prd.md", "trd.md", "code-review.md", "qa-report.md", "security-review.md", "sre-review.md")
+$Files = @("prd.md", "trd.md", "code-review.md", "ux-review.md", "qa-report.md", "security-review.md", "sre-review.md")
 $ReferentialPattern = 'ver rodada|ver acima|mesma pend|repetid|sem novidade|inalterad|ja citad'
 $OpenTaskStatusPattern = '^(pendente|em andamento|bloqueado)'
 

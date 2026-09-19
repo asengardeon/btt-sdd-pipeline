@@ -155,12 +155,13 @@ function Test-FatiaPendente {
 }
 
 $SpecsDir = "specs"
-$Stages = @("prd", "trd", "code-review", "qa-report", "security-review", "sre-review")
+$Stages = @("prd", "trd", "code-review", "ux-review", "qa-report", "security-review", "sre-review")
 
 $Labels = @{
   "prd"              = "PRD"
   "trd"              = "TRD"
   "code-review"      = "Code review"
+  "ux-review"        = "UX review"
   "qa-report"        = "QA"
   "security-review"  = "Seguranca"
   "sre-review"       = "SRE"
@@ -168,7 +169,8 @@ $Labels = @{
 $NextCmds = @{
   "prd"              = "/btt-sdd:trd"
   "trd"              = "/btt-sdd:implement"
-  "code-review"      = "/btt-sdd:qa"
+  "code-review"      = "/btt-sdd:ux-review"
+  "ux-review"        = "/btt-sdd:qa"
   "qa-report"        = "/btt-sdd:security"
   "security-review"  = "/btt-sdd:sre"
   "sre-review"       = "(pipeline concluido)"
@@ -220,6 +222,12 @@ foreach ($d in $dirs) {
       # escolha explicita do usuario, nao o fluxo padrao.
       $current = "QA pulado (justificado)"
       $next = "(nenhum - decisao registrada)"
+    } elseif ($stage -eq "ux-review" -and $content -match '(?mi)^#{1,4}\s*Decis.o:\s*UX review pulado') {
+      # UX review formalmente pulada (justificada, skills/ux-review/SKILL.md, passo 3) -
+      # fatia sem superficie de UI perceptivel. Diferente de "QA pulado" acima, nao e um
+      # estado terminal: o pipeline segue normalmente para /btt-sdd:qa.
+      $current = "UX review pulada (nao aplicavel)"
+      $next = $NextCmds[$stage]
     } else {
       $verdict = Get-LatestVerdict $content
       if ($verdict -match '(?i)reprovado') {
