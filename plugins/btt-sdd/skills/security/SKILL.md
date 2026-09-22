@@ -72,7 +72,14 @@ dois.
    e siga a seção "Retomando para corrigir achados de revisão" da skill `/btt-sdd:implement`
    (prefira retomar o mesmo agente que implementou a fatia via `SendMessage` para correções
    pequenas e objetivas, em vez de invocar um agente novo). Se aprovado (ou aprovado com
-   ressalvas não-bloqueantes), informe que a próxima etapa é `/btt-sdd:sre`.
+   ressalvas não-bloqueantes), informe que a próxima etapa é `/btt-sdd:sre`. **Destaque isso como
+   um aviso explícito, não só como a última frase de um resumo maior**: "⚠️ Segurança aprovada — o
+   merge deste PR não deveria acontecer ainda; o SRE (última etapa) ainda não rodou." Já aconteceu
+   de verdade (fatia normal com TRD, não só hotfix — a mesma lacuna que motivou esta instrução já
+   tinha reforço equivalente na skill `hotfix`, passo 6b, mas não aqui): um PR foi mergeado logo
+   depois da aprovação de segurança, sem que o SRE tivesse rodado, porque a menção à próxima etapa
+   estava perdida no meio de um resumo maior e fácil de não notar — descoberto só numa auditoria de
+   SRE de uma fatia posterior.
 
 ## Quando usar sem o agente
 
