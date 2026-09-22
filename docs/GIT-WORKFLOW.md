@@ -174,16 +174,23 @@ e escalar ao usuário. Essa sincronização é o que garante que múltiplos agen
 produzem uma única branch/PR coerente por fatia, sem que a isolação de working tree vire duas
 branches divergentes por engano.
 
-**Se `git checkout <branch-da-fatia>` falhar dentro do worktree isolado** (`fatal: '<branch>' is
-already used by worktree at '<caminho>'` — o mecanismo de `isolation: "worktree"` cria um worktree
-com uma branch própria do agente, não a branch da fatia, e um worktree concorrente — principal ou
-de outro agente — pode já ter `<branch-da-fatia>` como `HEAD`), não tente liberar a branch: crie
-uma branch local temporária rastreando `origin/<branch-da-fatia>` (`git checkout -b
-<nome-temporário> origin/<branch-da-fatia>`), trabalhe nela normalmente (ler artefatos, rodar
-suíte, editar), e ao final use o mesmo `git push origin HEAD:<branch-da-fatia>` da sincronização
-acima — não é preciso que `HEAD` literalmente *seja* `<branch-da-fatia>` para isso funcionar. Já
-aconteceu de 3 agentes de revisão em sequência baterem nesse mesmo erro e cada um re-derivar essa
-mesma solução de forma independente, em vez de segui-la já documentada.
+**`git checkout <branch-da-fatia>` falhar dentro do worktree isolado é o caminho esperado, não uma
+exceção rara, sempre que mais de uma etapa de revisão roda em sequência sobre a mesma branch**
+(code review → UX, quando aplicável → QA → segurança → SRE, o fluxo padrão deste pipeline com
+`isolation: "worktree"` em cada etapa). A partir da 2ª etapa de revisão da mesma fatia em diante,
+não espere que o `checkout` normal funcione — vá direto para o workaround abaixo em vez de
+diagnosticar o erro (`fatal: '<branch>' is already used by worktree at '<caminho>'` — o mecanismo
+de `isolation: "worktree"` cria um worktree com uma branch própria do agente, não a branch da
+fatia, e um worktree concorrente de uma etapa anterior já tem `<branch-da-fatia>` como `HEAD`).
+Não tente liberar a branch: crie uma branch local temporária rastreando `origin/<branch-da-fatia>`
+(`git checkout -b <nome-temporário> origin/<branch-da-fatia>`), trabalhe nela normalmente (ler
+artefatos, rodar suíte, editar), e ao final use o mesmo `git push origin HEAD:<branch-da-fatia>` da
+sincronização acima — não é preciso que `HEAD` literalmente *seja* `<branch-da-fatia>` para isso
+funcionar. Já aconteceu de 3 agentes de revisão em sequência baterem nesse mesmo erro e cada um
+re-derivar essa mesma solução de forma independente, em vez de tratá-la como o caminho normal já
+documentado — inclusive numa 4ª ocorrência depois desta seção já existir, sinal de que só
+documentar o workaround como "se falhar" não bastou; precisava dizer explicitamente que ele **vai**
+falhar a partir da 2ª etapa, então nem vale a pena tentar o `checkout` normal de novo.
 
 **Confirme sempre o branch atual depois de qualquer `git checkout` que pode falhar por colisão de
 worktree, antes de rodar qualquer comando seguinte que dependa dele** (`pull`, `merge`, `push` sem
