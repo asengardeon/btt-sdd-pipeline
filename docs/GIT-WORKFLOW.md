@@ -185,6 +185,22 @@ acima — não é preciso que `HEAD` literalmente *seja* `<branch-da-fatia>` par
 aconteceu de 3 agentes de revisão em sequência baterem nesse mesmo erro e cada um re-derivar essa
 mesma solução de forma independente, em vez de segui-la já documentada.
 
+**Confirme sempre o branch atual depois de qualquer `git checkout` que pode falhar por colisão de
+worktree, antes de rodar qualquer comando seguinte que dependa dele** (`pull`, `merge`, `push` sem
+branch explícito). `git checkout <branch>` que falha com `fatal: '<branch>' is already used by
+worktree at '<caminho>'` não é um erro fatal de shell — a sessão/script continua executando os
+comandos seguintes no branch em que já estava, silenciosamente, a menos que se preste atenção à
+mensagem de erro específica. Já aconteceu de verdade: entre duas etapas de revisão sequenciais da
+mesma fatia, um `git checkout <branch-da-fatia>` falhou por colisão de worktree, mas o `git pull
+origin <branch-da-fatia>` seguinte rodou mesmo assim — sobre `main` (branch em que a sessão já
+estava, não a branch da fatia) — fazendo `main` local avançar vários commits à frente do
+`origin/main` com código de uma fatia ainda não aprovada. Nada foi perdido (resolvido com `git
+reset --hard origin/main` local, nada enviado a `origin/main`), mas um `git push origin main`
+subsequente teria empurrado esse código direto para `main`, violando a regra 1 deste documento.
+Rode `git branch --show-current` (ou confira com atenção o output do próprio `checkout`) antes de
+prosseguir sempre que houver qualquer dúvida sobre se o checkout anterior teve sucesso — nunca
+assuma sucesso só porque o comando seguinte não deu erro de sintaxe.
+
 **Um agente rodando num worktree isolado nunca deve fazer `git checkout main`/`<branch base>`
 como limpeza final dentro do próprio worktree.** O worktree principal do orquestrador
 normalmente já tem essa branch como `HEAD` ativo — Git não permite a mesma branch checked out em
