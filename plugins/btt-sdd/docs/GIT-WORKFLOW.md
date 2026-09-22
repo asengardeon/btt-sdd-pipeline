@@ -19,7 +19,10 @@ dependências entre histórias (fatias verticais de entrega)"), PR obrigatório 
    confira com `gh pr view <PR> --json state` ou `git log main` antes de criar a branch. Se a
    fatia anterior ainda não estiver mergeada, **pare** e informe o usuário.
 4. **PR aberto cedo**, em modo *draft*, no primeiro commit — não só no final (mantém o CI rodando
-   continuamente e dá visibilidade do progresso). "Commita por incremento" (`backend-developer`/
+   continuamente e dá visibilidade do progresso). O PR sai do modo draft automaticamente ao final
+   da skill `sre` quando a fatia é aprovada (`skills/sre/SKILL.md`, passo 5d) — nunca fica como
+   transição manual pendente para o usuário perceber sozinho. "Commita por incremento"
+   (`backend-developer`/
    `frontend-developer`, Fase 2 — TDD red-green-refactor) é sobre **commits locais**, não sobre um
    push por commit — esses agentes já fazem só um push ao final da trilha inteira. Fora desse
    fluxo (o orquestrador, fora de um agente de trilha específico, fazendo duas ou mais mudanças
@@ -55,7 +58,7 @@ todas as fatias de uma vez para revisar depois.
 | `/btt-sdd:code-review`      | Contra o PR desta fatia; registra em `code-review.md`, preservando o histórico das fatias anteriores; commita e envia (push) esse arquivo na mesma branch antes de devolver o resultado. |
 | `/btt-sdd:qa`               | Contra o PR desta fatia, só os critérios de aceite cobertos por ela; registra em `qa-report.md`; commita e envia (push) esse arquivo (e o de cobertura, se regravado) na mesma branch. |
 | `/btt-sdd:security`         | Contra o PR desta fatia; registra em `security-review.md`; commita e envia (push) esse arquivo na mesma branch. |
-| `/btt-sdd:sre`              | CI/CD/infra impactados por esta fatia; aprovado = PR pronto para merge; commita e envia (push) `sre-review.md` (e qualquer ajuste de infra desta rodada) na mesma branch. |
+| `/btt-sdd:sre`              | CI/CD/infra impactados por esta fatia; aprovado = PR pronto para merge (tira o PR do modo draft, `gh pr ready`); commita e envia (push) `sre-review.md` (e qualquer ajuste de infra desta rodada) na mesma branch. |
 | Merge do PR             | Decisão do usuário, nunca automática. Dispara CD e libera a fatia seguinte.   |
 
 ## Revisão retroativa de um PR já mergeado
