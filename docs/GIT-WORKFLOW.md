@@ -385,6 +385,17 @@ concorrente da mesma janela. Antes de investigar isso como bug de código, tente
 de CI, não a feature. Só escale como achado bloqueante se o rerun também falhar, ou se falhar com
 teste vermelho (não só timeout).
 
+**Depois de corrigir uma flakiness real de CI, uma falha nova no push seguinte pode ser flakiness
+de novo, não uma regressão da correção — compare dois sinais antes de decidir.** (1) O teste que
+falhou agora é o mesmo teste que motivou a correção anterior nesta fatia? (2) O push que disparou
+esse CI contém alguma mudança de código capaz de explicar essa falha (não só doc/spec)? Só trate
+como possível regressão real — reabrindo investigação — quando os dois sinais apontarem nessa
+direção (mesmo teste + diff de código relevante). Quando o teste é diferente do achado original e o
+push não teve diff de código, reexecute (`gh run rerun --failed`) antes de escalar, do mesmo jeito
+que a contenção descrita acima. Já aconteceu de verdade: depois de corrigir um timeout de Playwright
+reverificado de forma independente, o push seguinte (só `timing-log.md`, sem código) falhou em um
+teste completamente diferente; reexecutar sem abrir nova investigação resolveu.
+
 ## Por que `/sdd-amend` não reescreve histórico
 
 Uma emenda a um artefato já aprovado (`/sdd-amend`, ver `docs/SDD-WORKFLOW.md`) nunca reescreve
