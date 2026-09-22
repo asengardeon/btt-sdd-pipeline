@@ -124,6 +124,17 @@ qualquer código:
    - Refatore mantendo os testes verdes — remova duplicação, melhore nomes, simplifique.
    - Nunca escreva implementação antes do teste correspondente existir e falhar primeiro.
    - Commite ao final de cada incremento coerente (não um commit gigante no final).
+   - **Rode todo comando de teste deste ciclo em primeiro plano (bloqueante), nunca em
+     `run_in_background`** — você não tem nenhum outro trabalho útil para fazer enquanto espera o
+     próprio resultado que decide se o incremento passou (`docs/QUALITY-GATES.md`, seção
+     "Governança de decisão", bullet sobre comando de build/teste que o próprio agente precisa
+     aguardar). Já aconteceu de verdade 3 vezes na mesma invocação: um `dotnet test` disparado em
+     background encerrou o turno do agente à espera de um processo que ele mesmo poderia ter
+     aguardado em primeiro plano, exigindo do orquestrador descobrir o PID, esperar manualmente, e
+     retomar via `SendMessage` a cada vez — puro overhead de coordenação sem nenhum ganho de
+     paralelismo real. `run_in_background` só vale quando há outro trabalho genuinamente útil para
+     fazer nesse meio-tempo (ex.: instalar dependências de um projeto irmão enquanto escreve outro
+     teste), nunca para o próprio comando que bloqueia o próximo passo do ciclo TDD.
 3. Se a feature tem frontend, implemente os adapters de entrada (`src/adapters/inbound`)
    exatamente conforme o contrato do TRD — mesmo formato de payload, mesmo formato de erro, mesma
    rota/mensagem. Qualquer necessidade de desviar do contrato é uma mudança de TRD, não uma
@@ -133,7 +144,8 @@ qualquer código:
    confirmar o ciclo red-green-refactor sem pagar o custo da suíte inteira a cada incremento. Não
    acumule débito: se um teste tocado falha, corrija antes de seguir para o próximo incremento.
 5. **Só depois de concluídos todos os incrementos da sua trilha**, rode a suíte completa com
-   cobertura uma única vez — é esse resultado (não os testes parciais dos incrementos) que conta
+   cobertura uma única vez (mesma regra do passo 2 acima: em primeiro plano, nunca
+   `run_in_background`) — é esse resultado (não os testes parciais dos incrementos) que conta
    como evidência de conclusão da trilha, antes de `/sdd-code-review`. Se a suíte completa
    revelar uma regressão fora do escopo do incremento que a causou, corrija antes de reportar a
    trilha como pronta. **Se sua trilha gera um artefato de build/empacotamento distinto do
