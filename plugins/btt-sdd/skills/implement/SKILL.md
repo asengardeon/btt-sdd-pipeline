@@ -195,6 +195,15 @@ assim:
    prefira uma primeira espera maior antes da primeira checagem, em vez de checagens curtas desde
    o início. Ao confirmar o merge, atualize (se ainda não estiver) a coluna Status das tarefas
    dessa fatia anterior no TRD para `concluído (mergeado)`.
+2c-quater. **Ao confirmar esse merge, confirme também que todas as issues daquela fatia fecharam de
+   fato** — `gh pr view <PR> --json closingIssuesReferences` (ou `gh issue view <N> --json state`
+   para cada issue da coluna "Issue GitHub" daquela fatia). As que sobrarem abertas, feche à mão
+   citando o PR (`gh issue close <N> --comment "Fechada por #<PR>"`). Não assuma que o `Closes`
+   funcionou: a forma com vírgulas simples (`Closes #A, #B, #C`) fecha **só a primeira** em
+   silêncio, e o corpo do PR *parece* correto (`docs/GIT-WORKFLOW.md`, regras 5b e 5c). Uma issue
+   que ficou aberta sem motivo faz esta spec parecer ter trabalho pendente que já está em produção
+   — e, no limite, faz o gate do passo 2c-ter levar uma fatia futura a **reimplementar** o que já
+   foi mergeado, exatamente o cenário que o passo 2b-ter existe para evitar.
 2c-bis. **Ao criar a branch desta rodada, garanta que o PRD/TRD desta spec estão commitados em
    algum ref antes de invocar qualquer agente com `isolation: "worktree"`.** Um `git worktree add`
    cria um checkout limpo a partir de um ref já commitado — mudanças feitas diretamente no checkout
