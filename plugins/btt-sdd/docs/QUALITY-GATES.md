@@ -275,6 +275,12 @@ gravada por quem causa a transição.
   feature, nunca em branco ou genérica.
 - [ ] Se a feature inclui frontend, "Contrato Frontend↔Backend" está definido (no TRD ou num ADR
   referenciado) — nunca "a definir depois".
+- [ ] **Na seção "Riscos e trade-offs", toda afirmação sobre comportamento concreto de biblioteca
+  de terceiro ou de runtime está marcada `[medido]` (com versão e como) ou `[não medido]`**, e toda
+  alegação de contenção ("vira falha daquela linha") cita o ponto do código onde a contenção
+  acontece. Afirmação desse tipo sem marcação é lida como fato estabelecido e atravessa o pipeline
+  inteiro sem verificação — inclusive escrita com hedge ("em teoria", "lançaria"), que faz o texto
+  parecer análise prudente.
 - [ ] "Decomposição de tarefas e dependências" preenchida, com trilha (backend/frontend/ambos) e
   dependências técnicas explícitas para cada tarefa, e a coluna Status inicializada como
   `pendente` para cada tarefa nova (ciclo de vida completo na seção "Status de tarefas" abaixo).
