@@ -144,6 +144,14 @@ pipeline:
 - Isso não substitui os testes tocados por incremento durante o TDD (rápidos, parciais, rodados a
   cada red-green-refactor) — só evita repetir a rodada completa final entre backend/frontend-
   developer, `qa-engineer`, e qualquer etapa futura que também precise da evidência.
+- **Uma rodada de correção de achado cujo diff não toca `src/`/`frontend/`** (só acrescenta casos
+  de teste, só ajusta doc/comentário) não move esse último commit que tocou código — a suíte
+  completa já rodou contra exatamente o código que continua lá. Nesse caso a validação local pode
+  ser escopada aos módulos afetados, com o **CI do PR verde no commit final** como gate real, desde
+  que a rodada declare no relatório o que rodou localmente e o que foi delegado ao CI
+  (skill `/btt-sdd:implement`, seção "Retomando para corrigir achados de revisão", passo 3a).
+  Correção que toca comportamento de produção não entra nessa exceção: ali a suíte completa local
+  continua obrigatória, e o `Commit` do artefato de cobertura precisa ser regravado.
 
 **Nunca use o relatório bruto (HTML, especialmente) como fonte para preencher o resumo, e nunca
 cole o relatório bruto inteiro no artefato.** Gere o relatório num formato legível por máquina que
