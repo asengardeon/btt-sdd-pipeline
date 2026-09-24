@@ -151,8 +151,12 @@ dois.
    foi descoberta ~9 dias depois. `/btt-sdd:status` já sinaliza esse tipo de gap corretamente
    quando consultado — este passo existe para que o gap seja visto *antes* do merge, não só depois.
 7. **Merge é decisão do usuário**, nunca automática — mesma regra de GitHub Flow de qualquer PR
-   deste pipeline. Depois do merge, se a correção resolve algo que `docs/POST-MERGE-VALIDATION.md`
-   ou um item "VALIDAR DEPOIS" esperava, feche esse ciclo (`/btt-sdd:amend`).
+   deste pipeline. Depois do merge, **confirme que a(s) issue(s) do PR fecharam de fato** (`gh pr
+   view <PR> --json closingIssuesReferences`) e feche à mão, citando o PR, qualquer uma que tenha
+   sobrado: o `Closes` pode ter falhado silenciosamente se o corpo do PR usou a lista com vírgulas
+   simples (`Closes #A, #B`) em vez da palavra-chave repetida (`docs/GIT-WORKFLOW.md`, regras 5b e
+   5c). Depois disso, se a correção resolve algo que `docs/POST-MERGE-VALIDATION.md` ou um item
+   "VALIDAR DEPOIS" esperava, feche esse ciclo (`/btt-sdd:amend`).
 
 ## Registro do processo
 

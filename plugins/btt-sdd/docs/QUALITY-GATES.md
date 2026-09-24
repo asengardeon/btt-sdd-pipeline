@@ -316,6 +316,11 @@ gravada por quem causa a transição.
 - [ ] Branch da fatia criada a partir de `main` atualizada (só depois do PR da fatia anterior já
   mergeado, se houver uma); PR aberto (única branch/PR por fatia, mesmo quando backend e frontend
   desenvolvem em paralelo dentro dela).
+- [ ] O PR referencia `Closes #N` para cada issue do GitHub associada às tarefas desta fatia
+  (coluna "Issue GitHub" do TRD), **com a palavra-chave repetida por issue** (`Closes #117, Closes
+  #118`), nunca a lista com vírgulas simples (`Closes #117, #118`), que o GitHub aplica só ao
+  primeiro número (`docs/GIT-WORKFLOW.md`, regra 5b) — issues ficam abertas até o merge de verdade,
+  nunca fechadas manualmente antes disso.
 - [ ] Plano de implementação foi aprovado pelo usuário antes do primeiro commit de código (plano
   combinado quando full-stack, orquestrado por `/btt-sdd:implement`).
 - [ ] Resultado da suíte completa com cobertura gravado em
@@ -433,6 +438,10 @@ gravada por quem causa a transição.
 - [ ] PR desta fatia aberto, CI verde, revisão de código aprovada, QA aprovado, segurança
   aprovada, SRE aprovado (ou aprovado com ressalvas não-bloqueantes explicitamente aceitas pelo
   usuário em qualquer uma dessas etapas) — tudo escopado a esta fatia, não à feature inteira.
+- [ ] **Depois do merge, todas as issues da fatia foram confirmadas fechadas** (`gh pr view <PR>
+  --json closingIssuesReferences`), e as que não fecharam sozinhas foram fechadas à mão citando o
+  PR. Não basta o corpo do PR *parecer* correto: `Closes #A, #B, #C` fecha só a primeira em
+  silêncio — a forma válida repete a palavra-chave (`docs/GIT-WORKFLOW.md`, regras 5b e 5c).
 - [ ] Se houver fatia seguinte pendente na feature, ela só começa depois deste merge
   (`docs/GIT-WORKFLOW.md`).
 - [ ] Nenhum item "VALIDAR DEPOIS" bloqueante (marcado como tal pelo usuário) segue em aberto.

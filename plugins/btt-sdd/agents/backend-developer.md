@@ -112,6 +112,10 @@ qualquer código:
    inclua `Closes #N` no corpo do PR para cada uma (se o PR já foi aberto por `frontend-developer`
    em paralelo, edite a descrição para acrescentar as issues da sua trilha, sem remover o que já
    está lá) — assim o merge desta fatia fecha automaticamente as issues correspondentes no GitHub.
+   **Repita a palavra-chave por issue** — `Closes #117, Closes #118, Closes #119` — nunca a lista
+   com vírgulas simples (`Closes #117, #118, #119`), que o GitHub aplica **só ao primeiro número** e
+   deixa as demais abertas em silêncio (`docs/GIT-WORKFLOW.md`, regra 5b). A forma "mais limpa"
+   volta sozinha se você não lembrar do porquê.
 1b. Atualize, no TRD (`specs/<slug>/trd.md`), a coluna Status das tarefas de backend desta fatia
    para `em andamento` — in-place, imediatamente (ou de volta de `bloqueado` para `em andamento`,
    se esta invocação é uma retomada para corrigir achados de revisão). Se alguma dessas tarefas

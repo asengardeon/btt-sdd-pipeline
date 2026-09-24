@@ -35,6 +35,22 @@ dependências entre histórias (fatias verticais de entrega)"), PR obrigatório 
    de uma vez. `code-review.md`/`qa-report.md`/`security-review.md`/`sre-review.md` são editados
    in-place a cada fatia (nunca recriados), com uma linha por fatia na seção "Histórico de
    aprovações por fatia" de cada um — histórico de fatias já mergeadas nunca é apagado.
+5b. **`Closes` é repetido por issue no corpo do PR — nunca uma lista com vírgulas simples.** O
+   GitHub só reconhece a palavra-chave aplicada ao número **imediatamente seguinte**: `Closes #117,
+   #118, #119` fecha **só a #117** e deixa as outras abertas, em silêncio. A forma correta é
+   `Closes #117, Closes #118, Closes #119`. A forma com vírgulas simples parece mais limpa e volta
+   sozinha se o porquê não estiver escrito ao lado da regra — por isso está escrito aqui.
+5c. **Depois do merge, confirme que todas as issues do PR fecharam de fato.** `gh pr view <PR>
+   --json closingIssuesReferences` (ou `gh issue view <N> --json state` para cada uma); as que
+   sobrarem, feche à mão citando o PR. É barato e fecha o buraco mesmo quando o corpo do PR estiver
+   errado — inclusive em PRs antigos. O erro é invisível sem essa checagem: o corpo do PR *parece*
+   correto e ninguém relê issues fechadas. As consequências não são cosméticas — a spec parece ter
+   tarefas pendentes que já estão em produção, `/sdd-status` e `/sdd-pending` reportam trabalho
+   pendente que não existe, e o gate de "toda tarefa precisa de issue associada"
+   (`.claude/skills/sdd-implement/SKILL.md`, passo 2c-ter) pode levar uma fatia futura a
+   **reimplementar** trabalho já mergeado. Já aconteceu de verdade: um PR com `Closes #117, #118,
+   #119, #120, #121` fechou só a primeira, e as outras quatro precisaram ser fechadas à mão — só
+   percebido porque o orquestrador conferiu em vez de assumir que o `Closes` tinha funcionado.
 6. **Merge só depois de code review, QA, segurança e SRE aprovados *para aquela fatia*** e CI
    verde (lint + testes + gate de cobertura 80%) naquele PR. Preferência por *squash merge* — um
    commit por fatia em `main`.
