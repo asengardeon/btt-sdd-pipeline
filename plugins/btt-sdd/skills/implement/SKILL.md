@@ -262,7 +262,15 @@ assim:
    nesta rodada (etapa "Implementação", agente "backend-developer" e/ou "frontend-developer", fatia
    desta rodada), com o horário anotado no passo 3 (trilha única) ou 4d (full-stack — mesmo horário
    de início para as duas linhas, já que rodam em paralelo), o horário atual, e a diferença
-   calculada. Diferente de PRD/TRD (passo 2c-bis), aqui já existe branch/PR — commit e envie (push)
+   calculada. **Se esta rodada incluiu uma pausa para aprovação humana** (o agente devolveu o plano
+   da Fase 1 e ficou parado até o usuário responder — passo 5b abaixo), a diferença bruta de
+   horários **não** é o número a registrar: some as durações reais das invocações de subagente
+   envolvidas (o `duration_ms` de cada notificação de conclusão) e registre isso, com nota
+   parentética explícita dizendo que exclui a espera de aprovação
+   (`specs/_template/timing-log.template.md`, seção "O que a coluna 'Duração' mede"). Uma espera de
+   aprovação de horas registrada como wall-clock puro faz a retrospectiva do `sre` concluir que a
+   implementação foi anormalmente lenta quando não foi. Diferente de PRD/TRD (passo 2c-bis), aqui
+   já existe branch/PR — commit e envie (push)
    essa atualização junto com o resto do que esta rodada já for commitar (não é um push extra só
    para isso, salvo se nada mais estiver pendente — `docs/GIT-WORKFLOW.md`, regra 4, sobre agrupar
    pushes relacionados).
