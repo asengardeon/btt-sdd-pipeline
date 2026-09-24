@@ -108,6 +108,24 @@ Isso é uma otimização de escopo, não uma dispensa de rigor: se o achado espe
 fato corrigido, ou a correção introduzir um problema novo visível no diff pontual, reprove
 normalmente.
 
+**Um achado cuja correção cria um caminho de exceção novo merece reverificação da classe, não só
+do achado.** Quando a correção acrescenta um `throw`, um `return` de erro, ou qualquer caminho de
+falha que não existia, confirme que ela não reintroduz — numa forma vizinha — a classe de defeito
+que a fatia (ou a spec) existe para eliminar. Confirmar que o achado original fechou **não** é
+suficiente: a pergunta adicional é **"se isto disparar, o resultado é melhor ou pior que a
+violação que ele guarda?"**. Isso vale com força extra quando o achado foi levantado por você: já
+aconteceu de verdade que uma ressalva legítima sua — um braço `_ =>` que faria uma categoria futura
+renderizar sem declaração de desfecho — foi fechada com `_ => throw new NotSupportedException(...)`
+**dentro do mesmo método de renderização de falha** que a fatia anterior tinha endurecido
+justamente para impedir que uma exceção ali derrubasse o lote inteiro. Passou pelo desenvolvedor e
+pelo revisor porque ambos olhavam para "a categoria fica sem declaração?", não para "o que acontece
+se isto disparar?". Duas verificações baratas desmontaram a justificativa: acrescentar uma categoria
+real ao enum e compilar mostrou que o braço `_` já suprimia o aviso de exaustividade (a "rede de
+compilação" que justificaria o `throw` não existia — ele a *custava*), e rastrear o caminho real
+mostrou avaliação ávida dentro de um `catch`, sem `catch` externo. No cenário em que dispararia, o
+resultado era pior que a violação guardada: em vez de uma falha sem classificação, **nenhum
+relatório para nenhuma linha**, inclusive as bem-sucedidas.
+
 ## Áreas de revisão
 
 1. **Ports & Adapters / regra da dependência**: `domain` não importa nada de fora; `application`
