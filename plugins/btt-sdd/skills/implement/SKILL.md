@@ -70,6 +70,22 @@ assim:
    → green → refactor) e ainda roda a suíte completa com cobertura ao final, como no passo 5
    abaixo. A próxima rodada da mesma etapa de revisão que reprovou continua verificando o
    resultado de forma independente.
+3a. **Dose também o custo de validação pelo alcance real da correção — simétrico à dosagem de
+   contexto do passo 1b.** Rodar a suíte completa local continua sendo o padrão **sempre que a
+   correção toca comportamento de produção**. Mas se o diff da correção **não toca nenhum arquivo de
+   `src/`/`frontend/`** (ex.: só acrescenta casos de teste, só ajusta um comentário/doc), ou toca
+   apenas código que a suíte rápida cobre integralmente, a validação local pode ser **escopada aos
+   módulos afetados** — desde que **o CI do PR fique verde no commit final**, que é o gate real. Se
+   escopar, o relatório da rodada declara explicitamente o que foi rodado localmente, o que foi
+   delegado ao CI, e por quê — a omissão dessa declaração é que transforma escopar em atalho
+   silencioso. Já aconteceu de verdade: uma rodada de correção que mudou **3 `InlineData` num
+   arquivo de teste e um comentário**, zero linhas de comportamento, foi a etapa mais longa da fatia
+   inteira (41m14s, mais que a implementação) — gasta rodando duas vezes uma suíte de integração com
+   navegador real que a correção não podia afetar, ambas vermelhas por flakiness de ambiente. Na
+   mesma fatia, os mesmos testes passaram verdes de primeira nos dois runs de CI em runner dedicado,
+   sem rerun: em ambiente de desenvolvimento contendido, o CI é o sinal **mais** confiável, não
+   menos. Isso não vale como desculpa para pular validação de uma correção que mexe em produção —
+   ali a suíte completa local continua obrigatória antes de empurrar para o CI.
 3b. **Registre esta invocação em `specs/<slug>/timing-log.md` também**, mesmo sendo uma correção ou
    reverificação pontual fora dos passos numerados 1-5 (etapa "Correção pontual" ou "Reverificação
    pontual", agente, fatia) — mesmo mecanismo do passo 5a abaixo (horário de início antes de
