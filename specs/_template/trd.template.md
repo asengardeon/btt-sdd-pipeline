@@ -129,6 +129,22 @@ não é. Detalhe conceitual de cada pilar em `docs/ENGINEERING-PILLARS.md`.
 
 Riscos técnicos identificados e a decisão tomada (com justificativa).
 
+**Toda afirmação sobre comportamento concreto de biblioteca de terceiro ou de runtime** — tipo de
+exceção lançada, limite numérico, formato gravado, o que um `catch` captura — vem marcada como
+**`[medido]`** (com a versão da biblioteca e como foi medido) ou **`[não medido]`** (hipótese vinda
+de leitura de documentação/código, a verificar por quem depender dela). Afirmações desse tipo
+*parecem* factuais e não convidam à verificação; a marcação é o que transforma uma armadilha
+silenciosa em item acionável, a custo praticamente zero para quem escreve.
+
+O mesmo vale para a decisão registrada ao lado do risco: dizer que algo "vira falha daquela linha"
+(ou qualquer outra alegação de **contenção**) é uma afirmação sobre o próprio código — **cite o
+ponto onde a contenção acontece**. Se ninguém conseguir citar o ponto, a contenção provavelmente
+não existe.
+
+| Risco | Impacto | Decisão / mitigação | Evidência |
+|-------|---------|---------------------|-----------|
+| <risco> | <impacto real, não o suposto> | <decisão, citando o ponto de contenção quando alegar contenção> | `[medido]` (biblioteca X vN, como) ou `[não medido]` |
+
 ## 13. Decomposição de tarefas e dependências (fatias verticais de entrega)
 
 Ponto de partida: a seção "Ordem de valor / dependências entre histórias (fatias verticais de
