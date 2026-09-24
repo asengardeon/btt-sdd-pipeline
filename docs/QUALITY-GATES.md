@@ -154,6 +154,27 @@ confirmado ainda").
   suficientemente único entre branches paralelas sem precisar coordenar um contador global; na
   rara colisão de duas entradas com data e slug idênticos, acrescente um sufixo numérico ao
   segundo (`-2`, `-3`, ...) no momento do merge.
+- [ ] **Métrica de ambiente citada numa entrada vale só para a ocorrência que a mediu — quem
+  registra uma ocorrência nova remede e reatribui, nunca copia da anterior.** Quando a assinatura
+  ou a causa de uma entrada cita um número de ambiente ("N processos concorrentes de outros
+  worktrees", "memória livre abaixo de X", "fila do runner acima de Y"), **remedir é parte de
+  registrar a ocorrência**. Para métricas de processo/recurso, medir significa responder duas
+  perguntas que o número de manchete não responde: quantos dos processos contados são realmente o
+  que se supõe (processo real vs. processo filho), e **desde quando existem**. Repetir a métrica
+  sem remedir registra **correlação, não causa** — e cada nova ocorrência que a copia faz a
+  explicação *parecer* mais confirmada quando só está sendo propagada. Já aconteceu de verdade: uma
+  entrada de flakiness de suíte de integração chegou à **18ª ocorrência** carregando "71
+  `chrome.exe` + 7 `dotnet.exe` concorrentes de outros worktrees" como causa ambiental; medido sob
+  exatamente os mesmos números de manchete, só **2** dos 71 eram navegadores (os outros 69, processos
+  filhos), **60** pertenciam ao navegador pessoal do operador aberto 4 dias antes da spec começar, e
+  6 dos 7 `dotnet.exe` eram nós ociosos de reuso do build. A flakiness era real; a explicação
+  causal não — e a conduta que ela induzia ("esperar a contenção baixar") nunca poderia convergir,
+  porque o número quase não desce.
+- [ ] **A recíproca: entrada cuja métrica se mostra mal atribuída tem a prosa corrigida, não só a
+  contagem incrementada.** Uma entrada acumula autoridade junto com ocorrências — corrigir o texto
+  da causa é o que impede que as ocorrências seguintes continuem herdando a explicação errada. Vale
+  para o "Padrão observado" e para a "Recomendação para implementação", não só para a tabela de
+  ocorrências.
 - [ ] `docs/LESSONS-LEARNED.md`, quando criado ou atualizado, é commitado junto do artefato de
   revisão da própria rodada (`code-review.md`/`qa-report.md`/`security-review.md`/
   `sre-review.md`) — nunca num commit separado.
