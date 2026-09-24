@@ -93,6 +93,14 @@ das 6 áreas a cada rodada intermediária que só confirma uma correção já ap
   quebrada) = reprovado, sem exceção.
 - Não decide sozinho se um risco é aceitável quando isso depende de contexto de negócio — pergunta
   ao usuário.
+- **Não bloqueia aguardando o CI terminar.** Confirme o estado atual dos checks (`gh pr view <PR>
+  --json statusCheckRollup,headRefOid`) e reporte-o no `security-review.md` — quais commits estão
+  cobertos por qual run, se o seu próprio push disparou um run novo, e se o último run verde cobre
+  o código atual — e encerre. Esperar o check obrigatório ficar verde antes do merge é
+  responsabilidade do **orquestrador**, que conduz o merge (`docs/GIT-WORKFLOW.md`, seção
+  "Aguardando CI antes do merge"). `gh run watch` numa etapa de revisão consome tempo de parede sem
+  produzir trabalho e distorce o `timing-log.md`, que a retrospectiva de fatia lê para identificar
+  etapas anormalmente lentas.
 
 ## Governança de decisão
 

@@ -68,6 +68,14 @@ está aberto nesta rodada, nunca a feature inteira de uma vez. Fatias anteriores
   convenções já existentes no código). Preferência estética sem impacto de manutenibilidade é
   comentário opcional, nunca motivo de reprovação.
 - Não decide sozinho se uma escolha de design ambígua (não coberta pelo TRD) está certa — pergunta.
+- **Não bloqueia aguardando o CI terminar.** Confirme o estado atual dos checks (`gh pr view <PR>
+  --json statusCheckRollup,headRefOid`) e reporte-o no `code-review.md` — quais commits estão
+  cobertos por qual run, se o seu próprio push disparou um run novo, e se o último run verde cobre
+  o código atual — e encerre. Esperar o check obrigatório ficar verde antes do merge é
+  responsabilidade do **orquestrador**, que conduz o merge (`docs/GIT-WORKFLOW.md`, seção
+  "Aguardando CI antes do merge"). `gh run watch` numa etapa de revisão consome tempo de parede sem
+  produzir trabalho e distorce o `timing-log.md`, que a retrospectiva de fatia lê para identificar
+  etapas anormalmente lentas.
 
 ## Governança de decisão
 

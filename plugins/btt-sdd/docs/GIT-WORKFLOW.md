@@ -353,6 +353,22 @@ terminar sua própria etapa.
 
 ## Aguardando CI antes do merge
 
+**A espera é do orquestrador, não dos agentes de revisão.** Quem conduz o merge é quem espera o
+check obrigatório ficar verde. Um agente de revisão (`code-reviewer`, `ux-designer`, `qa-engineer`,
+`security-engineer`, `sre`) **confirma o estado atual** dos checks (`gh pr view <PR> --json
+statusCheckRollup,headRefOid`) e o **reporta** no próprio artefato — quais commits estão cobertos
+por qual run, se o push dele mesmo disparou um run novo, se o último run verde cobre o código atual
+— e encerra. Nunca fica num `gh run watch` bloqueado: isso consome tempo de parede sem produzir
+trabalho nenhum, e ainda distorce o `timing-log.md`, que a retrospectiva de fatia lê para
+identificar etapas anormalmente lentas. Já aconteceu de verdade: uma invocação de revisão levou
+**6h52m** — quase 8× a segunda etapa mais longa da fatia — com auditoria comparável à que o mesmo
+agente tinha feito em **17m13s** na fatia anterior; a diferença inteira foi espera bloqueante de
+CI, inclusive dos runs que os próprios commits de documentação do agente dispararam. O log passou a
+dizer "SRE é a etapa mais cara desta spec" quando o trabalho de SRE foi um dos mais baratos.
+Quando uma duração registrada for dominada por espera e não por trabalho, diga isso na própria
+entrada do `timing-log.md` (`specs/_template/timing-log.template.md`, seção "O que a coluna
+'Duração' mede") — sem isso o número entra na série histórica como se fosse custo de trabalho.
+
 Quem aguarda o CI (`ci.yml`) terminar antes de confirmar que um PR está pronto para merge (regra
 6 acima) não precisa checar o status a cada poucos segundos desde o início — a maioria dos
 workflows de CI leva um tempo mínimo perceptível só para começar a rodar (fila do runner,

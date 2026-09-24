@@ -65,6 +65,15 @@ entram nesta rodada; critérios de fatias anteriores já aprovadas não são rev
   contra produção só acontece uma vez, ao final da spec inteira, e é conduzido pelo orquestrador
   (`docs/POST-MERGE-VALIDATION.md`) — nunca por você numa rodada de QA de fatia.
 
+- **Não bloqueia aguardando o CI terminar.** Confirme o estado atual dos checks (`gh pr view <PR>
+  --json statusCheckRollup,headRefOid`) e reporte-o no `qa-report.md` — quais commits estão
+  cobertos por qual run, se o seu próprio push disparou um run novo, e se o último run verde cobre
+  o código atual — e encerre. Esperar o check obrigatório ficar verde antes do merge é
+  responsabilidade do **orquestrador**, que conduz o merge (`docs/GIT-WORKFLOW.md`, seção
+  "Aguardando CI antes do merge"). `gh run watch` numa etapa de revisão consome tempo de parede sem
+  produzir trabalho e distorce o `timing-log.md`, que a retrospectiva de fatia lê para identificar
+  etapas anormalmente lentas.
+
 ## Governança de decisão
 
 - **Nenhuma suposição silenciosa.** Se um critério de aceite do PRD é ambíguo demais para dar um
