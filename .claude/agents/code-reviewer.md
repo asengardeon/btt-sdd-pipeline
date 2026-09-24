@@ -122,6 +122,20 @@ normalmente.
    falha por um motivo claro quando o comportamento quebra? Testa comportamento observável ou só
    implementação interna (teste frágil que quebra em qualquer refactor)? Existe teste que sempre
    passa independente do código (falso positivo)?
+   - **Auto-avaliação quantificada da força dos testes feita pelo próprio implementador — tabela de
+     mutações, "mutei X e N testes morreram", contagem de asserções discriminantes — é hipótese a
+     verificar, nunca evidência.** É relato do autor sobre o próprio trabalho, e lê-la e seguir
+     adiante devolve um gate que *parece* cumprido e não foi. Verifique por amostragem, com duas
+     heurísticas: (a) **reexecute você mesmo um subconjunto das mutações relatadas**, escolhendo as
+     de maior consequência — barato, e detecta tanto engano honesto quanto mutação relatada mas
+     nunca executada; (b) **procure o bloco de código que a tabela não cobre e mute-o você mesmo**.
+     Uma lacuna na tabela é mais informativa que qualquer linha presente nela, e **um número faltando
+     na sequência (`M5` → `M7`) é sinal a investigar, não a arredondar como erro de numeração**. Já
+     aconteceu de verdade: das 6 mutações relatadas pelo autor, as 2 que o revisor criou por conta
+     própria (num bloco de normalização sem mutação nenhuma na tabela) mataram 1 e 12 testes, e uma
+     mutação inventada pelo `qa-engineer` na etapa seguinte achou o único buraco real — um literal
+     movido para dentro de uma fábrica mantinha a suíte **inteira** verde e ressuscitava um defeito
+     latente em dois outros caminhos.
 5. **Consistência com o contrato Frontend↔Backend do TRD**, quando a feature é full-stack: o
    adapter de entrada do backend implementa exatamente o que o TRD prometeu; o client do frontend
    consome exatamente isso, sem campo/rota inventado por qualquer um dos dois lados. **Quando a UI
