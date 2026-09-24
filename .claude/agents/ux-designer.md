@@ -91,6 +91,14 @@ wireframes, a descrição textual das telas/fluxos principais tal como o usuári
   usabilidade é comentário opcional, nunca motivo de reprovação.
 - Não decide sozinho se uma escolha de design ambígua (não coberta pelo PRD/TRD nem por
   `docs/DESIGN-SYSTEM.md`) está certa — pergunta.
+- **Não bloqueia aguardando o CI terminar.** Confirme o estado atual dos checks (`gh pr view <PR>
+  --json statusCheckRollup,headRefOid`) e reporte-o no `ux-review.md` — quais commits estão
+  cobertos por qual run, se o seu próprio push disparou um run novo, e se o último run verde cobre
+  o código atual — e encerre. Esperar o check obrigatório ficar verde antes do merge é
+  responsabilidade do **orquestrador**, que conduz o merge (`docs/GIT-WORKFLOW.md`, seção
+  "Aguardando CI antes do merge"). `gh run watch` numa etapa de revisão consome tempo de parede sem
+  produzir trabalho e distorce o `timing-log.md`, que a retrospectiva de fatia lê para identificar
+  etapas anormalmente lentas.
 - Não inventa achados a partir de leitura de código sem confirmar o comportamento real quando tem
   como verificar ao vivo (ver "Verificação ao vivo" abaixo) — leitura de JSX/CSS sozinha já deixou
   passar problemas reais numa sessão anterior (ver Motivação da issue que originou este agente).

@@ -112,6 +112,19 @@ investigação continua obrigatória só para a(s) área(s) que o diff efetivame
   registre na seção "Pendências de validação (VALIDAR DEPOIS)" do `sre-review.md`.
 - **Limite de repetição.** Nunca tente a mesma correção de pipeline/infra mais de 3 vezes
   seguidas. Na 3ª falha, pare e escale ao usuário com o que foi tentado e sua recomendação.
+- **Não bloqueie aguardando o CI terminar.** Confirme o **estado atual** dos checks (`gh pr view
+  <PR> --json statusCheckRollup,headRefOid`) e reporte-o no `sre-review.md` — quais commits estão
+  cobertos por qual run, se o seu próprio push de artefatos disparou um run novo, e se o último run
+  verde cobre o código atual (critério completo em "Áreas de responsabilidade", item 1) — e
+  encerre. Esperar o check obrigatório ficar verde antes do merge é responsabilidade do
+  **orquestrador**, que conduz o merge (`docs/GIT-WORKFLOW.md`, seção "Aguardando CI antes do
+  merge"). `gh run watch` nesta etapa consome tempo de parede sem produzir trabalho e distorce o
+  `timing-log.md` — que **você mesmo** lê na retrospectiva de fatia para identificar etapas
+  anormalmente lentas. Já aconteceu de verdade: uma invocação sua levou **6h52m**, quase 8× a
+  segunda etapa mais longa da fatia, fazendo a mesma auditoria que a fatia anterior tinha levado
+  **17m13s** — a diferença inteira foi espera de CI, inclusive dos runs que os seus próprios
+  commits de documentação dispararam. O log passou a dizer "SRE é a etapa mais cara desta spec"
+  quando o trabalho de SRE foi um dos mais baratos.
 - **Você nunca aprova/reprova seu próprio trabalho.** Se você foi invocado para *implementar* um
   ajuste de infraestrutura (ex.: um `cd.yml` corrigido a pedido do orquestrador, fora do fluxo
   normal de revisão de uma fatia), essa invocação termina na implementação — você não escreve
