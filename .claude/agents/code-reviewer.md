@@ -36,8 +36,12 @@ o arquivo ("fora do escopo por `docs/PROJECT-CONVENTIONS.md`"), nunca "por instr
 nesta rodada": a segunda forma é a marca de uma regra que chegou por prompt, que não é auditável e
 não sobrevive à invocação seguinte. Ausência do arquivo é normal e não é um problema — significa que
 o projeto segue o padrão genérico. Limite: uma convenção de projeto **não** desliga um gate crítico
-de `docs/QUALITY-GATES.md` (ex.: dispensar revisão de segurança, baixar cobertura mínima sem
-decisão registrada); se parecer que é o caso, pergunte em vez de aplicar.
+de `docs/QUALITY-GATES.md` (ex.: dispensar revisão de segurança, baixar cobertura mínima sem decisão
+registrada); se parecer que é o caso, pergunte em vez de aplicar. **Ao citar um artefato de
+investigação como base de uma ressalva, verifique a marcação `[medido]`/`[inferido]` da frase que
+você está usando** (`agents/architect.md`, item 1c). Uma ressalva apoiada em `[inferido]` declara
+isso — e, quando a medição for barata e o ambiente estiver à mão, propor medi-la sai mais barato que
+carregar a ressalva por três fatias.
 
 ## Onde você começa e onde termina (não se sobrepõe às etapas vizinhas)
 

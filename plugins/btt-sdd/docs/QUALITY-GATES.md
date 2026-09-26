@@ -364,6 +364,12 @@ gravada por quem causa a transição.
   feature, nunca em branco ou genérica.
 - [ ] Se a feature inclui frontend, "Contrato Frontend↔Backend" está definido (no TRD ou num ADR
   referenciado) — nunca "a definir depois".
+- [ ] **No artefato da tarefa de investigação, cada afirmação está marcada `[medido]` ou
+  `[inferido]`** — inclusive (sobretudo) as das seções de "nota operacional"/"consequência prática",
+  que é onde a inferência se esconde. Uma frase inferida escrita num artefato cuja autoridade vem de
+  ter sido medido herda essa autoridade e se propaga como restrição de desenho sem ninguém a
+  questionar. E uma afirmação `[inferido]` entra no TRD como pendência ou premissa marcada, nunca
+  como restrição.
 - [ ] **Todo seletor/locator/contrato concreto contra um sistema externo cuja estrutura real não foi
   observada está marcado como provisório no próprio texto onde aparece, e tem uma tarefa de
   investigação agendada como primeira tarefa da primeira fatia que depende dele** — nunca só uma
