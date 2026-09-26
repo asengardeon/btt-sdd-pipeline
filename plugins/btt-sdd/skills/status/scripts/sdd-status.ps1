@@ -1,6 +1,5 @@
 # Resumo do estagio de cada feature em specs/, sem precisar ler cada artefato
-# inteiro no contexto do agente. Usado pela skill deste plugin (skills/status/,
-# comando /btt-sdd:status) - equivalente a .claude/skills/sdd-status (/sdd-status).
+# inteiro no contexto do agente. Usado por .claude/skills/sdd-status.
 #
 # Uso: powershell -File scripts/sdd-status.ps1 [-Slug <slug>]
 #   -Slug (opcional) - mostra so aquela feature.
@@ -176,13 +175,68 @@ $Labels = @{
   "security-review"  = "Seguranca"
   "sre-review"       = "SRE"
 }
+# Artefatos citados IMEDIATAMENTE antes de "requer revalidacao" (issue #332). Identificar o
+# alvo com \bTRD\b na linha inteira errava de duas formas: pegava o TRD quando ele era so a
+# *causa* ("**Seguranca requer revalidacao.** TRD revisao 9 redesenhou ..."), e casava a
+# sentenca NEGADA que o proprio trd.template.md induz ("Nenhuma - nenhuma etapa a jusante
+# **requer revalidacao**"). Exigir o nome colado na frase resolve os dois: em "a jusante
+# requer revalidacao" nao ha artefato antes, entao nao e flag.
+# Devolve TODOS os alvos da linha - uma entrada de log pode sinalizar mais de uma etapa, e
+# parar no primeiro esconderia as demais.
+function Get-RevalidationTargets {
+  param([string]$Line)
+  $sufixo = '\*{0,2}\s+requer\s+revalida'
+  $mapa = [ordered]@{
+    'prd'             = "PRD$sufixo"
+    'trd'             = "TRD$sufixo"
+    'code-review'     = "(code review|revis.o de c.digo)$sufixo"
+    'ux-review'       = "(ux review|revis.o de ux)$sufixo"
+    'qa-report'       = "QA$sufixo"
+    'security-review' = "seguran.a$sufixo"
+    'sre-review'      = "SRE$sufixo"
+  }
+  foreach ($k in $mapa.Keys) {
+    if ($Line -match "(?i)$($mapa[$k])") { $k }
+  }
+}
+
+# Agente que assina a revalidacao de cada etapa. code-review/ux-review/qa-report/
+# security-review/sre-review nao tem checkbox "Aprovado por" - era por isso que, antes da
+# #332, essas cinco etapas nao tinham NENHUM caminho de resolucao e a flag ficava eterna.
+$StageAgents = @{
+  'code-review'     = 'code-reviewer'
+  'ux-review'       = 'ux-designer'
+  'qa-report'       = 'qa-engineer'
+  'security-review' = 'security-engineer'
+  'sre-review'      = 'sre'
+}
+
+# $true se o log do artefato tem linha com data ESTRITAMENTE maior que a da flag, assinada
+# pelo agente da etapa, e que nao seja ela propria outra flag. Estrito de proposito: a data
+# tem granularidade de dia, entao uma entrada do mesmo dia pode ser anterior a flag - e
+# resolver uma flag por engano e silencioso, enquanto deixa-la aberta e visivel.
+function Test-RevalidatedInLog {
+  param([string]$Content, [string]$FlagDate, [string]$Agent)
+  foreach ($line in ($Content -split "`r?`n")) {
+    if ($line -match '(?i)requer revalida') { continue }
+    # captura explicita em vez de depender de $Matches sobreviver ao -match seguinte
+    $mData = [regex]::Match($line, '^\|\s*(\d{4}-\d{2}-\d{2})')
+    if (-not $mData.Success) { continue }
+    $cols = $line -split '\|'
+    if ($cols.Count -lt 3) { continue }
+    $autor = $cols[2].Trim().ToLower()
+    if ($mData.Groups[1].Value -gt $FlagDate -and $autor.Contains($Agent)) { return $true }
+  }
+  return $false
+}
+
 $NextCmds = @{
-  "prd"              = "/btt-sdd:trd"
-  "trd"              = "/btt-sdd:implement"
-  "code-review"      = "/btt-sdd:ux-review"
-  "ux-review"        = "/btt-sdd:qa"
-  "qa-report"        = "/btt-sdd:security"
-  "security-review"  = "/btt-sdd:sre"
+  "prd"              = "/sdd-trd"
+  "trd"              = "/sdd-implement"
+  "code-review"      = "/sdd-ux-review"
+  "ux-review"        = "/sdd-qa"
+  "qa-report"        = "/sdd-security"
+  "security-review"  = "/sdd-sre"
   "sre-review"       = "(pipeline concluido)"
 }
 
@@ -206,9 +260,12 @@ if (-not $dirs) {
 foreach ($d in $dirs) {
   $slugName = $d.Name
   $current = "(nenhum artefato)"
-  $next = "/btt-sdd:prd"
+  $next = "/sdd-prd"
   $pending = 0
   $revalidate = "nao"
+  # acumula os alvos em vez de sobrescrever (issue #332): a coluna guardava uma string so e a
+  # ultima etapa iterada vencia, entao uma flag legitima de outra etapa sumia da saida
+  $revalAlvos = [ordered]@{}
   $fatiaPendente = Test-FatiaPendente (Join-Path $d.FullName "trd.md")
 
   foreach ($stage in $Stages) {
@@ -233,22 +290,22 @@ foreach ($d in $dirs) {
       $current = "QA pulado (justificado)"
       $next = "(nenhum - decisao registrada)"
     } elseif ($stage -eq "ux-review" -and $content -match '(?mi)^#{1,4}\s*Decis.o:\s*UX review pulado') {
-      # UX review formalmente pulada (justificada, skills/ux-review/SKILL.md, passo 3) -
-      # fatia sem superficie de UI perceptivel. Diferente de "QA pulado" acima, nao e um
-      # estado terminal: o pipeline segue normalmente para /btt-sdd:qa.
+      # UX review formalmente pulada (justificada, .claude/skills/sdd-ux-review/SKILL.md,
+      # passo 3) - fatia sem superficie de UI perceptivel. Diferente de "QA pulado" acima,
+      # nao e um estado terminal: o pipeline segue normalmente para /sdd-qa.
       $current = "UX review pulada (nao aplicavel)"
       $next = $NextCmds[$stage]
     } else {
       $verdict = Get-LatestVerdict $content
       if ($verdict -match '(?i)reprovado') {
         $current = "$($Labels[$stage]) - REPROVADO"
-        $next = "/btt-sdd:implement (corrigir achados)"
+        $next = "/sdd-implement (corrigir achados)"
       } elseif ($verdict -match '(?i)aprovado') {
         $extra = ""
         if ($verdict -match '(?i)ressalvas') { $extra = " (com ressalvas)" }
         $current = "$($Labels[$stage])$extra"
         if ($stage -eq "sre-review" -and $fatiaPendente) {
-          $next = "/btt-sdd:implement (retomar proxima fatia)"
+          $next = "/sdd-implement (retomar proxima fatia)"
         } else {
           $next = $NextCmds[$stage]
         }
@@ -267,49 +324,47 @@ foreach ($d in $dirs) {
     }
 
     if ($content -match '(?i)requer revalida') {
-      # Uma flag "requer revalidacao" registrada no log pode ja ter sido resolvida por
-      # uma (re)aprovacao formal posterior do artefato-alvo (secao "Aprovacao" do PRD
-      # ou do TRD - os unicos artefatos com checkbox "Aprovado por"). O alvo nem sempre
-      # e o proprio arquivo: uma flag registrada no log do PRD tipicamente aponta para
-      # "TRD requer revalidacao". Para cada linha de log com a flag, identifica o
-      # artefato-alvo pela palavra TRD/PRD na propria linha e compara a data da flag
-      # com a data da (re)aprovacao mais recente desse artefato-alvo.
+      # Uma flag "requer revalidacao" registrada no log pode ja ter sido resolvida de duas
+      # formas: (a) uma (re)aprovacao formal posterior do artefato-alvo - so PRD e TRD tem o
+      # checkbox "Aprovado por"; (b) uma linha de log posterior no proprio artefato-alvo
+      # assinada pelo agente daquela etapa, que e como uma revisao registra que refez o
+      # trabalho. Antes da #332 so (a) existia, entao as cinco etapas de revisao nao tinham
+      # caminho de resolucao nenhum e a flag ficava para sempre.
       $flagLines = [regex]::Matches($content, '(?mi)^\|\s*(\d{4}-\d{2}-\d{2})\s*\|.*requer revalida.*$')
-      $unresolved = $false
 
       foreach ($m in $flagLines) {
         $flagDate = $m.Groups[1].Value
-        $lineText = $m.Value
-        $targetFile = $null
-        if ($lineText -match '(?i)\bTRD\b') {
-          $targetFile = Join-Path $d.FullName "trd.md"
-        } elseif ($lineText -match '(?i)\bPRD\b') {
-          $targetFile = Join-Path $d.FullName "prd.md"
+        # sem artefato colado na frase nao sai alvo nenhum: e mencao, ou a negacao que o
+        # template induz ("nenhuma etapa a jusante requer revalidacao")
+        foreach ($targetStage in (Get-RevalidationTargets $m.Value)) {
+          $targetFile = Join-Path $d.FullName "$targetStage.md"
+          if (-not (Test-Path $targetFile)) {
+            $revalAlvos[$targetStage] = $true
+            continue
+          }
+
+          $targetContent = Get-Content $targetFile -Raw
+          # @(...) força coleção mesmo com um único match — sem isso, um resultado só vira
+          # string escalar e "[-1]" pega o último caractere da data, não a data inteira.
+          $approveDates = @([regex]::Matches($targetContent, '(?i)(?:re)?aprovad[oa] por.*?em\s+(\d{4}-\d{2}-\d{2})') |
+            ForEach-Object { $_.Groups[1].Value } | Sort-Object)
+          $approveDate = if ($approveDates.Count -gt 0) { $approveDates[-1] } else { $null }
+          if ($approveDate -and $flagDate -le $approveDate) { continue }
+
+          $agent = $StageAgents[$targetStage]
+          if ($agent -and (Test-RevalidatedInLog $targetContent $flagDate $agent)) { continue }
+
+          $revalAlvos[$targetStage] = $true
         }
-
-        if (-not $targetFile -or -not (Test-Path $targetFile)) {
-          $unresolved = $true
-          continue
-        }
-
-        $targetContent = Get-Content $targetFile -Raw
-        # @(...) força coleção mesmo com um único match — sem isso, um resultado só vira
-        # string escalar e "[-1]" pega o último caractere da data, não a data inteira.
-        $approveDates = @([regex]::Matches($targetContent, '(?i)(?:re)?aprovad[oa] por.*?em\s+(\d{4}-\d{2}-\d{2})') |
-          ForEach-Object { $_.Groups[1].Value } | Sort-Object)
-        $approveDate = if ($approveDates.Count -gt 0) { $approveDates[-1] } else { $null }
-
-        if (-not $approveDate -or $flagDate -gt $approveDate) {
-          $unresolved = $true
-        }
-      }
-
-      if ($unresolved) {
-        $revalidate = "sim ($($Labels[$stage]))"
       }
     }
 
     $pending += Get-ValidarDepoisPendentesCount $content
+  }
+
+  if ($revalAlvos.Count -gt 0) {
+    $rotulos = ($revalAlvos.Keys | ForEach-Object { $Labels[$_] }) -join ", "
+    $revalidate = "sim ($rotulos)"
   }
 
   "{0,-32} | {1,-30} | {2,-26} | {3,-4} | {4}" -f $slugName, $current, $next, $pending, $revalidate

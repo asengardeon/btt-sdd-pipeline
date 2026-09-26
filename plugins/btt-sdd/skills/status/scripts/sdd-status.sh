@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # Resumo do estágio de cada feature em specs/, sem precisar ler cada artefato
-# inteiro no contexto do agente. Usado pela skill deste plugin (skills/status/,
-# comando /btt-sdd:status) — equivalente a .claude/skills/sdd-status (/sdd-status).
+# inteiro no contexto do agente. Usado por .claude/skills/sdd-status.
 #
 # Uso: scripts/sdd-status.sh [slug]
 #   slug (opcional) — mostra só aquela feature.
@@ -170,14 +169,63 @@ label() {
   esac
 }
 
+# Artefato citado IMEDIATAMENTE antes de "requer revalidação" (issue #332). Identificar o
+# alvo com `grep -w TRD` na linha inteira errava de duas formas: pegava o TRD quando ele era
+# só a *causa* ("**Segurança requer revalidação.** TRD revisão 9 redesenhou ..."), e casava a
+# sentença NEGADA que o próprio `trd.template.md` induz ("Nenhuma — nenhuma etapa a jusante
+# **requer revalidação**"). Exigir o nome colado na frase resolve os dois de uma vez: em
+# "a jusante requer revalidação" não há artefato antes, então não é flag.
+# Devolve TODOS os alvos citados na linha, um por linha — uma entrada de log pode sinalizar
+# mais de uma etapa de uma vez, e parar no primeiro esconderia as demais.
+revalidation_target() {
+  local line="$1" sufixo='\*{0,2}[[:space:]]+requer[[:space:]]+revalida'
+  echo "$line" | grep -qiE "PRD${sufixo}"                             && echo "prd"
+  echo "$line" | grep -qiE "TRD${sufixo}"                             && echo "trd"
+  echo "$line" | grep -qiE "(code review|revis.o de c.digo)${sufixo}" && echo "code-review"
+  echo "$line" | grep -qiE "(ux review|revis.o de ux)${sufixo}"       && echo "ux-review"
+  echo "$line" | grep -qiE "QA${sufixo}"                              && echo "qa-report"
+  echo "$line" | grep -qiE "seguran.a${sufixo}"                       && echo "security-review"
+  echo "$line" | grep -qiE "SRE${sufixo}"                             && echo "sre-review"
+  return 0
+}
+
+# Agente que assina a revalidação de cada etapa. `code-review`/`ux-review`/`qa-report`/
+# `security-review`/`sre-review` não têm checkbox "Aprovado por" — era por isso que, antes da
+# #332, essas cinco etapas não tinham **nenhum** caminho de resolução: a flag ficava eterna.
+# O registro de que a etapa foi refeita é uma linha de log posterior assinada pelo agente dela.
+stage_agent() {
+  case "$1" in
+    code-review) echo "code-reviewer" ;;
+    ux-review) echo "ux-designer" ;;
+    qa-report) echo "qa-engineer" ;;
+    security-review) echo "security-engineer" ;;
+    sre-review) echo "sre" ;;
+  esac
+}
+
+# 1 se o log de "$1" tem linha com data ESTRITAMENTE maior que "$2" assinada por "$3" e que não
+# seja ela própria outra flag. Estrito de propósito: a data tem granularidade de dia, então uma
+# entrada do mesmo dia pode ser anterior à flag — e resolver uma flag por engano é silencioso,
+# enquanto deixá-la aberta é visível e acionável.
+revalidated_in_log() {
+  awk -F'|' -v fd="$2" -v ag="$3" '
+    /^\|[[:space:]]*[0-9]{4}-[0-9]{2}-[0-9]{2}/ {
+      if (tolower($0) ~ /requer revalida/) next
+      d = $2; a = $3
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", d)
+      if (d > fd && index(tolower(a), ag) > 0) { print 1; exit }
+    }
+  ' "$1" 2>/dev/null
+}
+
 next_cmd() {
   case "$1" in
-    prd) echo "/btt-sdd:trd" ;;
-    trd) echo "/btt-sdd:implement" ;;
-    code-review) echo "/btt-sdd:ux-review" ;;
-    ux-review) echo "/btt-sdd:qa" ;;
-    qa-report) echo "/btt-sdd:security" ;;
-    security-review) echo "/btt-sdd:sre" ;;
+    prd) echo "/sdd-trd" ;;
+    trd) echo "/sdd-implement" ;;
+    code-review) echo "/sdd-ux-review" ;;
+    ux-review) echo "/sdd-qa" ;;
+    qa-report) echo "/sdd-security" ;;
+    security-review) echo "/sdd-sre" ;;
     sre-review) echo "(pipeline concluído)" ;;
   esac
 }
@@ -199,9 +247,16 @@ for dir in "$SPECS_DIR"/*/; do
   any=1
 
   current="(nenhum artefato)"
-  next="/btt-sdd:prd"
+  next="/sdd-prd"
   pending=0
   revalidate="não"
+  # acumula os alvos em vez de sobrescrever (issue #332): a coluna guardava uma string só e a
+  # última etapa iterada vencia, então uma flag legítima de outra etapa sumia da saída
+  reval_alvos=""
+  add_revalidate() {
+    case " $reval_alvos " in *" $1 "*) return ;; esac
+    reval_alvos="$reval_alvos $1"
+  }
   fatia_pendente="$(has_fatia_pendente "${dir}trd.md")"
 
   for stage in "${STAGES[@]}"; do
@@ -225,9 +280,9 @@ for dir in "$SPECS_DIR"/*/; do
       current="QA pulado (justificado)"
       next="(nenhum — decisão registrada)"
     elif [ "$stage" = "ux-review" ] && grep -qiE '^#{1,4}[[:space:]]*Decis.*o:[[:space:]]*UX review pulado' "$file" 2>/dev/null; then
-      # UX review formalmente pulada (justificada, skills/ux-review/SKILL.md, passo 3) —
-      # fatia sem superfície de UI perceptível. Diferente de "QA pulado" acima, não é um
-      # estado terminal: o pipeline segue normalmente para /btt-sdd:qa.
+      # UX review formalmente pulada (justificada, .claude/skills/sdd-ux-review/SKILL.md,
+      # passo 3) — fatia sem superfície de UI perceptível. Diferente de "QA pulado" acima,
+      # não é um estado terminal: o pipeline segue normalmente para /sdd-qa.
       current="UX review pulada (não aplicável)"
       next="$(next_cmd "$stage")"
     else
@@ -235,14 +290,14 @@ for dir in "$SPECS_DIR"/*/; do
       case "$verdict" in
         *[Rr]eprovado*)
           current="$(label "$stage") — REPROVADO"
-          next="/btt-sdd:implement (corrigir achados)"
+          next="/sdd-implement (corrigir achados)"
           ;;
         *[Aa]provado*)
           extra=""
           case "$verdict" in *[Rr]essalvas*) extra=" (com ressalvas)";; esac
           current="$(label "$stage")${extra}"
           if [ "$stage" = "sre-review" ] && [ "$fatia_pendente" = "1" ]; then
-            next="/btt-sdd:implement (retomar próxima fatia)"
+            next="/sdd-implement (retomar próxima fatia)"
           else
             next="$(next_cmd "$stage")"
           fi
@@ -262,41 +317,47 @@ for dir in "$SPECS_DIR"/*/; do
     fi
 
     if grep -qi 'requer revalida' "$file" 2>/dev/null; then
-      # Uma flag "requer revalidação" registrada no log pode já ter sido resolvida por
-      # uma (re)aprovação formal posterior do artefato-alvo (seção "Aprovação" do PRD
-      # ou do TRD — os únicos artefatos com checkbox "Aprovado por"). O alvo nem sempre
-      # é o próprio arquivo: uma flag registrada no log do PRD tipicamente aponta para
-      # "TRD requer revalidação". Para cada linha de log com a flag, identifica o
-      # artefato-alvo pela palavra TRD/PRD na própria linha e compara a data da flag
-      # com a data da (re)aprovação mais recente desse artefato-alvo.
-      unresolved=0
+      # Uma flag "requer revalidação" registrada no log pode já ter sido resolvida de duas
+      # formas: (a) uma (re)aprovação formal posterior do artefato-alvo — só PRD e TRD têm o
+      # checkbox "Aprovado por"; (b) uma linha de log posterior no próprio artefato-alvo
+      # assinada pelo agente daquela etapa, que é como uma revisão registra que refez o
+      # trabalho. Antes da #332 só (a) existia, então as cinco etapas de revisão não tinham
+      # caminho de resolução nenhum e a flag ficava para sempre.
       while IFS= read -r flagline; do
         flag_date="$(echo "$flagline" | grep -oE '^\|[[:space:]]*[0-9]{4}-[0-9]{2}-[0-9]{2}' | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}')"
-        target_file=""
-        if [ -n "$flag_date" ]; then
-          if echo "$flagline" | grep -qiw 'TRD'; then
-            target_file="${dir}trd.md"
-          elif echo "$flagline" | grep -qiw 'PRD'; then
-            target_file="${dir}prd.md"
+        # sem artefato colado na frase não sai alvo nenhum: é menção, ou a negação que o
+        # template induz ("nenhuma etapa a jusante requer revalidação")
+        for target_stage in $(revalidation_target "$flagline"); do
+          target_file="${dir}${target_stage}.md"
+          if [ -z "$flag_date" ] || [ ! -f "$target_file" ]; then
+            add_revalidate "$target_stage"
+            continue
           fi
-        fi
-        if [ -z "$flag_date" ] || [ -z "$target_file" ] || [ ! -f "$target_file" ]; then
-          unresolved=1
-          continue
-        fi
-        approve_date="$(grep -ioE '(re)?aprovad[oa] por.*em[[:space:]]+[0-9]{4}-[0-9]{2}-[0-9]{2}' "$target_file" 2>/dev/null \
-          | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | sort | tail -1)"
-        if [ -z "$approve_date" ] || [[ "$flag_date" > "$approve_date" ]]; then
-          unresolved=1
-        fi
+          approve_date="$(grep -ioE '(re)?aprovad[oa] por.*em[[:space:]]+[0-9]{4}-[0-9]{2}-[0-9]{2}' "$target_file" 2>/dev/null \
+            | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | sort | tail -1)"
+          if [ -n "$approve_date" ] && [[ ! "$flag_date" > "$approve_date" ]]; then
+            continue
+          fi
+          agent="$(stage_agent "$target_stage")"
+          if [ -n "$agent" ] && [ "$(revalidated_in_log "$target_file" "$flag_date" "$agent")" = "1" ]; then
+            continue
+          fi
+          add_revalidate "$target_stage"
+        done
       done < <(grep -iE '^\|[[:space:]]*[0-9]{4}-[0-9]{2}-[0-9]{2}[[:space:]]*\|.*requer revalida' "$file" 2>/dev/null)
-
-      [ "$unresolved" = "1" ] && revalidate="sim ($(label "$stage"))"
     fi
 
     p="$(count_validar_depois_pendentes "$file")"
     pending=$((pending + ${p:-0}))
   done
+
+  if [ -n "$reval_alvos" ]; then
+    rotulos=""
+    for alvo in $reval_alvos; do
+      rotulos="${rotulos:+$rotulos, }$(label "$alvo")"
+    done
+    revalidate="sim ($rotulos)"
+  fi
 
   printf '%-32s | %-30s | %-26s | %-4s | %s\n' "$slug" "$current" "$next" "$pending" "$revalidate"
 done
