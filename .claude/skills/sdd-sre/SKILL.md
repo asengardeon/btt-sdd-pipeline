@@ -173,6 +173,15 @@ conteúdo do projeto, não deste pipeline — não confunda os dois.
    `mergeable=MERGEABLE` mas bloqueados na UI do GitHub até essa transição manual) — não é uma
    pendência a deixar para o usuário perceber sozinho. Reprovado não passa por este passo (o PR
    continua draft até nova rodada de correção).
+
+   **Num projeto com cadência `ci-antes-do-merge`** (`docs/PROJECT-CONVENTIONS.md`), esta transição
+   deixa de ser cosmética: é ela que **dispara a única execução completa da suíte da fatia inteira**,
+   e é por desenho o último ato antes do merge. Diga isso explicitamente na mensagem do passo 6, e
+   diga de quem é a espera: **do orquestrador**, não sua — você não bloqueia aguardando CI
+   (`docs/GIT-WORKFLOW.md`, seção "Aguardando CI antes do merge"). Na prática: rode `gh pr ready`,
+   informe que o run completo acabou de ser disparado por essa transição, e que o merge depende
+   dele ficar verde. Sem isso o usuário vê um PR "pronto" cujo único run de verdade ainda está
+   rodando — ou, pior, lê como pronto um verde que era do caminho pulado.
 6. **Só escreva esta mensagem depois de completar 5b, 5c e 5d (se aplicáveis) acima.** Se aprovado,
    informe que a feature está pronta ponta a ponta pelo pipeline SDD, que o PR já saiu do modo
    draft (passo 5d), e que o merge (GitHub Flow) fica a critério do usuário. Se você (ou o usuário)

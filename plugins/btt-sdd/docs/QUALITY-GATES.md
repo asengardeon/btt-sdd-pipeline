@@ -515,6 +515,11 @@ commitar o artefato: o artefato na branch é o que torna a revisão auditável.
 ## SRE / CI-CD / Infra
 
 - [ ] CI roda lint + testes + gate de cobertura em todo PR.
+- [ ] **Sob cadência condicional, o estado do CI reportado distingue "suíte executada" de "suíte
+  pulada".** Toda etapa que afirma no seu artefato que o CI cobre o código atual inspecionou os
+  passos do run, não só `conclusion` — e, quando os passos caros ficaram `skipped`, apontou qual run
+  executou a suíte e provou que o código não mudou desde ele. Verde de run pulado nunca é reportado
+  como "código validado".
 - [ ] **Cadência de CI conferida contra `docs/PROJECT-CONVENTIONS.md`.** Padrão (arquivo ausente
   ou sem essa seção): suíte completa a cada push. Se o projeto registra `ci-antes-do-merge`, o
   `ci.yml` roda a suíte completa quando o PR **não é draft** (e em push para a branch base) e
@@ -522,12 +527,13 @@ commitar o artefato: o artefato na branch é o que torna a revisão auditável.
   gatilho, senão o *required status check* nunca reporta e o PR fica bloqueado para sempre (mesma
   armadilha do `paths-ignore`). O `sre` nunca adota essa cadência por conta própria: ela é opt-in do
   projeto (`agents/sre.md`, área "CI").
-- [ ] `ci.yml` pula lint/testes/build numa mudança só de documentação **comparando `HEAD` com o último run verde desta branch** — nunca por `paths`/`paths-ignore` no gatilho, que deixa um PR
-  só de documentação bloqueado para sempre quando o job é *required status check* (o workflow não
+- [ ] `ci.yml` pula lint/testes/build numa mudança só de documentação **comparando `HEAD` com o
+  último run verde desta branch** — nunca por `paths`/`paths-ignore` no gatilho, que deixa um PR só
+  de documentação bloqueado para sempre quando o job é *required status check* (o workflow não
   dispara, o GitHub nunca reporta status), nem por diff contra o tip de `main`, que num PR de código
   sempre acusa `src/` e por isso nunca dispara o short-circuit. Receita completa e a medição que a
-  justifica em `agents/sre.md`, área "CI". Falha em qualquer etapa da checagem → roda a
-  suíte (direção de falha segura).
+  justifica em `agents/sre.md`, área "CI". Falha em qualquer etapa da checagem → roda a suíte
+  (direção de falha segura).
 - [ ] Se este projeto tem hoje `paths`/`paths-ignore` no gatilho de um check obrigatório, isso é
   reportado como achado — é a forma que #146 pediu e que a medição depois mostrou ser errada, não
   uma configuração a preservar.

@@ -374,15 +374,23 @@ check obrigatório ficar verde. Um agente de revisão (`code-reviewer`, `ux-desi
 `security-engineer`, `sre`) **confirma o estado atual** dos checks (`gh pr view <PR> --json
 statusCheckRollup,headRefOid`) e o **reporta** no próprio artefato — quais commits estão cobertos
 por qual run, se o push dele mesmo disparou um run novo, se o último run verde cobre o código atual
-— e encerra. Nunca fica num `gh run watch` bloqueado: isso consome tempo de parede sem produzir
-trabalho nenhum, e ainda distorce o `timing-log.md`, que a retrospectiva de fatia lê para
-identificar etapas anormalmente lentas. Já aconteceu de verdade: uma invocação de revisão levou
-**6h52m** — quase 8× a segunda etapa mais longa da fatia — com auditoria comparável à que o mesmo
-agente tinha feito em **17m13s** na fatia anterior; a diferença inteira foi espera bloqueante de
-CI, inclusive dos runs que os próprios commits de documentação do agente dispararam. O log passou a
-dizer "SRE é a etapa mais cara desta spec" quando o trabalho de SRE foi um dos mais baratos.
-Quando uma duração registrada for dominada por espera e não por trabalho, diga isso na própria
-entrada do `timing-log.md` (`specs/_template/timing-log.template.md`, seção "O que a coluna
+— e encerra.
+
+**Num projeto com cadência condicional de CI** (`docs/PROJECT-CONVENTIONS.md`, ex.:
+`ci-antes-do-merge`), `conclusion: success` tem dois significados indistinguíveis pela API de alto
+nível: a suíte passou, ou a suíte foi deliberadamente pulada. Quem reporta o estado do CI precisa
+olhar os passos do run (`gh api repos/<owner>/<repo>/actions/runs/<id>/jobs --jq '.jobs[].steps[]'`)
+e dizer qual dos dois é — e, quando for o segundo, apontar qual run executou a suíte e provar que o
+código não mudou desde então. Um verde que nunca compilou o projeto é pior que um vermelho: ele
+encerra a dúvida em vez de abri-la. Nunca fica num `gh run watch` bloqueado: isso consome tempo de
+parede sem produzir trabalho nenhum, e ainda distorce o `timing-log.md`, que a retrospectiva de
+fatia lê para identificar etapas anormalmente lentas. Já aconteceu de verdade: uma invocação de
+revisão levou **6h52m** — quase 8× a segunda etapa mais longa da fatia — com auditoria comparável à
+que o mesmo agente tinha feito em **17m13s** na fatia anterior; a diferença inteira foi espera
+bloqueante de CI, inclusive dos runs que os próprios commits de documentação do agente dispararam. O
+log passou a dizer "SRE é a etapa mais cara desta spec" quando o trabalho de SRE foi um dos mais
+baratos. Quando uma duração registrada for dominada por espera e não por trabalho, diga isso na
+própria entrada do `timing-log.md` (`specs/_template/timing-log.template.md`, seção "O que a coluna
 'Duração' mede") — sem isso o número entra na série histórica como se fosse custo de trabalho.
 
 Quem aguarda o CI (`ci.yml`) terminar antes de confirmar que um PR está pronto para merge (regra
