@@ -75,6 +75,46 @@ DELIBERADAS: dict[str, dict] = {
             ),
         ],
     },
+    ".claude/skills/create-project/SKILL.md": {
+        # Como resolver o caminho do scaffold depende do canal: pela raiz deste repositório, ou como
+        # pasta irmã do SKILL.md dentro do plugin instalado. A frase sobre este repositório não
+        # manter cópia própria do scaffold também só faz sentido aqui.
+        "trocas": [
+            (
+                "todo o conteúdo de `plugins/btt-sdd/skills/create-project/scaffold/` (caminho "
+                "relativo à raiz do repositório onde este arquivo `SKILL.md` vive, ou seja "
+                "`../../../plugins/btt-sdd/skills/create-project/scaffold/` a partir daqui, de onde "
+                "quer que esta skill esteja instalada)",
+                "todo o conteúdo da pasta `scaffold/` deste plugin (a pasta irmã deste arquivo "
+                "`SKILL.md`, dentro de onde quer que o plugin `btt-sdd` esteja instalado)",
+            ),
+            (
+                "eles vivem em `plugins/btt-sdd/docs/` (ou, via junction, na raiz deste "
+                "repositório), lidos diretamente pelos agentes/skills a partir de onde estão "
+                "instalados",
+                "eles vivem em `docs/` na raiz deste plugin instalado, lidos diretamente pelos "
+                "agentes/skills a partir de lá",
+            ),
+            (
+                "Este repositório não mantém uma cópia própria do scaffold em "
+                "`«skills»«cmd:create-project»/` — a cópia do plugin é a única fonte, mesma usada "
+                "por uma instalação standalone do plugin (ver `plugins/btt-sdd/README.md`). Se o "
+                "usuário deu um nome de projeto",
+                "Se o usuário deu um nome de projeto",
+            ),
+        ],
+    },
+    ".claude/skills/sdd-hotfix/SKILL.md": {
+        # `specs/_template/oneshot.template.md` existe só neste repositório (ver SEM_EQUIVALENTE) —
+        # não há o que referenciar do lado do plugin.
+        "trocas": [
+            (
+                "pare e migre para o fluxo completo em vez de continuar aqui (mesmo espírito de "
+                "`specs/_template/oneshot.template.md`).",
+                "pare e migre para o fluxo completo em vez de continuar aqui.",
+            ),
+        ],
+    },
     "docs/ARCHITECTURE.md": {
         "trocas": [
             (
@@ -115,22 +155,17 @@ REGULARES: list[tuple[re.Pattern, str]] = [
     # O parágrafo "onde os docs de governança vivem" difere por canal de distribuição (junction
     # global x pacote do plugin instalado) — é a mesma informação adaptada, não deriva.
     (re.compile(r"Referências como `«doc:.*?(?=\n\n)", re.DOTALL), "«nota:onde-os-docs-vivem»"),
-    # Referência a um agente: a raiz aponta o caminho do arquivo, o plugin nomeia o agente (esse
-    # caminho não existe no contexto de um projeto onde o plugin foi instalado). Aparece em várias
-    # redações, todas equivalentes.
-    # A preposição entra no token porque as duas redações a flexionam de formas diferentes
-    # ("de `agents/x.md`" x "do agente `x`") — sem isso sobraria um "d" órfão de um lado.
-    (flex(r"d[eoa] `«agents»/([a-z-]+)\.md`"), r"«agente-ref:\1»"),
-    (flex(r"d[eoa] (?:(?:o mesmo )?processo descrito n)?o agente `([a-z-]+)`"
-          r"(?: deste plugin)?"), r"«agente-ref:\1»"),
+    # Referência cruzada a um agente ou a uma skill: a raiz usa o caminho com o prefixo `.claude/`,
+    # o plugin usa o caminho relativo à raiz do pacote — **e nada mais na frase muda**
+    # (`plugins/btt-sdd/README.md`, item 3 da lista de replicação). Por isso basta uma regra por
+    # tipo: a preposição e o resto da frase são comparados literalmente, dos dois lados.
+    #
+    # A issue #290 ressincronizou 8 pares que divergiam só por reescritas dessa referência ("siga o
+    # mesmo processo descrito no agente `x`" x "siga `agents/x.md`"). Cada variante exigia sua própria
+    # regra aqui, e uma regra que engole prosa em volta do nome não distingue reescrita de conteúdo
+    # perdido. Se aparecer uma variante nova, o certo é padronizar o texto — não acrescentar regra.
     (flex(r"`«agents»/([a-z-]+)\.md`"), r"«agente-ref:\1»"),
-    (flex(r"(?:ver )?o (?:mesmo processo descrito no )?agente `([a-z-]+)`(?: deste plugin)?"),
-     r"«agente-ref:\1»"),
-    # Referência a uma skill: a raiz aponta o caminho do SKILL.md, o plugin nomeia o comando.
-    (flex(r"d[eoa] `«skill:([a-z-]+)»/SKILL\.md`"), r"«skill-ref:\1»"),
-    (flex(r"d[eoa] skill `«cmd:([a-z-]+)»`"), r"«skill-ref:\1»"),
     (flex(r"`«skill:([a-z-]+)»/SKILL\.md`"), r"«skill-ref:\1»"),
-    (flex(r"skill `«cmd:([a-z-]+)»`"), r"«skill-ref:\1»"),
     # Dentro do scaffold, um doc do pipeline é referenciado como "<DOC> do pipeline" para
     # distingui-lo de um doc do próprio projeto.
     (flex(r"(«doc:[A-Z-]+»`?) do pipeline"), r"\1"),

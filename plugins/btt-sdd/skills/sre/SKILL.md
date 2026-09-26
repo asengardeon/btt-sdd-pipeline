@@ -174,13 +174,13 @@ dois.
    pendência a deixar para o usuário perceber sozinho. Reprovado não passa por este passo (o PR
    continua draft até nova rodada de correção).
 6. **Só escreva esta mensagem depois de completar 5b, 5c e 5d (se aplicáveis) acima.** Se aprovado,
-   informe que a feature está pronta ponta a ponta pelo pipeline SDD, que o PR já saiu do modo
-   draft (passo 5d), e que o merge (GitHub Flow) fica a critério do usuário. Se você (ou o usuário)
-   for aguardar o CI terminar antes desse merge, siga `docs/GIT-WORKFLOW.md`, seção "Aguardando CI
-   antes do merge" — prefira uma primeira espera maior antes da primeira checagem, em vez de
-   checagens curtas desde o início. Se reprovado ou aprovado com ressalvas, liste os itens
-   pendentes e quem deve resolvê-los — e siga a seção "Retomando para corrigir achados de revisão"
-   da skill `/btt-sdd:implement` (prefira retomar o mesmo agente que implementou a fatia via
+   informe que a feature está pronta ponta a ponta pelo pipeline SDD, que o PR já saiu do modo draft
+   (passo 5d), e que o merge (GitHub Flow) fica a critério do usuário. Se você (ou o usuário) for
+   aguardar o CI terminar antes desse merge, siga `docs/GIT-WORKFLOW.md`, seção "Aguardando CI antes
+   do merge" — prefira uma primeira espera maior antes da primeira checagem, em vez de checagens
+   curtas desde o início. Se reprovado ou aprovado com ressalvas, liste os itens pendentes e quem
+   deve resolvê-los — e siga a seção "Retomando para corrigir achados de revisão" de
+   `skills/implement/SKILL.md` (prefira retomar o mesmo agente que implementou a fatia via
    `SendMessage` para correções pequenas e objetivas, em vez de invocar um agente novo).
 
 ## Auto-aprovação nunca é o gate real
@@ -200,5 +200,4 @@ o agente `sre` para os checklists gerais dele mesmo sem um `qa-report.md` associ
 
 ## Quando usar sem o agente
 
-Se o Agent tool não estiver disponível, siga o mesmo processo descrito no agente `sre`
-diretamente.
+Se o Agent tool não estiver disponível, siga `agents/sre.md` diretamente.

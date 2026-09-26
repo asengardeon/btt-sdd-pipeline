@@ -19,18 +19,18 @@ dependências entre histórias (fatias verticais de entrega)"), PR obrigatório 
    confira com `gh pr view <PR> --json state` ou `git log main` antes de criar a branch. Se a
    fatia anterior ainda não estiver mergeada, **pare** e informe o usuário.
 4. **PR aberto cedo**, em modo *draft*, no primeiro commit — não só no final (mantém o CI rodando
-   continuamente e dá visibilidade do progresso). O PR sai do modo draft automaticamente ao final
-   da skill `sre` quando a fatia é aprovada (`skills/sre/SKILL.md`, passo 5d) — nunca fica como
+   continuamente e dá visibilidade do progresso). O PR sai do modo draft automaticamente ao final de
+   `/btt-sdd:sre` quando a fatia é aprovada (`skills/sre/SKILL.md`, passo 5d) — nunca fica como
    transição manual pendente para o usuário perceber sozinho. "Commita por incremento"
-   (`backend-developer`/
-   `frontend-developer`, Fase 2 — TDD red-green-refactor) é sobre **commits locais**, não sobre um
-   push por commit — esses agentes já fazem só um push ao final da trilha inteira. Fora desse
-   fluxo (o orquestrador, fora de um agente de trilha específico, fazendo duas ou mais mudanças
-   relacionadas na mesma branch/sessão — ex.: um fix pontual e o `qa-report.md`/artefato de revisão
-   que o documenta): agrupe num commit e envie (push) uma vez só, salvo motivo real de durabilidade
-   incremental — cada push dispara seu próprio run de CI completo (`docs/QUALITY-GATES.md`, seção
-   "SRE / CI-CD / Infra", sobre o short-circuit de docs-only que reduz o custo dos pushes que só tocam
-   `specs/`/`docs/`, mas não elimina a necessidade de agrupar quando o push toca código).
+   (`backend-developer`/ `frontend-developer`, Fase 2 — TDD red-green-refactor) é sobre **commits
+   locais**, não sobre um push por commit — esses agentes já fazem só um push ao final da trilha
+   inteira. Fora desse fluxo (o orquestrador, fora de um agente de trilha específico, fazendo duas
+   ou mais mudanças relacionadas na mesma branch/sessão — ex.: um fix pontual e o
+   `qa-report.md`/artefato de revisão que o documenta): agrupe num commit e envie (push) uma vez só,
+   salvo motivo real de durabilidade incremental — cada push dispara seu próprio run de CI completo
+   (`docs/QUALITY-GATES.md`, seção "SRE / CI-CD / Infra", sobre o short-circuit de docs-only que
+   reduz o custo dos pushes que só tocam `specs/`/`docs/`, mas não elimina a necessidade de agrupar
+   quando o push toca código).
 5. **Revisão de código, QA, segurança e SRE revisam o PR de cada fatia**, não a feature inteira
    de uma vez. `code-review.md`/`qa-report.md`/`security-review.md`/`sre-review.md` são editados
    in-place a cada fatia (nunca recriados), com uma linha por fatia na seção "Histórico de
@@ -46,11 +46,11 @@ dependências entre histórias (fatias verticais de entrega)"), PR obrigatório 
    errado — inclusive em PRs antigos. O erro é invisível sem essa checagem: o corpo do PR *parece*
    correto e ninguém relê issues fechadas. As consequências não são cosméticas — a spec parece ter
    tarefas pendentes que já estão em produção, `/btt-sdd:status` e `/btt-sdd:pending` reportam
-   trabalho pendente que não existe, e o gate de "toda tarefa precisa de issue associada" (skill
-   `/btt-sdd:implement`, passo 2c-ter) pode levar uma fatia futura a **reimplementar** trabalho já
-   mergeado. Já aconteceu de verdade: um PR com `Closes #117, #118, #119, #120, #121` fechou só a
-   primeira, e as outras quatro precisaram ser fechadas à mão — só percebido porque o orquestrador
-   conferiu em vez de assumir que o `Closes` tinha funcionado.
+   trabalho pendente que não existe, e o gate de "toda tarefa precisa de issue associada"
+   (`skills/implement/SKILL.md`, passo 2c-ter) pode levar uma fatia futura a **reimplementar**
+   trabalho já mergeado. Já aconteceu de verdade: um PR com `Closes #117, #118, #119, #120, #121`
+   fechou só a primeira, e as outras quatro precisaram ser fechadas à mão — só percebido porque o
+   orquestrador conferiu em vez de assumir que o `Closes` tinha funcionado.
 6. **Merge só depois de code review, QA, segurança e SRE aprovados *para aquela fatia*** e CI
    verde (lint + testes + gate de cobertura 80%) naquele PR. Preferência por *squash merge* — um
    commit por fatia em `main`.

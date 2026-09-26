@@ -79,10 +79,10 @@ adapter de entrada que o frontend vai consumir.
 
 ## Fase 1 — Plano de implementação
 
-**Se você foi invocado por `/btt-sdd:implement` com plano já aprovado pelo orquestrador** (a instrução
-vai dizer isso explicitamente), pule esta fase inteira e vá direto para a Fase 2 executando sua
-trilha do plano. Esse é o caminho normal, tanto em trilha única quanto em feature full-stack
-(skill `/btt-sdd:implement`, passo 4).
+**Se você foi invocado por `/btt-sdd:implement` com plano já aprovado pelo orquestrador** (a
+instrução vai dizer isso explicitamente), pule esta fase inteira e vá direto para a Fase 2
+executando sua trilha do plano. Esse é o caminho normal, tanto em trilha única quanto em feature
+full-stack (`skills/implement/SKILL.md`, passo 4).
 
 Caso contrário (invocação avulsa, ou uma trilha que chegou sem plano pré-aprovado), esta fase é
 obrigatória antes de qualquer código. **Se esta invocação é isolada/assíncrona e chegou sem plano

@@ -11,6 +11,19 @@ completa (`CLAUDE.md`, `docs/`, `specs/_template/`) pronta para o pipeline
 mesmo (a sessão atual) faz o scaffolding e depois segue o processo do `product-design`
 diretamente.
 
+## Onde ficam os docs de governança citados nesta skill
+
+Referências como `docs/GIT-WORKFLOW.md`, `docs/QUALITY-GATES.md`, `docs/TESTING.md`,
+`docs/ENGINEERING-PILLARS.md`, `docs/ARCHITECTURE.md`, `docs/SDD-WORKFLOW.md`,
+`docs/FILE-GUIDE.md` e `docs/POST-MERGE-VALIDATION.md` nesta skill apontam para os docs genéricos
+deste pipeline — **não são copiados para dentro de cada projeto que o usa**. Resolva-os a partir
+de onde esta própria skill está instalada (o "Base directory" desta invocação, dentro do plugin
+`btt-sdd`): esses docs estão em `docs/` na raiz **deste plugin instalado**, atualizado
+automaticamente a cada `claude plugin update` — não no projeto onde você está trabalhando agora.
+Se o projeto atual também tiver um `docs/<nome>.md` próprio (`STACK.md`, `BASELINE.md`,
+`LESSONS-LEARNED.md`, `adr/`), esse é conteúdo do projeto, não deste plugin — não confunda os
+dois.
+
 ## Passos
 
 1. **Pergunte, não assuma** (mesma governança do resto do pipeline, `docs/QUALITY-GATES.md`):
@@ -46,10 +59,10 @@ diretamente.
    — não crie o arquivo nesse caso; ele nasce mais tarde, via `/btt-sdd:project-conventions` ou
    `/btt-sdd:baseline`, assim que o projeto acumular convenções reais.
 
-6. **Gere o primeiro PRD**: siga o mesmo processo descrito no agente `product-design` (o mesmo
-   que `/btt-sdd:prd` aciona) usando os requisitos coletados no passo 1, salvando em
-   `<diretório novo>/specs/0001-<slug>/prd.md`. Aplique a mesma governança de não-suposição —
-   pergunte o que for ambíguo, com "VALIDAR DEPOIS" como opção.
+6. **Gere o primeiro PRD**: siga o processo descrito em `agents/product-design.md` (o mesmo que
+   `/btt-sdd:prd` aciona) usando os requisitos coletados no passo 1, salvando em `<diretório
+   novo>/specs/0001-<slug>/prd.md`. Aplique a mesma governança de não-suposição — pergunte o que for
+   ambíguo, com "VALIDAR DEPOIS" como opção.
 
 7. **Pare aqui.** Não continue o pipeline sozinho (TRD, implementação, etc.) — cada etapa exige
    aprovação explícita do usuário (`docs/QUALITY-GATES.md`). Apresente um resumo do PRD gerado,

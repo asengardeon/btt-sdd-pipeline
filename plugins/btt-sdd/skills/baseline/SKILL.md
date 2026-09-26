@@ -36,5 +36,5 @@ dois.
 
 ## Quando usar sem o agente
 
-Se o Agent tool não estiver disponível, siga o mesmo processo descrito no agente
-`codebase-archaeologist` diretamente — nunca corrija/refatore o que encontrar, só documente.
+Se o Agent tool não estiver disponível, siga `agents/codebase-archaeologist.md` diretamente — nunca
+corrija/refatore o que encontrar, só documente.
