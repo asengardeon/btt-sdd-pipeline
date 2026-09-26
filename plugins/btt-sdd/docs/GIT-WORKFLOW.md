@@ -29,7 +29,7 @@ dependências entre histórias (fatias verticais de entrega)"), PR obrigatório 
    relacionadas na mesma branch/sessão — ex.: um fix pontual e o `qa-report.md`/artefato de revisão
    que o documenta): agrupe num commit e envie (push) uma vez só, salvo motivo real de durabilidade
    incremental — cada push dispara seu próprio run de CI completo (`docs/QUALITY-GATES.md`, seção
-   "SRE / CI-CD / Infra", sobre o filtro de `paths` que reduz o custo dos pushes que só tocam
+   "SRE / CI-CD / Infra", sobre o short-circuit de docs-only que reduz o custo dos pushes que só tocam
    `specs/`/`docs/`, mas não elimina a necessidade de agrupar quando o push toca código).
 5. **Revisão de código, QA, segurança e SRE revisam o PR de cada fatia**, não a feature inteira
    de uma vez. `code-review.md`/`qa-report.md`/`security-review.md`/`sre-review.md` são editados
