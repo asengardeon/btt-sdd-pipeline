@@ -233,6 +233,16 @@ relatório para nenhuma linha**, inclusive as bem-sucedidas.
    não só quando pedido explicitamente. Distinto do item 9 (campo novo não propagado para todo
    ponto de reconstrução do agregado): aqui o que não foi propagado é uma correção de bug para todo
    consumidor com o mesmo padrão estrutural, não um campo novo.
+12. **Quebra de contrato declarada no TRD → `!` no título do PR.** Se a seção "Janelas de quebra de
+   contrato entre fatias" do TRD marca esta fatia como portadora da quebra (coluna "`!` no título do
+   PR" = sim), confirme que o título do PR tem `!` antes dos dois-pontos (ou o rodapé
+   `BREAKING CHANGE:` no corpo) — é uma checagem de um caractere, e é a última barata: num squash
+   merge o título do PR vira o subject do commit, e é dele que o cálculo automático de versão deriva
+   MAJOR/MINOR/PATCH (`docs/GIT-WORKFLOW.md`, seção "Quebra de contrato e o título do PR"). Já
+   aconteceu de uma fatia que rejeitava todos os arquivos que o usuário tinha em mãos ir para merge
+   como MINOR, pego só na última etapa do pipeline. Se o TRD não declara quebra nesta fatia, marque
+   como "não aplicável" — não invente uma quebra que o desenho não previu; mas se você **encontrar**
+   no diff uma quebra que o TRD não declarou, isso é um achado por si só.
 
 ## Processo
 

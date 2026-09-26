@@ -223,6 +223,19 @@ não se aplica.
    numa fatia só foi satisfeito pelo frontend em produção duas fatias depois, descoberto só na
    revisão de SRE da primeira fatia — o usuário teve que decidir reativamente, no meio da revisão
    final, entre segurar o merge, tornar o campo opcional, ou aceitar a janela.
+   **Registre também, na coluna `!` no título do PR da mesma tabela, que a fatia portadora da quebra
+   precisa de `!` antes dos dois-pontos no título do seu PR** (`feat(<spec>)!: ...`), ou do rodapé
+   `BREAKING CHANGE:`. Isso não é formalidade de commit: em repositório com release automatizado a
+   partir de Conventional Commits — o default que este pipeline empurra, via lint do título do PR —
+   o título do PR vira o subject do commit de squash, e o `!` é o **único** sinal de quebra que
+   sobrevive ao merge. Sem ele, o cálculo de versão classifica a mudança como MINOR e a seção
+   "quebra de compatibilidade" do changelog sai vazia. Já aconteceu de verdade: uma fatia que tornou
+   uma coluna obrigatória — rejeitando **toda** planilha que o operador já tinha — publicaria
+   `v1.10.0`, e isso só foi pego na última etapa do pipeline (SRE), como a única ressalva bloqueante
+   no ato do merge. A declaração da quebra existia nos três artefatos certos (PRD, TRD, README); o
+   que faltava era ela chegar ao artefato que decide a versão. Você é a primeira etapa que sabe qual
+   fatia carrega a quebra — registrar isso aqui, em forma acionável, é o que evita a reconciliação
+   reativa no fim.
    **O TRD só é considerado pronto para aprovação depois que toda tarefa desta tabela tem uma
    Issue GitHub associada — isso deixou de ser opcional.** Diferente do PRD (que não exige GitHub),
    a partir da decomposição de tarefas o pipeline exige GitHub configurado. Depois de preencher a

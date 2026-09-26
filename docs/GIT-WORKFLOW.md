@@ -485,6 +485,27 @@ nem fatia (não é uma feature de produto), então usa uma branch simples em vez
    SRE automático para esse tipo de mudança (não é uma feature de produto), mas o PR ainda é o
    mecanismo de revisão antes do merge.
 
+## Quebra de contrato e o título do PR
+
+Em repositório com release automatizado a partir de Conventional Commits — o default que este
+pipeline empurra, via lint do título do PR —, **o `!` antes dos dois-pontos no título do PR
+(`feat(0005)!: ...`) é o único sinal de quebra de compatibilidade que sobrevive ao squash merge**:
+num squash, o subject do commit é o título do PR, e é dele que o cálculo de versão deriva MAJOR /
+MINOR / PATCH e a seção "quebra de compatibilidade" do changelog. O rodapé `BREAKING CHANGE:` no
+corpo do commit de squash tem o mesmo efeito.
+
+Esse `!` **é decidido no TRD, não no momento do merge**. O `architect` registra qual fatia carrega a
+quebra na seção "Janelas de quebra de contrato entre fatias" (coluna "`!` no título do PR"), o agente
+de implementação abre o PR já com ele, e `code-reviewer` confere — três etapas antes do SRE.
+
+Por que a regra mora aqui e não só no cabeçalho de um workflow de release: um guard procedimental
+que depende de alguém lembrar dele no ato do merge falha exatamente quando mais importa. Já
+aconteceu de verdade: uma fatia tornou uma coluna obrigatória — **rejeitando toda planilha que o
+operador já tinha** — com a quebra declarada corretamente no PRD, no TRD e no README que a própria
+fatia escreveu, e ainda assim publicaria `v1.10.0` (MINOR). Foi pego na última etapa do pipeline,
+como a única ressalva bloqueante no ato do merge. Para quem só baixa o artefato da página de
+Releases, o número de versão é o único aviso que chega.
+
 ## Exceção histórica
 
 O commit inicial deste template (estrutura, agentes, skills, docs e a feature de exemplo) foi
