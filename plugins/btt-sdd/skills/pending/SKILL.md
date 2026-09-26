@@ -11,7 +11,7 @@ coisas: os itens marcados "VALIDAR DEPOIS" e as tarefas que a tabela de decompos
 (seção "Decomposição de tarefas e dependências") ainda não marca como implementadas. Diferente de
 `/btt-sdd:gap-report` (que compara os casos de uso do TRD, seção 6, com o código real) — aqui a
 fonte é só a coluna **Status** que os próprios agentes já mantêm in-place
-(`docs/QUALITY-GATES.md`, seção "Status de tarefas"), sem inspecionar código.
+(`docs/gates/status-de-tarefas.md`), sem inspecionar código.
 
 ## Onde ficam os docs de governança citados nesta skill
 
@@ -67,7 +67,7 @@ dois.
    nunca editando o artefato direto. Se responder exigir investigação somente-leitura (ler vários
    arquivos de código, histórico de Git) cujo conteúdo não precisa ficar retido depois de chegar à
    resposta, prefira delegar essa leitura a uma sub-tarefa isolada que devolva só a conclusão
-   (`docs/QUALITY-GATES.md`, seção "Governança de decisão", bullet sobre investigação de causa
+   (`docs/gates/governanca.md`, bullet sobre investigação de causa
    raiz) em vez de inflar seu próprio contexto com o conteúdo lido.
 5. Se o usuário pedir para avançar numa tarefa específica da tabela de "Tarefas ainda não
    implementadas", **não** é caso de `/btt-sdd:amend` (não é uma decisão já aprovada sendo

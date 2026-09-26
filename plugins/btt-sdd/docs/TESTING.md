@@ -238,8 +238,7 @@ das etapas anteriores reproduziu o **comando de build/empacotamento real** da st
   desatualizado, quem precisar da evidência (`code-reviewer`/ `qa-engineer`) roda o comando de
   build/empacotamento você mesmo antes de aprovar — nunca aprova uma fatia com trilha de
   frontend/build sem essa evidência (atual ou reexecutada).
-- **Isso é definição do agente, não depende de lições aprendidas.** `docs/QUALITY-GATES.md` (seções
-  "Implementação", "Revisão de código" e "QA") e `agents/code-reviewer.md`/ `agents/qa-engineer.md`
+- **Isso é definição do agente, não depende de lições aprendidas.** `docs/gates/implementacao.md`, `docs/gates/code-review.md` e `docs/gates/qa.md` e `agents/code-reviewer.md`/ `agents/qa-engineer.md`
   já exigem isso diretamente — não fica condicionado a `docs/LESSONS-LEARNED.md` ter uma entrada
   sobre o assunto numa sessão futura.
 

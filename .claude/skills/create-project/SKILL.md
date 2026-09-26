@@ -26,7 +26,7 @@ conteúdo do projeto, não deste pipeline — não confunda os dois.
 
 ## Passos
 
-1. **Pergunte, não assuma** (mesma governança do resto do pipeline, `docs/QUALITY-GATES.md`):
+1. **Pergunte, não assuma** (mesma governança do resto do pipeline, `docs/gates/governanca.md`):
    - Nome do projeto.
    - Diretório de destino — sugira um caminho razoável (ex.: irmão do diretório atual, ou dentro
      de uma pasta comum de projetos que você identificar no sistema), mas **pergunte
@@ -70,7 +70,7 @@ conteúdo do projeto, não deste pipeline — não confunda os dois.
    pergunte o que for ambíguo, com "VALIDAR DEPOIS" como opção.
 
 7. **Pare aqui.** Não continue o pipeline sozinho (TRD, implementação, etc.) — cada etapa exige
-   aprovação explícita do usuário (`docs/QUALITY-GATES.md`). Apresente um resumo do PRD gerado,
+   aprovação explícita do usuário (`docs/gates/governanca.md`). Apresente um resumo do PRD gerado,
    peça aprovação, e quando aprovado informe que o próximo passo é `cd` para o diretório novo e
    rodar `/sdd-trd` lá dentro.
 

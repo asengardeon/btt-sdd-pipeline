@@ -61,7 +61,7 @@ objetivamente contra critérios escritos".
   feature, o "Contrato Frontend↔Backend" quando a feature tem UI (o que permite backend e frontend
   desenvolverem em paralelo), e a "Decomposição de tarefas e dependências" (backend/frontend/ambos,
   com dependência técnica explícita, e uma coluna Status que o pipeline mantém atualizada ponta a
-  ponta conforme a spec avança — detalhe em `docs/QUALITY-GATES.md`, seção "Status de tarefas" —
+  ponta conforme a spec avança — detalhe em `docs/gates/status-de-tarefas.md` —
   preferencialmente espelhada como Issues reais do GitHub quando há remote conectado e autenticado;
   a tabela do TRD sozinha é o fallback só quando não há GitHub configurado). ADRs em `docs/adr/`
   para decisões técnicas significativas.
@@ -176,7 +176,7 @@ objetivamente contra critérios escritos".
 
 ## Governança de decisão (vale para todas as etapas, incluindo a condicional)
 
-Detalhe completo em `docs/QUALITY-GATES.md`. Resumo: nenhum agente faz suposição silenciosa — toda
+Detalhe completo em `docs/gates/governanca.md`. Resumo: nenhum agente faz suposição silenciosa — toda
 ambiguidade vira pergunta ao usuário, com **"VALIDAR DEPOIS"** sempre disponível como opção quando o
 usuário não souber responder agora (o item fica registrado na seção "Pendências de validação" do
 artefato). Nenhuma ação ou pergunta se repete mais de 3 vezes sem escalar. Use `/btt-sdd:pending`
@@ -250,7 +250,7 @@ pipeline completo do zero. `/btt-sdd:hotfix` (`skills/hotfix/SKILL.md`) formaliz
 de banda: sem PRD/TRD, mas com o mesmo rigor de TDD, branch/PR (GitHub Flow, `docs/GIT-WORKFLOW.md`)
 e as revisões que se aplicarem — code review sempre; QA se há critério de aceite concreto a validar;
 segurança sempre que o diff tocar autenticação, autorização, sessão, dado sensível, ou entrada de
-identificador externo (critério objetivo em `docs/QUALITY-GATES.md`, seção "Segurança"); SRE só com
+identificador externo (critério objetivo em `docs/gates/seguranca.md`); SRE só com
 impacto de infraestrutura/CI/dependência. O resultado é registrado na spec relacionada (in-place,
 linha `hotfix-<data>` no histórico de aprovações) ou num diretório de spec dedicado sem
 `prd.md`/`trd.md` quando não há spec de origem. Não confunda com uma feature nova pequena — se o

@@ -55,7 +55,7 @@ conteúdo do projeto, não deste pipeline — não confunda os dois.
      bug/ajuste, com o label de tipo apropriado (`bug` ou `enhancement`). Nenhum hotfix começa
      sem essa issue — sem exceção, mesmo para uma correção de uma linha. **Se o passo 1 identificou
      uma spec relacionada**, identifique essa issue estruturadamente contra ela
-     (`docs/QUALITY-GATES.md`, seção "TRD"): reaproveite o milestone da spec se ele já existir (`gh
+     (`docs/gates/trd.md`): reaproveite o milestone da spec se ele já existir (`gh
      api repos/<owner>/<repo>/milestones` filtrando por título `<slug>` — o mesmo milestone que
      `architect` cria por spec, `.claude/agents/architect.md`); se ainda não existir nenhum
      milestone para essa spec/projeto (spec sem decomposição de tarefas em issues), aplique em vez
@@ -120,7 +120,7 @@ conteúdo do projeto, não deste pipeline — não confunda os dois.
      mesmo padrão já usado para QA pulado (heading padronizado `## Decisão: UX review pulado
      (justificado)`, com a justificativa completa) no `ux-review.md` desta rodada.
    - **Segurança: sempre que o diff tocar qualquer item do critério objetivo de
-     `docs/QUALITY-GATES.md` (seção "Segurança (`security-engineer`)")** — autenticação,
+     `docs/gates/seguranca.md`** — autenticação,
      autorização, gestão de sessão, dados pessoais/sensíveis, ou qualquer ponto de entrada
      aceitando identificador externo (e-mail, identidade SSO, token) — independente do tamanho da
      mudança. Fora desses casos, decisão do orquestrador, mas registrada no artefato desta rodada

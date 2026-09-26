@@ -169,9 +169,13 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
 - **`ENGINEERING-PILLARS.md`** — explica os pilares de engenharia (performance, escalabilidade,
   resiliência, disponibilidade, observabilidade, manutenibilidade) que o `architect` precisa
   endereçar explicitamente na seção 10 do TRD.
-- **`QUALITY-GATES.md`** — checklist único e não-negociável dos gates críticos do pipeline
-  (governança de decisão, baseline, PRD, TRD, implementação, QA, segurança, SRE, merge) —
-  referência central citada por todos os agentes, para não duplicar a lista em cada um deles.
+- **`QUALITY-GATES.md`** — **índice** dos gates críticos, dividido por etapa. Não contém gate
+  nenhum: mapeia cada etapa para o arquivo em `gates/` e diz qual agente lê quais.
+- **`gates/*.md`** — um arquivo por etapa (`governanca`, `licoes`, `status-de-tarefas`,
+  `baseline`, `prd`, `trd`, `implementacao`, `code-review`, `ux`, `qa`, `seguranca`, `sre`,
+  `merge`), cada gate em exatamente um lugar. Cada agente carrega os 2-4 que são dele —
+  `governanca` e `licoes` valem para todas as etapas, o resto é da etapa que o nomeia — em vez
+  do checklist inteiro, que cabia num arquivo só mas não na atenção de nenhum agente.
 - **`GIT-WORKFLOW.md`** — GitHub Flow aplicado ao pipeline: convenção de branch, PR, proteção de
   `main`, e como cada etapa do SDD se relaciona com branch/PR/merge.
 - **`BASELINE.md`** — **gerado condicionalmente** pelo `codebase-archaeologist` (não existe por
@@ -194,7 +198,7 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
   `qa-engineer`, `security-engineer`, `sre`): não existe por padrão, sua ausência já significa
   "nenhum padrão recorrente confirmado ainda". Nasce na primeira vez que um achado se repete
   (2ª ocorrência confirmada) numa revisão de feature diferente da que o levantou pela primeira
-  vez — critério completo em `docs/QUALITY-GATES.md`, seção "Lições aprendidas recorrentes". Cada
+  vez — critério completo em `docs/gates/licoes.md`. Cada
   entrada vira uma restrição que `backend-developer`/`frontend-developer` aplicam na próxima
   implementação, sem esperar a revisão apontar de novo.
 - **`POST-MERGE-VALIDATION.md`** — checklist leve para validação manual contra produção real

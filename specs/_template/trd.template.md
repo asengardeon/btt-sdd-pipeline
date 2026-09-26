@@ -192,7 +192,7 @@ quando a fatia não é a portadora da quebra.
 A coluna **Status** é a fonte de verdade de onde cada tarefa está, mantida **in-place** por quem
 causa cada transição — nunca inferida depois por outra etapa. `architect` inicializa toda tarefa
 nova como `pendente`. Ciclo de vida completo e responsabilidade de cada transição em
-`docs/QUALITY-GATES.md`, seção "Status de tarefas": `pendente` → `em andamento` → `implementado`
+`docs/gates/status-de-tarefas.md`: `pendente` → `em andamento` → `implementado`
 → `aprovado` → `concluído (mergeado)`, com `bloqueado` como estado de exceção (uma revisão
 reprovou; volta a `em andamento` quando a correção começa).
 

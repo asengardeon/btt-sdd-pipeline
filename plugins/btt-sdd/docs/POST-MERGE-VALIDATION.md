@@ -44,7 +44,7 @@ mudou.
   via CLI do provedor quando a superfície é infraestrutura.
 - **Confirme o deploy efetivo**, não só "o comando rodou sem erro": leia logs do serviço, rode o
   comando de status/health do provedor, ou exercite o caminho funcional de ponta a ponta (mesmo
-  princípio do `sre`, `docs/QUALITY-GATES.md`, seção SRE — "validado com build + subida reais").
+  princípio do `sre`, `docs/gates/sre.md` — "validado com build + subida reais").
 - **DNS/certificados**: confirme propagação de verdade (`dig`/`nslookup`, ou o painel do provedor
   de DNS), não só que o registro foi criado.
 - **Dados de teste criados durante a validação são removidos ao final** — nunca deixe um registro,

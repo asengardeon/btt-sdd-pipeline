@@ -69,7 +69,7 @@ disponível).
 Ambiguidade de design não coberta pelo PRD/TRD/`docs/DESIGN-SYSTEM.md` vira pergunta ao usuário;
 se ele não souber responder agora, registre aqui em vez de decidir por conta própria. **ID no
 formato `UX-<AAAA-MM-DD>-<slug-curto>`** (data + slug curto do próprio item — nunca um contador
-sequencial simples) — mesmo critério de `docs/QUALITY-GATES.md`/`docs/LESSONS-LEARNED.md` sobre
+sequencial simples) — mesmo critério de `docs/gates/licoes.md`/`docs/LESSONS-LEARNED.md` sobre
 colisão de ID entre branches paralelas.
 
 | ID                          | Pergunta                          | Contexto                    | Status              |

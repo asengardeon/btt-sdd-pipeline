@@ -152,7 +152,7 @@ cerimônia: não é lacuna a reportar.
    Essa avaliação é
    investigação somente-leitura que não precisa ficar retida no seu contexto depois de concluída —
    prefira delegar a uma sub-tarefa isolada que devolva só as sugestões destiladas
-   (`docs/QUALITY-GATES.md`, seção "Governança de decisão", bullet sobre investigação de causa
+   (`docs/gates/governanca.md`, bullet sobre investigação de causa
    raiz).
 
    Para cada sugestão concreta e acionável (não "poderia ser melhor" genérico), abra uma issue

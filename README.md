@@ -69,8 +69,9 @@ docs, templates) — nunca commit direto em `main`/`master`.
   infraestrutura) e pedem aprovação explícita antes de agir.
 - **Artefatos aprovados são editados in-place**, nunca recriados do zero (`/sdd-amend`).
 
-Checklist completo, gate a gate, em `docs/QUALITY-GATES.md` — é a referência única citada por
-todos os agentes, para não duplicar a lista em cada um deles.
+Checklist completo, gate a gate, em `docs/QUALITY-GATES.md` — índice dividido por etapa
+(`docs/gates/*.md`), para cada agente carregar só os 2-4 arquivos que são dele em vez do
+checklist inteiro. É a referência única citada por todos, para não duplicar a lista em cada um.
 
 ## Mecânicas de eficiência e memória do pipeline
 
@@ -87,14 +88,14 @@ próxima rodada de revisão apontar de novo um problema já conhecido:
   individualmente inofensivas nunca escapando de auditoria nenhuma), a **última fatia pendente de
   uma feature sempre recebe revisão completa**, cobrindo o diff acumulado desde a última revisão
   marcada como `completo` na tabela "Histórico de aprovações por fatia" de cada artefato — não só
-  o diff da última fatia isolada. Critério completo em `docs/QUALITY-GATES.md`.
+  o diff da última fatia isolada. Critério completo em `docs/gates/code-review.md`.
 - **Lições aprendidas recorrentes entre features.** Quando um achado de `code-review`/`qa`/
   `security`/`sre` se repete numa **2ª feature diferente**, o agente promove o padrão para
   `docs/LESSONS-LEARNED.md` (arquivo condicional — não existe até a primeira promoção). Um achado
   isolado nunca vira entrada, só um padrão confirmado. `backend-developer`/`frontend-developer`
   leem esse arquivo antes de planejar a implementação seguinte e aplicam as lições relevantes como
   restrição adicional ao TRD — evitando repetir um erro que o pipeline já viu antes de qualquer
-  revisão apontar de novo. Critério completo em `docs/QUALITY-GATES.md`.
+  revisão apontar de novo. Critério completo em `docs/gates/licoes.md`.
 - **Retomar o mesmo agente em vez de recomeçar.** Quando uma revisão reprova (ou levanta achado
   sobre) uma fatia que um agente de implementação acabou de entregar **na mesma sessão**, e a
   correção é pequena e objetiva, `/sdd-implement` prefere retomar esse mesmo agente via
