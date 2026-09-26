@@ -198,6 +198,26 @@ confirmado ainda").
   da causa é o que impede que as ocorrências seguintes continuem herdando a explicação errada. Vale
   para o "Padrão observado" e para a "Recomendação para implementação", não só para a tabela de
   ocorrências.
+- [ ] **Antes de acrescentar uma ocorrência, confira se `docs/PROJECT-CONVENTIONS.md` tornou
+  esperado o comportamento que a entrada trata como defeito.** Se tornou, **não incremente**: marque
+  a entrada como obsoleta (próximo bullet). Uma convenção de projeto pode **inverter o sentido** de
+  uma lição genérica, e a assimetria de custo esconde isso — contar mais uma ocorrência é barato e
+  invisível, perceber que a entrada inteira caducou exige reauditar a premissa, que é justamente o
+  que não se faz quando a entrada "já está estabelecida". Tende a aparecer onde o pipeline ganhou
+  opt-in por projeto (`docs/PROJECT-CONVENTIONS.md` é lido por todos os agentes; a cadência
+  `ci-antes-do-merge` foi o primeiro opt-in de comportamento), então quanto mais convenções um
+  projeto acumula, mais lições genéricas podem deixar de valer localmente.
+- [ ] **Estado `obsoleta` no formato da entrada**, para o caso em que ela deixa de valer porque o
+  mundo mudou de forma deliberada — o quarto movimento, ao lado de criar, acrescentar ocorrência e
+  corrigir a prosa. Três campos: **desde quando**, **por qual convenção/decisão**, e **o que
+  sobrevive** dela (frequentemente sobra a parte de método, mesmo quando o diagnóstico caduca). As
+  ocorrências históricas ficam **preservadas, nunca apagadas** — elas aconteceram, e sob o regime
+  antigo o diagnóstico estava certo. Quando a obsolescência cria um risco novo no lugar do antigo, a
+  entrada aponta o **sucessor** pelo ID. Já aconteceu de verdade: uma entrada com 6 ocorrências
+  sobre "PR mergeável mas ainda marcado como draft" inverteu de sentido quando o projeto adotou
+  `ci-antes-do-merge` — `isDraft: true` durante a fatia passou a ser **o mecanismo** que suprime a
+  suíte cara, e um PR fora do draft é que seria anômalo. O agente chegou a registrar a 7ª ocorrência
+  antes de perceber, desfez o registro, e teve de inventar a marcação na hora.
 - [ ] `docs/LESSONS-LEARNED.md`, quando criado ou atualizado, é commitado junto do artefato de
   revisão da própria rodada (`code-review.md`/`qa-report.md`/`security-review.md`/ `sre-review.md`)
   — nunca num commit separado.
