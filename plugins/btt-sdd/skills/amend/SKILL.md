@@ -37,6 +37,29 @@ dois.
 3. Registre a mudança na seção "Log de revisões" do artefato editado: data, autor (você, como
    agente, citando a instrução do usuário), o que mudou, motivo.
 
+   **Passada de coerência do TRD, sempre que esta rodada gravar uma revisão nova no "Log de
+   revisões".** As seções 9, 13 e 14 não são prosa: são **contrato lido a jusante** — a 9 é onde QA
+   e SRE conferem o que o mundo externo enxerga, a 13 é a fonte do Status que `/btt-sdd:pending` e
+   `/btt-sdd:status` reportam e de onde a fatia seguinte tira o que implementar, e a 14 é o que o `sre`
+   lê para decidir semver. Uma revisão que muda comportamento ou refuta uma premissa toca
+   necessariamente essas seções, e hoje isso depende inteiramente de alguém lembrar. Quatro
+   verificações, fechadas e baratas:
+
+   1. **Releia a linha 1 do arquivo** — pega corrupção acidental por edit.
+   2. Se a revisão muda **contrato observável** (campo de log, coluna de arquivo, schema, literal de
+      mensagem), reconcilie a **seção 9** — é ela, não a 7, que as etapas seguintes leem como
+      contrato.
+   3. Se a revisão **refuta ou restringe uma premissa** (um `[não medido]` que virou medido, ou o
+      contrário), varra o documento inteiro pelas afirmações que a premissa antiga sustentava —
+      nomeadamente as seções 7 e 13, **incluindo linhas de tarefas de fatias ainda não iniciadas**.
+   4. Atualize a linha da fatia na **seção 14** e a coluna Status na **seção 13**.
+
+   Não é etapa nova: é um parágrafo de checklist no passo que já bumpa a revisão. O custo de não
+   fazer não é teórico — numa fatia, **4 dos 12 achados** de code review eram higiene documental do
+   TRD, e a trilha de revisão (1h43m somando revisão, correção e reverificação) saiu mais cara que a
+   própria implementação (1h21m). Um dos achados era da mesma classe de outro da fatia anterior, e
+   tinha potencial de contaminar uma fatia futura que ainda não tinha começado.
+
 4. Determine as etapas posteriores afetadas usando a ordem fixa do pipeline
    (PRD → TRD → implementação → revisão de código → QA → segurança → SRE, ver
    `docs/SDD-WORKFLOW.md`):

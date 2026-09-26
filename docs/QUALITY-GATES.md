@@ -471,6 +471,9 @@ gravada por quem causa a transição.
   foi verificado (reaproveitado do arquivo de cobertura da fatia ou reexecutado nesta rodada) antes
   de aprovar — nunca aprovado só com base em lint/tipo/teste unitário nesse caso
   (`docs/TESTING.md`, seção "Build/empacotamento real como parte da suíte completa").
+- [ ] Se esta rodada gravou revisão nova no "Log de revisões" do TRD, as seções 9 (contrato
+  observável), 13 (decomposição/Status) e 14 (controle de versão por fatia) foram reconciliadas —
+  não só a seção que a revisão editou. São as seções que as etapas seguintes leem como contrato.
 - [ ] Se o TRD marca esta fatia como portadora de uma quebra de contrato (seção "Janelas de quebra
   de contrato entre fatias", coluna "`!` no título do PR"), o título do PR tem `!` antes dos
   dois-pontos (ou o rodapé `BREAKING CHANGE:` no corpo) — checagem de um caractere, três etapas
