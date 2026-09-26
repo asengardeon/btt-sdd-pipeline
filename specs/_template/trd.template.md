@@ -154,6 +154,17 @@ resultado continue demonstrável de ponta a ponta** (quando full-stack: backend 
 mesma fatia concluídos juntos, nunca "todo o backend primeiro, todo o frontend depois"). É isso
 que permite entregar e mostrar a spec completa aos poucos, em vez de só no fim.
 
+**Tarefa de investigação vem primeiro.** Se alguma decisão desta spec depende da forma concreta de um
+contrato com um sistema externo que ninguém observou (seletor de DOM de terceiro, formato de resposta
+de API não documentada, layout de arquivo de parceiro, esquema de webhook, nome de campo de SSO), a
+tarefa que captura essa estrutura real é a **primeira** tarefa da primeira fatia que depende dela —
+antes de qualquer tarefa que escreva código de produção contra ela, e com Issue GitHub própria como
+qualquer outra. Ela entrega um artefato em `specs/<slug>/` com a estrutura capturada (snapshot
+ARIA/DOM, payload real, amostra do arquivo) e uma seção "correções obrigatórias ao desenho do TRD";
+este TRD é emendado antes de a fatia prosseguir. O motivo é que o dublê escrito a partir de uma
+estrutura suposta **valida a suposição, não a realidade**: a suíte fica verde e nenhuma etapa de
+revisão posterior consegue distinguir isso de uma suíte verde contra a realidade.
+
 | ID   | Tarefa                    | Trilha                    | Fatia (PRD) | Depende de | Status | Issue GitHub |
 |------|------------------------------|------------------------------|--------------|---------------|-----------|------------------|
 | T-1  | <descrição da tarefa>         | backend / frontend / ambos    | F-1           | nenhuma        | pendente  | `<#N ou "não espelhada">` |
