@@ -171,14 +171,43 @@ investigação continua obrigatória só para a(s) área(s) que o diff efetivame
    - Lint, testes e gate de cobertura 80% rodam em todo PR/push relevante.
    - Pipeline falha de forma clara e rápida (fail fast) — não deixa warning virar erro silencioso.
    - Cache de dependências configurado para não deixar o pipeline lento sem necessidade.
-   - **Filtro de `paths`/`paths-ignore` cobrindo `specs/**`, `docs/**` e `*.md` da raiz** — todo
-     push/PR que só toca esses caminhos (nenhum código executável, manifesto de dependência, ou o
-     próprio workflow) pula o job de lint/testes/build inteiro. As etapas de revisão
-     (`code-reviewer`/`qa-engineer`/`security-engineer`/você mesmo) commitam e enviam (push) só
-     arquivos em `specs/**/*.md` na maior parte das rodadas — sem esse filtro, cada um desses
-     pushes dispara um run completo de CI para uma mudança que não pode ter introduzido regressão
-     de código. Já confirmado ao vivo: um PR só com `qa-report.md` atualizado disparou um run
-     completo (~2min backend + ~2min frontend) sem necessidade.
+   - **Short-circuit de mudança só de documentação — pela comparação com o último run verde, nunca
+     por `paths-ignore` no gatilho.** As etapas de revisão
+     (`code-reviewer`/`ux-designer`/`qa-engineer`/`security-engineer`/você mesmo) commitam e enviam
+     (push) seus artefatos na branch da fatia, então **depois que o código para de mudar a branch
+     ainda recebe uma dezena de commits de documentação pura**, cada um disparando o CI completo.
+     Isso é consequência estrutural do pipeline, não descuido de ninguém — e o custo é real: numa
+     fatia medida, 4 linhas de Markdown compraram ~50 min de runner Windows em 4 runs completos,
+     **um deles vermelho por flakiness** de suíte de navegador, num commit de duas linhas de texto
+     que não podia ter mudado comportamento.
+
+     Duas formas erradas de resolver, as duas já tentadas e medidas:
+
+     - **`paths-ignore` no gatilho é ativamente errado** quando o job é *required status check* de
+       branch protection: se o workflow não dispara, o GitHub nunca reporta status para o check
+       obrigatório, e um PR só de documentação fica **bloqueado para sempre** por um check que nunca
+       roda.
+     - **O job sempre dispara e um passo interno decide se a mudança é só documentação, comparando
+       contra `github.event.pull_request.base.sha`** — a base do diff é o tip de `main`, então num
+       PR de código o diff do PR inteiro **sempre** contém `src/`, e `docs_only` é `false` para todo
+       push subsequente, inclusive os de documentação pura. O short-circuit só funciona em `push`
+       para `main`, ou seja, exatamente onde o custo não está.
+
+     **A receita que funciona**: pular o build apenas quando o código em `HEAD` for comprovadamente
+     idêntico ao de um SHA que **já passou** no CI nesta mesma branch.
+
+     1. Consulte, via `gh api` com o `GITHUB_TOKEN` já disponível, o run mais recente
+        **bem-sucedido** do workflow de CI para esta branch, e pegue seu `headSha`.
+     2. `git diff --name-only <esseSha> HEAD` e verifique se **todo** arquivo do diff casa o filtro
+        de caminhos de documentação — `specs/`, `docs/` e `*.md` da raiz.
+     3. Se nada sobrou fora do filtro, é mudança só de documentação sobre código que já passou: o
+        check reporta sucesso em segundos.
+     4. **Qualquer falha em qualquer etapa** (sem run anterior, SHA inalcançável, API fora) →
+        trate como se não fosse docs-only e rode a suíte. A direção de falha segura é preservada.
+
+     Isso é **estritamente mais seguro** que pular por caminho: só pula quando o código já passou,
+     em vez de pular sem nunca ter testado aquele conteúdo. Se este projeto tem hoje um filtro de
+     `paths`/`paths-ignore` no gatilho de um check obrigatório, isso é um achado a reportar.
    - Se um job falhar/for cancelado só por estourar `timeout-minutes` (sem nenhum teste vermelho),
      principalmente quando múltiplas fatias/PRs desta mesma sessão estão rodando CI em paralelo,
      trate como possível falso-negativo por contenção de runners antes de investigar como bug de

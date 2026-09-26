@@ -383,6 +383,14 @@ gravada por quem causa a transição.
 - [ ] `code-review.md` commitado (só esse arquivo, nunca `git add -A`/`.`) e enviado (push) na
   branch do PR pelo próprio `code-reviewer` antes de devolver o resultado.
 
+**Nota sobre o custo de CI desta exigência** (vale igualmente para `ux-review.md`, `qa-report.md`,
+`security-review.md`, `sre-review.md`, `timing-log.md` e as rodadas de correção): como cada etapa
+commita e envia seu artefato na branch da fatia, **depois que o código para de mudar a branch ainda
+recebe uma dezena de commits de documentação pura**, cada um disparando o CI completo no PR. Isso é
+consequência estrutural do pipeline, não descuido — e é por isso que existe a receita de
+short-circuit de docs-only na seção "SRE / CI-CD / Infra" abaixo. Não resolva isso deixando de
+commitar o artefato: o artefato na branch é o que torna a revisão auditável.
+
 ## UX / Usabilidade (`ux-designer`, condicional)
 
 - [ ] **Critério objetivo para UX review obrigatória**: sempre que o diff da fatia tocar alguma
@@ -464,11 +472,16 @@ gravada por quem causa a transição.
 ## SRE / CI-CD / Infra
 
 - [ ] CI roda lint + testes + gate de cobertura em todo PR.
-- [ ] `ci.yml` tem filtro de `paths`/`paths-ignore` cobrindo `specs/**`, `docs/**` e `*.md` da raiz
-  — push/PR que só toca esses caminhos pula lint/testes/build (nenhum código executável mudou, zero
-  risco de qualidade). Sem esse filtro, cada push de um artefato de revisão
-  (`code-review.md`/`ux-review.md`/`qa-report.md`/`security-review.md`/`sre-review.md`) dispara um
-  run completo desnecessário (`agents/sre.md`, área "CI").
+- [ ] `ci.yml` pula lint/testes/build numa mudança só de documentação **comparando `HEAD` com o
+  último run verde desta branch** — nunca por `paths`/`paths-ignore` no gatilho, que deixa um PR
+  só de documentação bloqueado para sempre quando o job é *required status check* (o workflow não
+  dispara, o GitHub nunca reporta status), nem por diff contra o tip de `main`, que num PR de código
+  sempre acusa `src/` e por isso nunca dispara o short-circuit. Receita completa e a medição que a
+  justifica em `agents/sre.md`, área "CI". Falha em qualquer etapa da checagem → roda a
+  suíte (direção de falha segura).
+- [ ] Se este projeto tem hoje `paths`/`paths-ignore` no gatilho de um check obrigatório, isso é
+  reportado como achado — é a forma que #146 pediu e que a medição depois mostrou ser errada, não
+  uma configuração a preservar.
 - [ ] `main` protegida: sem push direto, PR obrigatório, status checks obrigatórios (verificado, não
   necessariamente configurado pelo agente — configuração real é do administrador do repo).
 - [ ] Deploy só roda após CI verde.
