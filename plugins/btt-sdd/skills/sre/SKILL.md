@@ -108,15 +108,20 @@ cerimônia: não é lacuna a reportar.
    automaticamente uma extensão nova (ex. adicionar um serviço novo ao compose).
 5. Mostre ao usuário o veredito e os checklists de CI, Docker e Terraform — incluindo a
    verificação de proteção da branch `main` (`docs/GIT-WORKFLOW.md`).
-5b. **Spec finalizada → aciona `tech-writer` automaticamente.** Se a fatia aprovada (ou aprovada
-   com ressalvas) nesta rodada for a **última fatia pendente da feature** (verifique a tabela
+5b. **Spec finalizada → aciona `tech-writer` automaticamente.** Se a fatia aprovada (ou aprovada com
+   ressalvas) nesta rodada for a **última fatia pendente da feature** (verifique a tabela
    "Decomposição de tarefas e dependências" do TRD: nenhuma outra fatia ainda não
    implementada/mergeada depois desta), a spec está completa ponta a ponta pelo pipeline. Antes de
    informar o usuário sobre o merge (passo 6 abaixo), invoque o agente `tech-writer` (Agent tool,
    `subagent_type: "tech-writer"`, ou `/btt-sdd:docs`) para atualizar a documentação do repositório
-   (README, `docs/`, ADRs) refletindo o que esta feature introduziu de fato — não é um passo
-   opcional a critério do usuário, roda automaticamente sempre que a última fatia é aprovada.
-   Escopo da invocação: só o que a feature `<slug>` mudou de verdade (mecanismos novos,
+   (README, `docs/`, ADRs) refletindo o que esta feature introduziu de fato. **Passe explicitamente,
+   na invocação, a lista de itens VALIDAR DEPOIS de tipo "documentação" abertos nesta spec e nas
+   anteriores** (condições do tipo "aceitar o risco + documentar", `agents/security-engineer.md`,
+   item 3b): esta é a única etapa do pipeline com dono natural para texto de README, e ela **não
+   recebe a tarefa a menos que alguém a nomeie** — já aconteceu de o `tech-writer` só saber da
+   pendência porque `security-engineer` e `sre` a citaram à mão, em prosa, em duas seções diferentes
+   — não é um passo opcional a critério do usuário, roda automaticamente sempre que a última fatia é
+   aprovada. Escopo da invocação: só o que a feature `<slug>` mudou de verdade (mecanismos novos,
    comportamento documentado alterado), nunca uma reescrita geral não relacionada. Lembre também o
    usuário que, depois do merge desta última fatia, `/btt-sdd:implement` conduz o teste geral
    obrigatório de fim de spec contra produção real (`docs/POST-MERGE-VALIDATION.md`) — não é algo

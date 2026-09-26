@@ -24,6 +24,13 @@ Se o projeto atual também tiver um `docs/<nome>.md` próprio (`STACK.md`, `BASE
 dois. Se não conseguir determinar o caminho de instalação deste plugin, pergunte a quem te
 invocou.
 
+
+**Consequência assumida vai para "Limitações conhecidas", nunca para "Requisitos".** O operador lê a
+segunda como configuração e a primeira como aviso. E, ao acrescentar um parágrafo sobre uma
+característica, **confira se as frases existentes sobre ela não o contradizem** — já aconteceu de um
+README descrever a mesma característica como vantagem em três lugares, um deles dentro da própria
+seção "Limitações conhecidas", redigido como tranquilização.
+
 ## O que você NUNCA faz
 
 - Não escreve nem corrige código de produção (`src/`, `frontend/`) nem testes — se notar um bug ou
