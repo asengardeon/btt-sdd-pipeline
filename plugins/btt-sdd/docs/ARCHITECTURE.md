@@ -1,14 +1,14 @@
 # Arquitetura: Ports & Adapters, SOLID, Clean Code
 
-Este documento explica os princípios de arquitetura que todo código gerado neste repositório
-deve seguir. É a referência que o `architect` usa para desenhar o TRD e que
+Este documento explica os princípios de arquitetura que todo código gerado neste repositório deve
+seguir. É a referência que o `architect` usa para desenhar o TRD e que
 `backend-developer`/`frontend-developer` usam para implementar.
 
 ## Ports & Adapters (arquitetura hexagonal)
 
-A ideia central: **a lógica de negócio não sabe nem se importa** com banco de dados, frameworks
-web, filas de mensagens ou qualquer detalhe de infraestrutura. Infraestrutura é um detalhe
-plugável em torno do núcleo, não o contrário.
+A ideia central: **a lógica de negócio não sabe nem se importa** com banco de dados, frameworks web,
+filas de mensagens ou qualquer detalhe de infraestrutura. Infraestrutura é um detalhe plugável em
+torno do núcleo, não o contrário.
 
 ```
                          ┌─────────────────────────────┐
@@ -28,33 +28,36 @@ plugável em torno do núcleo, não o contrário.
                           └─────────────────────────────┘
 ```
 
-**Regra da dependência**: setas sempre apontam para dentro. `domain` não conhece `application`
-nem `adapters`. `application` conhece `domain` e define *ports* (interfaces) — mas nunca importa
-uma implementação concreta de `adapters`. `adapters` conhece `application` (para implementar
-ports ou acionar casos de uso) e pode conhecer bibliotecas externas — é aqui, e só aqui, que
+**Regra da dependência**: setas sempre apontam para dentro. `domain` não conhece `application` nem
+`adapters`. `application` conhece `domain` e define *ports* (interfaces) — mas nunca importa uma
+implementação concreta de `adapters`. `adapters` conhece `application` (para implementar ports ou
+acionar casos de uso) e pode conhecer bibliotecas externas — é aqui, e só aqui, que
 framework/SQL/HTTP client aparecem.
 
 ### Mapeamento neste repositório
 
-- `src/domain/` — entidades e regras de negócio puras. Zero import de `application` ou
-  `adapters`, zero import de biblioteca de infraestrutura.
+- `src/domain/` — entidades e regras de negócio puras. Zero import de `application` ou `adapters`,
+  zero import de biblioteca de infraestrutura.
 - `src/application/ports/` — interfaces que a aplicação precisa da infraestrutura (ex.:
   `TaskRepository`). Definidas pelo que o caso de uso precisa, não pelo que uma tecnologia
   específica oferece.
 - `src/application/use_cases/` — orquestram domínio + ports para cumprir um critério de aceite.
-  Recebem as implementações de port por injeção (construtor/parâmetro), nunca instanciam um
-  adapter concreto internamente.
+  Recebem as implementações de port por injeção (construtor/parâmetro), nunca instanciam um adapter
+  concreto internamente.
 - `src/adapters/inbound/` — o que aciona os casos de uso: controllers HTTP, comandos de CLI,
   handlers de evento/fila.
-- `src/adapters/outbound/` — o que implementa os ports: repositórios de banco de dados, clientes
-  de API externa, publicadores de fila.
+- `src/adapters/outbound/` — o que implementa os ports: repositórios de banco de dados, clientes de
+  API externa, publicadores de fila.
 
 ### Por que isso importa na prática
 
-- **Testabilidade**: casos de uso são testados com dublês (fakes/stubs) dos ports, sem precisar
-  de banco/rede real — testes unitários rápidos e determinísticos.
-- **Substituibilidade**: trocar Postgres por outro banco, ou REST por gRPC, é trocar um adapter —
-  o domínio e os casos de uso não mudam uma linha.
+- **Testabilidade**: casos de uso são testados com dublês (fakes/stubs) dos ports, sem precisar de
+  banco/rede real — testes unitários rápidos e determinísticos.
+- **Substituibilidade**: trocar Postgres por outro banco, ou REST por gRPC, é trocar um adapter — o
+  domínio e os casos de uso não mudam uma linha. O mesmo vale para adapters que falam com serviços
+  de nuvem gerenciados (S3, DynamoDB, Blob Storage etc.): em dev/teste a implementação aponta para
+  [floci](https://floci.io) simulando o provedor localmente, em produção aponta para o provedor real
+  — só a implementação injetada do port muda (`docs/STACK.md`, "Simulação de nuvem local").
 - **Foco de revisão**: bugs de regra de negócio ficam isolados em `domain`/`application`; bugs de
   integração ficam isolados em `adapters`.
 
@@ -65,25 +68,25 @@ separação de responsabilidade — não é uma imposição de ports & adapters 
 over-engineering para a maioria das UIs), mas segue o mesmo espírito:
 
 - `frontend/src/components/` — UI. Não fala com rede diretamente.
-- `frontend/src/services/` — a camada que fala com a API, implementando o contrato definido no
-  TRD (seção "Contrato Frontend↔Backend"). É o equivalente frontend de um adapter de saída: os
-  componentes dependem de uma abstração de `service` (injetável/substituível por um dublê em
-  teste), nunca de detalhe de transporte HTTP.
+- `frontend/src/services/` — a camada que fala com a API, implementando o contrato definido no TRD
+  (seção "Contrato Frontend↔Backend"). É o equivalente frontend de um adapter de saída: os
+  componentes dependem de uma abstração de `service` (injetável/substituível por um dublê em teste),
+  nunca de detalhe de transporte HTTP.
 - `frontend/tests/` — testes de componente/serviço, espelhando `frontend/src/`.
 
-O contrato do TRD é o que desacopla `frontend-developer` de `backend-developer`: cada um
-implementa contra o contrato, não contra a implementação real do outro lado — o que permite os
-dois desenvolverem em paralelo (`frontend-developer` usa um `service` dublê que respeita o
-contrato até o endpoint real existir). Agnóstico de framework, como o resto deste documento —
-qualquer framework de UI se encaixa nessa separação componente/serviço.
+O contrato do TRD é o que desacopla `frontend-developer` de `backend-developer`: cada um implementa
+contra o contrato, não contra a implementação real do outro lado — o que permite os dois
+desenvolverem em paralelo (`frontend-developer` usa um `service` dublê que respeita o contrato até o
+endpoint real existir). Agnóstico de framework, como o resto deste documento — qualquer framework de
+UI se encaixa nessa separação componente/serviço.
 
 ## SOLID aplicado
 
 - **Single Responsibility**: um caso de uso faz uma coisa (`CreateTask`, não
-  `TaskServiceThatDoesEverything`). Um port representa uma responsabilidade (`TaskRepository`
-  cuida de persistência de `Task`, não também de notificação).
-- **Open/Closed**: comportamento novo entra como um novo adapter ou uma nova implementação de
-  port, não como mais um `if` dentro de um caso de uso existente.
+  `TaskServiceThatDoesEverything`). Um port representa uma responsabilidade (`TaskRepository` cuida
+  de persistência de `Task`, não também de notificação).
+- **Open/Closed**: comportamento novo entra como um novo adapter ou uma nova implementação de port,
+  não como mais um `if` dentro de um caso de uso existente.
 - **Liskov Substitution**: qualquer implementação de um port (ex.: `InMemoryTaskRepository` vs.
   `PostgresTaskRepository`) deve ser intercambiável sem que o caso de uso perceba diferença de
   comportamento observável.
@@ -95,12 +98,11 @@ qualquer framework de UI se encaixa nessa separação componente/serviço.
 ## Clean Code — regras práticas
 
 - Funções pequenas, um nível de abstração por função.
-- Nomes que dizem o que a coisa é/faz sem precisar de comentário (`is_overdue()`, não
-  `check(t)`).
+- Nomes que dizem o que a coisa é/faz sem precisar de comentário (`is_overdue()`, não `check(t)`).
 - Sem duplicação: se a mesma lógica aparece duas vezes, extraia.
 - Sem código morto, sem parâmetro/flag que nada usa ainda "para o futuro".
 - Comentário só quando existe um *porquê* não óbvio (uma decisão contraintuitiva, um workaround
-  específico, uma invariante que não é visível no código). Nunca um comentário que só repete o
-  que a linha já diz.
+  específico, uma invariante que não é visível no código). Nunca um comentário que só repete o que a
+  linha já diz.
 
 Veja `docs/TESTING.md` para como TDD e cobertura se encaixam nessa arquitetura.
