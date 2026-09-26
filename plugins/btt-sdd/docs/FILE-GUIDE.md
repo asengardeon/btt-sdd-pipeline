@@ -37,6 +37,9 @@ atualizado sozinho.
   etapa para o arquivo em `gates/` e diz qual agente lê quais.
 - **`gates/*.md`** — um arquivo por etapa, cada gate em exatamente um lugar. Cada agente
   carrega os 2-4 que são dele, não o checklist inteiro.
+- **`AGENT-PREAMBLE.md`** / **`SKILL-PREAMBLE.md`** — o que todo agente / toda skill lê antes de
+  começar: onde ficam os docs de governança, de onde vêm os templates de `specs/_template/`, e
+  como tratar `docs/PROJECT-CONVENTIONS.md`. Cada agente/skill carrega só um ponteiro.
 - **`GIT-WORKFLOW.md`** — GitHub Flow aplicado ao pipeline.
 - **`BASELINE.md`** — **gerado condicionalmente** pelo `codebase-archaeologist`, só se este projeto
   vier a incorporar código pré-existente sem documentação suficiente. Não existe por padrão num

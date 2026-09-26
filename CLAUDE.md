@@ -221,7 +221,10 @@ em `asengardeon/btt-sdd-pipeline` assim que fica claro, não só quando uma fati
 - `infra/docker`, `infra/terraform` — containerização e infraestrutura como código.
 - `.github/workflows` — pipelines de CI (lint + testes + gate de cobertura) e CD (deploy via Terraform).
 - `docs/` — arquitetura, workflow SDD, política de testes, pilares de engenharia, gates críticos,
-  fluxo de Git e guia arquivo-a-arquivo. Inclui `docs/LESSONS-LEARNED.md` (condicional): padrões
+  fluxo de Git e guia arquivo-a-arquivo. Inclui `docs/AGENT-PREAMBLE.md` e
+  `docs/SKILL-PREAMBLE.md`: o contexto que todo agente / toda skill lê antes de começar (onde
+  ficam os docs deste pipeline, de onde vêm os templates, como tratar
+  `docs/PROJECT-CONVENTIONS.md`), referenciado por ponteiro em vez de copiado em cada arquivo. Inclui `docs/LESSONS-LEARNED.md` (condicional): padrões
   de achados já repetidos entre features, que `backend-developer`/`frontend-developer` aplicam
   desde o início da implementação seguinte — critério de promoção em `docs/QUALITY-GATES.md`. Inclui
   também `docs/PROJECT-CONVENTIONS.md` (condicional, mesmo padrão de `BASELINE.md`): particularidades

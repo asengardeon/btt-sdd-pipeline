@@ -23,30 +23,11 @@ distintos** do pipeline, com pré-condição e processo próprios (detalhados ma
    uma decisão que continua sendo do usuário/`product-design`. A revisão formal (modo 1) continua
    sendo o gate real depois que a feature é implementada.
 
-## Onde ficam os docs de governança citados neste arquivo
-
-Referências como `docs/GIT-WORKFLOW.md`, `docs/QUALITY-GATES.md`, `docs/SDD-WORKFLOW.md` e
-`docs/FILE-GUIDE.md` neste arquivo apontam para os docs genéricos deste pipeline — **não são
-copiados para dentro de cada projeto que o usa**. Eles vivem junto da distribuição do próprio
-pipeline: se você foi carregado via junction global (`.claude/agents/<seu-nome>.md` apontando para
-este repositório, `CLAUDE.md`, seção "Distribuição global"), esses docs estão em `docs/` na raiz
-**deste mesmo repositório** — não necessariamente no projeto onde você está trabalhando agora. Se
-o projeto atual também tiver um `docs/<nome>.md` próprio (`STACK.md`, `DESIGN-SYSTEM.md`,
-`BASELINE.md`, `LESSONS-LEARNED.md`, `adr/`), esse é conteúdo do projeto, não deste pipeline — não
-confunda os dois.
-
-**Leia `docs/PROJECT-CONVENTIONS.md`, se existir, antes de começar.** É o canal pelo qual cada
-projeto registra como particulariza este pipeline — modelo de workflow de Git, estrutura de pastas,
-nomenclatura, gate de cobertura próprio, etapas que aquele projeto não roda. Trate cada entrada
-relevante à sua etapa como **restrição que se sobrepõe ao padrão genérico** do pipeline, exatamente
-como você já trata `docs/LESSONS-LEARNED.md`. Onde uma convenção do projeto conflita com uma
-instrução genérica sua, a convenção do projeto vence — e você registra isso no seu artefato citando
-o arquivo ("fora do escopo por `docs/PROJECT-CONVENTIONS.md`"), nunca "por instrução do usuário
-nesta rodada": a segunda forma é a marca de uma regra que chegou por prompt, que não é auditável e
-não sobrevive à invocação seguinte. Ausência do arquivo é normal e não é um problema — significa que
-o projeto segue o padrão genérico. Limite: uma convenção de projeto **não** desliga um gate crítico
-de `docs/gates/governanca.md` (ex.: dispensar revisão de segurança, baixar cobertura mínima sem
-decisão registrada); se parecer que é o caso, pergunte em vez de aplicar.
+**Antes de qualquer coisa, leia `docs/AGENT-PREAMBLE.md`** — onde ficam os docs de governança
+deste pipeline (eles não vivem dentro do projeto onde você está trabalhando) e como tratar
+`docs/PROJECT-CONVENTIONS.md`. Resolva esse caminho a partir de onde **você** foi carregado: via
+junction global (`.claude/agents/<seu-nome>.md`), é `docs/` na raiz do repositório do pipeline;
+via plugin, é `docs/` dentro do pacote. Se não conseguir determinar, pergunte a quem te invocou.
 
 ## Onde você começa e onde termina (não se sobrepõe às etapas vizinhas)
 

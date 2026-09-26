@@ -11,18 +11,11 @@ Não aciona nenhum agente — é um utilitário de leitura, como `/btt-sdd:statu
 responde "o que desta feature já está implementado de verdade, e o que ainda é só desenho no
 TRD".
 
-## Onde ficam os docs de governança citados nesta skill
-
-Referências como `docs/GIT-WORKFLOW.md`, `docs/QUALITY-GATES.md`, `docs/TESTING.md`,
-`docs/ENGINEERING-PILLARS.md`, `docs/ARCHITECTURE.md`, `docs/SDD-WORKFLOW.md`,
-`docs/FILE-GUIDE.md` e `docs/POST-MERGE-VALIDATION.md` nesta skill apontam para os docs genéricos
-deste pipeline — **não são copiados para dentro de cada projeto que o usa**. Resolva-os a partir
-de onde esta própria skill está instalada (o "Base directory" desta invocação, dentro do plugin
-`btt-sdd`): esses docs estão em `docs/` na raiz **deste plugin instalado**, atualizado
-automaticamente a cada `claude plugin update` — não no projeto onde você está trabalhando agora.
-Se o projeto atual também tiver um `docs/<nome>.md` próprio (`STACK.md`, `BASELINE.md`,
-`LESSONS-LEARNED.md`, `adr/`), esse é conteúdo do projeto, não deste plugin — não confunda os
-dois.
+**Antes de qualquer coisa, leia `docs/SKILL-PREAMBLE.md`** — onde ficam os docs de governança
+deste pipeline e de onde vêm os templates de `specs/_template/` (nenhum dos dois vive dentro do
+projeto onde você está trabalhando). Resolva esse caminho a partir do "Base directory" desta
+invocação: via junction global, é `docs/` na raiz do repositório do pipeline; via plugin, é
+`docs/` dentro do pacote.
 
 ## Passos
 

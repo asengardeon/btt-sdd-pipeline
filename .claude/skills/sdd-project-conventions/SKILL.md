@@ -11,14 +11,11 @@ próprio pipeline SDD — só as divergências em relação ao padrão genérico
 qualquer momento: logo após adotar o pipeline num projeto existente, ou depois de uma mudança real
 de convenção (ex.: o time passou a usar outro prefixo de branch).
 
-## Onde ficam os docs de governança citados nesta skill
-
-Referências como `docs/GIT-WORKFLOW.md` e `docs/FILE-GUIDE.md` nesta skill apontam para os docs
-genéricos deste pipeline — **não são copiados para dentro de cada projeto que o usa**. Resolva-os a
-partir de onde esta própria skill está instalada (o "Base directory" desta invocação): se for
-`.claude/skills/<esta-skill>/` apontando para este repositório via junction global (`CLAUDE.md`,
-seção "Distribuição global"), esses docs estão em `docs/` na raiz **deste mesmo repositório** — não
-necessariamente no projeto onde você está trabalhando agora.
+**Antes de qualquer coisa, leia `docs/SKILL-PREAMBLE.md`** — onde ficam os docs de governança
+deste pipeline e de onde vêm os templates de `specs/_template/` (nenhum dos dois vive dentro do
+projeto onde você está trabalhando). Resolva esse caminho a partir do "Base directory" desta
+invocação: via junction global, é `docs/` na raiz do repositório do pipeline; via plugin, é
+`docs/` dentro do pacote.
 
 ## Passos
 

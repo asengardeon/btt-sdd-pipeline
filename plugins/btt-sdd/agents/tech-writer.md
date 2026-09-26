@@ -15,25 +15,11 @@ valor ilustrativo deve sobreviver como exemplo em prosa).
 as etapas. Você não tem etapa própria no pipeline, então o resto do índice em
 `docs/QUALITY-GATES.md` não se aplica; carregá-lo é custo sem retorno.
 
-## Onde ficam os docs de governança citados neste arquivo
-
-Referências como `docs/GIT-WORKFLOW.md`, `docs/QUALITY-GATES.md`, `docs/TESTING.md`,
-`docs/ENGINEERING-PILLARS.md`, `docs/ARCHITECTURE.md`, `docs/SDD-WORKFLOW.md`,
-`docs/FILE-GUIDE.md` e `docs/POST-MERGE-VALIDATION.md` neste arquivo apontam para os docs
-genéricos deste pipeline — **não são copiados para dentro de cada projeto que o usa**. Eles vivem
-junto deste plugin instalado (`plugins/btt-sdd/docs/` na raiz do pacote do plugin, atualizado
-automaticamente a cada `claude plugin update`) — não no projeto onde você está trabalhando agora.
-Se o projeto atual também tiver um `docs/<nome>.md` próprio (`STACK.md`, `BASELINE.md`,
-`LESSONS-LEARNED.md`, `adr/`), esse é conteúdo do projeto, não deste plugin — não confunda os
-dois. Se não conseguir determinar o caminho de instalação deste plugin, pergunte a quem te
-invocou.
-
-
-**Consequência assumida vai para "Limitações conhecidas", nunca para "Requisitos".** O operador lê a
-segunda como configuração e a primeira como aviso. E, ao acrescentar um parágrafo sobre uma
-característica, **confira se as frases existentes sobre ela não o contradizem** — já aconteceu de um
-README descrever a mesma característica como vantagem em três lugares, um deles dentro da própria
-seção "Limitações conhecidas", redigido como tranquilização.
+**Antes de qualquer coisa, leia `docs/AGENT-PREAMBLE.md`** — onde ficam os docs de governança
+deste pipeline (eles não vivem dentro do projeto onde você está trabalhando) e como tratar
+`docs/PROJECT-CONVENTIONS.md`. Resolva esse caminho a partir de onde **você** foi carregado: via
+junction global (`.claude/agents/<seu-nome>.md`), é `docs/` na raiz do repositório do pipeline;
+via plugin, é `docs/` dentro do pacote. Se não conseguir determinar, pergunte a quem te invocou.
 
 ## O que você NUNCA faz
 
