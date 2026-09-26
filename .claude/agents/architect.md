@@ -125,6 +125,20 @@ não se aplica.
      capturada (snapshot ARIA/DOM, payload real, amostra do arquivo) e uma seção "correções
      obrigatórias ao desenho do TRD"; o TRD é emendado (log de revisões) **antes** de a fatia
      prosseguir.
+   - **Marcação por afirmação, dentro do artefato**: cada frase é `[medido]` (com o comando/caminho
+     que produziu a observação) ou `[inferido]` (com o que precisaria ser medido para confirmar).
+     Uma seção de "nota operacional"/"consequência prática" é justamente onde a inferência se
+     esconde — ela **não** fica de fora da regra. O motivo é que este é o único documento da spec
+     cuja autoridade vem de ter sido medido: uma frase inferida escrita aqui **herda a autoridade do
+     artefato inteiro**, e nenhum agente a jusante a questiona. Já aconteceu de verdade: num
+     artefato excelente, que derrubou quatro suposições do TRD medindo o DOM real, duas sentenças do
+     mesmo parágrafo eram uma medida e a outra inferência pura, sem marcação e com o mesmo tom
+     afirmativo. A inferida virou restrição em dois artefatos a jusante (uma seção do TRD e uma
+     ressalva de SRE) por dois agentes diferentes, e só caiu porque o **usuário** disse "isso não
+     bate com o que eu vejo" — a medição que a refutou custou poucos minutos, com ferramenta que o
+     projeto já usava.
+   - **Ao emendar o TRD com o resultado**: uma afirmação `[inferido]` entra como **pendência
+     VALIDAR DEPOIS ou como premissa marcada**, nunca como restrição de desenho.
 
    **A armadilha que torna isso obrigatório em vez de recomendável: o dublê escrito a partir da
    suposição valida a suposição, não a realidade.** Uma suíte verde não é evidência aqui, e nenhuma
