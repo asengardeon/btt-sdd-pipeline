@@ -101,8 +101,9 @@ seria redundante — por isso os diretórios equivalentes aqui **removem** esse 
 `/btt-sdd:trd` em vez de `/btt-sdd:sdd-trd`. `create-project` já não tinha o prefixo `sdd-`, então
 seu diretório não muda (`skills/create-project/` nos dois lados).
 
-**Isso significa que editar `.claude/agents/*.md` ou `.claude/skills/*` na raiz do repositório não
-atualiza este plugin automaticamente.** Ao mudar algo relevante lá, replique aqui:
+**Isso significa que editar `.claude/agents/*.md`, `.claude/skills/*`, `docs/*.md` ou
+`specs/_template/*` na raiz do repositório não atualiza este plugin automaticamente.** Ao mudar
+algo relevante lá, replique aqui:
 
 1. Copie o arquivo alterado de `.claude/agents/` para o caminho equivalente em `agents/` deste
    plugin (mesmo nome de arquivo). Para skills, copie `.claude/skills/sdd-<nome>/SKILL.md` para
@@ -115,6 +116,18 @@ atualiza este plugin automaticamente.** Ao mudar algo relevante lá, replique aq
 3. Se o arquivo menciona `.claude/agents/<nome>.md` como fallback ("se o Agent tool não estiver
    disponível, siga..."), troque pela referência genérica ao nome do agente (esse caminho não
    existe no contexto de um projeto onde o plugin foi instalado).
+4. **Os docs de governança (`docs/*.md`) e os templates (`specs/_template/*`) também são cópias**,
+   com as mesmas adaptações dos itens 2 e 3 — não só `agents/` e `skills/`. Eles são o material que
+   os agentes leem para saber *o que é obrigatório*, então uma deriva aqui não degrada a
+   experiência: ela **desliga gates** para quem usa o plugin. Foi o que aconteceu com a etapa 4b
+   (revisão de UX), ausente destes docs por cinco commits seguidos (`/repo-issues`, issues #280 e
+   #281). Dentro do scaffold, um doc do pipeline é referenciado como "`<DOC>.md` do pipeline" para
+   distingui-lo de um doc do próprio projeto — essa é a adaptação legítima de caminho de doc.
+5. **Rode `python scripts/check-plugin-sync.py` antes de commitar.** Ele compara as duas árvores
+   normalizando exatamente as adaptações dos itens 2 a 4 e falha apontando o arquivo e o bloco que
+   ficou para trás. Instrução escrita sozinha já falhou cinco vezes neste repositório; a verificação
+   é o que fecha o buraco. A deriva que já existia quando o script nasceu está registrada em
+   `scripts/plugin-sync-baseline.txt` — o gate reclama só de deriva **nova**.
 
 `skills/create-project/scaffold/` **não é mais uma cópia a manter sincronizada — é a única
 cópia que existe.** `.claude/skills/create-project/` (a raiz deste repositório) não tem scaffold
