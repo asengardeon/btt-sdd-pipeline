@@ -520,8 +520,14 @@ commitar o artefato: o artefato na branch é o que torna a revisão auditável.
 ## SRE / CI-CD / Infra
 
 - [ ] CI roda lint + testes + gate de cobertura em todo PR.
-- [ ] `ci.yml` pula lint/testes/build numa mudança só de documentação **comparando `HEAD` com o
-  último run verde desta branch** — nunca por `paths`/`paths-ignore` no gatilho, que deixa um PR
+- [ ] **Cadência de CI conferida contra `docs/PROJECT-CONVENTIONS.md`.** Padrão (arquivo ausente
+  ou sem essa seção): suíte completa a cada push. Se o projeto registra `ci-antes-do-merge`, o
+  `ci.yml` roda a suíte completa quando o PR **não é draft** (e em push para a branch base) e
+  reporta sucesso em segundos enquanto o PR é draft — com o gate nos **passos**, nunca no job nem no
+  gatilho, senão o *required status check* nunca reporta e o PR fica bloqueado para sempre (mesma
+  armadilha do `paths-ignore`). O `sre` nunca adota essa cadência por conta própria: ela é opt-in do
+  projeto (`agents/sre.md`, área "CI").
+- [ ] `ci.yml` pula lint/testes/build numa mudança só de documentação **comparando `HEAD` com o último run verde desta branch** — nunca por `paths`/`paths-ignore` no gatilho, que deixa um PR
   só de documentação bloqueado para sempre quando o job é *required status check* (o workflow não
   dispara, o GitHub nunca reporta status), nem por diff contra o tip de `main`, que num PR de código
   sempre acusa `src/` e por isso nunca dispara o short-circuit. Receita completa e a medição que a

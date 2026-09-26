@@ -184,8 +184,66 @@ investigação continua obrigatória só para a(s) área(s) que o diff efetivame
    - Lint, testes e gate de cobertura 80% rodam em todo PR/push relevante.
    - Pipeline falha de forma clara e rápida (fail fast) — não deixa warning virar erro silencioso.
    - Cache de dependências configurado para não deixar o pipeline lento sem necessidade.
-   - **Short-circuit de mudança só de documentação — pela comparação com o último run verde, nunca
-     por `paths-ignore` no gatilho.** As etapas de revisão
+   - **Cadência de CI: leia `docs/PROJECT-CONVENTIONS.md` antes de desenhar ou revisar o `ci.yml`.**
+     O padrão deste pipeline é rodar a suíte completa a cada push, e continua sendo o padrão quando
+     o arquivo não diz nada. Mas o pipeline é estruturalmente caro em minutos de runner: cada etapa
+     de revisão commita e envia seu artefato na branch da fatia, então uma fatia típica acumula
+     ~10 runs — com os ~11–15 min por run medidos em runner Windows, ~2h de runner por fatia,
+     multiplicado pelo número de fatias da spec. Um projeto pode registrar a cadência
+     **`ci-antes-do-merge`** em `docs/PROJECT-CONVENTIONS.md`: a suíte completa roda quando o PR
+     **não é draft** (e em push para a branch base); enquanto o PR é draft, o job reporta sucesso em
+     segundos.
+
+     Isso não exige mecanismo novo, porque o pipeline já gerencia o estado exato: o PR é aberto em
+     draft no primeiro commit e sai do draft (`gh pr ready`) ao final desta etapa, quando a fatia é
+     aprovada (`docs/GIT-WORKFLOW.md`, regra 4). "CI só antes do merge" é literalmente "CI só quando
+     o PR não é draft", e a transição draft → ready é o sinal, no momento exato.
+
+     **O gate vai nos passos caros, nunca no job nem no gatilho** — mesma armadilha do
+     `paths-ignore` descrita no item abaixo: um job que não roda não reporta status, e um *required
+     status check* que nunca reporta bloqueia o PR para sempre. O job sempre inicia, decide numa
+     linha se deve rodar, e sai; um job que só arranca e para consome ~1 min em vez de ~13:
+
+     ```yaml
+     on:
+       push:
+         branches: [main]
+       pull_request:
+         types: [opened, synchronize, reopened, ready_for_review]
+
+     jobs:
+       test:
+         runs-on: <runner do projeto>
+         steps:
+           - id: cadencia
+             shell: bash
+             run: |
+               if [ "${{ github.event_name }}" = "push" ] || \
+                  [ "${{ github.event.pull_request.draft }}" = "false" ]; then
+                 echo "rodar=true" >> "$GITHUB_OUTPUT"
+               else
+                 echo "rodar=false" >> "$GITHUB_OUTPUT"
+                 echo "PR em draft: suite completa roda ao sair do draft, antes do merge."
+               fi
+           - if: steps.cadencia.outputs.rodar == 'true'
+             uses: actions/checkout@v4
+           # ... setup, lint, testes, cobertura, build — todos com o mesmo if
+     ```
+
+     Compõe com o short-circuit de docs-only do item abaixo em vez de substituí-lo: quando o PR sai
+     do draft, aquele ainda evita repetir a suíte se o código não mudou desde o último run verde.
+     Inclua `workflow_dispatch` no gatilho como escape para forçar um run no meio da fatia.
+
+     **Essa cadência é opt-in por projeto, nunca o padrão que você aplica por conta própria**, e o
+     motivo é honesto: o sinal de teste não desaparece durante a fatia (os agentes de implementação
+     rodam a suíte completa com cobertura ao final de cada trilha e registram em
+     `specs/<slug>/coverage/`, e o `qa-engineer` reaproveita ou reexecuta essa evidência —
+     `docs/TESTING.md`), mas um defeito que **só o ambiente do CI pega** (dependência de
+     plataforma, runner Windows, serviço de container) passa a aparecer mais tarde, já com as
+     revisões aprovadas. Se `docs/PROJECT-CONVENTIONS.md` não registra a cadência, mantenha o
+     padrão e não sugira a troca como se fosse consenso — se o custo de runner do projeto parecer
+     alto, aponte o número medido e ofereça a opção ao usuário.
+   - **Short-circuit de mudança só de documentação — pela comparação com o último run verde, nunca por `paths-ignore` no gatilho.** As etapas de revisão
      (`code-reviewer`/`ux-designer`/`qa-engineer`/`security-engineer`/você mesmo) commitam e enviam
      (push) seus artefatos na branch da fatia, então **depois que o código para de mudar a branch
      ainda recebe uma dezena de commits de documentação pura**, cada um disparando o CI completo.
