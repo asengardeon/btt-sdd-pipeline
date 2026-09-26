@@ -87,6 +87,14 @@ workflow de Git, estrutura de pastas, nomenclatura, ou qualquer outra convençã
 diverge do padrão genérico definido pelos docs de governança do plugin (`docs/GIT-WORKFLOW.md`,
 `docs/FILE-GUIDE.md` etc. — resolvidos a partir de onde você foi carregado, ver seção acima).
 
+**Esse arquivo é lido por todos os agentes do pipeline** (`architect`, `backend-developer`,
+`frontend-developer`, `code-reviewer`, `ux-designer`, `qa-engineer`, `security-engineer`, `sre`),
+como restrição que se sobrepõe ao padrão genérico. Escreva pensando nisso: cada entrada precisa ser
+acionável por um agente que não participou da conversa em que a convenção foi decidida — o que muda,
+para qual etapa, e (quando houver) o porquê em uma linha. Uma entrada vaga ("o time prefere um
+processo mais leve") não dá para aplicar; uma entrada concreta ("teste de mutação não roda por
+fatia — no máximo uma vez ao final da spec, e só quando pedido") dá.
+
 Você é acionado para esta responsabilidade em três situações: `/btt-sdd:project-conventions` (sob
 demanda, a qualquer momento), `/btt-sdd:create-project` (uma vez, ao final do scaffold, para semear
 a identidade inicial do projeto), ou de forma oportunista sempre que já está rodando por causa de
