@@ -177,17 +177,23 @@ relatório para nenhuma linha**, inclusive as bem-sucedidas.
      adiante devolve um gate que *parece* cumprido e não foi. Verifique por amostragem, com duas
      heurísticas: (a) **reexecute você mesmo um subconjunto das mutações relatadas**, escolhendo as
      de maior consequência — barato, e detecta tanto engano honesto quanto mutação relatada mas
-     nunca executada; (b) **procure o bloco de código que a tabela não cobre e mute-o você mesmo**.
-     Uma lacuna na tabela é mais informativa que qualquer linha presente nela, e **um número
-     faltando na sequência (`M5` → `M7`) é sinal a investigar, não a arredondar como erro de
-     numeração**. Já aconteceu de verdade: das 6 mutações relatadas pelo autor, as 2 que o revisor
-     criou por conta própria (num bloco de normalização sem mutação nenhuma na tabela) mataram 1 e
-     12 testes, e uma mutação inventada pelo `qa-engineer` na etapa seguinte achou o único buraco
-     real — um literal movido para dentro de uma fábrica mantinha a suíte **inteira** verde e
-     ressuscitava um defeito latente em dois outros caminhos. Ao avaliar a correção de um teste que
-     era instável, pergunte se mudou a **classe** da asserção ou só a **constante de tempo**:
-     aumentar timeout/delay é adiamento, não correção (`docs/TESTING.md`, seção "Instabilidade de
-     teste: classe da asserção, não constante de tempo").
+     nunca executada. **Ver a mutação morrer não basta: confira QUAL asserção a matou.** Uma mutação
+     que quebra o fluxo *antes* do ponto sob teste mata o teste por qualquer asserção anterior, e o
+     vermelho resultante é indistinguível do que se queria provar. Se ela morreu por uma asserção
+     anterior ao ponto sob teste, ela não prova nada sobre aquele ponto — construa a mutação
+     complementar, a que mantém o fluxo íntegro e ataca o **modo de falha oposto** ("a asserção nova
+     ficou tolerante demais?"). O par das duas é que responde; nenhuma sozinha responde; (b)
+     **procure o bloco de código que a tabela não cobre e mute-o você mesmo**. Uma lacuna na tabela
+     é mais informativa que qualquer linha presente nela, e **um número faltando na sequência (`M5`
+     → `M7`) é sinal a investigar, não a arredondar como erro de numeração**. Já aconteceu de
+     verdade: das 6 mutações relatadas pelo autor, as 2 que o revisor criou por conta própria (num
+     bloco de normalização sem mutação nenhuma na tabela) mataram 1 e 12 testes, e uma mutação
+     inventada pelo `qa-engineer` na etapa seguinte achou o único buraco real — um literal movido
+     para dentro de uma fábrica mantinha a suíte **inteira** verde e ressuscitava um defeito latente
+     em dois outros caminhos. Ao avaliar a correção de um teste que era instável, pergunte se mudou
+     a **classe** da asserção ou só a **constante de tempo**: aumentar timeout/delay é adiamento,
+     não correção (`docs/TESTING.md`, seção "Instabilidade de teste: classe da asserção, não
+     constante de tempo").
 5. **Consistência com o contrato Frontend↔Backend do TRD**, quando a feature é full-stack: o
    adapter de entrada do backend implementa exatamente o que o TRD prometeu; o client do frontend
    consome exatamente isso, sem campo/rota inventado por qualquer um dos dois lados. **Quando a UI

@@ -202,7 +202,9 @@ worktree, não no working directory principal.
    quantificada da força dos testes — tabela de mutações, "mutei X e N testes morreram" — trate-a
    como hipótese a verificar, nunca como evidência de que o gate foi cumprido.** Cobertura alta e
    tabela de mutações cheia convivem sem problema com um teste que passa pelo motivo errado. Duas
-   heurísticas baratas: (a) **reexecute você mesmo uma ou duas das mutações relatadas**, as de maior
+   heurísticas baratas: (a) **reexecute você mesmo uma ou duas das mutações relatadas** — conferindo
+   **qual asserção** matou cada uma, porque uma mutação que quebra o fluxo antes do ponto sob teste
+   mata o teste por uma asserção anterior e não prova nada sobre o ponto —, as de maior
    consequência, e confirme que os testes que deveriam morrer morrem de fato; (b) **mute você mesmo
    um bloco que a tabela não cobre** — a lacuna é mais informativa que qualquer linha presente nela.
    Já aconteceu de verdade: numa fatia com 6 mutações relatadas pelo autor e reverificadas pelo
