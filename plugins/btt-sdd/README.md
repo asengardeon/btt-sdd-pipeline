@@ -113,9 +113,19 @@ algo relevante lá, replique aqui:
 2. Se o arquivo copiado menciona um comando `/sdd-*` (skill deste pipeline) ou `/create-project`,
    troque pelo namespace deste plugin **removendo também o `sdd-`**: `/sdd-trd` → `/btt-sdd:trd`,
    `/sdd-code-review` → `/btt-sdd:code-review`, `/create-project` → `/btt-sdd:create-project`.
-3. Se o arquivo menciona `.claude/agents/<nome>.md` como fallback ("se o Agent tool não estiver
-   disponível, siga..."), troque pela referência genérica ao nome do agente (esse caminho não
-   existe no contexto de um projeto onde o plugin foi instalado).
+3. **Referência cruzada a um agente ou a uma skill: troque só o caminho, nunca a frase em volta.**
+   `.claude/agents/<nome>.md` → `agents/<nome>.md`, e
+   `.claude/skills/sdd-<nome>/SKILL.md` → `skills/<nome>/SKILL.md` — caminhos relativos à raiz deste
+   plugin, que é onde eles de fato existem quando o plugin está instalado (o prefixo `.claude/` não
+   existe nesse contexto; cada agente já explica como resolver o caminho da própria instalação).
+   Mantenha a preposição, o passo/seção citado e o resto da frase **idênticos à raiz**.
+
+   Isso é regra de forma, não de estilo: reescrever a frase ("siga o mesmo processo descrito no
+   agente `x`" em vez de "siga `agents/x.md`") produziu, ao longo do tempo, uma dezena de redações
+   diferentes para a mesma referência — e uma regra de normalização que engole a prosa em volta do
+   nome não distingue reescrita de conteúdo perdido de verdade. Foi a causa de 8 dos 11 pares que a
+   issue #290 teve de ressincronizar à mão. Trocar só o caminho mantém as duas cópias comparáveis
+   mecanicamente por `scripts/check-plugin-sync.py`.
 4. **Os docs de governança (`docs/*.md`) e os templates (`specs/_template/*`) também são cópias**,
    com as mesmas adaptações dos itens 2 e 3 — não só `agents/` e `skills/`. Eles são o material que
    os agentes leem para saber *o que é obrigatório*, então uma deriva aqui não degrada a

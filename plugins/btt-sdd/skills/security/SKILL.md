@@ -66,36 +66,36 @@ dois.
    específico** (`security-engineer.md`, seção "Escopo de uma rodada de reverificação de achado
    específico") — nunca pule este registro por ser "só uma reverificação", senão o `timing-log.md`
    da fatia fica sistematicamente incompleto.
-3c. **Se o agente registrou perguntas como "VALIDAR DEPOIS" por não ter `AskUserQuestion`
-   disponível nesta invocação** (subagente isolado/assíncrono — sinal típico: uma nota de processo no
-   topo de `security-review.md`, ou um item de pendência dizendo "não pude perguntar"), **você** — o
+3c. **Se o agente registrou perguntas como "VALIDAR DEPOIS" por não ter `AskUserQuestion` disponível
+   nesta invocação** (subagente isolado/assíncrono — sinal típico: uma nota de processo no topo de
+   `security-review.md`, ou um item de pendência dizendo "não pude perguntar"), **você** — o
    orquestrador desta skill — apresenta essas perguntas ao usuário via *sua própria*
    `AskUserQuestion`, **antes** de informar o resultado da etapa no passo seguinte. Mesmo padrão já
-   documentado para `sre` (skill `/btt-sdd:sre`, passo 4b) e para os agentes de
-   implementação (skill `/btt-sdd:implement`, passo 5b). As que o usuário responder
-   **deixam de ser pendência** e voltam ao relatório como decisão registrada — `SendMessage` ao
-   agente `security-engineer`, se ainda endereçável, ou edição direta da tabela de pendências de
-   `security-review.md`. As que ele não souber responder agora continuam como VALIDAR DEPOIS, agora
-   legitimamente. Registrar em vez de perguntar é o fallback correto **do agente**, que não tinha a
-   ferramenta; não é o seu, que tem — e o usuário está disponível justamente no turno em que a etapa
-   roda. Perguntas binárias de política ou de comportamento, que o usuário responderia em segundos,
-   já viraram dívida em `/btt-sdd:pending` exatamente por este passo não existir.
+   documentado para `sre` (`skills/sre/SKILL.md`, passo 4b) e para os agentes de implementação
+   (`skills/implement/SKILL.md`, passo 5b). As que o usuário responder **deixam de ser pendência** e
+   voltam ao relatório como decisão registrada — `SendMessage` ao agente `security-engineer`, se
+   ainda endereçável, ou edição direta da tabela de pendências de `security-review.md`. As que ele
+   não souber responder agora continuam como VALIDAR DEPOIS, agora legitimamente. Registrar em vez
+   de perguntar é o fallback correto **do agente**, que não tinha a ferramenta; não é o seu, que tem
+   — e o usuário está disponível justamente no turno em que a etapa roda. Perguntas binárias de
+   política ou de comportamento, que o usuário responderia em segundos, já viraram dívida em
+   `/btt-sdd:pending` exatamente por este passo não existir.
 4. Mostre ao usuário o veredito geral e os achados por área (OWASP, segredos, autenticação,
    validação de entrada, dependências).
-5. Se reprovado, informe que a feature volta para `/btt-sdd:implement` com os achados listados —
-   e siga a seção "Retomando para corrigir achados de revisão" da skill `/btt-sdd:implement`
-   (prefira retomar o mesmo agente que implementou a fatia via `SendMessage` para correções
-   pequenas e objetivas, em vez de invocar um agente novo). Se aprovado (ou aprovado com
-   ressalvas não-bloqueantes), informe que a próxima etapa é `/btt-sdd:sre`. **Destaque isso como
-   um aviso explícito, não só como a última frase de um resumo maior**: "⚠️ Segurança aprovada — o
-   merge deste PR não deveria acontecer ainda; o SRE (última etapa) ainda não rodou." Já aconteceu
-   de verdade (fatia normal com TRD, não só hotfix — a mesma lacuna que motivou esta instrução já
-   tinha reforço equivalente na skill `hotfix`, passo 6b, mas não aqui): um PR foi mergeado logo
-   depois da aprovação de segurança, sem que o SRE tivesse rodado, porque a menção à próxima etapa
-   estava perdida no meio de um resumo maior e fácil de não notar — descoberto só numa auditoria de
-   SRE de uma fatia posterior.
+5. Se reprovado, informe que a feature volta para `/btt-sdd:implement` com os achados listados — e
+   siga a seção "Retomando para corrigir achados de revisão" de `skills/implement/SKILL.md` (prefira
+   retomar o mesmo agente que implementou a fatia via `SendMessage` para correções pequenas e
+   objetivas, em vez de invocar um agente novo). Se aprovado (ou aprovado com ressalvas
+   não-bloqueantes), informe que a próxima etapa é `/btt-sdd:sre`. **Destaque isso como um aviso
+   explícito, não só como a última frase de um resumo maior**: "⚠️ Segurança aprovada — o merge
+   deste PR não deveria acontecer ainda; o SRE (última etapa) ainda não rodou." Já aconteceu de
+   verdade (fatia normal com TRD, não só hotfix — a mesma lacuna que motivou esta instrução já tinha
+   reforço equivalente em `/btt-sdd:hotfix`, passo 6b, mas não aqui): um PR foi mergeado logo depois
+   da aprovação de segurança, sem que o SRE tivesse rodado, porque a menção à próxima etapa estava
+   perdida no meio de um resumo maior e fácil de não notar — descoberto só numa auditoria de SRE de
+   uma fatia posterior.
 
 ## Quando usar sem o agente
 
-Se o Agent tool não estiver disponível, siga o mesmo processo descrito no agente
-`security-engineer` diretamente, com o mesmo rigor de revisão.
+Se o Agent tool não estiver disponível, siga `agents/security-engineer.md` diretamente, com o mesmo
+rigor de revisão.

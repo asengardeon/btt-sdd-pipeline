@@ -40,17 +40,17 @@ dois.
    `qa-report.md`/`security-review.md`/`sre-review.md`/`trd.md`) preservando o conteúdo de ambos os
    lados quando tocarem os mesmos arquivos (`docs/GIT-WORKFLOW.md`, seção "Resolvendo conflitos de
    merge nos arquivos de artefato de revisão", tem o passo a passo de como preservar a estrutura
-   Markdown desses arquivos), e envie (push) o resultado. Isso evita que esta e as
-   etapas seguintes (QA, segurança, SRE) commitem "às cegas" sobre uma base que já vai gerar
-   conflito — descoberto só na última etapa, exigindo uma correção retroativa. **Se o rebase trouxe
-   commits substanciais de outra feature mergeada** (não só um hotfix pontual da mesma spec),
-   informe explicitamente ao `code-reviewer` que vai revisar esta rodada: qualquer varredura
-   exaustiva de propagação de campo/assinatura (ex.: "todo `new <Entidade>(` do repositório") que
+   Markdown desses arquivos), e envie (push) o resultado. Isso evita que esta e as etapas seguintes
+   (QA, segurança, SRE) commitem "às cegas" sobre uma base que já vai gerar conflito — descoberto só
+   na última etapa, exigindo uma correção retroativa. **Se o rebase trouxe commits substanciais de
+   outra feature mergeada** (não só um hotfix pontual da mesma spec), informe explicitamente ao
+   `code-reviewer` que vai revisar esta rodada: qualquer varredura exaustiva de propagação de
+   campo/assinatura (ex.: "todo `new <Entidade>(` do repositório") que
    `backend-developer`/`frontend-developer` tenha rodado *antes* deste rebase pode estar
-   desatualizada — código novo trazido pelo rebase pode ter introduzido um ponto de propagação que
-   a varredura original não podia ver. Não é motivo para reprovar de antemão; é sinal para o
-   `code-reviewer` reconfirmar com uma varredura própria (área 9 do agente `code-reviewer`) em vez
-   de confiar que "já rodei isso uma vez" continua válido.
+   desatualizada — código novo trazido pelo rebase pode ter introduzido um ponto de propagação que a
+   varredura original não podia ver. Não é motivo para reprovar de antemão; é sinal para o
+   `code-reviewer` reconfirmar com uma varredura própria (área 9 de `agents/code-reviewer.md`) em
+   vez de confiar que "já rodei isso uma vez" continua válido.
 3. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 3b para
    registrar a duração desta invocação. Invoque o agente `code-reviewer` (Agent tool,
    `subagent_type: "code-reviewer"`) passando o caminho do TRD e o PR/branch da feature, e
@@ -69,30 +69,29 @@ dois.
    específico** (`code-reviewer.md`, seção "Escopo de uma rodada de reverificação de achado
    específico") — nunca pule este registro por ser "só uma reverificação", senão o `timing-log.md`
    da fatia fica sistematicamente incompleto.
-3c. **Se o agente registrou perguntas como "VALIDAR DEPOIS" por não ter `AskUserQuestion`
-   disponível nesta invocação** (subagente isolado/assíncrono — sinal típico: uma nota de processo no
-   topo de `code-review.md`, ou um item de pendência dizendo "não pude perguntar"), **você** — o
+3c. **Se o agente registrou perguntas como "VALIDAR DEPOIS" por não ter `AskUserQuestion` disponível
+   nesta invocação** (subagente isolado/assíncrono — sinal típico: uma nota de processo no topo de
+   `code-review.md`, ou um item de pendência dizendo "não pude perguntar"), **você** — o
    orquestrador desta skill — apresenta essas perguntas ao usuário via *sua própria*
    `AskUserQuestion`, **antes** de informar o resultado da etapa no passo seguinte. Mesmo padrão já
-   documentado para `sre` (skill `/btt-sdd:sre`, passo 4b) e para os agentes de
-   implementação (skill `/btt-sdd:implement`, passo 5b). As que o usuário responder
-   **deixam de ser pendência** e voltam ao relatório como decisão registrada — `SendMessage` ao
-   agente `code-reviewer`, se ainda endereçável, ou edição direta da tabela de pendências de
-   `code-review.md`. As que ele não souber responder agora continuam como VALIDAR DEPOIS, agora
-   legitimamente. Registrar em vez de perguntar é o fallback correto **do agente**, que não tinha a
-   ferramenta; não é o seu, que tem — e o usuário está disponível justamente no turno em que a etapa
-   roda. Perguntas binárias de política ou de comportamento, que o usuário responderia em segundos,
-   já viraram dívida em `/btt-sdd:pending` exatamente por este passo não existir.
+   documentado para `sre` (`skills/sre/SKILL.md`, passo 4b) e para os agentes de implementação
+   (`skills/implement/SKILL.md`, passo 5b). As que o usuário responder **deixam de ser pendência** e
+   voltam ao relatório como decisão registrada — `SendMessage` ao agente `code-reviewer`, se ainda
+   endereçável, ou edição direta da tabela de pendências de `code-review.md`. As que ele não souber
+   responder agora continuam como VALIDAR DEPOIS, agora legitimamente. Registrar em vez de perguntar
+   é o fallback correto **do agente**, que não tinha a ferramenta; não é o seu, que tem — e o
+   usuário está disponível justamente no turno em que a etapa roda. Perguntas binárias de política
+   ou de comportamento, que o usuário responderia em segundos, já viraram dívida em
+   `/btt-sdd:pending` exatamente por este passo não existir.
 4. Mostre ao usuário o veredito geral (aprovado/aprovado com ressalvas/reprovado) e os achados
    principais do relatório.
-5. Se reprovado, informe que a feature volta para `/btt-sdd:implement` com os achados
-   listados — e siga a seção "Retomando para corrigir achados de revisão" da skill
-   `/btt-sdd:implement` (prefira retomar o mesmo agente que implementou a fatia via
-   `SendMessage` para correções pequenas e objetivas, em vez de invocar um agente novo). Se
-   aprovado (ou aprovado com ressalvas aceitas pelo usuário), informe que a próxima etapa é
-   `/btt-sdd:qa`.
+5. Se reprovado, informe que a feature volta para `/btt-sdd:implement` com os achados listados — e
+   siga a seção "Retomando para corrigir achados de revisão" de `skills/implement/SKILL.md` (prefira
+   retomar o mesmo agente que implementou a fatia via `SendMessage` para correções pequenas e
+   objetivas, em vez de invocar um agente novo). Se aprovado (ou aprovado com ressalvas aceitas pelo
+   usuário), informe que a próxima etapa é `/btt-sdd:qa`.
 
 ## Quando usar sem o agente
 
-Se o Agent tool não estiver disponível, siga o mesmo processo descrito no agente `code-reviewer`
-diretamente — leia o diff do PR você mesmo antes de dar qualquer veredito.
+Se o Agent tool não estiver disponível, siga `agents/code-reviewer.md` diretamente — leia o diff do
+PR você mesmo antes de dar qualquer veredito.

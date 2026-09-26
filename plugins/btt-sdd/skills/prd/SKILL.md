@@ -36,14 +36,14 @@ dois.
    fidelidade das telas principais antes de escrever as histórias de usuário em detalhe — com "não,
    seguir direto para o PRD" sempre disponível como opção.
 
-   **Sempre que este passo dispara** (a feature tem alteração de UI de verdade — o mesmo gate
-   acima, não uma condição extra), a consultoria de `ux-designer` (modo "consultoria de PRD", ver o
-   agente `ux-designer` deste plugin) roda também, **independente da resposta do usuário sobre ver
+   **Sempre que este passo dispara** (a feature tem alteração de UI de verdade — o mesmo gate acima,
+   não uma condição extra), a consultoria de `ux-designer` (modo "consultoria de PRD",
+   `agents/ux-designer.md`) roda também, **independente da resposta do usuário sobre ver
    wireframes** — sem alteração de UI, não invoque `ux-designer` nesta etapa. Invoque-o via Agent
-   tool (`subagent_type: "ux-designer"`); ele não exige branch/PR nem produz artefato próprio
-   nesse modo, então não precisa de `isolation: "worktree"` aqui. Só o modo consultoria — nunca
-   confunda com o modo revisão pós-implementação (`/btt-sdd:ux-review`, etapa 4b), que continua
-   existindo sem alteração e é o gate real depois da implementação.
+   tool (`subagent_type: "ux-designer"`); ele não exige branch/PR nem produz artefato próprio nesse
+   modo, então não precisa de `isolation: "worktree"` aqui. Só o modo consultoria — nunca confunda
+   com o modo revisão pós-implementação (`/btt-sdd:ux-review`, etapa 4b), que continua existindo sem
+   alteração e é o gate real depois da implementação.
 
    Se o usuário topar ver wireframes:
    - **Confira `docs/DESIGN-SYSTEM.md` antes de gerar qualquer opção.** Se existir, reaproveite as
@@ -124,10 +124,9 @@ dois.
 
 ## Quando usar sem o agente
 
-Se o Agent tool não estiver disponível na sessão, siga o mesmo processo descrito no agente
-`product-design` diretamente, você mesmo, com o mesmo rigor — o passo 2b acima (oferta de
+Se o Agent tool não estiver disponível na sessão, siga o processo descrito em
+`agents/product-design.md` diretamente, você mesmo, com o mesmo rigor — o passo 2b acima (oferta de
 wireframes/protótipos, incluindo a consultoria de `ux-designer`) continua sendo sua
 responsabilidade, já que ele depende de ferramentas (`AskUserQuestion`, `Artifact`, skill `design`,
-Agent tool) que este agente sozinho não tem. Sem Agent tool, siga o processo descrito no agente
-`ux-designer`, seção "Processo (modo consultoria de PRD)", você mesmo, em vez de pular a
-consultoria.
+Agent tool) que este agente sozinho não tem. Sem Agent tool, siga `agents/ux-designer.md`, seção
+"Processo (modo consultoria de PRD)", você mesmo, em vez de pular a consultoria.

@@ -50,15 +50,15 @@ dois.
    os artefatos de revisão que se aplicarem — sem `prd.md`/`trd.md`.
 1b. **Gate obrigatório: confirme/crie a Issue GitHub deste hotfix antes de criar a branch.**
    Verifique remote GitHub configurado e autenticado (`git remote -v`, `gh auth status`).
-   - **Se houver**: se o bug/ajuste já tem uma issue aberta (o usuário citou o número, ou ela
-     existe no repositório), use-a; senão crie uma via `gh issue create` descrevendo o
-     bug/ajuste, com o label de tipo apropriado (`bug` ou `enhancement`). Nenhum hotfix começa
-     sem essa issue — sem exceção, mesmo para uma correção de uma linha. **Se o passo 1 identificou
-     uma spec relacionada**, identifique essa issue estruturadamente contra ela
-     (`docs/QUALITY-GATES.md`, seção "TRD"): reaproveite o milestone da spec se ele já existir (`gh
-     api repos/<owner>/<repo>/milestones` filtrando por título `<slug>` — o mesmo milestone que o
-     agente `architect` cria por spec); se ainda não existir nenhum milestone para essa
-     spec/projeto (spec sem decomposição de tarefas em issues), aplique em vez disso um label
+   - **Se houver**: se o bug/ajuste já tem uma issue aberta (o usuário citou o número, ou ela existe
+     no repositório), use-a; senão crie uma via `gh issue create` descrevendo o bug/ajuste, com o
+     label de tipo apropriado (`bug` ou `enhancement`). Nenhum hotfix começa sem essa issue — sem
+     exceção, mesmo para uma correção de uma linha. **Se o passo 1 identificou uma spec
+     relacionada**, identifique essa issue estruturadamente contra ela (`docs/QUALITY-GATES.md`,
+     seção "TRD"): reaproveite o milestone da spec se ele já existir (`gh api
+     repos/<owner>/<repo>/milestones` filtrando por título `<slug>` — o mesmo milestone que
+     `architect` cria por spec, `agents/architect.md`); se ainda não existir nenhum milestone para
+     essa spec/projeto (spec sem decomposição de tarefas em issues), aplique em vez disso um label
      `spec:<slug>` (crie com `gh label create` se faltar). Sem spec relacionada (melhoria pontual
      sem origem), não há identificação de spec a aplicar.
    - **Se não houver** remote GitHub configurado/autenticado: **pare aqui**, não crie a branch —
@@ -69,30 +69,29 @@ dois.
    já quebrado em produção/`main` precisa de correção urgente; `fix/<slug>` se é uma correção sem
    urgência de produção, ou a melhoria pontual sem spec de origem. `<slug>` curto em kebab-case
    descrevendo a correção. Crie a branch a partir de `main` atualizada.
-3. **Implemente com TDD estrito**, mesmo rigor do agente `backend-developer`/`frontend-developer`
-   (teste que falha primeiro, código mínimo, refactor) — invoque o agente correspondente à trilha
-   afetada (Agent tool) passando esta instrução: sem TRD/PRD desta vez, o "plano" é a descrição do
-   bug/ajuste desta rodada e o escopo do passo 1. **Se a correção se aplica a múltiplos pontos de
-   entrada estruturalmente equivalentes** (mesmo padrão de UI/lógica duplicado em N lugares — ex.:
-   N formulários de upload usando o mesmo hook compartilhado, N validações idênticas em rotas
-   irmãs), inclua explicitamente na instrução: "aplique a correção com paridade de teste em todos
-   os N pontos, não só paridade de implementação" — já aconteceu de a implementação sair correta
-   nos N pontos, mas só alguns ganharem teste de integração dedicado ao novo caminho, achado só
-   pelo `code-reviewer` numa rodada extra de correção evitável.
-   Ainda assim, apresente esse plano mínimo ao
-   usuário via `AskUserQuestion` antes do primeiro commit (mesmo gate de aprovação de sempre, só
-   que sobre um escopo bem menor). **Se o plano envolve mutação real de infraestrutura/config vars
-   de produção ou geração deliberada de tráfego/carga** (ex.: múltiplos logins concorrentes para
-   validar esgotamento de conexão), sinalize isso no próprio texto apresentado nesta
-   `AskUserQuestion` — essas duas categorias são tipicamente bloqueadas pelo classificador de modo
-   automático desta sessão para orquestrador e subagentes, exigindo execução manual do usuário ou
-   uma regra de permissão explícita; já aconteceu de um hotfix de infra só descobrir esse bloqueio
-   durante a execução, depois de comandos já terem falhado, em vez de antecipado no plano. Abra o
-   PR cedo, em modo draft, com `Closes #N` referenciando a
-   issue do passo 1b (sempre existe, é o gate obrigatório). **Se outra tarefa desta sessão pode
-   estar ativa no mesmo
-   repositório**, use isolamento de working tree (`docs/GIT-WORKFLOW.md`, seção "Isolamento de
-   working tree entre agentes concorrentes").
+3. **Implemente com TDD estrito**, mesmo rigor de
+   `agents/backend-developer.md`/`agents/frontend-developer.md` (teste que falha primeiro, código
+   mínimo, refactor) — invoque o agente correspondente à trilha afetada (Agent tool) passando esta
+   instrução: sem TRD/PRD desta vez, o "plano" é a descrição do bug/ajuste desta rodada e o escopo
+   do passo 1. **Se a correção se aplica a múltiplos pontos de entrada estruturalmente
+   equivalentes** (mesmo padrão de UI/lógica duplicado em N lugares — ex.: N formulários de upload
+   usando o mesmo hook compartilhado, N validações idênticas em rotas irmãs), inclua explicitamente
+   na instrução: "aplique a correção com paridade de teste em todos os N pontos, não só paridade de
+   implementação" — já aconteceu de a implementação sair correta nos N pontos, mas só alguns
+   ganharem teste de integração dedicado ao novo caminho, achado só pelo `code-reviewer` numa rodada
+   extra de correção evitável. Ainda assim, apresente esse plano mínimo ao usuário via
+   `AskUserQuestion` antes do primeiro commit (mesmo gate de aprovação de sempre, só que sobre um
+   escopo bem menor). **Se o plano envolve mutação real de infraestrutura/config vars de produção ou
+   geração deliberada de tráfego/carga** (ex.: múltiplos logins concorrentes para validar
+   esgotamento de conexão), sinalize isso no próprio texto apresentado nesta `AskUserQuestion` —
+   essas duas categorias são tipicamente bloqueadas pelo classificador de modo automático desta
+   sessão para orquestrador e subagentes, exigindo execução manual do usuário ou uma regra de
+   permissão explícita; já aconteceu de um hotfix de infra só descobrir esse bloqueio durante a
+   execução, depois de comandos já terem falhado, em vez de antecipado no plano. Abra o PR cedo, em
+   modo draft, com `Closes #N` referenciando a issue do passo 1b (sempre existe, é o gate
+   obrigatório). **Se outra tarefa desta sessão pode estar ativa no mesmo repositório**, use
+   isolamento de working tree (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre
+   agentes concorrentes").
 4. **Rode a suíte completa com cobertura** (e o comando de build/empacotamento real, se a trilha
    afetada tiver um — `docs/TESTING.md`) ao final, gravando o resumo em
    `specs/<slug-da-spec-relacionada-ou-dedicada>/coverage/hotfix-<data>-<trilha>.md`, mesmo padrão
@@ -133,10 +132,10 @@ dois.
    a exija.
 6. **Rode cada revisão decidida no passo 5** normalmente (`/btt-sdd:code-review`,
    `/btt-sdd:ux-review`, `/btt-sdd:qa`, `/btt-sdd:security`, `/btt-sdd:sre`), contra o PR desta
-   rodada — cada uma edita in-place o
-   artefato identificado no passo 1, com a linha `hotfix-<data>` no histórico de aprovações. Mesma
-   regra de "Auto-aprovação nunca é o gate real" (skill `/btt-sdd:implement`) — nenhum agente que
-   implementou a correção escreve o próprio veredito.
+   rodada — cada uma edita in-place o artefato identificado no passo 1, com a linha `hotfix-<data>`
+   no histórico de aprovações. Mesma regra de "Auto-aprovação nunca é o gate real"
+   (`skills/implement/SKILL.md`) — nenhum agente que implementou a correção escreve o próprio
+   veredito.
 6b. **Antes de informar que o merge fica a critério do usuário, confirme explicitamente que toda
    revisão decidida como aplicável no passo 5 já rodou com veredito aprovado** — não confie em
    lembrar de tê-las rodado todas. Releia a decisão do passo 5 contra o estado real dos artefatos
@@ -166,6 +165,6 @@ rodaram e por quê (critério do passo 5), e onde ficou registrado o resultado �
 
 ## Quando usar sem os agentes
 
-Se o Agent tool não estiver disponível, siga o mesmo processo descrito nos agentes
-`backend-developer`/`frontend-developer` para a implementação e nos agentes de revisão
-correspondentes diretamente, mantendo o mesmo rigor de TDD e os mesmos critérios do passo 5.
+Se o Agent tool não estiver disponível, siga
+`agents/backend-developer.md`/`agents/frontend-developer.md` para a implementação e os agentes de
+revisão correspondentes diretamente, mantendo o mesmo rigor de TDD e os mesmos critérios do passo 5.

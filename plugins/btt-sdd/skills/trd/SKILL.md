@@ -60,5 +60,4 @@ dois.
 
 ## Quando usar sem o agente
 
-Se o Agent tool não estiver disponível, siga o mesmo processo descrito no agente `architect`
-diretamente.
+Se o Agent tool não estiver disponível, siga `agents/architect.md` diretamente.

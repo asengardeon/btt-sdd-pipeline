@@ -36,5 +36,5 @@ dois.
 
 ## Quando usar sem o agente
 
-Se o Agent tool não estiver disponível, siga o mesmo processo descrito no agente `tech-writer`
-diretamente — nunca escreva/corrija código de produção, só documente o que existe de fato.
+Se o Agent tool não estiver disponível, siga `agents/tech-writer.md` diretamente — nunca
+escreva/corrija código de produção, só documente o que existe de fato.

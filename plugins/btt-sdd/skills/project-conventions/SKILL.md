@@ -8,7 +8,7 @@ description: Utilitário do pipeline SDD, sem posição fixa numa etapa. Use qua
 Aciona o agente **arqueólogo de código** numa responsabilidade separada de `/btt-sdd:baseline`: em
 vez de documentar o sistema em si (`docs/BASELINE.md`), documenta como **este projeto**
 particulariza o próprio pipeline SDD — só as divergências em relação ao padrão genérico, nunca o
-óbvio. Útil a qualquer momento: logo após adotar o plugin num projeto existente, ou depois de uma
+óbvio. Útil a qualquer momento: logo após adotar o pipeline num projeto existente, ou depois de uma
 mudança real de convenção (ex.: o time passou a usar outro prefixo de branch).
 
 ## Onde ficam os docs de governança citados nesta skill
@@ -36,5 +36,5 @@ automaticamente a cada `claude plugin update` — não no projeto onde você est
 ## Quando usar sem o agente
 
 Se o Agent tool não estiver disponível, siga a seção "docs/PROJECT-CONVENTIONS.md — particularidades
-do projeto vs. padrão do pipeline" do agente `codebase-archaeologist` diretamente — nunca corrija/
-refatore o que encontrar, só documente.
+do projeto vs. padrão do pipeline" de `agents/codebase-archaeologist.md` diretamente — nunca
+corrija/ refatore o que encontrar, só documente.

@@ -188,70 +188,69 @@ assim:
    segurança e SRE todos aprovados e CI verde, só faltando o merge; sem uma checagem manual, o
    trabalho teria sido reimplementado do zero.
 2c. **Antes de criar a branch desta rodada**, se a fatia não é a primeira, confirme que o PR da
-   fatia anterior já foi mergeado em `main` (`docs/GIT-WORKFLOW.md`, regra 3, tem o comando). Se
-   não estiver, **pare aqui** e informe o usuário — não invoque os agentes de desenvolvimento
-   sobre uma `main` desatualizada. Se você (ou o usuário) estiver aguardando o CI daquele PR
-   terminar antes do merge, siga `docs/GIT-WORKFLOW.md`, seção "Aguardando CI antes do merge" —
-   prefira uma primeira espera maior antes da primeira checagem, em vez de checagens curtas desde
-   o início. Ao confirmar o merge, atualize (se ainda não estiver) a coluna Status das tarefas
-   dessa fatia anterior no TRD para `concluído (mergeado)`.
-2c-quater. **Ao confirmar esse merge, confirme também que todas as issues daquela fatia fecharam de
-   fato** — `gh pr view <PR> --json closingIssuesReferences` (ou `gh issue view <N> --json state`
-   para cada issue da coluna "Issue GitHub" daquela fatia). As que sobrarem abertas, feche à mão
-   citando o PR (`gh issue close <N> --comment "Fechada por #<PR>"`). Não assuma que o `Closes`
-   funcionou: a forma com vírgulas simples (`Closes #A, #B, #C`) fecha **só a primeira** em
-   silêncio, e o corpo do PR *parece* correto (`docs/GIT-WORKFLOW.md`, regras 5b e 5c). Uma issue
-   que ficou aberta sem motivo faz esta spec parecer ter trabalho pendente que já está em produção
-   — e, no limite, faz o gate do passo 2c-ter levar uma fatia futura a **reimplementar** o que já
-   foi mergeado, exatamente o cenário que o passo 2b-ter existe para evitar.
-2c-bis. **Ao criar a branch desta rodada, garanta que o PRD/TRD desta spec estão commitados em
-   algum ref antes de invocar qualquer agente com `isolation: "worktree"`.** Um `git worktree add`
-   cria um checkout limpo a partir de um ref já commitado — mudanças feitas diretamente no checkout
-   principal (ex.: a edição do PRD/TRD durante a aprovação, que por si só não passa por commit/PR,
-   `docs/GIT-WORKFLOW.md`, seção "Mapeamento no pipeline SDD": "Nenhuma — documentos em `specs/`,
-   sem código/branch ainda") são literalmente invisíveis para um worktree novo, mesmo que `git log
-   --all` seja consultado. Se `specs/<slug>/prd.md`/`trd.md` (e `timing-log.md`, se as etapas de
-   PRD/TRD já o criaram — `specs/_template/timing-log.template.md`) ainda estiverem só como
-   mudanças não commitadas no checkout principal, commite-os agora, nesta branch recém-criada, como
-   parte do primeiro commit — antes de qualquer `git worktree add`/invocação com `isolation:
-   "worktree"` para esta fatia. **Nunca** contorne isso commitando PRD/TRD direto em `main` (regra 1
-   de `docs/GIT-WORKFLOW.md` — ninguém commita direto nela) nem criando um PR de documentação avulso
-   para isso — eles seguem incluídos no mesmo PR desta fatia, revisados normalmente como o resto do
-   conteúdo da branch. Já aconteceu de verdade: um agente invocado com `isolation: "worktree"`
-   falhou de cara porque o TRD da spec só existia como arquivo não commitado no checkout principal
-   — uma implementação inteira precisou ser refeita (~28k tokens) até alguém perceber e commitar
-   manualmente. Se duas specs em paralelo estão nessa mesma situação, cada uma resolve isso na
-   própria branch — nunca aproveite para commitar o PRD/TRD de uma spec na branch de outra.
-2c-ter. **Gate obrigatório: toda tarefa da fatia escolhida precisa ter Issue GitHub associada.**
-   Confira a coluna "Issue GitHub" da tabela de decomposição do TRD para cada tarefa desta fatia
-   (excluindo fatias sem trilha de código, passo 2b-bis, que não passam por este gate). Se alguma
-   estiver vazia/`não espelhada`, **antes de concluir que a fatia está pendente**, rode uma
-   checagem barata de que ela não foi implementada e mergeada sem que o TRD tivesse sido
-   atualizado depois (a coluna Status pode ter ficado desatualizada mesmo com a fatia já em
-   produção — ex.: `git log --oneline --all -i --grep="<slug>.*fatia N"` e/ou `gh pr list --search
-   "<slug> Fatia N" --state merged`, ajustando o padrão ao texto real usado nos commits/PRs deste
-   projeto). Se essa checagem encontrar um commit/PR já mergeado cobrindo as mesmas tarefas desta
-   fatia, **isso é uma discrepância de documentação, não trabalho pendente**: atualize a coluna
-   Status dessas tarefas no TRD para `concluído (mergeado)` citando o PR/commit real, informe o
-   usuário, e volte ao passo 2b para escolher a próxima fatia realmente pendente — não crie issues
+   fatia anterior já foi mergeado em `main` (`docs/GIT-WORKFLOW.md`, regra 3, tem o comando). Se não
+   estiver, **pare aqui** e informe o usuário — não invoque os agentes de desenvolvimento sobre uma
+   `main` desatualizada. Se você (ou o usuário) estiver aguardando o CI daquele PR terminar antes do
+   merge, siga `docs/GIT-WORKFLOW.md`, seção "Aguardando CI antes do merge" — prefira uma primeira
+   espera maior antes da primeira checagem, em vez de checagens curtas desde o início. Ao confirmar
+   o merge, atualize (se ainda não estiver) a coluna Status das tarefas dessa fatia anterior no TRD
+   para `concluído (mergeado)`. 2c-quater. **Ao confirmar esse merge, confirme também que todas as
+   issues daquela fatia fecharam de fato** — `gh pr view <PR> --json closingIssuesReferences` (ou
+   `gh issue view <N> --json state` para cada issue da coluna "Issue GitHub" daquela fatia). As que
+   sobrarem abertas, feche à mão citando o PR (`gh issue close <N> --comment "Fechada por #<PR>"`).
+   Não assuma que o `Closes` funcionou: a forma com vírgulas simples (`Closes #A, #B, #C`) fecha
+   **só a primeira** em silêncio, e o corpo do PR *parece* correto (`docs/GIT-WORKFLOW.md`, regras
+   5b e 5c). Uma issue que ficou aberta sem motivo faz esta spec parecer ter trabalho pendente que
+   já está em produção — e, no limite, faz o gate do passo 2c-ter levar uma fatia futura a
+   **reimplementar** o que já foi mergeado, exatamente o cenário que o passo 2b-ter existe para
+   evitar. 2c-bis. **Ao criar a branch desta rodada, garanta que o PRD/TRD desta spec estão
+   commitados em algum ref antes de invocar qualquer agente com `isolation: "worktree"`.** Um `git
+   worktree add` cria um checkout limpo a partir de um ref já commitado — mudanças feitas
+   diretamente no checkout principal (ex.: a edição do PRD/TRD durante a aprovação, que por si só
+   não passa por commit/PR, `docs/GIT-WORKFLOW.md`, seção "Mapeamento no pipeline SDD": "Nenhuma —
+   documentos em `specs/`, sem código/branch ainda") são literalmente invisíveis para um worktree
+   novo, mesmo que `git log --all` seja consultado. Se `specs/<slug>/prd.md`/`trd.md` (e
+   `timing-log.md`, se as etapas de PRD/TRD já o criaram — `specs/_template/timing-log.template.md`)
+   ainda estiverem só como mudanças não commitadas no checkout principal, commite-os agora, nesta
+   branch recém-criada, como parte do primeiro commit — antes de qualquer `git worktree
+   add`/invocação com `isolation: "worktree"` para esta fatia. **Nunca** contorne isso commitando
+   PRD/TRD direto em `main` (regra 1 de `docs/GIT-WORKFLOW.md` — ninguém commita direto nela) nem
+   criando um PR de documentação avulso para isso — eles seguem incluídos no mesmo PR desta fatia,
+   revisados normalmente como o resto do conteúdo da branch. Já aconteceu de verdade: um agente
+   invocado com `isolation: "worktree"` falhou de cara porque o TRD da spec só existia como arquivo
+   não commitado no checkout principal — uma implementação inteira precisou ser refeita (~28k
+   tokens) até alguém perceber e commitar manualmente. Se duas specs em paralelo estão nessa mesma
+   situação, cada uma resolve isso na própria branch — nunca aproveite para commitar o PRD/TRD de
+   uma spec na branch de outra. 2c-ter. **Gate obrigatório: toda tarefa da fatia escolhida precisa
+   ter Issue GitHub associada.** Confira a coluna "Issue GitHub" da tabela de decomposição do TRD
+   para cada tarefa desta fatia (excluindo fatias sem trilha de código, passo 2b-bis, que não passam
+   por este gate). Se alguma estiver vazia/`não espelhada`, **antes de concluir que a fatia está
+   pendente**, rode uma checagem barata de que ela não foi implementada e mergeada sem que o TRD
+   tivesse sido atualizado depois (a coluna Status pode ter ficado desatualizada mesmo com a fatia
+   já em produção — ex.: `git log --oneline --all -i --grep="<slug>.*fatia N"` e/ou `gh pr list
+   --search "<slug> Fatia N" --state merged`, ajustando o padrão ao texto real usado nos commits/PRs
+   deste projeto). Se essa checagem encontrar um commit/PR já mergeado cobrindo as mesmas tarefas
+   desta fatia, **isso é uma discrepância de documentação, não trabalho pendente**: atualize a
+   coluna Status dessas tarefas no TRD para `concluído (mergeado)` citando o PR/commit real, informe
+   o usuário, e volte ao passo 2b para escolher a próxima fatia realmente pendente — não crie issues
    nem branch/agente de implementação para esta fatia. Só quando a checagem não encontrar nada,
    trate como o gate original: **pare aqui, não crie a branch nem invoque nenhum agente de
    implementação** — isso não deveria acontecer se o TRD foi aprovado depois desta regra existir
-   (agente `architect`, passo 6c), mas pode ocorrer em TRDs aprovados antes dela, ou se uma issue
+   (`agents/architect.md`, passo 6c), mas pode ocorrer em TRDs aprovados antes dela, ou se uma issue
    foi apagada/perdida depois. Informe o usuário e ofereça, via `AskUserQuestion`, acionar
    `architect` para criar as issues faltantes desta fatia (opção recomendada) antes de prosseguir —
    nunca inicie a fatia sem elas, mesmo que o usuário peça para pular o gate.
 3. **Identifique as trilhas desta fatia** (só backend, só frontend, ou as duas) na decomposição de
    tarefas do TRD. **Em qualquer dos casos — uma trilha ou duas — quem monta e aprova o plano é
-   você, o orquestrador, antes de invocar qualquer agente**: siga o passo 4. Não delegue a
-   aprovação do plano ao próprio agente quando ele for invocado isolado/assíncrono
-   (`isolation: "worktree"` ou equivalente), porque `AskUserQuestion` **não está disponível** nesse
-   modo: o agente faz o certo e devolve o plano em texto puro sem tocar código
-   (agente `backend-developer`, Fase 1, passo 3), e fica parado até você intermediar.
-   Isso já custou **~4h30m de relógio numa única fatia de trilha única**, medidas e registradas no
-   `timing-log.md` da spec como custo do pipeline — 2ª ocorrência do mesmo mecanismo. A única
-   situação em que o agente conduz a própria Fase 1 é quando ele roda **no mesmo contexto,
-   síncrono, com `AskUserQuestion` disponível para ele**; na dúvida, planeje você.
+   você, o orquestrador, antes de invocar qualquer agente**: siga o passo 4. Não delegue a aprovação
+   do plano ao próprio agente quando ele for invocado isolado/assíncrono (`isolation: "worktree"` ou
+   equivalente), porque `AskUserQuestion` **não está disponível** nesse modo: o agente faz o certo e
+   devolve o plano em texto puro sem tocar código (`agents/backend-developer.md`, Fase 1, passo 3),
+   e fica parado até você intermediar. Isso já custou **~4h30m de relógio numa única fatia de trilha
+   única**, medidas e registradas no `timing-log.md` da spec como custo do pipeline — 2ª ocorrência
+   do mesmo mecanismo. A única situação em que o agente conduz a própria Fase 1 é quando ele roda
+   **no mesmo contexto, síncrono, com `AskUserQuestion` disponível para ele**; na dúvida, planeje
+   você.
 4. **Monte e aprove o plano antes de invocar** — uma trilha ou duas. Com as duas trilhas (feature
    full-stack), o plano é combinado e **invocar as duas em paralelo é o padrão, não uma exceção
    cautelosa**: com isolamento de working tree garantido (passo "d" abaixo), não há mais motivo
@@ -372,14 +371,14 @@ assim:
 
 ## Troca de provedor/serviço externo descoberta durante a implementação
 
-Se, durante a implementação (ou um ajuste de infra pontual conduzido por você, passo 2b-bis),
-surgir a necessidade de trocar um provedor/serviço externo que o TRD já desenhou com outra escolha
-(ex.: TRD desenhou storage no provedor A, na prática o provedor B foi usado; TRD não especificou
-provedor de e-mail transacional e um foi escolhido agora) — isso **sempre** exige, no mínimo, uma
-ADR nova registrada pelo `architect` (`docs/adr/`, mesmo que pequena) **antes** do `sre` ou do
-dev implementar a troca. Não é uma decisão que o orquestrador ou o `sre` tomam sozinhos caso a
-caso "se merece" ADR — troca de provedor já desenhado no TRD sempre merece. Acione `architect`
-(ou `/btt-sdd:trd` se a mudança também precisar refletir no corpo do TRD) antes de prosseguir.
+Se, durante a implementação (ou um ajuste de infra pontual conduzido por você, passo 2b-bis), surgir
+a necessidade de trocar um provedor/serviço externo que o TRD já desenhou com outra escolha (ex.:
+TRD desenhou storage no provedor A, na prática o provedor B foi usado; TRD não especificou provedor
+de e-mail transacional e um foi escolhido agora) — isso **sempre** exige, no mínimo, uma ADR nova
+registrada pelo `architect` (`docs/adr/`, mesmo que pequena) **antes** do `sre` ou do dev
+implementar a troca. Não é uma decisão que o orquestrador ou o `sre` tomam sozinhos caso a caso "se
+merece" ADR — troca de provedor já desenhado no TRD sempre merece. Acione `architect` (ou
+`/btt-sdd:trd` se a mudança também precisa refletir no corpo do TRD) antes de prosseguir.
 
 ## Auto-aprovação nunca é o gate real
 
@@ -417,6 +416,6 @@ usuário pedir; é parte de considerar a spec de fato concluída.
 
 ## Quando usar sem o agente
 
-Se o Agent tool não estiver disponível, siga o mesmo processo descrito nos agentes
-`backend-developer` e/ou `frontend-developer` diretamente, mantendo o mesmo rigor de TDD e o gate de
-aprovação do plano antes de codar.
+Se o Agent tool não estiver disponível, siga `agents/backend-developer.md` e/ou
+`agents/frontend-developer.md` diretamente, mantendo o mesmo rigor de TDD e o gate de aprovação do
+plano antes de codar.

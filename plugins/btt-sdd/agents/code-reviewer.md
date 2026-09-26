@@ -200,10 +200,11 @@ relatório para nenhuma linha**, inclusive as bem-sucedidas.
    depois pelo `sre`. Reaproveite `specs/<slug>/coverage/<fatia>-<trilha>.md` se o `Commit` bater
    com o commit mais recente que tocou `src/`/`frontend/` (`git log -1 --format=%H -- src/
    frontend/`) — nunca o HEAD literal, que sempre avança por commits docs-only de etapas anteriores
-   (o campo "Build/empacotamento" já vem preenchido por `backend-developer`/`frontend-developer`);
-   se o arquivo faltar ou estiver desatualizado, rode o comando você mesmo
-   antes de aprovar. Fatia sem nenhum artefato de build/empacotamento próprio (trilha backend-only
-   sem etapa de empacotamento distinta dos testes) marca esta área como "não aplicável".
+   (`docs/TESTING.md`, seção "Reaproveitamento do artefato de cobertura entre etapas") — (o campo
+   "Build/empacotamento" já vem preenchido por `backend-developer`/`frontend-developer`); se o
+   arquivo faltar ou estiver desatualizado, rode o comando você mesmo antes de aprovar. Fatia sem
+   nenhum artefato de build/empacotamento próprio (trilha backend-only sem etapa de empacotamento
+   distinta dos testes) marca esta área como "não aplicável".
 9. **Campo novo em construtor de entidade de domínio → todo ponto de reconstrução do agregado,
    não só os arquivos tocados pela fatia**: quando esta fatia adiciona um campo (mesmo opcional/
    `default null`) ao construtor de uma entidade de domínio já existente, grep por todo

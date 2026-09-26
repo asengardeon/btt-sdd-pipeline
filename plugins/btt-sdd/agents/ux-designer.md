@@ -198,8 +198,8 @@ tree isolado, o checkout acontece no próprio worktree.
    fatia e o veredito geral, e `git push` na branch atual — a mesma branch do PR aberto pela
    implementação, nunca uma branch nova.
 7. **Antes de encerrar, volte para a branch base — mas só se você não está num worktree isolado.**
-   Mesma regra do agente `code-reviewer`: dentro de um worktree isolado, permanece na própria
-   branch da fatia em vez de mirar a branch base.
+   Mesma regra de `agents/code-reviewer.md`, passo 8: dentro de um worktree isolado, permanece na
+   própria branch da fatia em vez de mirar a branch base.
 
 ## Processo (modo consultoria de PRD)
 
