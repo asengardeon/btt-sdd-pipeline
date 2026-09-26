@@ -1,43 +1,43 @@
 # Guia de arquivos — o que cada arquivo/pasta faz
 
-Referência item a item do repositório. Para o *porquê* das decisões, veja `docs/ARCHITECTURE.md`
-e `docs/SDD-WORKFLOW.md`; este documento é sobre *o que cada coisa é*.
+Referência item a item do repositório. Para o *porquê* das decisões, veja `docs/ARCHITECTURE.md` e
+`docs/SDD-WORKFLOW.md`; este documento é sobre *o que cada coisa é*.
 
 ## Raiz
 
-- **`CLAUDE.md`** — arquivo que o Claude Code carrega automaticamente no início de toda sessão
-  neste repositório. É o ponto de entrada: resume o pipeline, os princípios e onde encontrar
-  cada detalhe.
+- **`CLAUDE.md`** — arquivo que o Claude Code carrega automaticamente no início de toda sessão neste
+  repositório. É o ponto de entrada: resume o pipeline, os princípios e onde encontrar cada detalhe.
 - **`README.md`** — introdução para humanos.
 
 ## Agentes e skills (globais)
 
 Os agentes (`product-design`, `architect`, `backend-developer`, `frontend-developer`,
-`code-reviewer`, `qa-engineer`, `security-engineer`, `sre`, `codebase-archaeologist`) e as skills
-(`/btt-sdd:*`) **não vivem neste projeto** — vêm do plugin `btt-sdd` instalado via
-`claude plugin install`, e funcionam aqui porque este projeto segue a mesma estrutura de
-`specs/`, `docs/`, `CLAUDE.md` que eles esperam. Os docs de governança genéricos do pipeline
-(`GIT-WORKFLOW.md`, `QUALITY-GATES.md`, `TESTING.md`, `ENGINEERING-PILLARS.md`,
-`ARCHITECTURE.md`, `SDD-WORKFLOW.md`, `FILE-GUIDE.md`, `POST-MERGE-VALIDATION.md`) também vêm do
-plugin, não deste projeto — o `docs/` deste projeto só tem conteúdo próprio (`STACK.md`,
-`BASELINE.md`, `LESSONS-LEARNED.md`, `adr/`). Não é necessário (nem esperado) copiar `agents/`,
-`skills/` ou os docs genéricos do plugin para dentro deste projeto — `claude plugin update`
-mantém tudo isso sempre atualizado sozinho.
+`code-reviewer`, `ux-designer`, `qa-engineer`, `security-engineer`, `sre`, `codebase-archaeologist`,
+`tech-writer`) e as skills (`/btt-sdd:*`) **não vivem neste projeto** — vêm do plugin `btt-sdd`
+instalado via `claude plugin install`, e funcionam aqui porque este projeto segue a mesma estrutura
+de `specs/`, `docs/`, `CLAUDE.md` que eles esperam. Os docs de governança genéricos do pipeline
+(`GIT-WORKFLOW.md`, `QUALITY-GATES.md`, `TESTING.md`, `ENGINEERING-PILLARS.md`, `ARCHITECTURE.md`,
+`SDD-WORKFLOW.md`, `FILE-GUIDE.md`, `POST-MERGE-VALIDATION.md`) também vêm do plugin, não deste
+projeto — o `docs/` deste projeto só tem conteúdo próprio (`STACK.md`, `BASELINE.md`,
+`LESSONS-LEARNED.md`, `adr/`). Não é necessário (nem esperado) copiar `agents/`, `skills/` ou os
+docs genéricos do plugin para dentro deste projeto — `claude plugin update` mantém tudo isso sempre
+atualizado sozinho.
 
 ## `docs/` — documentação de referência
 
-- **`ARCHITECTURE.md`** — explica ports & adapters, SOLID, clean code, e a convenção de
-  `frontend/` quando aplicável.
-- **`SDD-WORKFLOW.md`** — explica o pipeline de 7 etapas (+ 1 condicional) em detalhe.
+- **`ARCHITECTURE.md`** — explica ports & adapters, SOLID, clean code, e a convenção de `frontend/`
+  quando aplicável.
+- **`SDD-WORKFLOW.md`** — explica o pipeline de 7 etapas (+ 2 condicionais: a etapa 0 de baseline e
+  a etapa 4b de revisão de UX) em detalhe.
 - **`TESTING.md`** — explica TDD, a pirâmide de testes e o gate de cobertura de 80% por pacote.
 - **`ENGINEERING-PILLARS.md`** — explica os pilares de engenharia (performance, escalabilidade,
   resiliência, disponibilidade, observabilidade, manutenibilidade) que o `architect` precisa
   endereçar explicitamente em todo TRD.
 - **`QUALITY-GATES.md`** — checklist único e não-negociável dos gates críticos do pipeline.
 - **`GIT-WORKFLOW.md`** — GitHub Flow aplicado ao pipeline.
-- **`BASELINE.md`** — **gerado condicionalmente** pelo `codebase-archaeologist`, só se este
-  projeto vier a incorporar código pré-existente sem documentação suficiente. Não existe por
-  padrão num projeto criado do zero.
+- **`BASELINE.md`** — **gerado condicionalmente** pelo `codebase-archaeologist`, só se este projeto
+  vier a incorporar código pré-existente sem documentação suficiente. Não existe por padrão num
+  projeto criado do zero.
 - **`PROJECT-CONVENTIONS.md`** — **gerado condicionalmente** pelo `codebase-archaeologist` (via
   `/btt-sdd:project-conventions`, `/btt-sdd:create-project`, ou junto de uma rodada de
   `/btt-sdd:baseline`); mesmo padrão de ausência-por-padrão de `BASELINE.md`. Diferente dele: não
@@ -46,29 +46,29 @@ mantém tudo isso sempre atualizado sozinho.
   nunca o óbvio.
 - **`STACK.md`** — **gerado condicionalmente** pelo `architect`, na primeira vez que a stack
   tecnológica é decidida neste projeto (linguagem, framework, persistência). Não é criado por
-  `/create-project` — sua ausência é o sinal de "stack ainda não decidida". Quando existe, é a
-  fonte que evita perguntar de novo em features seguintes.
-- **`POST-MERGE-VALIDATION.md`** — checklist leve para validação manual contra produção real
-  depois de um merge (sessão autenticada real, confirmação de deploy efetivo, DNS/certificados,
-  limpeza de dados de teste, e o lembrete de fechar itens "VALIDAR DEPOIS" via `/btt-sdd:amend`), mais
-  o teste geral obrigatório de fim de spec.
+  `/create-project` — sua ausência é o sinal de "stack ainda não decidida". Quando existe, é a fonte
+  que evita perguntar de novo em features seguintes.
+- **`POST-MERGE-VALIDATION.md`** — checklist leve para validação manual contra produção real depois
+  de um merge (sessão autenticada real, confirmação de deploy efetivo, DNS/certificados, limpeza de
+  dados de teste, e o lembrete de fechar itens "VALIDAR DEPOIS" via `/btt-sdd:amend`), mais o teste
+  geral obrigatório de fim de spec.
 - **`FILE-GUIDE.md`** — este arquivo.
 - **`adr/`** — Architecture Decision Records. `0001-...md` é o próprio ADR que estabelece a
   convenção de registrar ADRs.
 
 ## `specs/` — os artefatos do pipeline SDD, um diretório por feature
 
-- **`_template/`** — os modelos que os agentes preenchem (`prd`, `trd`, `code-review`,
-  `qa-report`, `security-review`, `sre-review`, `coverage-summary`). Não é uma feature, é a fôrma
-  usada por todas. `coverage-summary` é diferente dos demais — não é um artefato de revisão com
-  veredito, é a evidência condensada de teste/cobertura que `backend-developer`/
+- **`_template/`** — os modelos que os agentes preenchem (`prd`, `trd`, `code-review`, `ux-review`,
+  `qa-report`, `security-review`, `sre-review`, `coverage-summary`, `timing-log`). Não é uma
+  feature, é a fôrma usada por todas. `coverage-summary` é diferente dos demais — não é um artefato
+  de revisão com veredito, é a evidência condensada de teste/cobertura que `backend-developer`/
   `frontend-developer` geram e outras etapas reaproveitam em vez de re-executar a suíte
   (`docs/TESTING.md`).
 - **Cada feature** ganha uma pasta `NNNN-slug-em-kebab-case/` com os artefatos que forem sendo
   produzidos por cada etapa, incluindo uma subpasta `coverage/` com os resumos de cobertura por
   fatia/trilha e, quando a feature tem UI e o usuário aceitou ver opções (`/btt-sdd:prd`, passo 2b),
-  uma subpasta `wireframes/` com o(s) arquivo(s)-fonte `.dc.html` das opções geradas — salvos
-  junto da spec para conferência futura mesmo que o Artifact publicado não esteja mais acessível.
+  uma subpasta `wireframes/` com o(s) arquivo(s)-fonte `.dc.html` das opções geradas — salvos junto
+  da spec para conferência futura mesmo que o Artifact publicado não esteja mais acessível.
 
 ## `src/`, `frontend/`, `tests/` — ainda não existem
 
@@ -84,8 +84,8 @@ já foi decidida no TRD — não faz sentido escolher Docker/Terraform antes de 
 
 ## Arquivos de configuração da stack
 
-Decididos pelo `architect` no primeiro TRD e registrados em `docs/STACK.md` (linguagem,
-framework, persistência, gerenciador de pacotes); os arquivos de configuração propriamente ditos
+Decididos pelo `architect` no primeiro TRD e registrados em `docs/STACK.md` (linguagem, framework,
+persistência, gerenciador de pacotes); os arquivos de configuração propriamente ditos
 (`pyproject.toml`, `package.json`, ou equivalente) são criados por
 `backend-developer`/`frontend-developer` durante a implementação, seguindo essa decisão.
 
