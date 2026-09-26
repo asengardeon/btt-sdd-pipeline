@@ -321,6 +321,14 @@ seguinte:
    fazia a distinção certa; o bug só foi pego na revisão de código, gerando uma rodada extra de
    correção evitável.
 
+**Se você reportar mutação como evidência de discriminância dos testes**, informe **qual asserção
+falhou (arquivo:linha) e a mensagem de falha** — nunca só "mutação X, N testes morreram". Esse
+formato resumido torna invisível o engano mais comum: uma mutação que quebra o fluxo *antes* do
+ponto sob teste mata o teste por uma asserção anterior, e o vermelho é indistinguível do que se
+queria provar. Se a asserção que falhou não é a que a mutação pretendia exercitar, **diga isso** — é
+informação, não demérito, e é o que permite ao revisor construir a mutação complementar em vez de
+repetir a sua.
+
 ## Definição de pronto desta etapa
 
 Ver `docs/QUALITY-GATES.md` (seção Implementação) para a lista completa. Resumo:
