@@ -26,18 +26,28 @@ param([string]$Slug)
 # artefatos reais com "##" e ate "#" para o mesmo cabecalho, o que fazia a deteccao
 # nunca disparar e cair sempre no fallback (reintroduzindo o bug da #37). Aceita
 # 1 a 4 "#" em vez de exigir um nivel fixo.
+# A ultima linha do historico nao e o ultimo veredito (issue #333): um hotfix que pula
+# formalmente uma etapa acrescenta "| ... | Pulado (justificado) | ... |", e essa linha
+# ficava sendo lida como veredito ilegivel - /sdd-status mandava rodar de novo uma etapa
+# concluida. Sobe a tabela ate a linha mais recente que CARREGUE veredito; se nenhuma
+# carregar, devolve a mais recente mesmo assim, para o bloco de classificacao tratar
+# "Pulado (justificado)" como estado proprio em vez de erro de parsing.
 function Get-LatestVerdict {
   param([string]$Content)
   $inSec = $false
   $lastRow = $null
+  $rowWithVerdict = $null
   foreach ($line in ($Content -split "`r?`n")) {
     if ($line -match '^#{1,4}\s.*Hist.rico de aprova') { $inSec = $true; continue }
     if ($inSec -and $line -match '^#{1,4}\s') { $inSec = $false }
-    if ($inSec -and $line -match '^\|') { $lastRow = $line }
+    if ($inSec -and $line -match '^\|') {
+      if ($line -match '^\|[-|\s]+\|?$') { continue }
+      $lastRow = $line
+      if ($line -match '(?i)aprovado|reprovado') { $rowWithVerdict = $line }
+    }
   }
-  if ($lastRow -and $lastRow -notmatch '^\|[-|\s]+\|?$') {
-    return $lastRow
-  }
+  if ($rowWithVerdict) { return $rowWithVerdict }
+  if ($lastRow) { return $lastRow }
   $verdictMatches = [regex]::Matches($Content, '(?ms)#{1,4}.*Veredito geral\s*?\r?\n+.*?\*\*(.+?)\*\*')
   if ($verdictMatches.Count -gt 0) {
     return $verdictMatches[$verdictMatches.Count - 1].Groups[1].Value
@@ -241,6 +251,15 @@ foreach ($d in $dirs) {
         } else {
           $next = $NextCmds[$stage]
         }
+      } elseif ($verdict -match '(?i)pulado') {
+        # Etapa formalmente pulada como unica entrada do historico (issue #333) - um
+        # hotfix sem impacto de infra/CI pula SRE/seguranca por decisao registrada
+        # (skills/hotfix/SKILL.md), e a linha do historico E o registro dela. Mesmo
+        # tratamento que "QA pulado" acima: estado proprio, sem proximo comando.
+        # Vem DEPOIS de aprovado/reprovado de proposito: uma linha pode dizer
+        # "Aprovado ... UX pulado", e ai o veredito que vale e o "Aprovado".
+        $current = "$($Labels[$stage]): etapa pulada (justificada)"
+        $next = "(nenhum - decisao registrada)"
       } else {
         $current = "$($Labels[$stage]) (veredito nao identificado - leia o arquivo)"
       }

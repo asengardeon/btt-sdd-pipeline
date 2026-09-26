@@ -28,16 +28,26 @@ done
 # artefatos reais com "##" e até "#" para o mesmo cabeçalho, o que fazia a detecção
 # nunca disparar e cair sempre no fallback (reintroduzindo o bug da #37). Aceita
 # 1 a 4 "#" em vez de exigir um nível fixo.
+# A última linha do histórico não é o último veredito (issue #333): um hotfix que pula
+# formalmente uma etapa acrescenta `| ... | Pulado (justificado) | ... |`, e essa linha
+# ficava sendo lida como veredito ilegível — `/sdd-status` mandava rodar de novo uma etapa
+# concluída. Sobe a tabela até a linha mais recente que **carregue** veredito; se nenhuma
+# carregar, devolve a mais recente mesmo assim, para o `case` tratar `Pulado (justificado)`
+# como estado próprio em vez de erro de parsing.
 latest_verdict() {
   local file="$1"
   local hist_last
   hist_last="$(awk '
     /^#{1,4}[[:space:]].*Histórico de aprovações por fatia/ { insec = 1; next }
     insec && /^#{1,4}[[:space:]]/ { insec = 0 }
-    insec && /^\|/ { line = $0 }
-    END { print line }
+    insec && /^\|/ {
+      if ($0 ~ /^\|[-| 	]+\|?$/) next
+      ultima = $0
+      if (tolower($0) ~ /aprovado|reprovado/) com_veredito = $0
+    }
+    END { print (com_veredito != "" ? com_veredito : ultima) }
   ' "$file" 2>/dev/null)"
-  if [ -n "$hist_last" ] && ! echo "$hist_last" | grep -qE '^\|[-|[:space:]]+\|?$'; then
+  if [ -n "$hist_last" ]; then
     echo "$hist_last"
     return
   fi
@@ -235,6 +245,14 @@ for dir in "$SPECS_DIR"/*/; do
           else
             next="$(next_cmd "$stage")"
           fi
+          ;;
+        *[Pp]ulado*)
+          # Etapa formalmente pulada como única entrada do histórico (issue #333) — um
+          # hotfix sem impacto de infra/CI pula SRE/segurança por decisão registrada
+          # (`skills/sdd-hotfix/SKILL.md`), e a linha do histórico É o registro dela.
+          # Mesmo tratamento que "QA pulado" acima: estado próprio, sem próximo comando.
+          current="$(label "$stage"): etapa pulada (justificada)"
+          next="(nenhum — decisão registrada)"
           ;;
         *)
           current="$(label "$stage") (veredito não identificado — leia o arquivo)"
