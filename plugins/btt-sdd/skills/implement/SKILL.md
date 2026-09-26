@@ -272,56 +272,59 @@ assim:
    você.
 4. **Monte e aprove o plano antes de invocar** — uma trilha ou duas. Com as duas trilhas (feature
    full-stack), o plano é combinado e **invocar as duas em paralelo é o padrão, não uma exceção
-   cautelosa**: com isolamento de working tree garantido (passo "d" abaixo), não há mais motivo
-   para serializar backend e frontend só por precaução de corrida de Git (`docs/GIT-WORKFLOW.md`,
-   seção "Isolamento resolve a corrida de Git — não substitui dependência lógica entre etapas"):
-   a. Leia o TRD (a decomposição de tarefas e, com as duas trilhas, o contrato "Frontend↔Backend"),
-      o PRD, e também `docs/LESSONS-LEARNED.md` se existir (mesmo tratamento condicional do passo 1)
-      — **isto é necessário mesmo já tendo verificado a existência do arquivo no passo 1**, porque
-      ao pular a Fase 1 do(s) agente(s) no passo "d" abaixo (plano já aprovado pelo orquestrador),
-      nenhum deles vai ler esse arquivo por conta própria: a leitura das lições aplicáveis ao
-      planejar passa a ser sua responsabilidade, não deles.
-   b. Monte o plano: os incrementos pequenos e testáveis da trilha (idealmente um por caso de uso),
-      na ordem em que serão implementados. Com as duas trilhas, é um plano **combinado** —
-      incrementos de backend + incrementos de frontend, e como cada um se encaixa no contrato (ex.: "backend implementa o endpoint X no incremento 2; frontend
-      constrói o client contra esse mesmo contrato, em paralelo, desde o incremento 1, usando um
-      dublê até o endpoint existir de verdade") — aplicando como restrição adicional qualquer
-      lição de `docs/LESSONS-LEARNED.md` relevante às trilhas de backend/frontend (mesmo critério
-      que cada agente aplicaria na própria Fase 1, `docs/QUALITY-GATES.md`, seção "Lições
-      aprendidas recorrentes"). **Se esta fatia toca múltiplos pontos de entrada estruturalmente
-      equivalentes** (mesmo padrão de UI/lógica duplicado em N lugares — ex.: N formulários usando
-      o mesmo hook compartilhado, N validações idênticas em rotas irmãs), inclua no plano
-      explicitamente: "paridade de teste em todos os N pontos, não só paridade de implementação" —
-      já aconteceu de uma correção sair correta em todos os pontos, mas só alguns ganharem teste
-      dedicado ao novo caminho, achado só pelo `code-reviewer` numa rodada extra evitável. **Se esta
-      fatia introduz o endpoint/rota *permanente* de uma "janela de convivência" já desenhada no
-      TRD** (uma rota temporária de fatia anterior sendo suplantada — TRD, seção "Janelas de quebra
-      de contrato entre fatias"), não presuma que um consumidor de frontend que já compila contra a
-      rota temporária "já está pronto, sem mudança necessária" só porque a assinatura bate: rode
-      `grep` pelo caminho da rota temporária em `frontend/src` antes de escrever a instrução da
-      trilha frontend, e se encontrar uso, inclua no plano a migração explícita para a rota
-      permanente — a rota temporária pode ser removida por uma fatia futura, e um consumidor não
-      migrado quebra silenciosamente em produção nesse momento.
-   c. Apresente esse plano ao usuário via `AskUserQuestion`, citando explicitamente qual
-      lição de `docs/LESSONS-LEARNED.md` foi aplicada e como (se alguma foi), e só prossiga com
-      aprovação explícita (mesmo limite de 3 repetições dos outros agentes — na 3ª rodada sem
-      convergência, registre como VALIDAR DEPOIS no TRD e pare).
-   d. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 5a
-      para registrar a duração de cada trilha. Só depois de aprovado, invoque o(s) agente(s) —
-      **com as duas trilhas, em paralelo** (uma única mensagem, duas chamadas de Agent tool) —,
-      cada um com a instrução explícita: "este plano já foi aprovado pelo orquestrador de
-      /btt-sdd:implement — pule sua Fase 1 e execute direto a sua trilha: <trilha específica do
-      agente, extraída do plano>". Essa frase não é opcional: sem ela o agente roda a própria Fase 1,
-      não consegue perguntar, e para. **Invocação paralela no mesmo repositório exige isolamento de
-      working tree** (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes
-      concorrentes") — passe `isolation: "worktree"` em cada chamada da Agent tool; não deixe os
-      dois agentes dividirem o mesmo diretório de trabalho só porque tocam pastas diferentes
-      (`src/` vs. `frontend/`).
+   cautelosa**: com isolamento de working tree garantido (passo "d" abaixo), não há mais motivo para
+   serializar backend e frontend só por precaução de corrida de Git (`docs/GIT-WORKFLOW.md`, seção
+   "Isolamento resolve a corrida de Git — não substitui dependência lógica entre etapas"): a. Leia o
+   TRD (a decomposição de tarefas e, com as duas trilhas, o contrato "Frontend↔Backend"), o PRD, e
+   também `docs/LESSONS-LEARNED.md` se existir (mesmo tratamento condicional do passo 1) — **isto é
+   necessário mesmo já tendo verificado a existência do arquivo no passo 1**, porque ao pular a Fase
+   1 do(s) agente(s) no passo "d" abaixo (plano já aprovado pelo orquestrador), nenhum deles vai ler
+   esse arquivo por conta própria: a leitura das lições aplicáveis ao planejar passa a ser sua
+   responsabilidade, não deles. b. Monte o plano: os incrementos pequenos e testáveis da trilha
+   (idealmente um por caso de uso), na ordem em que serão implementados. Com as duas trilhas, é um
+   plano **combinado** — incrementos de backend + incrementos de frontend, e como cada um se encaixa
+   no contrato (ex.: "backend implementa o endpoint X no incremento 2; frontend constrói o client
+   contra esse mesmo contrato, em paralelo, desde o incremento 1, usando um dublê até o endpoint
+   existir de verdade") — aplicando como restrição adicional qualquer lição de
+   `docs/LESSONS-LEARNED.md` relevante às trilhas de backend/frontend (mesmo critério que cada
+   agente aplicaria na própria Fase 1, `docs/QUALITY-GATES.md`, seção "Lições aprendidas
+   recorrentes"). **Se esta fatia toca múltiplos pontos de entrada estruturalmente equivalentes**
+   (mesmo padrão de UI/lógica duplicado em N lugares — ex.: N formulários usando o mesmo hook
+   compartilhado, N validações idênticas em rotas irmãs), inclua no plano explicitamente: "paridade
+   de teste em todos os N pontos, não só paridade de implementação" — já aconteceu de uma correção
+   sair correta em todos os pontos, mas só alguns ganharem teste dedicado ao novo caminho, achado só
+   pelo `code-reviewer` numa rodada extra evitável. **Se esta fatia introduz o endpoint/rota
+   *permanente* de uma "janela de convivência" já desenhada no TRD** (uma rota temporária de fatia
+   anterior sendo suplantada — TRD, seção "Janelas de quebra de contrato entre fatias"), não presuma
+   que um consumidor de frontend que já compila contra a rota temporária "já está pronto, sem
+   mudança necessária" só porque a assinatura bate: rode `grep` pelo caminho da rota temporária em
+   `frontend/src` antes de escrever a instrução da trilha frontend, e se encontrar uso, inclua no
+   plano a migração explícita para a rota permanente — a rota temporária pode ser removida por uma
+   fatia futura, e um consumidor não migrado quebra silenciosamente em produção nesse momento. c.
+   Apresente esse plano ao usuário via `AskUserQuestion`, citando explicitamente qual lição de
+   `docs/LESSONS-LEARNED.md` foi aplicada e como (se alguma foi), e só prossiga com aprovação
+   explícita (mesmo limite de 3 repetições dos outros agentes — na 3ª rodada sem convergência,
+   registre como VALIDAR DEPOIS no TRD e pare). d. **Anote o horário atual (`date -u
+   +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 5a para registrar a duração de cada trilha.
+   Só depois de aprovado, invoque o(s) agente(s) — **com as duas trilhas, em paralelo** (uma única
+   mensagem, duas chamadas de Agent tool) —, cada um com a instrução explícita: "este plano já foi
+   aprovado pelo orquestrador de /btt-sdd:implement — pule sua Fase 1 e execute direto a sua trilha:
+   <trilha específica do agente, extraída do plano>". Essa frase não é opcional: sem ela o agente
+   roda a própria Fase 1, não consegue perguntar, e para. **Invocação paralela no mesmo repositório
+   exige isolamento de working tree** (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree
+   entre agentes concorrentes") — passe `isolation: "worktree"` em cada chamada da Agent tool; não
+   deixe os dois agentes dividirem o mesmo diretório de trabalho só porque tocam pastas diferentes
+   (`src/` vs. `frontend/`).
 5. Ao terminar (uma ou duas trilhas), confirme que cada agente rodou a **suíte completa** com
    relatório de cobertura **uma única vez, ao final da sua trilha** (não a cada task/incremento —
    durante o TDD, cada task roda só os testes que ela toca) em cada pacote afetado (`src/` e/ou
    `frontend/`) como evidência de conclusão, junto com lint sem erros, e que a branch/PR **desta
    fatia** foram de fato criados (uma única branch/PR por fatia, mesmo com as duas trilhas).
+   **Se esta rodada gravou uma revisão nova no "Log de revisões" do TRD** (ex.: uma premissa
+   refutada por medição, um contrato observável que mudou na implementação), faça antes a **passada
+   de coerência das seções 9, 13 e 14** descrita em `skills/amend/SKILL.md`, passo 3 —
+   são as seções que as etapas seguintes leem como contrato, e hoje a reconciliação depende de
+   alguém lembrar.
    **Promova a coluna Status das tarefas desta fatia para `implementado` você mesmo, numa única
    passada, depois de confirmar as duas trilhas integradas na branch compartilhada** —
    `backend-developer`/`frontend-developer` não editam mais essa transição no próprio commit final
@@ -341,15 +344,15 @@ assim:
    parentética explícita dizendo que exclui a espera de aprovação
    (`specs/_template/timing-log.template.md`, seção "O que a coluna 'Duração' mede"). Uma espera de
    aprovação de horas registrada como wall-clock puro faz a retrospectiva do `sre` concluir que a
-   implementação foi anormalmente lenta quando não foi. **Se você, o orquestrador, conduziu trabalho próprio
-   nesta etapa** — investigação executada sem agente, rodadas de `AskUserQuestion` que custaram
-   tempo real de relógio, intermediação de plano/pergunta de subagente isolado —, **registre-o como
-   uma linha própria** com `Agente = orquestrador (sem agente)`, em vez de deixá-lo invisível no log
-   (`specs/_template/timing-log.template.md`, seção "Trabalho conduzido pelo orquestrador"). Diferente de PRD/TRD (passo 2c-bis), aqui
-   já existe branch/PR — commit e envie (push)
-   essa atualização junto com o resto do que esta rodada já for commitar (não é um push extra só
-   para isso, salvo se nada mais estiver pendente — `docs/GIT-WORKFLOW.md`, regra 4, sobre agrupar
-   pushes relacionados).
+   implementação foi anormalmente lenta quando não foi. **Se você, o orquestrador, conduziu trabalho
+   próprio nesta etapa** — investigação executada sem agente, rodadas de `AskUserQuestion` que
+   custaram tempo real de relógio, intermediação de plano/pergunta de subagente isolado —,
+   **registre-o como uma linha própria** com `Agente = orquestrador (sem agente)`, em vez de
+   deixá-lo invisível no log (`specs/_template/timing-log.template.md`, seção "Trabalho conduzido
+   pelo orquestrador"). Diferente de PRD/TRD (passo 2c-bis), aqui já existe branch/PR — commit e
+   envie (push) essa atualização junto com o resto do que esta rodada já for commitar (não é um push
+   extra só para isso, salvo se nada mais estiver pendente — `docs/GIT-WORKFLOW.md`, regra 4, sobre
+   agrupar pushes relacionados).
 5b. **Fallback, não o caminho esperado.** Com o passo 4 seguido, o plano já foi aprovado por você
    antes da invocação e nenhum agente devolve plano em texto puro. Este passo existe para o desvio:
    **se `backend-developer`/`frontend-developer` estiver rodando como subagente assíncrono/em
