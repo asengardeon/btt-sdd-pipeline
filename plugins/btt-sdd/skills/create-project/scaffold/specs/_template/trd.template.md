@@ -166,9 +166,17 @@ fica coerente depois que outra fatia posterior (ex.: a que atualiza o cliente/fr
 mergear — nunca deixar essa janela implícita. Se nenhuma fatia introduz esse tipo de janela,
 escreva "não aplicável".
 
-| Fatia que quebra | O que quebra | Só fica coerente depois de | Mitigação decidida |
-|--------------------|-----------------|--------------------------------|------------------------|
-| F-1                  | <ex.: campo `tenantSlug` passa a ser obrigatório em `POST /auth/login`> | F-3 (seletor de tenant na UI) | <ex.: campo aceito como opcional com fallback até F-3 mergear / segurar merge de F-1 até F-3 estar pronta / janela aceita conscientemente, com justificativa> |
+| Fatia que quebra | O que quebra | Só fica coerente depois de | Mitigação decidida | `!` no título do PR |
+|--------------------|-----------------|--------------------------------|------------------------|------------------|
+| F-1                  | <ex.: campo `tenantSlug` passa a ser obrigatório em `POST /auth/login`> | F-3 (seletor de tenant na UI) | <ex.: campo aceito como opcional com fallback até F-3 mergear / segurar merge de F-1 até F-3 estar pronta / janela aceita conscientemente, com justificativa> | sim / não |
+
+A última coluna é acionável, não informativa: em repositório com release automatizado por
+Conventional Commits, o `!` antes dos dois-pontos no título do PR (`feat(0005)!: ...`) é o **único**
+sinal de quebra que sobrevive ao squash merge — o subject do commit de squash é o título do PR. Sem
+ele, uma mudança que rejeita tudo que o usuário tinha em mãos é publicada como MINOR, e o número de
+versão é o único aviso que chega a quem só baixa o artefato da página de Releases. Marque "sim"
+sempre que a fatia carregar a quebra, mesmo que a mitigação escolhida reduza o impacto; "não" só
+quando a fatia não é a portadora da quebra.
 
 A coluna **Status** é a fonte de verdade de onde cada tarefa está, mantida **in-place** por quem
 causa cada transição — nunca inferida depois por outra etapa. `architect` inicializa toda tarefa

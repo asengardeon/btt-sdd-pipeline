@@ -130,6 +130,14 @@ seguinte:
    #118, #119`), que o GitHub aplica **só ao primeiro número** e deixa as demais abertas em
    silêncio (`docs/GIT-WORKFLOW.md`, regra 5b). A forma "mais limpa" volta sozinha se você não
    lembrar do porquê.
+   **Se o TRD marca esta fatia como portadora de uma quebra de contrato** (seção "Janelas de quebra
+   de contrato entre fatias", coluna `!` no título do PR = sim), abra o PR **já com `!` antes dos
+   dois-pontos no título** (`feat(<spec>)!: <descrição> (F-N)`) ou com o rodapé `BREAKING CHANGE:`
+   no corpo. Num squash merge o título do PR vira o subject do commit, e esse `!` é o único sinal de
+   quebra que sobrevive até o cálculo automático de versão — sem ele, uma mudança incompatível é
+   publicada como MINOR e a seção de quebra de compatibilidade do changelog sai vazia
+   (`docs/GIT-WORKFLOW.md`, seção "Quebra de contrato e o título do PR"). É um caractere, decidido
+   no TRD; corrigir depois do merge custa uma versão errada já publicada.
 1b. Atualize, no TRD (`specs/<slug>/trd.md`), a coluna Status das tarefas de frontend desta fatia
    para `em andamento` — in-place, imediatamente (ou de volta de `bloqueado` para `em andamento`,
    se esta invocação é uma retomada para corrigir achados de revisão). Se alguma dessas tarefas

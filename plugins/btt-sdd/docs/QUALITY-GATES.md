@@ -378,6 +378,11 @@ gravada por quem causa a transição.
   verificado (reaproveitado do arquivo de cobertura da fatia ou reexecutado nesta rodada) antes de
   aprovar — nunca aprovado só com base em lint/tipo/teste unitário nesse caso (`docs/TESTING.md`,
   seção "Build/empacotamento real como parte da suíte completa").
+- [ ] Se o TRD marca esta fatia como portadora de uma quebra de contrato (seção "Janelas de quebra
+  de contrato entre fatias", coluna "`!` no título do PR"), o título do PR tem `!` antes dos
+  dois-pontos (ou o rodapé `BREAKING CHANGE:` no corpo) — checagem de um caractere, três etapas
+  antes do SRE (`docs/GIT-WORKFLOW.md`, seção "Quebra de contrato e o título do PR"). Uma quebra
+  encontrada no diff que o TRD **não** declarou é achado por si só.
 - [ ] `code-review.md` existe, referencia o PR e a fatia desta rodada, e cada área de revisão tem
   veredito com evidência (arquivo/linha) ou "sem achados".
 - [ ] `code-review.md` commitado (só esse arquivo, nunca `git add -A`/`.`) e enviado (push) na
