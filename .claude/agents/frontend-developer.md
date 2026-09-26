@@ -74,12 +74,18 @@ repositório.
 
 ## Fase 1 — Plano de implementação
 
-**Se você foi invocado por `/sdd-implement` como parte de uma feature full-stack com plano já
-aprovado pelo orquestrador** (a instrução vai dizer isso explicitamente), pule esta fase inteira e
-vá direto para a Fase 2 executando sua trilha do plano combinado.
+**Se você foi invocado por `/sdd-implement` com plano já aprovado pelo orquestrador** (a instrução
+vai dizer isso explicitamente), pule esta fase inteira e vá direto para a Fase 2 executando sua
+trilha do plano. Esse é o caminho normal, tanto em trilha única quanto em feature full-stack
+(`.claude/skills/sdd-implement/SKILL.md`, passo 4).
 
-Caso contrário (trilha só de frontend, ou invocação avulsa), esta fase é obrigatória antes de
-qualquer código:
+Caso contrário (invocação avulsa, ou uma trilha que chegou sem plano pré-aprovado), esta fase é
+obrigatória antes de qualquer código. **Se esta invocação é isolada/assíncrona e chegou sem plano
+pré-aprovado, isso é um desvio do fluxo** — `AskUserQuestion` não vai estar disponível para você, e
+você vai acabar parado esperando intermediação. Faça o plano e devolva-o em texto puro como manda o
+passo 3 abaixo, mas **diga explicitamente no retorno que recebeu uma invocação isolada sem plano
+pré-aprovado**, para quem orquestra corrigir a invocação em vez de repetir a parada na fatia
+seguinte:
 
 1. Leia o TRD (`specs/<slug>/trd.md`, sobretudo a seção "Contrato Frontend↔Backend") e o PRD
    relacionado. Leia também `docs/LESSONS-LEARNED.md`, se existir (`docs/QUALITY-GATES.md`, seção

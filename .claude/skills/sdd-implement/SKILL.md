@@ -240,24 +240,31 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    uma issue foi apagada/perdida depois. Informe o usuário e ofereça, via `AskUserQuestion`,
    acionar `architect` para criar as issues faltantes desta fatia (opção recomendada) antes de
    prosseguir — nunca inicie a fatia sem elas, mesmo que o usuário peça para pular o gate.
-3. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 5a para
-   registrar a duração desta trilha. **Se só uma trilha aparece** (só backend ou só frontend):
-   invoque o agente correspondente (`backend-developer` ou `frontend-developer`, Agent tool)
-   passando os caminhos do TRD e do PRD. O agente segue seu próprio processo em duas fases (plano
-   aprovado via `AskUserQuestion` antes de codar) — você não precisa orquestrar isso manualmente.
-4. **Se as duas trilhas aparecem** (feature full-stack): você orquestra o plano combinado antes
-   de invocar os agentes. **Invocar as duas trilhas em paralelo é o padrão, não uma exceção
-   cautelosa** — com isolamento de working tree garantido (passo "d" abaixo), não há mais motivo
+3. **Identifique as trilhas desta fatia** (só backend, só frontend, ou as duas) na decomposição de
+   tarefas do TRD. **Em qualquer dos casos — uma trilha ou duas — quem monta e aprova o plano é
+   você, o orquestrador, antes de invocar qualquer agente**: siga o passo 4. Não delegue a
+   aprovação do plano ao próprio agente quando ele for invocado isolado/assíncrono
+   (`isolation: "worktree"` ou equivalente), porque `AskUserQuestion` **não está disponível** nesse
+   modo: o agente faz o certo e devolve o plano em texto puro sem tocar código
+   (`.claude/agents/backend-developer.md`, Fase 1, passo 3), e fica parado até você intermediar.
+   Isso já custou **~4h30m de relógio numa única fatia de trilha única**, medidas e registradas no
+   `timing-log.md` da spec como custo do pipeline — 2ª ocorrência do mesmo mecanismo. A única
+   situação em que o agente conduz a própria Fase 1 é quando ele roda **no mesmo contexto,
+   síncrono, com `AskUserQuestion` disponível para ele**; na dúvida, planeje você.
+4. **Monte e aprove o plano antes de invocar** — uma trilha ou duas. Com as duas trilhas (feature
+   full-stack), o plano é combinado e **invocar as duas em paralelo é o padrão, não uma exceção
+   cautelosa**: com isolamento de working tree garantido (passo "d" abaixo), não há mais motivo
    para serializar backend e frontend só por precaução de corrida de Git (`docs/GIT-WORKFLOW.md`,
    seção "Isolamento resolve a corrida de Git — não substitui dependência lógica entre etapas"):
-   a. Leia o TRD (contrato "Frontend↔Backend" e a decomposição de tarefas), o PRD, e também
-      `docs/LESSONS-LEARNED.md` se existir (mesmo tratamento condicional do passo 1) — **isto é
-      necessário mesmo já tendo verificado a existência do arquivo no passo 1**, porque ao pular a
-      Fase 1 dos dois agentes no passo "d" abaixo (plano já aprovado pelo orquestrador), nenhum
-      deles vai ler esse arquivo por conta própria: a leitura das lições aplicáveis ao planejar
-      passa a ser sua responsabilidade, não deles.
-   b. Monte um plano combinado: incrementos de backend + incrementos de frontend, e como cada um
-      se encaixa no contrato (ex.: "backend implementa o endpoint X no incremento 2; frontend
+   a. Leia o TRD (a decomposição de tarefas e, com as duas trilhas, o contrato "Frontend↔Backend"),
+      o PRD, e também `docs/LESSONS-LEARNED.md` se existir (mesmo tratamento condicional do passo 1)
+      — **isto é necessário mesmo já tendo verificado a existência do arquivo no passo 1**, porque
+      ao pular a Fase 1 do(s) agente(s) no passo "d" abaixo (plano já aprovado pelo orquestrador),
+      nenhum deles vai ler esse arquivo por conta própria: a leitura das lições aplicáveis ao
+      planejar passa a ser sua responsabilidade, não deles.
+   b. Monte o plano: os incrementos pequenos e testáveis da trilha (idealmente um por caso de uso),
+      na ordem em que serão implementados. Com as duas trilhas, é um plano **combinado** —
+      incrementos de backend + incrementos de frontend, e como cada um se encaixa no contrato (ex.: "backend implementa o endpoint X no incremento 2; frontend
       constrói o client contra esse mesmo contrato, em paralelo, desde o incremento 1, usando um
       dublê até o endpoint existir de verdade") — aplicando como restrição adicional qualquer
       lição de `docs/LESSONS-LEARNED.md` relevante às trilhas de backend/frontend (mesmo critério
@@ -276,20 +283,21 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
       trilha frontend, e se encontrar uso, inclua no plano a migração explícita para a rota
       permanente — a rota temporária pode ser removida por uma fatia futura, e um consumidor não
       migrado quebra silenciosamente em produção nesse momento.
-   c. Apresente esse plano combinado ao usuário via `AskUserQuestion`, citando explicitamente qual
+   c. Apresente esse plano ao usuário via `AskUserQuestion`, citando explicitamente qual
       lição de `docs/LESSONS-LEARNED.md` foi aplicada e como (se alguma foi), e só prossiga com
       aprovação explícita (mesmo limite de 3 repetições dos outros agentes — na 3ª rodada sem
       convergência, registre como VALIDAR DEPOIS no TRD e pare).
    d. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 5a
-      para registrar a duração de cada trilha. Só depois de aprovado, invoque `backend-developer` e
-      `frontend-developer` **em paralelo** (uma única mensagem, duas chamadas de Agent tool), cada
-      um com a instrução explícita: "este plano já foi aprovado pelo orquestrador de
+      para registrar a duração de cada trilha. Só depois de aprovado, invoque o(s) agente(s) —
+      **com as duas trilhas, em paralelo** (uma única mensagem, duas chamadas de Agent tool) —,
+      cada um com a instrução explícita: "este plano já foi aprovado pelo orquestrador de
       /sdd-implement — pule sua Fase 1 e execute direto a sua trilha: <trilha específica do
-      agente, extraída do plano combinado>". **Invocação
-      paralela no mesmo repositório exige isolamento de working tree** (`docs/GIT-WORKFLOW.md`,
-      seção "Isolamento de working tree entre agentes concorrentes") — passe `isolation: "worktree"`
-      em cada chamada da Agent tool; não deixe os dois agentes dividirem o mesmo diretório de
-      trabalho só porque tocam pastas diferentes (`src/` vs. `frontend/`).
+      agente, extraída do plano>". Essa frase não é opcional: sem ela o agente roda a própria Fase 1,
+      não consegue perguntar, e para. **Invocação paralela no mesmo repositório exige isolamento de
+      working tree** (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes
+      concorrentes") — passe `isolation: "worktree"` em cada chamada da Agent tool; não deixe os
+      dois agentes dividirem o mesmo diretório de trabalho só porque tocam pastas diferentes
+      (`src/` vs. `frontend/`).
 5. Ao terminar (uma ou duas trilhas), confirme que cada agente rodou a **suíte completa** com
    relatório de cobertura **uma única vez, ao final da sua trilha** (não a cada task/incremento —
    durante o TDD, cada task roda só os testes que ela toca) em cada pacote afetado (`src/` e/ou
@@ -319,7 +327,9 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    essa atualização junto com o resto do que esta rodada já for commitar (não é um push extra só
    para isso, salvo se nada mais estiver pendente — `docs/GIT-WORKFLOW.md`, regra 4, sobre agrupar
    pushes relacionados).
-5b. **Se `backend-developer`/`frontend-developer` estiver rodando como subagente assíncrono/em
+5b. **Fallback, não o caminho esperado.** Com o passo 4 seguido, o plano já foi aprovado por você
+   antes da invocação e nenhum agente devolve plano em texto puro. Este passo existe para o desvio:
+   **se `backend-developer`/`frontend-developer` estiver rodando como subagente assíncrono/em
    background (`isolation: "worktree"` ou equivalente) e devolver uma pergunta/plano em texto puro**
    (sinal de que `AskUserQuestion` não estava disponível para ele nesse modo — mesmo padrão já
    documentado para `sre`/`/sdd-sre`, `.claude/skills/sdd-sre/SKILL.md`, passo 4b), o tratamento
@@ -339,7 +349,10 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
      conclusão da trilha.** Apresente o plano ao usuário via sua própria `AskUserQuestion` e, só
      depois de aprovação explícita, retome o agente (`SendMessage`) autorizando a Fase 2. O agente
      fica parado indefinidamente até essa retomada — diferente do caso anterior, aqui não há
-     trabalho de trilha em andamento para "considerar concluído": não existe ainda.
+     trabalho de trilha em andamento para "considerar concluído": não existe ainda. Chegar aqui
+     significa que a instrução "este plano já foi aprovado pelo orquestrador" do passo 4d não foi
+     passada: a parada é recuperável, mas o custo dela (horas de relógio) é justamente o que o
+     passo 4 existe para evitar.
 6. Mostre ao usuário um resumo do que foi implementado nesta fatia (por trilha, se full-stack), o
    link/nome do PR, os comandos usados para rodar os testes, e a cobertura obtida por pacote.
    **Inclua também uma tabela resumo do Status atual de todas as tarefas da spec** (não só desta
