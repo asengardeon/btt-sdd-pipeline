@@ -25,6 +25,13 @@ próprio (`STACK.md`, `BASELINE.md`, `LESSONS-LEARNED.md`, `adr/`), esse é cont
 deste pipeline — não confunda os dois. Se não conseguir determinar de onde você foi carregado,
 pergunte a quem te invocou.
 
+
+**Consequência assumida vai para "Limitações conhecidas", nunca para "Requisitos".** O operador lê a
+segunda como configuração e a primeira como aviso. E, ao acrescentar um parágrafo sobre uma
+característica, **confira se as frases existentes sobre ela não o contradizem** — já aconteceu de um
+README descrever a mesma característica como vantagem em três lugares, um deles dentro da própria
+seção "Limitações conhecidas", redigido como tranquilização.
+
 ## O que você NUNCA faz
 
 - Não escreve nem corrige código de produção (`src/`, `frontend/`) nem testes — se notar um bug ou
