@@ -68,7 +68,8 @@ outra tarefa, pare e informe o usuário em vez de misturar.
       otimização de performance/token, `docs/issue-<N>-<slug>` para mudança só de documentação,
       `chore/issue-<N>-<slug>` nos demais casos.
    b. Aplique a mudança seguindo as convenções já estabelecidas deste repositório — inclusive
-      replicando para `plugins/btt-sdd/` (agentes, skills) quando o conteúdo alterado tiver
+      replicando para `plugins/btt-sdd/` (agentes, skills, **docs de governança de `docs/` e
+      templates de `specs/_template/`** — não só agentes e skills) quando o conteúdo alterado tiver
       equivalente lá (`plugins/btt-sdd/README.md`, seção "⚠️ Isto é uma cópia, não um link").
       **Exceção ao contrário para `skills/create-project/scaffold/`**: esse conteúdo só existe em
       `plugins/btt-sdd/skills/create-project/scaffold/` — não há cópia em
@@ -76,6 +77,16 @@ outra tarefa, pare e informe o usuário em vez de misturar.
       uma mudança ali é editada uma vez só, direto no plugin. Exceção normal: se a própria issue
       for sobre algo deliberadamente exclusivo deste repositório (como esta skill), não replique
       para o plugin.
+   b2. **Rode `python scripts/check-plugin-sync.py` antes de commitar**, sempre que a mudança tocou
+      qualquer arquivo com equivalente nas duas cópias. Ele normaliza as adaptações legítimas
+      (namespace de comando, caminho de agente/skill, referência a doc) e falha apontando o arquivo
+      e o bloco que ficou para trás — deriva nova reprovada aqui é replicação esquecida no passo
+      `b`, não uma falha do script. A deriva que já existia quando o script nasceu está em
+      `scripts/plugin-sync-baseline.txt`, e o gate reclama só do que é novo; se a sua mudança
+      ressincronizou um par listado lá, o script pede para você remover a linha correspondente —
+      faça isso no mesmo commit. Instrução escrita sem verificação já falhou cinco vezes neste
+      repositório (issue #281), inclusive desligando a etapa 4b inteira para quem usa o plugin
+      (issue #280) — é por isso que este passo é uma verificação, não um lembrete.
    c. **Se a mudança tocou qualquer arquivo dentro de `plugins/btt-sdd/`**, incremente a versão em
       `plugins/btt-sdd/.claude-plugin/plugin.json` (patch por padrão — `1.X.Y` → `1.X.(Y+1)`; minor
       se a issue introduziu uma capacidade nova, não só um ajuste; pergunte ao usuário só se a

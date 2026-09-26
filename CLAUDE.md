@@ -128,7 +128,12 @@ Code, em `plugins/btt-sdd/` (manifesto `.claude-plugin/plugin.json`, mais `.clau
 marketplace.json` na raiz do repo funcionando como marketplace local). É uma cópia própria, não
 um link — necessária porque comandos instalados via plugin ganham o namespace `btt-sdd:` (ex.:
 `/btt-sdd:trd` em vez de `/sdd-trd`); ver `plugins/btt-sdd/README.md` para o processo de
-manter as duas cópias em sincronia. Instalação testada e confirmada de verdade neste computador:
+manter as duas cópias em sincronia. Isso vale para **agentes, skills, os docs de governança de
+`docs/` e os templates de `specs/_template/`** — os quatro são cópias, e deriva nos docs desliga
+gates para quem usa o plugin em vez de só desatualizar uma explicação. Antes de commitar qualquer
+mudança que toque um desses arquivos, rode `python scripts/check-plugin-sync.py`: ele compara as
+duas árvores normalizando as adaptações legítimas e falha apontando o que ficou para trás.
+Instalação testada e confirmada de verdade neste computador:
 
 ```
 claude plugin marketplace add C:\repositorios\projeto-base-ia

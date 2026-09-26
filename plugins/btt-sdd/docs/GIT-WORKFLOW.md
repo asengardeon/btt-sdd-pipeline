@@ -470,7 +470,16 @@ nem fatia (não é uma feature de produto), então usa uma branch simples em vez
    | `ci/<slug>`      | Mudança em pipelines de CI/CD (`.github/workflows/`).                    |
 
    `<slug>` é um nome curto em kebab-case descrevendo a mudança (ex.: `chore/reduz-tokens-agentes`).
-3. Commite nessa branch, abra o PR **referenciando `Closes #N` da issue confirmada/criada no passo
+3. **Se a mudança tocou a cópia da raiz de algo que também existe empacotado em
+   `plugins/btt-sdd/`** (agentes, skills, docs de governança, templates de `specs/_template/`),
+   replique para lá no mesmo commit e rode `python scripts/check-plugin-sync.py` antes de commitar
+   — as duas cópias são distribuídas por canais diferentes (junction global x `claude plugin
+   install`), e quem edita só a raiz não vê a deriva de dentro da própria sessão, porque nesta
+   máquina os agentes leem a cópia da raiz. Detalhe das adaptações legítimas em
+   `plugins/btt-sdd/README.md`, seção "⚠️ Isto é uma cópia, não um link". Deriva nesses arquivos não
+   degrada a experiência de quem usa o plugin: ela **desliga gates** — já aconteceu com a etapa 4b
+   inteira (revisão de UX), ausente dos docs do plugin por cinco commits (issues #280 e #281).
+4. Commite nessa branch, abra o PR **referenciando `Closes #N` da issue confirmada/criada no passo
    1**, e só mergeie em `main` com decisão explícita do usuário — as mesmas regras 1, 4, 6 e 7
    acima se aplicam (PR obrigatório, sem push direto, sem force-push). Não há gate de QA/segurança/
    SRE automático para esse tipo de mudança (não é uma feature de produto), mas o PR ainda é o

@@ -1,0 +1,27 @@
+# Baseline de deriva conhecida entre as duas cópias do pipeline (raiz x plugins/btt-sdd/).
+#
+# Lido por `scripts/check-plugin-sync.py`. Cada linha é um par que JÁ divergia quando o script foi
+# criado — o gate falha só em deriva NOVA, para o mecanismo valer desde o primeiro dia sem depender
+# de uma ressincronização completa antes.
+#
+# Formato: <rótulo do arquivo da raiz> # <motivo/estado>
+#
+# Duas regras que impedem este arquivo de virar um tapete:
+#   1. Um par listado aqui que voltou a estar em dia faz o script FALHAR — a linha precisa sair.
+#   2. Toda linha tem de apontar a issue que vai resolvê-la. Nenhuma divergência mora aqui para
+#      sempre: se ela é deliberada, o lugar dela é `DELIBERADAS` no script, não aqui.
+#
+# Origem: issue #281 (nada impede nem detecta deriva entre docs/ da raiz e plugins/btt-sdd/docs/).
+# Ressincronização pendente destes 11 pares: issue #290.
+
+docs/GIT-WORKFLOW.md                          # issue #290 — redação divergente em 2 parágrafos (regra 4 e regra 5c), herdada da ressincronização manual do PR #237
+.claude/agents/code-reviewer.md               # issue #290 — a cópia do plugin perdeu a referência a TESTING.md "Reaproveitamento do artefato de cobertura entre etapas" no passo 8
+.claude/agents/ux-designer.md                 # issue #290 — a cópia do plugin perdeu o "passo 8" na referência cruzada ao code-reviewer
+.claude/skills/create-project/SKILL.md        # issue #290 — não verificada item a item
+.claude/skills/sdd-code-review/SKILL.md       # issue #290 — não verificada item a item
+.claude/skills/sdd-hotfix/SKILL.md            # issue #290 — redação plural de referência a agente ("nos agentes `a`/`b`"), mais trechos não verificados item a item
+.claude/skills/sdd-implement/SKILL.md         # issue #290 — não verificada item a item
+.claude/skills/sdd-prd/SKILL.md               # issue #290 — não verificada item a item
+.claude/skills/sdd-project-conventions/SKILL.md # issue #290 — não verificada item a item
+.claude/skills/sdd-security/SKILL.md          # issue #290 — não verificada item a item
+.claude/skills/sdd-ux-review/SKILL.md         # issue #290 — referência a skill sem o namespace ("da skill `hotfix`"), mais trechos não verificados item a item
