@@ -66,6 +66,20 @@ dois.
    específico** (`security-engineer.md`, seção "Escopo de uma rodada de reverificação de achado
    específico") — nunca pule este registro por ser "só uma reverificação", senão o `timing-log.md`
    da fatia fica sistematicamente incompleto.
+3c. **Se o agente registrou perguntas como "VALIDAR DEPOIS" por não ter `AskUserQuestion`
+   disponível nesta invocação** (subagente isolado/assíncrono — sinal típico: uma nota de processo no
+   topo de `security-review.md`, ou um item de pendência dizendo "não pude perguntar"), **você** — o
+   orquestrador desta skill — apresenta essas perguntas ao usuário via *sua própria*
+   `AskUserQuestion`, **antes** de informar o resultado da etapa no passo seguinte. Mesmo padrão já
+   documentado para `sre` (skill `/btt-sdd:sre`, passo 4b) e para os agentes de
+   implementação (skill `/btt-sdd:implement`, passo 5b). As que o usuário responder
+   **deixam de ser pendência** e voltam ao relatório como decisão registrada — `SendMessage` ao
+   agente `security-engineer`, se ainda endereçável, ou edição direta da tabela de pendências de
+   `security-review.md`. As que ele não souber responder agora continuam como VALIDAR DEPOIS, agora
+   legitimamente. Registrar em vez de perguntar é o fallback correto **do agente**, que não tinha a
+   ferramenta; não é o seu, que tem — e o usuário está disponível justamente no turno em que a etapa
+   roda. Perguntas binárias de política ou de comportamento, que o usuário responderia em segundos,
+   já viraram dívida em `/btt-sdd:pending` exatamente por este passo não existir.
 4. Mostre ao usuário o veredito geral e os achados por área (OWASP, segredos, autenticação,
    validação de entrada, dependências).
 5. Se reprovado, informe que a feature volta para `/btt-sdd:implement` com os achados listados —

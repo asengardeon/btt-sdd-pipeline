@@ -71,6 +71,17 @@ referência única para não duplicar a lista em cada um deles.
   concreto (o que o operador do plugin tiver disponível para isolar uma sub-tarefa) não é definido
   por este template — só o princípio de não reter no contexto principal o que só serve para chegar à
   conclusão.
+- [ ] **Pergunta que um subagente isolado não conseguiu fazer é recolhida por quem o invocou, no
+  mesmo turno — não vira pendência.** Um agente rodando isolado/assíncrono não tem
+  `AskUserQuestion`; registrar a pergunta como "VALIDAR DEPOIS" no próprio relatório é o fallback
+  **correto dele**, que não tinha a ferramenta. Não é o fallback de quem orquestra, que tem — e o
+  usuário está disponível justamente no turno em que a etapa roda. **O orquestrador de qualquer
+  etapa** (implementação, revisão de código, UX, QA, segurança, SRE) apresenta essas perguntas via
+  sua própria `AskUserQuestion` antes de informar o resultado da etapa, e devolve ao relatório as
+  que o usuário responder — como decisão registrada, não como pendência. As que ele não souber
+  responder agora continuam VALIDAR DEPOIS, aí legitimamente. Já aconteceu de perguntas binárias de
+  política e de comportamento — respondíveis em segundos — atravessarem QA e segurança inteiros
+  como dívida, porque só `sre` e os agentes de implementação tinham esse passo escrito.
 - [ ] **Todo feedback real sobre o próprio plugin vira issue — em qualquer momento de qualquer
   sessão, não só no fim de uma fatia.** Quando o usuário dá um retorno direto sobre o plugin (algo
   que não funcionou como esperado, uma limitação real, uma sugestão concreta) ou você mesmo
