@@ -315,6 +315,24 @@ investigação continua obrigatória só para a(s) área(s) que o diff efetivame
      Isso é **estritamente mais seguro** que pular por caminho: só pula quando o código já passou,
      em vez de pular sem nunca ter testado aquele conteúdo. Se este projeto tem hoje um filtro de
      `paths`/`paths-ignore` no gatilho de um check obrigatório, isso é um achado a reportar.
+
+     **Nunca ofereça esta receita sozinha — ofereça junto a contrapartida.** As execuções
+     redundantes que ela suprime funcionam, sem ninguém ter planejado, como **amostragem de
+     flakiness**: rodar a mesma suíte N vezes sobre o mesmo código é um teste de repetição, e teste
+     de repetição acha asserção instável. Já aconteceu de verdade: numa fatia, os **dois runs
+     vermelhos rodaram em commits só de documentação, sobre código que já tinha passado verde** — a
+     receita os teria pulado, e foram exatamente eles que acharam o achado bloqueante do code
+     review (uma asserção presa a relógio, que só falha sob contenção).
+
+     A receita continua certa: usar o caminho crítico de cada push de documentação como amostrador
+     é caro (~13 min por amostra), não é intencional, não é controlável e **bloqueia o merge quando
+     acha algo**. Mas adotá-la sozinha remove a única amostragem repetida que o repositório tem. Ao
+     propô-la, proponha no mesmo movimento um substituto **deliberado** — tipicamente um `schedule`
+     rodando a suíte de integração completa na branch base, N vezes por dia, fora do caminho crítico
+     de qualquer PR. Custa o mesmo tempo de runner que hoje se gasta por acidente, e produz série
+     temporal em vez de anedota. Isto é generalizável: todo projeto que usa este pipeline recebe a
+     dezena de commits docs-only por fatia, logo todo projeto que adotar a receita perde o mesmo
+     amostrador.
    - Se um job falhar/for cancelado só por estourar `timeout-minutes` (sem nenhum teste vermelho),
      principalmente quando múltiplas fatias/PRs desta mesma sessão estão rodando CI em paralelo,
      trate como possível falso-negativo por contenção de runners antes de investigar como bug de
