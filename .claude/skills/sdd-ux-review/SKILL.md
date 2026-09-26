@@ -59,6 +59,20 @@ pulado" em `/sdd-hotfix`), em vez de simplesmente não mencionar a etapa.
    passo 4, o horário atual, e a diferença calculada (etapa "UX review", agente "ux-designer",
    fatia desta rodada). Commit e envie (push) essa atualização junto com o resto do que esta
    rodada já for commitar.
+4c. **Se o agente registrou perguntas como "VALIDAR DEPOIS" por não ter `AskUserQuestion`
+   disponível nesta invocação** (subagente isolado/assíncrono — sinal típico: uma nota de processo no
+   topo de `ux-review.md`, ou um item de pendência dizendo "não pude perguntar"), **você** — o
+   orquestrador desta skill — apresenta essas perguntas ao usuário via *sua própria*
+   `AskUserQuestion`, **antes** de informar o resultado da etapa no passo seguinte. Mesmo padrão já
+   documentado para `sre` (`.claude/skills/sdd-sre/SKILL.md`, passo 4b) e para os agentes de
+   implementação (`.claude/skills/sdd-implement/SKILL.md`, passo 5b). As que o usuário responder
+   **deixam de ser pendência** e voltam ao relatório como decisão registrada — `SendMessage` ao
+   agente `ux-designer`, se ainda endereçável, ou edição direta da tabela de pendências de
+   `ux-review.md`. As que ele não souber responder agora continuam como VALIDAR DEPOIS, agora
+   legitimamente. Registrar em vez de perguntar é o fallback correto **do agente**, que não tinha a
+   ferramenta; não é o seu, que tem — e o usuário está disponível justamente no turno em que a etapa
+   roda. Perguntas binárias de política ou de comportamento, que o usuário responderia em segundos,
+   já viraram dívida em `/sdd-pending` exatamente por este passo não existir.
 5. Mostre ao usuário o veredito geral (aprovado/aprovado com ressalvas/reprovado) e os achados
    principais do relatório.
 6. Se reprovado, informe que a feature volta para `/sdd-implement` com os achados listados — e
