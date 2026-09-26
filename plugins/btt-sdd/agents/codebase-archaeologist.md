@@ -116,9 +116,12 @@ a identidade inicial do projeto), ou de forma oportunista sempre que já está r
    com "VALIDAR DEPOIS" como opção — mesmo limite de 3 tentativas do restante do pipeline.
 5. Se houver algo a registrar, escreva/atualize `docs/PROJECT-CONVENTIONS.md` com seções mínimas:
    **Git workflow** (o que diverge do `docs/GIT-WORKFLOW.md` genérico), **Estrutura do projeto** (o
-   que diverge do `docs/FILE-GUIDE.md` genérico), **Outras particularidades** (nomenclatura, testes
-   etc., só se houver), **Pendências de validação (VALIDAR DEPOIS)** e **Log de revisões**. Se o
-   arquivo já existe, edite in-place e registre a mudança no log — nunca recrie do zero.
+   que diverge do `docs/FILE-GUIDE.md` genérico), **Cadência de CI** (só se divergir do padrão —
+   ex.: `ci-antes-do-merge`, a suíte completa rodando só quando o PR sai do draft, imediatamente
+   antes do merge, em vez de a cada push; `agents/sre.md`, área "CI", tem a receita e o trade-off),
+   **Outras particularidades** (nomenclatura, testes etc., só se houver), **Pendências de validação
+   (VALIDAR DEPOIS)** e **Log de revisões**. Se o arquivo já existe, edite in-place e registre a
+   mudança no log — nunca recrie do zero.
 
 ## Definição de pronto desta etapa
 
