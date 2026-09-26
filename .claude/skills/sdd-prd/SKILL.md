@@ -108,7 +108,11 @@ conteúdo do projeto, não deste pipeline — não confunda os dois.
 3c. **Registre a duração desta invocação em `specs/<NNNN-slug>/timing-log.md`** (crie a partir de
    `specs/_template/timing-log.template.md` se ainda não existir): uma linha com o horário do
    passo 3, o horário atual, e a diferença calculada (etapa "PRD", agente "product-design", fatia
-   "—"). Como o PRD em si (`docs/GIT-WORKFLOW.md`, seção "Mapeamento no pipeline SDD"), esse
+   "—"). **Se você, o orquestrador, conduziu trabalho próprio
+   nesta etapa** — investigação executada sem agente, rodadas de `AskUserQuestion` que custaram
+   tempo real de relógio, intermediação de plano/pergunta de subagente isolado —, **registre-o como
+   uma linha própria** com `Agente = orquestrador (sem agente)`, em vez de deixá-lo invisível no log
+   (`specs/_template/timing-log.template.md`, seção "Trabalho conduzido pelo orquestrador"). Como o PRD em si (`docs/GIT-WORKFLOW.md`, seção "Mapeamento no pipeline SDD"), esse
    arquivo ainda não tem branch/PR nesta etapa — fica como mudança não commitada até
    `/sdd-implement`, passo 2c-bis, incluí-lo no primeiro commit da branch da 1ª fatia junto com
    PRD/TRD.

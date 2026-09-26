@@ -119,6 +119,12 @@ dois.
    contagem de rodadas de correção. Uma etapa desproporcionalmente lenta em relação às outras da
    mesma rodada (ex.: `code-reviewer` levando 3x mais que `qa-engineer` sem justificativa óbvia no
    escopo) é candidata a virar uma issue de melhoria como qualquer outro achado desta retrospectiva.
+   **Linhas com `Agente = orquestrador (sem agente)` contam como qualquer outra** — são trabalho da
+   etapa conduzido sem agente (investigação ao vivo, rodadas de `AskUserQuestion`, intermediação de
+   subagente isolado; `specs/_template/timing-log.template.md`, seção "Trabalho conduzido pelo
+   orquestrador"). Se uma etapa tem só linhas de agente e você sabe, pelos artefatos desta rodada,
+   que houve trabalho de orquestrador nela, a série está subestimando essa etapa: diga isso na
+   análise em vez de concluir que ela foi barata.
    Essa avaliação é
    investigação somente-leitura que não precisa ficar retida no seu contexto depois de concluída —
    prefira delegar a uma sub-tarefa isolada que devolva só as sugestões destiladas
