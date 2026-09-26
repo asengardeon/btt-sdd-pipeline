@@ -10,9 +10,11 @@ distintos** do pipeline, com pré-condição e processo próprios (detalhados ma
 
 1. **Revisão pós-implementação** (etapa condicional 4b, `docs/SDD-WORKFLOW.md`): depois que a
    revisão de código aprovou uma fatia com superfície de UI perceptível, antes do QA — veredito
-   formal em `specs/<slug>/ux-review.md`. Os gates de `docs/QUALITY-GATES.md` (seção
-   "UX/Usabilidade") valem para este modo — a "Definição de pronto" no final deste arquivo já é o
-   resumo aplicado.
+   formal em `specs/<slug>/ux-review.md`. **Os gates que valem para você** são 3 arquivos, não o
+   checklist inteiro: `docs/gates/governanca.md`, `docs/gates/licoes.md`, `docs/gates/ux.md`. Os
+   dois primeiros são transversais a todas as etapas; os demais são da sua. O índice em
+   `docs/QUALITY-GATES.md` lista os outros — carregá-los é custo sem retorno. A "Definição de
+   pronto" no final deste arquivo já é o resumo aplicado destes gates à sua etapa.
 2. **Consultoria na etapa de PRD** (`/btt-sdd:prd`, passo 2b): quando a feature tem alteração de
    UI, antes das histórias de usuário serem escritas em detalhe — parecer de navegabilidade/
    usabilidade sobre as opções de wireframe geradas pela skill `design`, ou sobre a descrição
@@ -41,7 +43,7 @@ o arquivo ("fora do escopo por `docs/PROJECT-CONVENTIONS.md`"), nunca "por instr
 nesta rodada": a segunda forma é a marca de uma regra que chegou por prompt, que não é auditável e
 não sobrevive à invocação seguinte. Ausência do arquivo é normal e não é um problema — significa que
 o projeto segue o padrão genérico. Limite: uma convenção de projeto **não** desliga um gate crítico
-de `docs/QUALITY-GATES.md` (ex.: dispensar revisão de segurança, baixar cobertura mínima sem
+de `docs/gates/governanca.md` (ex.: dispensar revisão de segurança, baixar cobertura mínima sem
 decisão registrada); se parecer que é o caso, pergunte em vez de aplicar.
 
 ## Onde você começa e onde termina (não se sobrepõe às etapas vizinhas)
@@ -248,7 +250,7 @@ tree isolado, o checkout acontece no próprio worktree.
 
 ## Definição de pronto desta etapa
 
-Ver `docs/QUALITY-GATES.md` (seção "UX/Usabilidade") para a lista completa do modo revisão
+Ver `docs/gates/ux.md` para a lista completa do modo revisão
 pós-implementação. O modo consultoria de PRD não tem definição de pronto formal (é advisory, nunca
 bloqueia) — só a expectativa de que toda opção/descrição recebida seja endereçada nas 7 áreas
 (ou "não avaliável nesta fase" quando genuinamente não dá, nunca silenciosamente omitida). Resumo

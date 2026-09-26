@@ -168,7 +168,7 @@ REGULARES: list[tuple[re.Pattern, str]] = [
     (flex(r"`«skill:([a-z-]+)»/SKILL\.md`"), r"«skill-ref:\1»"),
     # Dentro do scaffold, um doc do pipeline é referenciado como "<DOC> do pipeline" para
     # distingui-lo de um doc do próprio projeto.
-    (flex(r"(«doc:[A-Z-]+»`?) do pipeline"), r"\1"),
+    (flex(r"((?:«doc:[A-Z-]+»|«gate:[a-z-]+»)`?) do pipeline"), r"\1"),
     # "padrão/docs de governança deste pipeline" (raiz) x "...deste plugin" (pacote): o mesmo
     # referente, nomeado pelo canal de distribuição de cada cópia.
     (flex(r"(gen[ée]ricos|governança|padrão) d(?:o|este) (?:pipeline|plugin)"),
@@ -201,6 +201,8 @@ def canonizar(texto: str) -> str:
     # Docs do pipeline: `docs/TESTING.md` (raiz/projeto) e `TESTING.md` (dentro do scaffold).
     t = re.sub(r"(?:docs/)?(GIT-WORKFLOW|QUALITY-GATES|TESTING|ENGINEERING-PILLARS|ARCHITECTURE"
                r"|SDD-WORKFLOW|FILE-GUIDE|POST-MERGE-VALIDATION)\.md", r"«doc:\1»", t)
+    # Gates por etapa (#328): `docs/gates/<n>.md` (raiz/projeto) e `gates/<n>.md` (scaffold).
+    t = re.sub(r"(?:docs/)?gates/([a-z-]+)\.md", r"«gate:\1»", t)
     # Nome da skill no frontmatter: `name: sdd-<n>` (raiz) e `name: <n>` (plugin).
     t = re.sub(r"(?m)^name: sdd-([a-z][a-z-]*)\s*$", r"name: \1", t)
     for padrao, token in REGULARES:
@@ -237,10 +239,13 @@ def blocos(texto: str) -> list[str]:
 def pares() -> list[tuple[str, Path, Path, str]]:
     """(grupo, arquivo da raiz, arquivo do plugin, rótulo) para cada par a comparar."""
     p: list[tuple[str, Path, Path, str]] = []
-    for doc in sorted((RAIZ / "docs").glob("*.md")):
-        alvo = PLUGIN / "docs" / doc.name
+    # rglob, nao glob: os gates vivem em docs/gates/ desde a #328, e um pareamento nao-recursivo
+    # deixaria de cobrir exatamente os arquivos novos.
+    for doc in sorted((RAIZ / "docs").rglob("*.md")):
+        rel = doc.relative_to(RAIZ / "docs").as_posix()
+        alvo = PLUGIN / "docs" / rel
         if alvo.exists():
-            p.append(("docs", doc, alvo, f"docs/{doc.name}"))
+            p.append(("docs", doc, alvo, f"docs/{rel}"))
     for agente in sorted((RAIZ / ".claude" / "agents").glob("*.md")):
         p.append(("agents", agente, PLUGIN / "agents" / agente.name,
                   f".claude/agents/{agente.name}"))

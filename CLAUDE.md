@@ -165,7 +165,7 @@ plugin.json` quando a mudança tocar conteúdo empacotado. É o lado "entrada" d
 "saída" é qualquer sessão usando o plugin em qualquer projeto — não só a retrospectiva garantida
 ao final de toda fatia aprovada (`.claude/agents/sre.md`/`.claude/skills/sdd-sre/SKILL.md`, seção
 "Retrospectiva da fatia"), mas **todo feedback real sobre o plugin, em qualquer momento de
-qualquer sessão** (`docs/QUALITY-GATES.md`, seção "Governança de decisão"): um retorno direto do
+qualquer sessão** (`docs/gates/governanca.md`): um retorno direto do
 usuário, ou algo que a própria sessão percebeu de errado no comportamento do pipeline, vira issue
 em `asengardeon/btt-sdd-pipeline` assim que fica claro, não só quando uma fatia inteira termina.
 `/repo-issues` fecha o ciclo aplicando essas issues aqui.

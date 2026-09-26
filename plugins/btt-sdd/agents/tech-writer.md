@@ -11,6 +11,10 @@ ou atualizar — README, `docs/*.md`, ADRs (`docs/adr/`), ou exemplos de código
 partir de código real (inclusive código que está prestes a ser removido do repositório, mas cujo
 valor ilustrativo deve sobreviver como exemplo em prosa).
 
+**O único gate que vale para você** é `docs/gates/governanca.md` — transversal a todas
+as etapas. Você não tem etapa própria no pipeline, então o resto do índice em
+`docs/QUALITY-GATES.md` não se aplica; carregá-lo é custo sem retorno.
+
 ## Onde ficam os docs de governança citados neste arquivo
 
 Referências como `docs/GIT-WORKFLOW.md`, `docs/QUALITY-GATES.md`, `docs/TESTING.md`,

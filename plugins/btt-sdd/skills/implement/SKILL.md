@@ -82,7 +82,7 @@ assim:
    exige ler vários arquivos de código, histórico de Git, ou logs — e esse conteúdo não precisa
    ficar retido depois de você chegar à conclusão do que pedir — prefira delegar essa leitura a uma
    sub-tarefa isolada que devolva só a conclusão destilada, em vez de investigar diretamente no seu
-   próprio contexto de orquestrador (`docs/QUALITY-GATES.md`, seção "Governança de decisão",
+   próprio contexto de orquestrador (`docs/gates/governanca.md`,
    bullet sobre investigação de causa raiz). O mecanismo concreto fica a critério de qual
    ferramenta de sub-tarefa isolada está disponível no seu ambiente.
 3. Retomar não abre mão de rigor: o agente retomado ainda segue TDD (teste antes da correção, red
@@ -160,7 +160,7 @@ assim:
    agora cruza com o estado real do PR antes de confiar cegamente no texto da coluna Status),
    **antes de simplesmente informar que não há trabalho a fazer**, confirme se a promoção de
    Status da **última fatia** da tabela já aconteceu. O mecanismo normal de promoção para
-   `concluído (mergeado)` (`docs/QUALITY-GATES.md`, seção "Status de tarefas") só dispara "ao
+   `concluído (mergeado)` (`docs/gates/status-de-tarefas.md`) só dispara "ao
    confirmar, antes de iniciar a fatia seguinte, que o PR de uma fatia já foi mergeado" — e a
    última fatia de uma spec nunca tem uma fatia seguinte para disparar isso, então a tarefa fica
    presa no status que o `sre` deixou (`aprovado`), mesmo depois de mergeada de verdade. Verifique
@@ -287,8 +287,7 @@ assim:
    contra esse mesmo contrato, em paralelo, desde o incremento 1, usando um dublê até o endpoint
    existir de verdade") — aplicando como restrição adicional qualquer lição de
    `docs/LESSONS-LEARNED.md` relevante às trilhas de backend/frontend (mesmo critério que cada
-   agente aplicaria na própria Fase 1, `docs/QUALITY-GATES.md`, seção "Lições aprendidas
-   recorrentes"). **Se esta fatia toca múltiplos pontos de entrada estruturalmente equivalentes**
+   agente aplicaria na própria Fase 1, `docs/gates/licoes.md`). **Se esta fatia toca múltiplos pontos de entrada estruturalmente equivalentes**
    (mesmo padrão de UI/lógica duplicado em N lugares — ex.: N formulários usando o mesmo hook
    compartilhado, N validações idênticas em rotas irmãs), inclua no plano explicitamente: "paridade
    de teste em todos os N pontos, não só paridade de implementação" — já aconteceu de uma correção
@@ -384,7 +383,7 @@ assim:
    **Inclua também uma tabela resumo do Status atual de todas as tarefas da spec** (não só desta
    fatia), extraída da coluna Status da tabela "Decomposição de tarefas e dependências" do TRD
    (colunas ID | Tarefa | Fatia | Status) — visão de progresso ponta a ponta da spec, não só do
-   incremento mais recente (`docs/QUALITY-GATES.md`, seção "Status de tarefas").
+   incremento mais recente (`docs/gates/status-de-tarefas.md`).
 7. Ao final, informe que a próxima etapa é `/btt-sdd:code-review`, referenciando o PR desta
    fatia. Se houver fatias seguintes pendentes, informe também que elas só começam depois deste PR
    passar por code review, QA, segurança, SRE e ser mergeado em `main` (`docs/GIT-WORKFLOW.md`) —
@@ -415,7 +414,7 @@ instância **nova e independente** do agente de revisão apropriado — mesmo qu
 **Independência não exige reexecutar tudo do zero em cada rodada intermediária.** A instância
 nova e independente ainda é obrigatória (parágrafo acima não muda), mas o escopo do que ela
 reexecuta pode ser proporcional ao tamanho da correção quando não é a primeira revisão da fatia —
-ver `docs/QUALITY-GATES.md`, seção "Governança de decisão", bullet sobre reverificação de achado
+ver `docs/gates/governanca.md`, bullet sobre reverificação de achado
 específico. A suíte 100% completa só precisa rodar de novo, do zero, uma vez, na última rodada
 antes do merge efetivo — não em toda reverificação pontual intermediária.
 

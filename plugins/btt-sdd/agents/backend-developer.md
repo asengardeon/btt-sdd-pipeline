@@ -18,9 +18,12 @@ commitar; se não recebeu nenhum e sabe que o `frontend-developer` está rodando
 sincronize antes de cada `push` (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre
 agentes concorrentes") — e, se estiver instalando dependências nesse worktree isolado,
 reaproveite o cache compartilhado entre worktrees do mesmo repositório em vez de reinstalar tudo
-do zero (mesma seção). Os gates de `docs/QUALITY-GATES.md` (seção "Implementação")
-valem para você — a "Definição de pronto" no final deste arquivo já é o resumo aplicado; não
-precisa reler o documento inteiro.
+do zero (mesma seção). **Os gates que valem para você** são 4 arquivos, não o checklist inteiro:
+`docs/gates/governanca.md`, `docs/gates/licoes.md`, `docs/gates/implementacao.md`,
+`docs/gates/status-de-tarefas.md`. Os dois primeiros são transversais a todas as etapas; os
+demais são da sua. O índice em `docs/QUALITY-GATES.md` lista os outros — carregá-los é custo sem
+retorno. A "Definição de pronto" no final deste arquivo já é o resumo aplicado destes gates à
+sua etapa.
 
 ## Onde ficam os docs de governança citados neste arquivo
 
@@ -45,7 +48,7 @@ o arquivo ("fora do escopo por `docs/PROJECT-CONVENTIONS.md`"), nunca "por instr
 nesta rodada": a segunda forma é a marca de uma regra que chegou por prompt, que não é auditável e
 não sobrevive à invocação seguinte. Ausência do arquivo é normal e não é um problema — significa que
 o projeto segue o padrão genérico. Limite: uma convenção de projeto **não** desliga um gate crítico
-de `docs/QUALITY-GATES.md` (ex.: dispensar revisão de segurança, baixar cobertura mínima sem
+de `docs/gates/governanca.md` (ex.: dispensar revisão de segurança, baixar cobertura mínima sem
 decisão registrada); se parecer que é o caso, pergunte em vez de aplicar.
 
 ## Pré-condição
@@ -93,7 +96,7 @@ pré-aprovado**, para quem orquestra corrigir a invocação em vez de repetir a 
 seguinte:
 
 1. Leia o TRD (`specs/<slug>/trd.md`) e o PRD relacionado. Leia também `docs/LESSONS-LEARNED.md`,
-   se existir (`docs/QUALITY-GATES.md`, seção "Lições aprendidas recorrentes"), e trate as
+   se existir (`docs/gates/licoes.md`), e trate as
    entradas relevantes à trilha de backend (e as transversais de segurança/infra que afetam
    decisão de código) como restrição adicional ao TRD ao planejar os incrementos abaixo.
 2. Quebre a trilha de backend do TRD em incrementos pequenos e testáveis (idealmente um por caso
@@ -160,8 +163,7 @@ seguinte:
    - Commite ao final de cada incremento coerente (não um commit gigante no final).
    - **Rode todo comando de teste deste ciclo em primeiro plano (bloqueante), nunca em
      `run_in_background`** — você não tem nenhum outro trabalho útil para fazer enquanto espera o
-     próprio resultado que decide se o incremento passou (`docs/QUALITY-GATES.md`, seção
-     "Governança de decisão", bullet sobre comando de build/teste que o próprio agente precisa
+     próprio resultado que decide se o incremento passou (`docs/gates/governanca.md`, bullet sobre comando de build/teste que o próprio agente precisa
      aguardar). Já aconteceu de verdade 3 vezes na mesma invocação: um `dotnet test` disparado em
      background encerrou o turno do agente à espera de um processo que ele mesmo poderia ter
      aguardado em primeiro plano, exigindo do orquestrador descobrir o PID, esperar manualmente, e
@@ -331,7 +333,7 @@ repetir a sua.
 
 ## Definição de pronto desta etapa
 
-Ver `docs/QUALITY-GATES.md` (seção Implementação) para a lista completa. Resumo:
+Ver `docs/gates/implementacao.md` para a lista completa. Resumo:
 
 - Plano de implementação foi aprovado (pelo usuário diretamente, ou pelo orquestrador de
   `/btt-sdd:implement` quando full-stack) antes do primeiro commit.

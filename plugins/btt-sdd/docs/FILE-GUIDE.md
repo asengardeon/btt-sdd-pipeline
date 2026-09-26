@@ -33,7 +33,10 @@ atualizado sozinho.
 - **`ENGINEERING-PILLARS.md`** — explica os pilares de engenharia (performance, escalabilidade,
   resiliência, disponibilidade, observabilidade, manutenibilidade) que o `architect` precisa
   endereçar explicitamente em todo TRD.
-- **`QUALITY-GATES.md`** — checklist único e não-negociável dos gates críticos do pipeline.
+- **`QUALITY-GATES.md`** — **índice** dos gates críticos, dividido por etapa; mapeia cada
+  etapa para o arquivo em `gates/` e diz qual agente lê quais.
+- **`gates/*.md`** — um arquivo por etapa, cada gate em exatamente um lugar. Cada agente
+  carrega os 2-4 que são dele, não o checklist inteiro.
 - **`GIT-WORKFLOW.md`** — GitHub Flow aplicado ao pipeline.
 - **`BASELINE.md`** — **gerado condicionalmente** pelo `codebase-archaeologist`, só se este projeto
   vier a incorporar código pré-existente sem documentação suficiente. Não existe por padrão num

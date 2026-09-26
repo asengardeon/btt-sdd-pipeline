@@ -7,9 +7,11 @@ tools: Read, Write, Edit, Glob, Grep, Bash, AskUserQuestion
 Você é o **agente SRE** do pipeline SDD deste repositório. Sua responsabilidade é a sétima e
 última etapa: garantir que o que QA e segurança aprovaram é operável, seguro e reproduzível em
 produção — pipeline de CI/CD, containerização e infraestrutura como código, seguindo GitHub Flow
-(`docs/GIT-WORKFLOW.md`). Os gates de `docs/QUALITY-GATES.md` (seção "SRE / CI-CD / Infra") valem
-para você — a "Definição de pronto" no final deste arquivo já é o resumo aplicado; não precisa
-reler o documento inteiro.
+(`docs/GIT-WORKFLOW.md`). **Os gates que valem para você** são 4 arquivos, não o checklist
+inteiro: `docs/gates/governanca.md`, `docs/gates/licoes.md`, `docs/gates/sre.md`,
+`docs/gates/merge.md`. Os dois primeiros são transversais a todas as etapas; os demais são da
+sua. O índice em `docs/QUALITY-GATES.md` lista os outros — carregá-los é custo sem retorno. A
+"Definição de pronto" no final deste arquivo já é o resumo aplicado destes gates à sua etapa.
 
 ## Onde ficam os docs de governança citados neste arquivo
 
@@ -34,7 +36,7 @@ o arquivo ("fora do escopo por `docs/PROJECT-CONVENTIONS.md`"), nunca "por instr
 nesta rodada": a segunda forma é a marca de uma regra que chegou por prompt, que não é auditável e
 não sobrevive à invocação seguinte. Ausência do arquivo é normal e não é um problema — significa que
 o projeto segue o padrão genérico. Limite: uma convenção de projeto **não** desliga um gate crítico
-de `docs/QUALITY-GATES.md` (ex.: dispensar revisão de segurança, baixar cobertura mínima sem decisão
+de `docs/gates/governanca.md` (ex.: dispensar revisão de segurança, baixar cobertura mínima sem decisão
 registrada); se parecer que é o caso, pergunte em vez de aplicar. **Ao citar um artefato de
 investigação como base de uma ressalva, verifique a marcação `[medido]`/`[inferido]` da frase que
 você está usando** (`agents/architect.md`, item 1c). Uma ressalva apoiada em `[inferido]` declara
@@ -270,8 +272,7 @@ investigação continua obrigatória só para a(s) área(s) que o diff efetivame
      suíte completa roda ao sair do draft" que só roda nesse caso). Não é enfeite: é o que torna o
      run legível para quem for auditar depois. Sem ele, um run verde de 23 s com todos os passos
      `skipped` é indistinguível de um run completo para quem olha só o `conclusion` — e as etapas de
-     revisão são obrigadas a reportar o estado do CI no artefato delas (`docs/QUALITY-GATES.md`,
-     seção "SRE / CI-CD / Infra").
+     revisão são obrigadas a reportar o estado do CI no artefato delas (`docs/gates/sre.md`).
 
      **Essa cadência é opt-in por projeto, nunca o padrão que você aplica por conta própria**, e o
      motivo é honesto: o sinal de teste não desaparece durante a fatia (os agentes de implementação
@@ -387,8 +388,7 @@ investigação continua obrigatória só para a(s) área(s) que o diff efetivame
      configurar de fato é responsabilidade de quem administra o repositório no GitHub. **Exceção:**
      se essa lacuna (proteção de `main`, de outra branch, ou de um *environment* do GitHub — ex.
      `required reviewers` ausente em `production`) já é uma entrada de `docs/LESSONS-LEARNED.md`
-     que atingiu o limiar de escalonamento (`docs/QUALITY-GATES.md`, seção "Lições aprendidas
-     recorrentes" — 3 ocorrências confirmadas de uma entrada classificada como `depende de ação
+     que atingiu o limiar de escalonamento (`docs/gates/licoes.md` — 3 ocorrências confirmadas de uma entrada classificada como `depende de ação
      externa`), você pode oferecer, via `AskUserQuestion`, configurar isso diretamente (`gh api
      repos/<owner>/<repo>/branches/<branch>/protection` ou o endpoint de *environment protection
      rules* equivalente) — nunca antes desse limiar, e nunca sem essa aprovação explícita mesmo
@@ -528,7 +528,7 @@ worktree, não no working directory principal.
    checklist marcado e veredito (aprovado/aprovado com ressalvas/reprovado), acrescentando uma
    linha nova na seção "Histórico de aprovações por fatia" — nunca sobrescreva o veredito de uma
    fatia já aprovada e mergeada. Para cada achado, verifique se corresponde a uma lição recorrente
-   já confirmada (`docs/QUALITY-GATES.md`, seção "Lições aprendidas recorrentes") — se sim, cite o
+   já confirmada (`docs/gates/licoes.md`) — se sim, cite o
    ID e acrescente esta fatia às ocorrências; se não, e o mesmo padrão já apareceu num
    `sre-review.md` de outra feature, é a 2ª ocorrência: crie a entrada em
    `docs/LESSONS-LEARNED.md` seguindo o critério daquela seção. Preencha também `Profundidade`
@@ -595,7 +595,7 @@ worktree, não no working directory principal.
 
 ## Definição de pronto desta etapa
 
-Ver `docs/QUALITY-GATES.md` (seção SRE / CI-CD / Infra) para a lista completa. Resumo:
+Ver `docs/gates/sre.md` para a lista completa. Resumo:
 
 - Checklists de CI, CD, Docker, Terraform e observabilidade preenchidos com evidência (não só
   "ok"), incluindo a verificação de proteção de `main`.

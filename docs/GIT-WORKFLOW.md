@@ -28,8 +28,7 @@ dependências entre histórias (fatias verticais de entrega)"), PR obrigatório 
    fluxo (o orquestrador, fora de um agente de trilha específico, fazendo duas ou mais mudanças
    relacionadas na mesma branch/sessão — ex.: um fix pontual e o `qa-report.md`/artefato de revisão
    que o documenta): agrupe num commit e envie (push) uma vez só, salvo motivo real de durabilidade
-   incremental — cada push dispara seu próprio run de CI completo (`docs/QUALITY-GATES.md`, seção
-   "SRE / CI-CD / Infra", sobre o short-circuit de docs-only que reduz o custo dos pushes que só tocam
+   incremental — cada push dispara seu próprio run de CI completo (`docs/gates/sre.md`, sobre o short-circuit de docs-only que reduz o custo dos pushes que só tocam
    `specs/`/`docs/`, mas não elimina a necessidade de agrupar quando o push toca código).
 5. **Revisão de código, QA, segurança e SRE revisam o PR de cada fatia**, não a feature inteira
    de uma vez. `code-review.md`/`qa-report.md`/`security-review.md`/`sre-review.md` são editados
@@ -188,7 +187,7 @@ git push origin HEAD:<branch-da-fatia>
 ```
 
 Se o `push` for rejeitado (non-fast-forward, sinal de que outro agente publicou nesse intervalo),
-repita `fetch` + `rebase` — mesmo limite de 3 tentativas de `docs/QUALITY-GATES.md` antes de parar
+repita `fetch` + `rebase` — mesmo limite de 3 tentativas de `docs/gates/governanca.md` antes de parar
 e escalar ao usuário. Essa sincronização é o que garante que múltiplos agentes isolados ainda
 produzem uma única branch/PR coerente por fatia, sem que a isolação de working tree vire duas
 branches divergentes por engano.
@@ -452,13 +451,11 @@ nem fatia (não é uma feature de produto), então usa uma branch simples em vez
 `feature/<NNNN-slug>/<fatia>`:
 
 1. **Confirme que existe uma issue do GitHub descrevendo o porquê desta mudança antes de criar a
-   branch.** Mesma exigência já aplicada a `/sdd-hotfix` (`docs/QUALITY-GATES.md`, seção
-   "Implementação" — "a issue do bug/ajuste existe antes da branch ser criada"), estendida a
+   branch.** Mesma exigência já aplicada a `/sdd-hotfix` (`docs/gates/implementacao.md` — "a issue do bug/ajuste existe antes da branch ser criada"), estendida a
    qualquer mudança no próprio pipeline: o diff mostra *o quê* mudou, mas só a issue registra *por
    quê* — histórico de revisão sem isso vira uma sequência de commits sem contexto recuperável
    meses depois. Se a mudança já nasceu de uma issue existente (ex.: `/repo-issues`, ou um pedido
-   do usuário que você já registrou como issue via `docs/QUALITY-GATES.md`, seção "Todo feedback
-   real sobre o próprio plugin vira issue"), reaproveite-a. Se não existir nenhuma, crie uma
+   do usuário que você já registrou como issue via `docs/gates/governanca.md`, "Todo feedback real sobre o próprio plugin vira issue"), reaproveite-a. Se não existir nenhuma, crie uma
    (`gh issue create --repo asengardeon/btt-sdd-pipeline --title "..." --body "..."`) antes de
    prosseguir — nunca abra a branch/PR primeiro e a issue depois, como formalidade retroativa.
 2. Crie uma branch a partir de `main` atualizada, com o prefixo que descreve a natureza da

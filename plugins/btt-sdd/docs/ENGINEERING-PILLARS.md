@@ -3,7 +3,7 @@
 Referência que o `architect` usa para preencher a seção "Pilares de engenharia de software" do
 TRD (`specs/_template/trd.template.md`). Cada pilar precisa de uma resposta explícita no TRD —
 mesmo que seja "não se aplica, porque X" — nunca implícita. Segurança tem seu próprio agente
-dedicado (`security-engineer`, ver `docs/QUALITY-GATES.md`) e não é tratada aqui; manutenibilidade
+dedicado (`security-engineer`, ver `docs/gates/seguranca.md`) e não é tratada aqui; manutenibilidade
 é, em grande parte, consequência de SOLID/Clean Code, já cobertos em `docs/ARCHITECTURE.md`.
 
 ## Performance

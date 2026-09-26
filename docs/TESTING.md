@@ -243,8 +243,7 @@ da stack em uso.
   existe, ou o commit está desatualizado, quem precisar da evidência (`code-reviewer`/
   `qa-engineer`) roda o comando de build/empacotamento você mesmo antes de aprovar — nunca aprova
   uma fatia com trilha de frontend/build sem essa evidência (atual ou reexecutada).
-- **Isso é definição do agente, não depende de lições aprendidas.** `docs/QUALITY-GATES.md`
-  (seções "Implementação", "Revisão de código" e "QA") e `.claude/agents/code-reviewer.md`/
+- **Isso é definição do agente, não depende de lições aprendidas.** `docs/gates/implementacao.md`, `docs/gates/code-review.md` e `docs/gates/qa.md` e `.claude/agents/code-reviewer.md`/
   `.claude/agents/qa-engineer.md` já exigem isso diretamente — não fica condicionado a
   `docs/LESSONS-LEARNED.md` ter uma entrada sobre o assunto numa sessão futura.
 
