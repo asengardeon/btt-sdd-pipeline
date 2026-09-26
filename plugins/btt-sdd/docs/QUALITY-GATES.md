@@ -515,6 +515,10 @@ commitar o artefato: o artefato na branch é o que torna a revisão auditável.
 ## SRE / CI-CD / Infra
 
 - [ ] CI roda lint + testes + gate de cobertura em todo PR.
+- [ ] **Desperdício de CI quantificado em minutos faturáveis, não só em relógio** — repositório
+  privado ou público (`gh api repos/<owner>/<repo> --jq .private`), multiplicador do runner lido do
+  `runs-on` (`ubuntu` 1×, `windows` 2×, `macos` 10×), e o total `minutos × multiplicador`. Em
+  repositório público a recomendação é de latência, não de custo, e isso muda a urgência.
 - [ ] **Sob cadência condicional, o estado do CI reportado distingue "suíte executada" de "suíte
   pulada".** Toda etapa que afirma no seu artefato que o CI cobre o código atual inspecionou os
   passos do run, não só `conclusion` — e, quando os passos caros ficaram `skipped`, apontou qual run
