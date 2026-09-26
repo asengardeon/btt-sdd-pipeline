@@ -325,6 +325,16 @@ gravada por quem causa a transição.
   feature, nunca em branco ou genérica.
 - [ ] Se a feature inclui frontend, "Contrato Frontend↔Backend" está definido (no TRD ou num ADR
   referenciado) — nunca "a definir depois".
+- [ ] **Todo seletor/locator/contrato concreto contra um sistema externo cuja estrutura real não foi
+  observada está marcado como provisório no próprio texto onde aparece, e tem uma tarefa de
+  investigação agendada como primeira tarefa da primeira fatia que depende dele** — nunca só uma
+  pendência "VALIDAR DEPOIS", que não bloqueia nada. Vale para seletor de DOM de terceiro, formato de
+  resposta de API não documentada, layout de arquivo de parceiro, esquema de webhook, nome de campo
+  de SSO. O motivo é que nenhuma etapa posterior pega esse erro: o dublê escrito a partir da suposição
+  valida a suposição, e a suíte fica verde contra ela — code review, UX, QA, segurança e SRE revisam
+  o código contra o TRD, e aqui o TRD é a fonte do erro. Já aconteceu de um locator desenhado casar
+  zero elementos no DOM real por um defeito do próprio site de terceiro, pego só porque a tarefa de
+  investigação existia (`.claude/agents/architect.md`, passo 1c).
 - [ ] **Na seção "Riscos e trade-offs", toda afirmação sobre comportamento concreto de biblioteca
   de terceiro ou de runtime está marcada `[medido]` (com versão e como) ou `[não medido]`**, e toda
   alegação de contenção ("vira falha daquela linha") cita o ponto do código onde a contenção
