@@ -118,12 +118,14 @@ não se aplica.
    - **Marque como provisório no próprio texto onde ele aparece.** Não basta uma pendência distante
      em "VALIDAR DEPOIS": quem implementa lê a seção de desenho, não a lista de pendências.
    - **Crie uma tarefa de investigação** na decomposição de tarefas (seção 13), com Issue GitHub
-     própria como qualquer outra tarefa, e posicione-a como **primeira tarefa da primeira fatia que
-     depende dessa estrutura** — nunca como pendência "VALIDAR DEPOIS", que não bloqueia nada e pode
-     atravessar a spec inteira. A tarefa produz um artefato em `specs/<slug>/` com a estrutura real
-     capturada (snapshot ARIA/DOM, payload real, amostra do arquivo) e uma seção "correções
-     obrigatórias ao desenho do TRD"; o TRD é emendado (log de revisões) **antes** de a fatia
-     prosseguir.
+     própria como qualquer outra tarefa — e com o label `premissa-nao-validada`, para ela continuar
+     visível em `/sdd-pending` depois que esta spec encerrar (`skills/pending/SKILL.md`, passo 1b);
+     registre no corpo da issue quantos consumidores a premissa tem hoje. Posicione-a como
+     **primeira tarefa da primeira fatia que depende dessa estrutura** — nunca como pendência
+     "VALIDAR DEPOIS", que não bloqueia nada e pode atravessar a spec inteira. A tarefa produz um
+     artefato em `specs/<slug>/` com a estrutura real capturada (snapshot ARIA/DOM, payload real,
+     amostra do arquivo) e uma seção "correções obrigatórias ao desenho do TRD"; o TRD é emendado
+     (log de revisões) **antes** de a fatia prosseguir.
    - **Marcação por afirmação, dentro do artefato**: cada frase é `[medido]` (com o comando/caminho
      que produziu a observação) ou `[inferido]` (com o que precisaria ser medido para confirmar).
      Uma seção de "nota operacional"/"consequência prática" é justamente onde a inferência se

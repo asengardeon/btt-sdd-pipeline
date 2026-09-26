@@ -44,7 +44,19 @@ conteúdo do projeto, não deste pipeline — não confunda os dois.
      "em andamento" ou "bloqueado") — feature | ID | tarefa | trilha | status | issue. Specs com
      `prd.md` aprovado mas sem `trd.md` ainda (nenhuma tarefa decomposta) aparecem à parte, só
      pelo nome da feature.
-2. Apresente as duas tabelas retornadas diretamente ao usuário — não recalcule do zero a partir
+1b. **Terceira lista, que o script não enxerga: premissas não validadas com consumidores ativos.**
+   Uma tarefa de validação de premissa não entrega critério de aceite de nenhum PRD, então **não
+   pertence a fatia nenhuma** — e por isso não aparece nem na tabela de VALIDAR DEPOIS (some quando
+   a spec de origem encerra) nem na de tarefas não implementadas (nunca esteve numa decomposição).
+   Ela vive só como issue do GitHub, e envelhece enquanto seus consumidores se multiplicam a cada
+   fatia que faz a coisa certa. Liste-as com `gh issue list --repo <owner>/<repo> --state open
+   --label premissa-nao-validada --json number,title,body`, **ordenadas pelo número de consumidores**
+   (que `code-reviewer`/`security-engineer` atualizam ao propagar um controle apoiado nelas), e
+   apresente como terceira tabela: issue | premissa | consumidores | spec de origem. Sem ordenação
+   por consumidores a priorização não vê que uma delas **dobrou de tamanho na última fatia**.
+   Se o label ainda não existir no repositório, não é erro — é sinal de que nenhuma premissa dessa
+   classe foi registrada ainda.
+2. Apresente as **três** tabelas retornadas diretamente ao usuário — não recalcule do zero a partir
    dos artefatos.
 3. **Só leia os artefatos manualmente** (fallback abaixo) se o script falhar.
 4. Se o usuário pedir para resolver um item específico de VALIDAR DEPOIS (responder a pergunta
