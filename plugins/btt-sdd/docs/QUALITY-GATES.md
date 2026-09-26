@@ -470,6 +470,14 @@ gravada por quem causa a transição.
 - [ ] `code-review.md` commitado (só esse arquivo, nunca `git add -A`/`.`) e enviado (push) na
   branch do PR pelo próprio `code-reviewer` antes de devolver o resultado.
 
+**Nota sobre a amostragem acidental.** As execuções redundantes descritas abaixo funcionam, sem
+ninguém ter planejado, como amostragem de flakiness: rodar a mesma suíte N vezes sobre o mesmo
+código é um teste de repetição, e teste de repetição acha asserção instável. Já aconteceu de os dois
+runs vermelhos de uma fatia serem justamente commits só de documentação — e de um deles ter achado o
+bloqueante do code review. Suprimi-las (pela receita de short-circuit, ou por uma cadência
+condicional) exige um substituto **deliberado**, fora do caminho crítico de qualquer PR, ou o
+projeto troca um amostrador barato-mas-acidental por nenhum amostrador.
+
 **Nota sobre o custo de CI desta exigência** (vale igualmente para `ux-review.md`, `qa-report.md`,
 `security-review.md`, `sre-review.md`, `timing-log.md` e as rodadas de correção): como cada etapa
 commita e envia seu artefato na branch da fatia, **depois que o código para de mudar a branch ainda
