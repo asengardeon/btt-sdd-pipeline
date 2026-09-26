@@ -194,6 +194,24 @@ investigação continua obrigatória só para a(s) área(s) que o diff efetivame
    - Lint, testes e gate de cobertura 80% rodam em todo PR/push relevante.
    - Pipeline falha de forma clara e rápida (fail fast) — não deixa warning virar erro silencioso.
    - Cache de dependências configurado para não deixar o pipeline lento sem necessidade.
+   - **Ao quantificar desperdício de CI, meça em minutos FATURÁVEIS — não em tempo de parede.** São
+     dois comandos e uma multiplicação, e é o eixo em que o usuário decide:
+
+     1. `gh api repos/<owner>/<repo> --jq .private` — repositório **privado** tem os minutos de
+        Actions cobrados; **público** não. Num repositório público o desperdício é de latência e de
+        bloqueio de merge, não de dinheiro, e a urgência da recomendação muda de verdade.
+     2. O **multiplicador do runner**, lido do próprio `runs-on`: `ubuntu` 1×, `windows` **2×**,
+        `macos` **10×**.
+     3. O total em **minutos faturáveis** (`minutos × multiplicador`), reportado junto do total em
+        relógio — nunca só o relógio.
+
+     Sem isso o argumento sai sistematicamente mais fraco que a realidade, em todo projeto privado.
+     Já aconteceu de verdade: numa spec de três fatias, ~206 min de runner Windows foram gastos em
+     commits que, por construção (só `.md` de artefato de revisão), não podiam mudar comportamento —
+     o que são da ordem de **~412 minutos faturáveis**. O `sre` argumentou por tempo de parede em
+     duas fatias seguidas e só olhou o eixo monetário na terceira, depois de o usuário já ter
+     resolvido o problema por fora do pipeline.
+
    - **Cadência de CI: leia `docs/PROJECT-CONVENTIONS.md` antes de desenhar ou revisar o `ci.yml`.**
      O padrão deste pipeline é rodar a suíte completa a cada push, e continua sendo o padrão quando
      o arquivo não diz nada. Mas o pipeline é estruturalmente caro em minutos de runner: cada etapa
