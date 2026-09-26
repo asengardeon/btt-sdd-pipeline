@@ -176,6 +176,13 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
   `merge`), cada gate em exatamente um lugar. Cada agente carrega os 2-4 que são dele —
   `governanca` e `licoes` valem para todas as etapas, o resto é da etapa que o nomeia — em vez
   do checklist inteiro, que cabia num arquivo só mas não na atenção de nenhum agente.
+- **`AGENT-PREAMBLE.md`** / **`SKILL-PREAMBLE.md`** — o que todo agente / toda skill lê antes de
+  começar: onde ficam os docs de governança (não dentro do projeto que usa o pipeline), de onde
+  vêm os templates de `specs/_template/`, e como tratar `docs/PROJECT-CONVENTIONS.md`. São dois
+  arquivos e não um porque a única diferença real é como cada lado resolve o próprio caminho de
+  instalação. Cada agente/skill carrega uma linha de ponteiro, não o texto inteiro — antes disso
+  o mesmo bloco estava copiado 15× (skills) e 11× (agentes), ×2 pela cópia do plugin, e já tinha
+  divergido sozinho em duas variantes.
 - **`GIT-WORKFLOW.md`** — GitHub Flow aplicado ao pipeline: convenção de branch, PR, proteção de
   `main`, e como cada etapa do SDD se relaciona com branch/PR/merge.
 - **`BASELINE.md`** — **gerado condicionalmente** pelo `codebase-archaeologist` (não existe por

@@ -12,14 +12,11 @@ usabilidade e navegabilidade por um designer de produto sênior, entre a revisã
 **Sempre passe por esta skill — nunca invoque o agente `ux-designer` diretamente via Agent tool**
 (mesma regra das demais etapas de revisão 4-7, `CLAUDE.md`, seção do pipeline).
 
-## Onde ficam os docs de governança citados nesta skill
-
-Referências como `docs/GIT-WORKFLOW.md`, `docs/QUALITY-GATES.md`, `docs/SDD-WORKFLOW.md` e
-`docs/FILE-GUIDE.md` nesta skill apontam para os docs genéricos deste pipeline — **não são
-copiados para dentro de cada projeto que o usa**. Resolva-os a partir de onde esta própria skill
-está instalada (o "Base directory" desta invocação, dentro do plugin `btt-sdd`): esses docs estão
-em `docs/` na raiz **deste plugin instalado**, atualizado automaticamente a cada `claude plugin
-update` — não no projeto onde você está trabalhando agora.
+**Antes de qualquer coisa, leia `docs/SKILL-PREAMBLE.md`** — onde ficam os docs de governança
+deste pipeline e de onde vêm os templates de `specs/_template/` (nenhum dos dois vive dentro do
+projeto onde você está trabalhando). Resolva esse caminho a partir do "Base directory" desta
+invocação: via junction global, é `docs/` na raiz do repositório do pipeline; via plugin, é
+`docs/` dentro do pacote.
 
 ## Quando esta etapa se aplica
 
@@ -30,25 +27,6 @@ revisão numa correção pontual. Uma fatia 100% backend/infra sem nenhuma tela 
 etapa: registre a decisão em `specs/<slug>/ux-review.md` sob um heading padronizado `## Decisão: UX
 review pulado (justificado)` com a justificativa (mesmo padrão já usado para "QA pulado" em
 `/btt-sdd:hotfix`), em vez de simplesmente não mencionar a etapa.
-
-**E de onde vêm os templates de `specs/_template/`.** Mesma regra dos docs acima: resolva
-`<nome>.template.md` a partir da **instalação desta skill**, não da cópia dentro do projeto — no
-pacote do plugin, `skills/create-project/scaffold/specs/_template/`; via junction global,
-`specs/_template/` na raiz do repositório do pipeline.
-
-O motivo é que a cópia do projeto foi escrita no dia em que ele nasceu e **congela ali**: correção
-de template aceita depois nunca chega a um projeto já existente — o inverso do desejado, já que
-projeto maduro é o que mais roda fatia. Já custou caro duas vezes na mesma spec: a seção "Trabalho
-conduzido pelo orquestrador" do `timing-log.template.md` foi reinventada à mão, em prosa, na fatia
-seguinte à que a criou; e a coluna "`!` no título do PR" do `trd.template.md` não existia no TRD do
-projeto, então a quebra de contrato teve de ser pega pelo `sre` no ato do merge — exatamente o
-cenário que aquela coluna existe para eliminar.
-
-Use o `specs/_template/<nome>.template.md` **do projeto** apenas quando ele existir **e** divergir
-por decisão registrada em `docs/PROJECT-CONVENTIONS.md` — isso é override deliberado, não o caminho
-padrão. Se o projeto simplesmente não tem o template (comum para os mais recentes, como
-`ux-review.template.md` num projeto criado antes da etapa 4b existir), use o da instalação sem
-cerimônia: não é lacuna a reportar.
 
 ## Passos
 

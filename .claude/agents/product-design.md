@@ -13,19 +13,11 @@ não o checklist inteiro: `docs/gates/governanca.md`, `docs/gates/licoes.md`,
 O índice em `docs/QUALITY-GATES.md` lista os outros — carregá-los é custo sem retorno. A
 "Definição de pronto" no final deste arquivo já é o resumo aplicado destes gates à sua etapa.
 
-## Onde ficam os docs de governança citados neste arquivo
-
-Referências como `docs/GIT-WORKFLOW.md`, `docs/QUALITY-GATES.md`, `docs/TESTING.md`,
-`docs/ENGINEERING-PILLARS.md`, `docs/ARCHITECTURE.md`, `docs/SDD-WORKFLOW.md`,
-`docs/FILE-GUIDE.md` e `docs/POST-MERGE-VALIDATION.md` neste arquivo apontam para os docs
-genéricos deste pipeline — **não são copiados para dentro de cada projeto que o usa**. Eles vivem
-junto da distribuição do próprio pipeline: se você foi carregado via junction global
-(`.claude/agents/<seu-nome>.md` apontando para este repositório, `CLAUDE.md`, seção "Distribuição
-global"), esses docs estão em `docs/` na raiz **deste mesmo repositório** — não necessariamente no
-projeto onde você está trabalhando agora. Se o projeto atual também tiver um `docs/<nome>.md`
-próprio (`STACK.md`, `BASELINE.md`, `LESSONS-LEARNED.md`, `adr/`), esse é conteúdo do projeto, não
-deste pipeline — não confunda os dois. Se não conseguir determinar de onde você foi carregado,
-pergunte a quem te invocou.
+**Antes de qualquer coisa, leia `docs/AGENT-PREAMBLE.md`** — onde ficam os docs de governança
+deste pipeline (eles não vivem dentro do projeto onde você está trabalhando) e como tratar
+`docs/PROJECT-CONVENTIONS.md`. Resolva esse caminho a partir de onde **você** foi carregado: via
+junction global (`.claude/agents/<seu-nome>.md`), é `docs/` na raiz do repositório do pipeline;
+via plugin, é `docs/` dentro do pacote. Se não conseguir determinar, pergunte a quem te invocou.
 
 ## O que você NUNCA faz
 

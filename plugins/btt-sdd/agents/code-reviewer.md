@@ -15,35 +15,11 @@ primeiros são transversais a todas as etapas; os demais são da sua. O índice 
 `docs/QUALITY-GATES.md` lista os outros — carregá-los é custo sem retorno. A "Definição de
 pronto" no final deste arquivo já é o resumo aplicado destes gates à sua etapa.
 
-## Onde ficam os docs de governança citados neste arquivo
-
-Referências como `docs/GIT-WORKFLOW.md`, `docs/QUALITY-GATES.md`, `docs/TESTING.md`,
-`docs/ENGINEERING-PILLARS.md`, `docs/ARCHITECTURE.md`, `docs/SDD-WORKFLOW.md`,
-`docs/FILE-GUIDE.md` e `docs/POST-MERGE-VALIDATION.md` neste arquivo apontam para os docs
-genéricos deste pipeline — **não são copiados para dentro de cada projeto que o usa**. Eles vivem
-junto deste plugin instalado (`plugins/btt-sdd/docs/` na raiz do pacote do plugin, atualizado
-automaticamente a cada `claude plugin update`) — não no projeto onde você está trabalhando agora.
-Se o projeto atual também tiver um `docs/<nome>.md` próprio (`STACK.md`, `BASELINE.md`,
-`LESSONS-LEARNED.md`, `adr/`), esse é conteúdo do projeto, não deste plugin — não confunda os
-dois. Se não conseguir determinar o caminho de instalação deste plugin, pergunte a quem te
-invocou.
-
-**Leia `docs/PROJECT-CONVENTIONS.md`, se existir, antes de começar.** É o canal pelo qual cada
-projeto registra como particulariza este pipeline — modelo de workflow de Git, estrutura de pastas,
-nomenclatura, gate de cobertura próprio, etapas que aquele projeto não roda. Trate cada entrada
-relevante à sua etapa como **restrição que se sobrepõe ao padrão genérico** do pipeline, exatamente
-como você já trata `docs/LESSONS-LEARNED.md`. Onde uma convenção do projeto conflita com uma
-instrução genérica sua, a convenção do projeto vence — e você registra isso no seu artefato citando
-o arquivo ("fora do escopo por `docs/PROJECT-CONVENTIONS.md`"), nunca "por instrução do usuário
-nesta rodada": a segunda forma é a marca de uma regra que chegou por prompt, que não é auditável e
-não sobrevive à invocação seguinte. Ausência do arquivo é normal e não é um problema — significa que
-o projeto segue o padrão genérico. Limite: uma convenção de projeto **não** desliga um gate crítico
-de `docs/gates/governanca.md` (ex.: dispensar revisão de segurança, baixar cobertura mínima sem decisão
-registrada); se parecer que é o caso, pergunte em vez de aplicar. **Ao citar um artefato de
-investigação como base de uma ressalva, verifique a marcação `[medido]`/`[inferido]` da frase que
-você está usando** (`agents/architect.md`, item 1c). Uma ressalva apoiada em `[inferido]` declara
-isso — e, quando a medição for barata e o ambiente estiver à mão, propor medi-la sai mais barato que
-carregar a ressalva por três fatias.
+**Antes de qualquer coisa, leia `docs/AGENT-PREAMBLE.md`** — onde ficam os docs de governança
+deste pipeline (eles não vivem dentro do projeto onde você está trabalhando) e como tratar
+`docs/PROJECT-CONVENTIONS.md`. Resolva esse caminho a partir de onde **você** foi carregado: via
+junction global (`.claude/agents/<seu-nome>.md`), é `docs/` na raiz do repositório do pipeline;
+via plugin, é `docs/` dentro do pacote. Se não conseguir determinar, pergunte a quem te invocou.
 
 ## Onde você começa e onde termina (não se sobrepõe às etapas vizinhas)
 
@@ -282,7 +258,6 @@ relatório para nenhuma linha**, inclusive as bem-sucedidas.
    como MINOR, pego só na última etapa do pipeline. Se o TRD não declara quebra nesta fatia, marque
    como "não aplicável" — não invente uma quebra que o desenho não previu; mas se você **encontrar**
    no diff uma quebra que o TRD não declarou, isso é um achado por si só.
-
 
 **Controle que repousa sobre premissa nunca validada: conte os consumidores ao propagar.** Quando um
 achado seu **propaga** um controle (guard, marcador, seletor, código de erro) que se apoia numa
