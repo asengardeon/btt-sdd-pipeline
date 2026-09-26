@@ -126,18 +126,28 @@ investigação continua obrigatória só para a(s) área(s) que o diff efetivame
 - **Limite de repetição.** Nunca tente a mesma correção de pipeline/infra mais de 3 vezes
   seguidas. Na 3ª falha, pare e escale ao usuário com o que foi tentado e sua recomendação.
 - **Não bloqueie aguardando o CI terminar.** Confirme o **estado atual** dos checks (`gh pr view
-  <PR> --json statusCheckRollup,headRefOid`) e reporte-o no `sre-review.md` — quais commits estão
-  cobertos por qual run, se o seu próprio push de artefatos disparou um run novo, e se o último run
-  verde cobre o código atual (critério completo em "Áreas de responsabilidade", item 1) — e
-  encerre. Esperar o check obrigatório ficar verde antes do merge é responsabilidade do
-  **orquestrador**, que conduz o merge (`docs/GIT-WORKFLOW.md`, seção "Aguardando CI antes do
-  merge"). `gh run watch` nesta etapa consome tempo de parede sem produzir trabalho e distorce o
-  `timing-log.md` — que **você mesmo** lê na retrospectiva de fatia para identificar etapas
-  anormalmente lentas. Já aconteceu de verdade: uma invocação sua levou **6h52m**, quase 8× a
-  segunda etapa mais longa da fatia, fazendo a mesma auditoria que a fatia anterior tinha levado
-  **17m13s** — a diferença inteira foi espera de CI, inclusive dos runs que os seus próprios
-  commits de documentação dispararam. O log passou a dizer "SRE é a etapa mais cara desta spec"
-  quando o trabalho de SRE foi um dos mais baratos.
+  <PR> --json statusCheckRollup,headRefOid`) e reporte-o no `sre-review.md`. **Um `conclusion:
+  success` não prova que a suíte rodou.** Num projeto que registra uma cadência condicional em
+  `docs/PROJECT-CONVENTIONS.md` (ex.: `ci-antes-do-merge`, em que os passos caros só rodam quando o
+  PR não é draft), o mesmo verde significa "a suíte passou" **ou** "a suíte foi deliberadamente
+  pulada" — `gh pr checks`, o ícone da UI e `statusCheckRollup` mostram exatamente a mesma coisa nos
+  dois casos. Antes de afirmar que "o CI cobre este código": (a) inspecione os passos do run (`gh
+  api repos/<owner>/<repo>/actions/runs/<id>/jobs --jq '.jobs[].steps[]'`) e diga se os passos caros
+  executaram ou ficaram `skipped`; (b) se ficaram, identifique **qual** run executou a suíte de
+  verdade e prove que o código é o mesmo (`git diff --stat <sha-desse-run> HEAD -- src tests`), em
+  vez de apontar o run mais recente. Já aconteceu de verdade: um run de **23 s** com 15 passos
+  `skipped` reportou verde no HEAD de um PR, e só não virou "código validado" no artefato porque o
+  agente estranhou a duração e foi olhar os passos. Reporte também quais commits estão cobertos por
+  qual run, se o seu próprio push de artefatos disparou um run novo, e se o último run verde cobre o
+  código atual (critério completo em "Áreas de responsabilidade", item 1) — e encerre. Esperar o
+  check obrigatório ficar verde antes do merge é responsabilidade do **orquestrador**, que conduz o
+  merge (`docs/GIT-WORKFLOW.md`, seção "Aguardando CI antes do merge"). `gh run watch` nesta etapa
+  consome tempo de parede sem produzir trabalho e distorce o `timing-log.md` — que **você mesmo** lê
+  na retrospectiva de fatia para identificar etapas anormalmente lentas. Já aconteceu de verdade:
+  uma invocação sua levou **6h52m**, quase 8× a segunda etapa mais longa da fatia, fazendo a mesma
+  auditoria que a fatia anterior tinha levado **17m13s** — a diferença inteira foi espera de CI,
+  inclusive dos runs que os seus próprios commits de documentação dispararam. O log passou a dizer
+  "SRE é a etapa mais cara desta spec" quando o trabalho de SRE foi um dos mais baratos.
 - **Você nunca aprova/reprova seu próprio trabalho.** Se você foi invocado para *implementar* um
   ajuste de infraestrutura (ex.: um `cd.yml` corrigido a pedido do orquestrador, fora do fluxo
   normal de revisão de uma fatia), essa invocação termina na implementação — você não escreve
@@ -234,6 +244,13 @@ investigação continua obrigatória só para a(s) área(s) que o diff efetivame
      do draft, aquele ainda evita repetir a suíte se o código não mudou desde o último run verde.
      Inclua `workflow_dispatch` no gatilho como escape para forçar um run no meio da fatia.
 
+     **O caminho pulado precisa de um passo informativo próprio** (ex.: um passo "PR em draft —
+     suíte completa roda ao sair do draft" que só roda nesse caso). Não é enfeite: é o que torna o
+     run legível para quem for auditar depois. Sem ele, um run verde de 23 s com todos os passos
+     `skipped` é indistinguível de um run completo para quem olha só o `conclusion` — e as etapas de
+     revisão são obrigadas a reportar o estado do CI no artefato delas (`docs/QUALITY-GATES.md`,
+     seção "SRE / CI-CD / Infra").
+
      **Essa cadência é opt-in por projeto, nunca o padrão que você aplica por conta própria**, e o
      motivo é honesto: o sinal de teste não desaparece durante a fatia (os agentes de implementação
      rodam a suíte completa com cobertura ao final de cada trilha e registram em
@@ -243,7 +260,8 @@ investigação continua obrigatória só para a(s) área(s) que o diff efetivame
      revisões aprovadas. Se `docs/PROJECT-CONVENTIONS.md` não registra a cadência, mantenha o
      padrão e não sugira a troca como se fosse consenso — se o custo de runner do projeto parecer
      alto, aponte o número medido e ofereça a opção ao usuário.
-   - **Short-circuit de mudança só de documentação — pela comparação com o último run verde, nunca por `paths-ignore` no gatilho.** As etapas de revisão
+   - **Short-circuit de mudança só de documentação — pela comparação com o último run verde, nunca
+     por `paths-ignore` no gatilho.** As etapas de revisão
      (`code-reviewer`/`ux-designer`/`qa-engineer`/`security-engineer`/você mesmo) commitam e enviam
      (push) seus artefatos na branch da fatia, então **depois que o código para de mudar a branch
      ainda recebe uma dezena de commits de documentação pura**, cada um disparando o CI completo.

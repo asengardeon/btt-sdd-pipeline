@@ -40,23 +40,23 @@ dois.
    veredito aprovado. Se algum faltar, sugira `/btt-sdd:qa` e/ou `/btt-sdd:security` primeiro — não pule
    nenhum dos dois.
 2b. **Se a branch/PR original da fatia já foi mergeado e apagado** (comum em revisão retroativa
-   pedida depois do fato — ex.: um `/btt-sdd:hotfix` que pulou SRE no momento do merge, e o
-   usuário pede para formalizar essa etapa depois), não tente localizar/rebasear uma branch
-   inexistente: siga `docs/GIT-WORKFLOW.md`, seção "Revisão retroativa de um PR já mergeado" — crie
-   uma branch nova a partir de `origin/main`, produza só o `sre-review.md` desta rodada, e abra um
-   PR próprio (sem gate adicional, já que não há código novo a revisar). Caso contrário (branch/PR
-   ainda ativo), **confirme que a branch está sincronizada com `main` antes de revisar.** Rode `git
-   fetch origin main` e `git rev-list --count HEAD..origin/main` — se houver commits novos em `main` desde que
-   esta branch nasceu (ex.: merge de um hotfix concorrente da mesma spec enquanto esta fatia ainda
-   estava em revisão), rebaseie a branch da fatia sobre `origin/main` antes de prosseguir,
+   pedida depois do fato — ex.: um `/btt-sdd:hotfix` que pulou SRE no momento do merge, e o usuário
+   pede para formalizar essa etapa depois), não tente localizar/rebasear uma branch inexistente:
+   siga `docs/GIT-WORKFLOW.md`, seção "Revisão retroativa de um PR já mergeado" — crie uma branch
+   nova a partir de `origin/main`, produza só o `sre-review.md` desta rodada, e abra um PR próprio
+   (sem gate adicional, já que não há código novo a revisar). Caso contrário (branch/PR ainda
+   ativo), **confirme que a branch está sincronizada com `main` antes de revisar.** Rode `git fetch
+   origin main` e `git rev-list --count HEAD..origin/main` — se houver commits novos em `main` desde
+   que esta branch nasceu (ex.: merge de um hotfix concorrente da mesma spec enquanto esta fatia
+   ainda estava em revisão), rebaseie a branch da fatia sobre `origin/main` antes de prosseguir,
    resolvendo eventuais conflitos nos arquivos de artefato da spec (`code-review.md`/
    `qa-report.md`/`security-review.md`/`sre-review.md`/`trd.md`) preservando o conteúdo de ambos os
    lados quando tocarem os mesmos arquivos (`docs/GIT-WORKFLOW.md`, seção "Resolvendo conflitos de
    merge nos arquivos de artefato de revisão", tem o passo a passo de como preservar a estrutura
-   Markdown desses arquivos), e envie (push) o resultado. Já aconteceu de verdade essa
-   sincronização faltar até esta última etapa — descoberta só pelo `sre`, depois que code review, QA
-   e segurança já tinham commitado às cegas sobre uma base que gerava conflito, exigindo uma
-   invocação extra só para resolver retroativamente.
+   Markdown desses arquivos), e envie (push) o resultado. Já aconteceu de verdade essa sincronização
+   faltar até esta última etapa — descoberta só pelo `sre`, depois que code review, QA e segurança
+   já tinham commitado às cegas sobre uma base que gerava conflito, exigindo uma invocação extra só
+   para resolver retroativamente.
 3. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 3b para
    registrar a duração desta invocação. Invoque o agente `sre` (Agent tool, `subagent_type:
    "sre"`) passando o caminho do TRD (seção de pilares de engenharia/infra), do `qa-report.md` e do
@@ -173,6 +173,15 @@ dois.
    `mergeable=MERGEABLE` mas bloqueados na UI do GitHub até essa transição manual) — não é uma
    pendência a deixar para o usuário perceber sozinho. Reprovado não passa por este passo (o PR
    continua draft até nova rodada de correção).
+
+   **Num projeto com cadência `ci-antes-do-merge`** (`docs/PROJECT-CONVENTIONS.md`), esta transição
+   deixa de ser cosmética: é ela que **dispara a única execução completa da suíte da fatia inteira**,
+   e é por desenho o último ato antes do merge. Diga isso explicitamente na mensagem do passo 6, e
+   diga de quem é a espera: **do orquestrador**, não sua — você não bloqueia aguardando CI
+   (`docs/GIT-WORKFLOW.md`, seção "Aguardando CI antes do merge"). Na prática: rode `gh pr ready`,
+   informe que o run completo acabou de ser disparado por essa transição, e que o merge depende
+   dele ficar verde. Sem isso o usuário vê um PR "pronto" cujo único run de verdade ainda está
+   rodando — ou, pior, lê como pronto um verde que era do caminho pulado.
 6. **Só escreva esta mensagem depois de completar 5b, 5c e 5d (se aplicáveis) acima.** Se aprovado,
    informe que a feature está pronta ponta a ponta pelo pipeline SDD, que o PR já saiu do modo draft
    (passo 5d), e que o merge (GitHub Flow) fica a critério do usuário. Se você (ou o usuário) for
