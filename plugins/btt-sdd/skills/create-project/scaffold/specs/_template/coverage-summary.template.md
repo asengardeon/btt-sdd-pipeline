@@ -2,18 +2,20 @@
 
 > Gerado por: `<backend-developer|frontend-developer|qa-engineer>`
 > Branch: `<nome-da-branch>`
-> Commit: `<sha completo do HEAD no momento da execução>`
+> Commit (último que tocou código): `<saída de git log -1 --format=%H -- src/ frontend/>`
 > Gerado em: `<data/hora>`
 > Comando executado: `<comando de lint + teste/cobertura da stack em uso>`
 
-Este arquivo é a **evidência condensada** de uma execução real da suíte completa com cobertura —
-não um relatório bruto (nunca cole aqui o HTML/XML/JSON original, nem um dump linha-a-linha de
-arquivo 100% coberto). Extraia só o que muda uma decisão de aprovação: números agregados e as
-lacunas abaixo do gate. Qualquer etapa seguinte que precise desta evidência **lê este arquivo em
-vez de rodar a suíte de novo**, contanto que o campo `Commit` acima seja igual ao HEAD atual da
-branch (ver `TESTING.md` do pipeline, seção "Reaproveitamento do artefato de cobertura entre etapas"). Se
-divergir, quem precisar da evidência roda a suíte e regrava este arquivo — nunca segue com um
-número desatualizado.
+Este arquivo é a **evidência condensada** de uma execução real da suíte completa com cobertura — não
+um relatório bruto (nunca cole aqui o HTML/XML/JSON original, nem um dump linha-a-linha de arquivo
+100% coberto). Extraia só o que muda uma decisão de aprovação: números agregados e as lacunas abaixo
+do gate. Qualquer etapa seguinte que precise desta evidência **lê este arquivo em vez de rodar a
+suíte de novo**, contanto que o campo `Commit` acima seja igual à saída atual de `git log -1
+--format=%H -- src/ frontend/` na branch do PR — **nunca o HEAD literal** (`git rev-parse HEAD`),
+que avança a cada commit de documentação das etapas de revisão e faria o artefato parecer
+desatualizado sem nada de código ter mudado (ver `TESTING.md` do pipeline, seção "Reaproveitamento
+do artefato de cobertura entre etapas"). Se divergir, quem precisar da evidência roda a suíte e
+regrava este arquivo — nunca segue com um número desatualizado.
 
 ## Resultado da suíte
 
