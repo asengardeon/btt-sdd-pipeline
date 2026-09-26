@@ -323,7 +323,11 @@ assim:
    parentética explícita dizendo que exclui a espera de aprovação
    (`specs/_template/timing-log.template.md`, seção "O que a coluna 'Duração' mede"). Uma espera de
    aprovação de horas registrada como wall-clock puro faz a retrospectiva do `sre` concluir que a
-   implementação foi anormalmente lenta quando não foi. Diferente de PRD/TRD (passo 2c-bis), aqui
+   implementação foi anormalmente lenta quando não foi. **Se você, o orquestrador, conduziu trabalho próprio
+   nesta etapa** — investigação executada sem agente, rodadas de `AskUserQuestion` que custaram
+   tempo real de relógio, intermediação de plano/pergunta de subagente isolado —, **registre-o como
+   uma linha própria** com `Agente = orquestrador (sem agente)`, em vez de deixá-lo invisível no log
+   (`specs/_template/timing-log.template.md`, seção "Trabalho conduzido pelo orquestrador"). Diferente de PRD/TRD (passo 2c-bis), aqui
    já existe branch/PR — commit e envie (push)
    essa atualização junto com o resto do que esta rodada já for commitar (não é um push extra só
    para isso, salvo se nada mais estiver pendente — `docs/GIT-WORKFLOW.md`, regra 4, sobre agrupar
