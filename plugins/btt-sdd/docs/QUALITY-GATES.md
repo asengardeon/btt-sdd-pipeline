@@ -166,9 +166,10 @@ confirmado ainda").
   Testes-QA), com ID no formato `L-<AAAA-MM-DD>-<slug-curto>` (data da criação da entrada + slug
   curto em kebab-case do próprio achado, ex.: `L-2026-08-25-timeout-http-nao-configuravel`) e os
   campos "Detectado por", "Ocorrências" (caminho do artefato + fatia, por feature), "Padrão
-  observado", "Recomendação para implementação" e **"Classe"** (`acionável-por-agente` se o próximo
-  dev/agente consegue evitar o padrão sozinho ao implementar a partir da lição; ou `depende de ação
-  externa` se a resolução depende de uma configuração fora do código — proteção de
+  observado", "Recomendação para implementação", **"Escalonamento"** (append-only, só quando houver
+  oferta — ver o bullet sobre estado da oferta abaixo) e **"Classe"** (`acionável-por-agente` se o
+  próximo dev/agente consegue evitar o padrão sozinho ao implementar a partir da lição; ou `depende
+  de ação externa` se a resolução depende de uma configuração fora do código — proteção de
   branch/environment, segredo, permissão de infra — que nenhum agente corrige sozinho sem aprovação
   explícita do usuário). A distinção importa porque a estratégia para quebrar o ciclo de repetição é
   diferente para cada classe (próximo bullet). **Nunca use um contador sequencial simples (`L-001`,
@@ -246,6 +247,29 @@ confirmado ainda").
   tenant-escopado por uma variante entre tenants) nunca foi propagada aos demais consumidores, e a
   mesma entrada chegou à 3ª ocorrência com o próprio achado já recomendando prioridade em texto
   livre — sem nada no processo formal forçando essa priorização a acontecer.
+- [ ] **A oferta de escalonamento tem estado, e ele fica na própria entrada.** Os dois bullets
+  acima criam o gatilho da oferta; sem registrar a resposta, a oferta é refeita a cada fatia, a
+  pendência nunca converge, e o usuário é treinado a ignorá-la. A entrada ganha um campo
+  **"Escalonamento"**, append-only, uma linha por oferta: **data**, **quem ofereceu**, **o que foi
+  oferecido** e a **resposta** (`aceito` / `adiado` / `recusado` / `sem resposta`). Quem reconfirma
+  a entrada **lê esse campo antes de ofertar**, e:
+  - **Não repete a oferta idêntica** que já foi adiada ou recusada. Reofertar exige **fato novo** —
+    uma objeção derrubada por medição, um agravamento do impacto, ou uma classe de ocorrência nova.
+  - **`recusado` fecha o eixo de decisão**: a entrada continua contando ocorrências, mas para de
+    escalar, e o motivo da recusa fica escrito — para a próxima spec não reabrir a discussão nem
+    tratar o silêncio como pendência. Uma recusa deliberada do usuário precisa ser distinguível de
+    uma pergunta que nunca chegou até ele.
+  - **`adiado` ou `sem resposta` numa entrada que atinge 5 ocorrências vira issue rastreada** no
+    repositório do projeto, com a decisão pendente explicitada. É a saída que tira o item do
+    artefato de revisão — onde ele é relido por todo mundo e resolvido por ninguém.
+
+  Já aconteceu de verdade, em três entradas da mesma spec: uma na **5ª** ocorrência ("oferecido e
+  não aplicado" em três fatias seguidas), uma na **6ª spec** consecutiva, e uma com **29**
+  ocorrências e "mitigação ainda não decidida". No caso mais ilustrativo o agente **reuniu os dados
+  que resolveriam a dúvida** na própria rodada — mediu o custo do check, mostrou que não interagia
+  com a cadência nova, e derrubou a objeção plausível com um incidente real do mesmo dia — e ainda
+  assim o item ficou aberto, porque nada disso fica registrado como "já perguntado, faltando X". Na
+  spec seguinte o próximo agente recomeça do zero.
 - [ ] `backend-developer`/`frontend-developer` leem `docs/LESSONS-LEARNED.md`, se existir, na fase
   de planejamento (antes de quebrar o TRD em incrementos) e aplicam as lições da(s) área(s)
   relevante(s) à trilha como restrição adicional ao TRD, citando no plano apresentado ao usuário
