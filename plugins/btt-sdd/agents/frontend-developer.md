@@ -195,31 +195,33 @@ seguinte:
      e colidir silenciosamente para tecnologia assistiva.
 5. **Só depois de concluídos todos os incrementos da sua trilha**, rode a suíte completa com
    cobertura uma única vez (mesma regra do passo 3 acima: em primeiro plano, nunca
-   `run_in_background`) — é esse resultado (não os testes parciais dos incrementos) que conta
-   como evidência de conclusão da trilha, antes de `/btt-sdd:code-review`. Se a suíte completa
-   revelar uma regressão fora do escopo do incremento que a causou, corrija antes de reportar a
-   trilha como pronta. **Rode também o comando de build/empacotamento real de produção** (o que
-   `docs/STACK.md` documentar como tal — não um modo dev/watch nem só checagem de tipos isolada,
-   `docs/TESTING.md`, seção "Build/empacotamento real como parte da suíte completa") — sua trilha
-   quase sempre gera esse artefato. Grave o resultado dessa rodada em
-   `specs/<slug>/coverage/<fatia>-frontend.md` (a partir de
-   `specs/_template/coverage-summary.template.md`), com o commit SHA do momento da execução — é
-   esse arquivo que `code-reviewer`/`qa-engineer` reaproveitam em vez de rodar a suíte de novo
-   (`docs/TESTING.md`, seção "Reaproveitamento do artefato de cobertura entre etapas"). Se depois
-   de reportar a trilha como pronta você ainda precisar commitar de novo nessa branch (ex.:
-   corrigindo um achado de code review), rode a suíte completa de novo ao final e regrave esse
-   arquivo com o novo commit — nunca deixe um resumo apontando para um commit antigo. **Exceção:
-   se o commit adicional é só documentação** (ex.: um ajuste de texto em `docs/`/`specs/`, sem
-   tocar código-fonte nem teste), não é preciso rodar a suíte de novo — só atualize o campo
-   `Commit` de `coverage/<fatia>-frontend.md` para o SHA final, no mesmo commit de documentação, já
-   que o conteúdo verificado não mudou (isso evita forçar `code-reviewer`/`qa-engineer` a
-   reexecutar a suíte inteira só por um metadado desatualizado, sem incerteza real sobre o código —
-   já causou reverificação redundante em duas fatias seguidas de uma sessão real). Neste mesmo
-   momento, comente a transição para `implementado` na Issue GitHub associada, se houver — **mas
-   não edite a coluna Status do TRD para `implementado` aqui**: duas trilhas terminando em paralelo
-   e editando a mesma tabela na última task já causou um conflito mecânico real de merge nessa
-   coluna. Quem promove a tabela para `implementado` é o orquestrador de `/btt-sdd:implement`, numa
-   única passada, depois de confirmar as duas trilhas integradas (passo 5 dessa skill).
+   `run_in_background`) — é esse resultado (não os testes parciais dos incrementos) que conta como
+   evidência de conclusão da trilha, antes de `/btt-sdd:code-review`. Se a suíte completa revelar
+   uma regressão fora do escopo do incremento que a causou, corrija antes de reportar a trilha como
+   pronta. **Rode também o comando de build/empacotamento real de produção** (o que `docs/STACK.md`
+   documentar como tal — não um modo dev/watch nem só checagem de tipos isolada, `docs/TESTING.md`,
+   seção "Build/empacotamento real como parte da suíte completa") — sua trilha quase sempre gera
+   esse artefato. Grave o resultado dessa rodada em `specs/<slug>/coverage/<fatia>-frontend.md` (a
+   partir de `specs/_template/coverage-summary.template.md`). O campo `Commit` recebe a saída de
+   `git log -1 --format=%H -- src/ frontend/` — o último commit que tocou código —, **nunca** `git
+   rev-parse HEAD`: o HEAD avança a cada commit de documentação das etapas de revisão, e um `Commit`
+   apontando para um SHA docs-only faz quem comparar literalmente concluir "desatualizado" e
+   reexecutar a suíte à toa. É esse arquivo que `code-reviewer`/`qa-engineer` reaproveitam em vez de
+   rodar a suíte de novo (`docs/TESTING.md`, seção "Reaproveitamento do artefato de cobertura entre
+   etapas"). Se depois de reportar a trilha como pronta você ainda precisar commitar de novo nessa
+   branch (ex.: corrigindo um achado de code review), rode a suíte completa de novo ao final e
+   regrave esse arquivo com o novo commit — nunca deixe um resumo apontando para um commit antigo.
+   **Exceção: se o commit adicional é só documentação** (ex.: um ajuste de texto em
+   `docs/`/`specs/`, sem tocar código-fonte nem teste), não é preciso rodar a suíte de novo **nem
+   tocar no artefato**: como o campo `Commit` é o último commit que tocou código, ele não se move
+   num commit docs-only — continua correto sozinho (isso evita forçar `code-reviewer`/`qa-engineer`
+   a reexecutar a suíte inteira só por um metadado desatualizado, sem incerteza real sobre o código
+   — já causou reverificação redundante em duas fatias seguidas de uma sessão real). Neste mesmo
+   momento, comente a transição para `implementado` na Issue GitHub associada, se houver — **mas não
+   edite a coluna Status do TRD para `implementado` aqui**: duas trilhas terminando em paralelo e
+   editando a mesma tabela na última task já causou um conflito mecânico real de merge nessa coluna.
+   Quem promove a tabela para `implementado` é o orquestrador de `/btt-sdd:implement`, numa única
+   passada, depois de confirmar as duas trilhas integradas (passo 5 dessa skill).
 5a. **Nunca declare "suíte completa, N erros pré-existentes/não relacionados" sem reconciliar a
    composição desse N.** Liste nominalmente quais testes/arquivos compõem as falhas (rode com
    output não truncado, ou salve em arquivo e grepe a lista completa de `FAIL`/`ERROR` em vez de
@@ -231,17 +233,17 @@ seguinte:
    a última vez que essa classe de erro pré-existente foi documentada (`docs/LESSONS-LEARNED.md` ou
    um `coverage/*.md` anterior da mesma spec), isso é sinal de alerta — investigue antes de declarar
    sucesso, nunca presuma "mais do mesmo".
-5b. **Antes de reportar a trilha como concluída, confirme contra `origin/<branch>` — não só que
-   `git push` retornou sucesso.** Um push bem-sucedido só garante que os commits que existiam
-   localmente *naquele momento* foram enviados — não protege contra um commit anterior ter sido
-   perdido por um `fetch`+`rebase` concorrente no meio da sessão (`docs/GIT-WORKFLOW.md`, seção
-   "Reconciliação para a branch compartilhada da fatia"). Depois do push final desta trilha, rode
-   `git fetch origin <branch>` e confirme que cada arquivo citado no seu resumo (o commit de
+5b. **Antes de reportar a trilha como concluída, confirme contra `origin/<branch>` — não só que `git
+   push` retornou sucesso.** Um push bem-sucedido só garante que os commits que existiam localmente
+   *naquele momento* foram enviados — não protege contra um commit anterior ter sido perdido por um
+   `fetch`+`rebase` concorrente no meio da sessão (`docs/GIT-WORKFLOW.md`, seção "Reconciliação para
+   a branch compartilhada da fatia"). Depois do push final desta trilha, rode `git fetch origin
+   <branch>` e confirme que cada arquivo citado no seu resumo (o commit de
    `coverage/<fatia>-frontend.md`, a transição para `em andamento` na coluna Status do TRD, etc.)
-   está de fato presente em `origin/<branch>` — ex.: `git diff origin/<branch> -- <arquivo>` vazio, ou `git log
-   origin/<branch> -1 --stat` incluindo o commit esperado. Se algo estiver faltando, refaça o
-   commit/push antes de declarar sucesso — nunca reporte "commitado e enviado" só porque o comando
-   `git push` não retornou erro.
+   está de fato presente em `origin/<branch>` — ex.: `git diff origin/<branch> -- <arquivo>` vazio,
+   ou `git log origin/<branch> -1 --stat` incluindo o commit esperado. Se algo estiver faltando,
+   refaça o commit/push antes de declarar sucesso — nunca reporte "commitado e enviado" só porque o
+   comando `git push` não retornou erro.
 5c. **Se esta trilha tocou mais de um ponto de entrada estruturalmente equivalente** (mesma
    correção/comportamento aplicado a N call-sites com o mesmo padrão — ex.: N formulários usando o
    mesmo hook compartilhado, N componentes de tela com a mesma interação), confirme, antes de
