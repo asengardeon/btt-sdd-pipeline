@@ -36,6 +36,19 @@ próprio (`STACK.md`, `BASELINE.md`, `LESSONS-LEARNED.md`, `adr/`), esse é cont
 deste pipeline — não confunda os dois. Se não conseguir determinar de onde você foi carregado,
 pergunte a quem te invocou.
 
+**Leia `docs/PROJECT-CONVENTIONS.md`, se existir, antes de começar.** É o canal pelo qual cada
+projeto registra como particulariza este pipeline — modelo de workflow de Git, estrutura de pastas,
+nomenclatura, gate de cobertura próprio, etapas que aquele projeto não roda. Trate cada entrada
+relevante à sua etapa como **restrição que se sobrepõe ao padrão genérico** do pipeline, exatamente
+como você já trata `docs/LESSONS-LEARNED.md`. Onde uma convenção do projeto conflita com uma
+instrução genérica sua, a convenção do projeto vence — e você registra isso no seu artefato citando
+o arquivo ("fora do escopo por `docs/PROJECT-CONVENTIONS.md`"), nunca "por instrução do usuário
+nesta rodada": a segunda forma é a marca de uma regra que chegou por prompt, que não é auditável e
+não sobrevive à invocação seguinte. Ausência do arquivo é normal e não é um problema — significa que
+o projeto segue o padrão genérico. Limite: uma convenção de projeto **não** desliga um gate crítico
+de `docs/QUALITY-GATES.md` (ex.: dispensar revisão de segurança, baixar cobertura mínima sem
+decisão registrada); se parecer que é o caso, pergunte em vez de aplicar.
+
 ## Pré-condição
 
 Você exige `specs/<slug>/trd.md` existente. Se não existir, diga ao usuário para rodar

@@ -73,6 +73,23 @@ documento é a referência única para não duplicar a lista em cada um deles.
   concreto (o que o operador do plugin tiver disponível para isolar uma sub-tarefa) não é definido
   por este template — só o princípio de não reter no contexto principal o que só serve para chegar
   à conclusão.
+- [ ] **Instrução de processo permanente que o usuário emite no meio de uma execução é registrada em
+  `docs/PROJECT-CONVENTIONS.md` na mesma hora — não repassada no prompt de cada agente seguinte.**
+  Distinga da decisão pontual sobre esta fatia (essa vive no artefato da etapa): é permanente quando
+  vale para as fatias e specs seguintes deste projeto ("aqui não se roda teste de mutação por
+  fatia", "aqui o gate de cobertura é 70%", "aqui e2e roda só no CI", "aqui não existe `infra/`").
+  Nesse caso, o orquestrador acrescenta uma linha datada a `docs/PROJECT-CONVENTIONS.md` — criando o
+  arquivo se não existir — em vez de repetir a frase no prompt de cada agente. O canal do prompt é o
+  mais caro (repetido a cada invocação) e o mais frágil (desaparece quando alguém esquece, ou quando
+  a sessão muda). Já aconteceu de verdade: uma regra de processo emitida no meio de uma fatia foi
+  repassada manualmente **quatro vezes** (implementação, revisão de código, QA, segurança), e cada
+  agente a transcreveu no relatório como "instrução explícita do usuário nesta rodada" — a marca de
+  algo que chegou por prompt e não por documento, sem garantia nenhuma de chegar à fatia seguinte.
+  Todos os agentes do pipeline leem esse arquivo como restrição que se sobrepõe ao padrão genérico
+  (`.claude/agents/*.md`, bloco de leitura obrigatória no topo), então uma linha ali substitui os quatro
+  repasses — e o agente passa a poder escrever "fora do escopo por `docs/PROJECT-CONVENTIONS.md`" em
+  vez de "por instrução do usuário nesta rodada": a diferença entre uma regra auditável e um boato
+  repassado.
 - [ ] **Pergunta que um subagente isolado não conseguiu fazer é recolhida por quem o invocou, no
   mesmo turno — não vira pendência.** Um agente rodando isolado/assíncrono não tem
   `AskUserQuestion`; registrar a pergunta como "VALIDAR DEPOIS" no próprio relatório é o fallback
