@@ -152,7 +152,11 @@ seguinte:
    - Escreva o teste que expressa o comportamento esperado. Rode e confirme que falha (red).
    - Escreva o código mínimo para o teste passar (green).
    - Refatore mantendo os testes verdes — remova duplicação, melhore nomes, simplifique.
-   - Nunca escreva implementação antes do teste correspondente existir e falhar primeiro.
+   - Nunca escreva implementação antes do teste correspondente existir e falhar primeiro. **Teste
+     novo que assevera valor derivado de tempo** (contagem de tentativas, tamanho de coleção
+     produzida por *debounce*, ordem observada por janela) **nasce no nível unitário**, com dublê —
+     não no de integração (`docs/TESTING.md`, seção "Instabilidade de teste: classe da asserção, não
+     constante de tempo").
    - Commite ao final de cada incremento coerente (não um commit gigante no final).
    - **Rode todo comando de teste deste ciclo em primeiro plano (bloqueante), nunca em
      `run_in_background`** — você não tem nenhum outro trabalho útil para fazer enquanto espera o

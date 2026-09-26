@@ -138,6 +138,36 @@ teste para produção.
   domínio/aplicação, ou que um caso de uso está fazendo coisa demais. A correção correta costuma ser
   revisar o TRD com o `architect`, não forçar um teste artificial.
 
+## Instabilidade de teste: classe da asserção, não constante de tempo
+
+**Ajustar a constante de tempo de uma asserção instável não é correção — é adiamento.** Já foi
+medido ao vivo: a mesma asserção, com a constante **20× maior**, caiu no primeiro CI sob contenção.
+As duas correções legítimas são:
+
+1. **Relocar** a asserção para o nível em que ela não depende de tempo — tipicamente o unitário, com
+   dublê no lugar do recurso real.
+2. Quando ela precisa mesmo rodar contra o recurso real, **trocar a dependência de relógio por um
+   sinal explícito controlado pelo teste**: o teste libera o passo, em vez de torcer para ele caber
+   numa janela.
+
+**Classifique antes de contar.** Ao registrar uma ocorrência de instabilidade (em
+`docs/LESSONS-LEARNED.md` ou num artefato de revisão), diga de qual população ela é:
+
+- **(a) Contenção** — há **timeout no rastro**. Não é corrigível por reescrita do teste; é ambiente.
+- **(b) Asserção presa a relógio** — **falha de asserção, sem timeout**: `Assert.Equal`/`Assert.Single`
+  sobre valor que depende de quanto tempo algo levou (contagem de tentativas via navegador, coleção
+  produzida por *debounce*, janela de atraso). **Corrigível**, e comprovadamente.
+
+Um contador que soma as duas faz a instabilidade parecer intratável e desencoraja a correção da
+metade que tem conserto: numa entrada real com 27 ocorrências, **cerca de um terço** era (b). A
+assinatura de (b) é fácil de perder — várias ocorrências se manifestaram como falha de contagem de
+tentativas, e procurar só por "timeout" no rastro deixa a ocorrência passar.
+
+**Asserção sobre valor derivado de tempo nasce no nível unitário.** Contagem de tentativas, tamanho
+de coleção produzida por *debounce*, ordem observada por janela — o custo medido da alternativa é
+claro: 22 testes unitários novos custaram **0 s** de suíte (490 ms contra 492 ms, dentro do ruído),
+enquanto 18 de integração custaram **36 s**. 316 testes unitários rodam em 451 ms, determinísticos.
+
 ## Reaproveitamento do artefato de cobertura entre etapas
 
 Rodar a suíte completa com cobertura é caro (tempo e, quando uma sessão do Claude Code lê o

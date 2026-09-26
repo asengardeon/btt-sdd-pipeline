@@ -139,7 +139,10 @@ worktree, não no working directory principal.
 
 1. Leia `specs/<slug>/prd.md` e `specs/<slug>/trd.md`, identifique a fatia sendo validada nesta
    rodada e o PR correspondente. Extraia só os critérios de aceite cobertos por essa fatia. Leia
-   também `docs/LESSONS-LEARNED.md`, se existir.
+   também `docs/LESSONS-LEARNED.md`, se existir. Ao avaliar a correção de um teste que era instável,
+   pergunte se mudou a **classe** da asserção ou só a **constante de tempo**: aumentar timeout/delay
+   é adiamento, não correção (`docs/TESTING.md`, seção "Instabilidade de teste: classe da asserção,
+   não constante de tempo").
 2. Reaproveite a evidência de teste/cobertura em vez de regenerá-la por padrão
    (`docs/TESTING.md`, seção "Reaproveitamento do artefato de cobertura entre etapas"): procure
    `specs/<slug>/coverage/<fatia>-backend.md`/`<fatia>-frontend.md` (conforme a trilha desta
