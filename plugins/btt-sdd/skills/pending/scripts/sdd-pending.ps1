@@ -12,6 +12,14 @@
 # lido pela codepage do sistema no Windows PowerShell 5.1, e caracteres
 # multibyte podem quebrar o parser ou sair como mojibake na saida.
 
+# Toda leitura de artefato passa "-Encoding UTF8" de proposito (issue #334): os .md
+# do pipeline sao UTF-8 sem BOM, e no Windows PowerShell 5.1 o default de Get-Content
+# e a codepage ANSI do sistema, nao UTF-8. Sem o parametro, todo texto acentuado
+# extraido das tabelas sai como mojibake (cada acento vira dois caracteres), o que
+# desalinha as colunas e entrega ao agente um texto corrompido de pergunta, contexto e
+# nome de tarefa. No PowerShell 7+ o parametro e aceito e nao muda nada, entao serve as duas
+# versoes sem condicional.
+
 param([string]$Slug)
 
 $SpecsDir = "specs"
@@ -116,7 +124,7 @@ $allTaskRows = @()
 $specsSemTrd = @()
 
 if (Test-Path "docs/BASELINE.md") {
-  $content = Get-Content "docs/BASELINE.md" -Raw
+  $content = Get-Content "docs/BASELINE.md" -Raw -Encoding UTF8
   foreach ($row in (Get-PendingRows -Content $content)) {
     $allRows += [PSCustomObject]@{ Feature = "(baseline)"; Artefato = "BASELINE"; Id = $row.Id; Pergunta = $row.Pergunta; Contexto = $row.Contexto }
   }
@@ -130,7 +138,7 @@ if (Test-Path $SpecsDir) {
     foreach ($f in $Files) {
       $file = Join-Path $d.FullName $f
       if (-not (Test-Path $file)) { continue }
-      $content = Get-Content $file -Raw
+      $content = Get-Content $file -Raw -Encoding UTF8
       foreach ($row in (Get-PendingRows -Content $content)) {
         $allRows += [PSCustomObject]@{ Feature = $d.Name; Artefato = $f; Id = $row.Id; Pergunta = $row.Pergunta; Contexto = $row.Contexto }
       }
@@ -139,7 +147,7 @@ if (Test-Path $SpecsDir) {
     $trdFile = Join-Path $d.FullName "trd.md"
     $prdFile = Join-Path $d.FullName "prd.md"
     if (Test-Path $trdFile) {
-      $content = Get-Content $trdFile -Raw
+      $content = Get-Content $trdFile -Raw -Encoding UTF8
       foreach ($row in (Get-OpenTaskRows -Content $content -SourcePath $trdFile)) {
         $allTaskRows += [PSCustomObject]@{ Feature = $d.Name; Id = $row.Id; Tarefa = $row.Tarefa; Trilha = $row.Trilha; Status = $row.Status; Issue = $row.Issue }
       }
