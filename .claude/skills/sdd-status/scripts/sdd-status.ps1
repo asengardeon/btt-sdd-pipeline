@@ -13,6 +13,15 @@
 # lido pela codepage do sistema no Windows PowerShell 5.1, e caracteres
 # multibyte podem quebrar o parser.
 
+# Toda leitura de artefato passa "-Encoding UTF8" de proposito (issue #334): os .md
+# do pipeline sao UTF-8 sem BOM, e no Windows PowerShell 5.1 o default de Get-Content
+# e a codepage ANSI do sistema, nao UTF-8. Sem o parametro, cada acento do artefato
+# chega como DOIS caracteres em vez de um, e os regexes que reservam so um ponto para
+# ele ("Hist.rico de aprova", "conclu.do") nunca casam - /sdd-status reportava "veredito nao
+# identificado" para toda spec cujo veredito estivesse no historico de aprovacoes,
+# silenciosamente e so no PS 5.1 (Git Bash e pwsh 7+ ja liam UTF-8). No PowerShell 7+
+# o parametro e aceito e nao muda nada, entao serve as duas versoes sem condicional.
+
 param([string]$Slug)
 
 # Devolve o veredito da RODADA MAIS RECENTE de um artefato de revisao: prefere a
@@ -118,7 +127,7 @@ function Get-PrMergedState {
 function Test-FatiaPendente {
   param([string]$TrdPath)
   if (-not (Test-Path $TrdPath)) { return $false }
-  $content = Get-Content $TrdPath -Raw
+  $content = Get-Content $TrdPath -Raw -Encoding UTF8
   $inSec = $false
   $headerSeen = $false
   $statusIdx = -1
@@ -271,7 +280,7 @@ foreach ($d in $dirs) {
   foreach ($stage in $Stages) {
     $file = Join-Path $d.FullName "$stage.md"
     if (-not (Test-Path $file)) { continue }
-    $content = Get-Content $file -Raw
+    $content = Get-Content $file -Raw -Encoding UTF8
 
     if ($stage -eq "prd" -or $stage -eq "trd") {
       if ($content -match '(?m)^\s*-\s*\[x\]\s*Aprovado por') {
@@ -343,7 +352,7 @@ foreach ($d in $dirs) {
             continue
           }
 
-          $targetContent = Get-Content $targetFile -Raw
+          $targetContent = Get-Content $targetFile -Raw -Encoding UTF8
           # @(...) força coleção mesmo com um único match — sem isso, um resultado só vira
           # string escalar e "[-1]" pega o último caractere da data, não a data inteira.
           $approveDates = @([regex]::Matches($targetContent, '(?i)(?:re)?aprovad[oa] por.*?em\s+(\d{4}-\d{2}-\d{2})') |
