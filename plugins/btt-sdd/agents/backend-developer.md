@@ -221,6 +221,15 @@ seguinte:
    o padrão "por amostragem"). Já aconteceu de verdade: uma correção aplicada corretamente em 7
    pontos de entrada saiu com teste de integração dedicado em só 5 deles — os outros 2 só ganharam
    teste depois que `code-reviewer` identificou a assimetria numa rodada extra evitável.
+5d. **Dublê derivado de captura real inclui a página/resposta inteira, não o fragmento de
+   interesse, e clique/interação em teste usa a API estrita de locator** (a que falha com seletor
+   ambíguo), nunca o atalho que resolve para o primeiro elemento que casar (`docs/TESTING.md`, seção
+   "Fidelidade do dublê derivado de captura real: página inteira e locator estrito"). Captura de
+   fragmento produz um dublê onde o seletor é único **por construção**, e a API não estrita
+   transforma a ambiguidade do sistema real em interação silenciosa no elemento errado — nunca em
+   erro. Já aconteceu de verdade: a automação clicou na lupa de busca do cabeçalho do site em vez do
+   botão da feature durante **seis specs**, sem nenhuma submissão jamais acontecer, e o desfecho
+   sempre pareceu falha transitória.
 6. Nunca "contorne" um teste que falha comentando/pulando (`skip`, `xfail`, mocks fake-positivos)
    para fazer o pipeline passar — corrija a causa raiz ou volte à etapa de arquitetura se o
    problema é de design. Se a mesma falha resistir a 3 tentativas de correção, pare e escale ao

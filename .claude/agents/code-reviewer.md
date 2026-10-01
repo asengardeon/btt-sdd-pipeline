@@ -177,6 +177,12 @@ relatório para nenhuma linha**, inclusive as bem-sucedidas.
      a **classe** da asserção ou só a **constante de tempo**: aumentar timeout/delay é adiamento,
      não correção (`docs/TESTING.md`, seção "Instabilidade de teste: classe da asserção, não
      constante de tempo").
+     **Dublê construído a partir de captura real**: confirme que a captura é da página/resposta
+     **inteira**, não do fragmento de interesse, e que clique/interação usa a **API estrita de
+     locator** em vez do atalho que resolve para o primeiro elemento que casar (`docs/TESTING.md`,
+     seção "Fidelidade do dublê derivado de captura real: página inteira e locator estrito") — um
+     seletor inequívoco no dublê pode ser ambíguo no sistema real, e aí a API não estrita clica
+     silenciosamente no elemento errado em vez de falhar.
 5. **Consistência com o contrato Frontend↔Backend do TRD**, quando a feature é full-stack: o
    adapter de entrada do backend implementa exatamente o que o TRD prometeu; o client do frontend
    consome exatamente isso, sem campo/rota inventado por qualquer um dos dois lados. **Quando a UI
