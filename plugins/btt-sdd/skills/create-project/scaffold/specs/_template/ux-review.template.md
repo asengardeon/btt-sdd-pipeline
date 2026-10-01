@@ -8,7 +8,12 @@
 > Data:
 
 Este documento é editado in-place a cada fatia (nunca recriado do zero) — ver seção "Histórico de
-aprovações por fatia" abaixo para o veredito de fatias anteriores já mergeadas.
+aprovações por fatia" abaixo para o veredito de fatias anteriores já mergeadas. **Quem lê este
+arquivo numa rodada seguinte lê a tabela de histórico inteira, a rodada vigente e a penúltima** —
+rodadas mais antigas são referência sob demanda, não leitura obrigatória (`AGENT-PREAMBLE.md` do
+pipeline, seção "Artefato in-place que acumulou rodadas"). Identifique a rodada que você acrescenta
+pelo mesmo identificador da tabela (`F-N` ou `hotfix-<data>`), para que a vigente seja localizável
+sem varrer o arquivo.
 
 ## 1. Veredito geral (fatia desta rodada)
 
