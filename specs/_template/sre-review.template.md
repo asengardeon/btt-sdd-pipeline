@@ -7,10 +7,14 @@
 > Data:
 
 Este documento é editado in-place a cada fatia (nunca recriado do zero) — ver seção "Histórico de
-aprovações por fatia" abaixo para o veredito de fatias anteriores já mergeadas. Boa parte do
-checklist abaixo tende a se repetir sem mudança entre fatias da mesma feature — quando não houver
-mudança relevante desde a última fatia aprovada, diga isso explicitamente em vez de preencher
-evidência idêntica sem necessidade.
+aprovações por fatia" abaixo para o veredito de fatias anteriores já mergeadas. **Quem lê este
+arquivo numa rodada seguinte lê a tabela de histórico inteira, a rodada vigente e a penúltima** —
+rodadas mais antigas são referência sob demanda, não leitura obrigatória (`docs/AGENT-PREAMBLE.md`,
+seção "Artefato in-place que acumulou rodadas"). Identifique a rodada que você acrescenta pelo mesmo
+identificador da tabela (`F-N` ou `hotfix-<data>`), para que a vigente seja localizável sem varrer o
+arquivo. Boa parte do checklist abaixo tende a se repetir sem mudança entre fatias da mesma feature
+— quando não houver mudança relevante desde a última fatia aprovada, diga isso explicitamente em vez
+de preencher evidência idêntica sem necessidade.
 
 ## 1. Veredito geral (fatia desta rodada)
 

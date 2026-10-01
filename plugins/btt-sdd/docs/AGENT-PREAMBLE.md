@@ -42,3 +42,42 @@ vez de aplicar.
 `[medido]`/`[inferido]` da frase que você está usando** (`agents/architect.md`, item 1c). Uma
 ressalva apoiada em `[inferido]` declara isso — e, quando a medição for barata e o ambiente
 estiver à mão, propor medi-la sai mais barato que carregar a ressalva por três fatias.
+
+## Artefato in-place que acumulou rodadas: leia a vigente e a penúltima, não todas
+
+Os artefatos de revisão (`code-review.md`, `ux-review.md`, `qa-report.md`, `security-review.md`,
+`sre-review.md`) são editados **in-place** a cada fatia/rodada, nunca recriados — então eles
+crescem indefinidamente, e numa spec com muitas rodadas o arquivo inteiro deixa de caber
+confortavelmente no seu contexto. **O arquivo continua inteiro: o que muda é quanto dele você
+lê.**
+
+- **Sempre leia por completo** a tabela "Histórico de aprovações por fatia" (é o índice de todas
+  as rodadas, e é curta) e **o conteúdo da rodada vigente**.
+- **Leia também a penúltima rodada** — é a que diz se um achado desta rodada é reincidência e se
+  uma ressalva anterior foi resolvida.
+- **Rodadas anteriores à penúltima são referência consultada sob demanda**, não leitura
+  obrigatória: vá buscar uma delas quando a tabela de histórico, um achado desta rodada ou uma
+  flag de revalidação apontar para ela — não "por completude".
+
+**Exceções em que o seu próprio passo exige alcançar mais atrás** — nesses casos leia o que o
+passo pedir, sem limite de duas rodadas:
+
+- **Auditoria completa da fatia final** (`security-engineer`, `sre`): cobre o diff acumulado desde
+  a última rodada registrada como `Profundidade = completo`, que pode estar várias fatias atrás
+  (`docs/gates/seguranca.md`, `docs/gates/sre.md`).
+- **Promoção de lição aprendida**: confirmar a 2ª ocorrência de um padrão exige procurar o achado
+  equivalente em revisões anteriores (`docs/gates/licoes.md`).
+- **Qualquer flag `requer revalidação` em aberto**, que pode ter sido registrada numa rodada
+  antiga.
+
+**O lado de quem escreve**, que é o que torna a leitura limitada possível: identifique a rodada no
+cabeçalho da seção que você acrescenta (`F-N` ou `hotfix-<data>`, o mesmo identificador que você
+usa na tabela de histórico), para que a próxima pessoa/agente encontre a vigente sem varrer o
+arquivo. E nunca reescreva rodada anterior para "enxugar" o arquivo — essas tabelas e seções são
+append-only (`docs/gates/governanca.md`); limitar leitura é escolha de quem lê, nunca apagamento
+de histórico.
+
+Já aconteceu de verdade: um `code-review.md` de **3.216 linhas**, com nove seções de rodadas
+históricas, era relido in-place por cada revisor seguinte só para encontrar a rodada vigente — e,
+no mesmo PR, um revisor que confiou num cabeçalho antigo em vez da tabela quase revisou a fatia
+errada.

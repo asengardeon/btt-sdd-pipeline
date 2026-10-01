@@ -200,7 +200,7 @@ def canonizar(texto: str) -> str:
     t = re.sub(r"(?<![\w:-])/sdd-([a-z][a-z-]*)", r"«cmd:\1»", t)
     # Docs do pipeline: `docs/TESTING.md` (raiz/projeto) e `TESTING.md` (dentro do scaffold).
     t = re.sub(r"(?:docs/)?(GIT-WORKFLOW|QUALITY-GATES|TESTING|ENGINEERING-PILLARS|ARCHITECTURE"
-               r"|SDD-WORKFLOW|FILE-GUIDE|POST-MERGE-VALIDATION)\.md", r"«doc:\1»", t)
+               r"|SDD-WORKFLOW|FILE-GUIDE|POST-MERGE-VALIDATION|AGENT-PREAMBLE|SKILL-PREAMBLE)\.md", r"«doc:\1»", t)
     # Gates por etapa (#328): `docs/gates/<n>.md` (raiz/projeto) e `gates/<n>.md` (scaffold).
     t = re.sub(r"(?:docs/)?gates/([a-z-]+)\.md", r"«gate:\1»", t)
     # Nome da skill no frontmatter: `name: sdd-<n>` (raiz) e `name: <n>` (plugin).
