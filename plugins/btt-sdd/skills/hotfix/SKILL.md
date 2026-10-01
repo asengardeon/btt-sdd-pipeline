@@ -123,6 +123,15 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    afetada tiver um — `docs/TESTING.md`) ao final, gravando o resumo em
    `specs/<slug-da-spec-relacionada-ou-dedicada>/coverage/hotfix-<data>-<trilha>.md`, mesmo padrão
    de qualquer fatia.
+   **Toda rodada que regrava esse arquivo atualiza o campo `Commit` com o commit da própria rodada**,
+   nunca herda o da primeira (`specs/_template/coverage-summary.template.md`) — é desse campo que a
+   etapa seguinte decide se pode reaproveitar a evidência em vez de rodar a suíte de novo, e num
+   hotfix com várias rodadas de correção no mesmo PR o campo desatualizado faz uma execução velha
+   passar por fresca. Já aconteceu de verdade: após três rodadas, o cabeçalho ainda apontava para o
+   commit da rodada 1, pego por uma rodada de code review. **E a base de qualquer diff desta rodada é
+   calculada** (`git merge-base HEAD main`), nunca lida da coluna `Commit` de uma tabela de histórico:
+   com *squash merge*, o SHA registrado lá deixa de ser ancestral de `main`, e um revisor que confiar
+   nele revisa o diff errado.
 4a. **Todo valor medido ao vivo é substituído por equivalente não atribuível antes de entrar em
    qualquer lugar — inclusive na instrução que você passa ao agente.** A medição com dado real é
    legítima (foi ela que provou o defeito), mas o valor medido não viaja cru: substitua no momento em

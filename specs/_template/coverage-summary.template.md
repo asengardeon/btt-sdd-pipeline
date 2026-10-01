@@ -2,7 +2,7 @@
 
 > Gerado por: `<backend-developer|frontend-developer|qa-engineer>`
 > Branch: `<nome-da-branch>`
-> Commit (último que tocou código): `<saída de git log -1 --format=%H -- src/ frontend/>`
+> Commit (último que tocou código) **desta rodada**: `<saída de git log -1 --format=%H -- src/ frontend/>`
 > Gerado em: `<data/hora>`
 > Comando executado: `<comando de lint + teste/cobertura da stack em uso>`
 
@@ -16,6 +16,22 @@ que avança a cada commit de documentação das etapas de revisão e faria o art
 desatualizado sem nada de código ter mudado (ver `docs/TESTING.md`, seção "Reaproveitamento do
 artefato de cobertura entre etapas"). Se divergir, quem precisar da evidência roda a suíte e regrava
 este arquivo — nunca segue com um número desatualizado.
+
+**O cabeçalho acima é da rodada vigente, nunca histórico.** Toda rodada que regrava este arquivo —
+inclusive a 2ª, 3ª e 4ª rodadas de correção de um mesmo PR — **atualiza** `Branch`, `Commit` e `Gerado
+em` com os valores da própria rodada. Herdar o `Commit` da primeira rodada é pior do que não ter o
+campo: é **desse** campo que o protocolo de reaproveitamento de evidência parte, então um SHA velho faz
+a etapa seguinte reaproveitar como fresca uma execução que não cobre o código atual. Já aconteceu de
+verdade: depois de três rodadas de correção, o cabeçalho ainda apontava para o commit da rodada 1 — pego
+por uma rodada de code review, não por quem escreveu o arquivo.
+
+**A base de qualquer diff é calculada, nunca lida de tabela de artefato.** Use sempre `git merge-base
+HEAD main` (ou a branch base do projeto). O SHA que a coluna `Commit` das tabelas "Histórico de
+aprovações por fatia" registra é capturado **antes** do merge daquela fatia; com *squash merge*
+(`docs/GIT-WORKFLOW.md`) ele deixa de ser ancestral de `main` e, usado como base, produz um diff
+gigante e errado. Já aconteceu de verdade: um `security-engineer` só revisou o diff certo porque apurou
+a base por conta própria, depois de `merge-base` refutar o commit que os cabeçalhos "vigente" dos
+artefatos nomeavam — se tivesse confiado na tabela, teria revisado outra fatia.
 
 ## Resultado da suíte
 
