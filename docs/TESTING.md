@@ -123,6 +123,40 @@ nunca para a suíte automatizada do dia a dia. Se um teste "precisa" de produç�
 forma repetível, isso é sinal de que falta um emulador/container equivalente, não motivo para
 apontar o teste para produção.
 
+## Valor medido ao vivo entra no repositório já substituído por equivalente não atribuível
+
+Medir o defeito ao vivo contra o sistema real, com os dados reais de quem opera, é legítimo e às
+vezes é a única coisa que prova a causa. **O que não pode é o valor medido viajar cru para o
+repositório.** Todo valor observado numa medição ao vivo entra em artefato de spec, teste, dublê,
+mock, comentário ou XML doc **já substituído** por um equivalente não atribuível a pessoa real — e a
+substituição acontece no momento em que o valor sai da medição, não numa limpeza posterior.
+
+**Substituir não é perder evidência.** Preserve a prosa e a **assinatura do incidente** — contagem de
+dígitos, zeros à esquerda, presença/ausência de separadores, resultado da máscara, qual validação o
+valor passa ou falha —, porque é a assinatura que explica o defeito, nunca a identidade do titular.
+Um documento que diz "CPF de 11 dígitos com dígitos verificadores válidos, formatado sem pontuação,
+que a máscara rejeitou" tem exatamente o mesmo valor de evidência que o número real, e nenhum do
+risco.
+
+Vale para os quatro destinos pelos quais o dado real costuma entrar, em ordem de frequência
+observada:
+
+- **Instrução passada a um agente** — o caminho mais fácil de esquecer, porque não é um arquivo:
+  repassar os valores medidos é o que torna a instrução verificável, e é por ali que eles chegam ao
+  código que o agente escreve.
+- **Teste/fixture/dublê** derivado da medição.
+- **Artefato de spec** (relatório de revisão, resumo de cobertura, log de validação ao vivo).
+- **Comentário/XML doc** no código de produção.
+
+Já aconteceu de verdade: numa rodada de hotfix, dados reais do operador — CPF com dígitos
+verificadores válidos, telefone, nome e e-mail — alcançaram **seis** arquivos do repositório,
+incluindo **código de produção** (XML doc de um matcher) e três arquivos de teste. Só apareceu porque
+o `security-engineer` conferiu os dígitos do CPF em vez de presumir que era placeholder sintético, e
+custou **uma rodada inteira** de implementação só para redigir. O achado registra explicitamente que
+não foi desatenção do desenvolvedor: nenhum lugar do pipeline dizia que artefato e teste usam dado
+não atribuível. E o risco escala — naquela rodada o titular era o próprio operador; a execução real
+seguinte usa dado de cliente.
+
 ## Fidelidade do dublê derivado de captura real: página inteira e locator estrito
 
 Um mock construído a partir de uma captura do sistema real (DOM de uma página, resposta de uma API,

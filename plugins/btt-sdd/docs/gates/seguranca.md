@@ -20,6 +20,15 @@
 - [ ] Superfície de ataque/fronteiras de confiança identificadas para a feature.
 - [ ] Cada categoria do OWASP Top 10 tem avaliação (aplicável com achado, ou não aplicável com
   justificativa) — nunca em branco.
+- [ ] **Nenhum dado atribuível a pessoa real em artefato de spec, teste, dublê/mock, comentário ou
+  XML doc** — o valor observado numa medição ao vivo entra no repositório já substituído por
+  equivalente não atribuível, preservando a assinatura do incidente (contagem de dígitos, zeros à
+  esquerda, máscara aplicada, qual validação ele passa ou falha), nunca a identidade do titular
+  (`docs/TESTING.md`, seção "Valor medido ao vivo entra no repositório já substituído por equivalente
+  não atribuível"). Inclui o caminho menos visível: a **instrução passada a um agente**, que não é
+  arquivo nenhum e é por onde o dado real costuma entrar. Não presuma que um identificador bem
+  formado num teste é placeholder sintético — confira o dígito verificador: já aconteceu de verdade,
+  e dados reais do operador alcançaram seis arquivos, dois de código de produção.
 - [ ] Nenhum segredo em texto claro na aplicação (código, config, log).
 - [ ] Autenticação/autorização revisada em todo caminho relevante, quando a feature tem noção de
   identidade/permissão.
