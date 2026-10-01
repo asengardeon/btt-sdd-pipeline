@@ -123,6 +123,35 @@ nunca para a suíte automatizada do dia a dia. Se um teste "precisa" de produç�
 forma repetível, isso é sinal de que falta um emulador/container equivalente, não motivo para
 apontar o teste para produção.
 
+## Fidelidade do dublê derivado de captura real: página inteira e locator estrito
+
+Um mock construído a partir de uma captura do sistema real (DOM de uma página, resposta de uma API,
+layout de arquivo) só é evidência válida **para o que a captura inclui**. Duas regras, as duas vindas
+do mesmo incidente real:
+
+- **A captura inclui a página/resposta inteira, não só o fragmento de interesse.** Capturar apenas o
+  formulário (ou apenas o objeto que importa) produz um dublê onde o elemento procurado é único **por
+  construção** — e um teste verde contra ele não disse nada sobre o sistema real, onde o mesmo seletor
+  pode casar com mais de um elemento.
+- **Teste que exercita clique/interação usa a API estrita de locator** — a que **falha** quando o
+  seletor casa com mais de um elemento —, nunca o atalho que resolve para "o primeiro que casar"
+  (ex.: `page.click("<seletor>")`). Com a API não estrita, ambiguidade de seletor nunca vira erro:
+  vira **interação silenciosa no elemento errado**, que é indistinguível de falha transitória.
+
+Já aconteceu de verdade, e passou por **seis specs**: `form button[type='submit']` casava com **2**
+elementos na página real — o primeiro era a lupa de busca do cabeçalho do site, dentro de outro
+`<form>` —, e a automação nunca clicou no botão da feature. Nenhuma submissão jamais aconteceu, e o
+desfecho sempre parecia um erro transitório genérico, retentado 5 vezes. O dublê vinha de uma captura
+só do fragmento do formulário, sem o cabeçalho do site; ali havia um único `<form>`, então o seletor
+era inequívoco. **O dado que fecha o argumento**: quando o dublê passou a servir a vizinhança do site
+por padrão, os testes de caminho feliz **que já existiam** passaram a falhar contra o código antigo,
+com a mensagem literal dos logs de produção — a suíte que já existia teria pego o defeito desde
+sempre, se o dublê tivesse a mesma ambiguidade do sistema real.
+
+Corolário, válido além de DOM: captura de fragmento ⟹ o dublê não pode decidir ambiguidade de
+seletor ⟹ a interação precisa ser por locator estrito, para que ambiguidade vire falha alta em vez
+de silêncio.
+
 ## O gate de cobertura de 80%
 
 - **Por pacote**: `src/` e, se existir, `frontend/` têm cada um seu próprio gate de 80% — não é
