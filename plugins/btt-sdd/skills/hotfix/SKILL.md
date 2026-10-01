@@ -84,10 +84,36 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    obrigatório). **Se outra tarefa desta sessão pode estar ativa no mesmo repositório**, use
    isolamento de working tree (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre
    agentes concorrentes").
+3a. **Quando a causa raiz for comportamento de um sistema externo** (DOM de terceiro, API de
+   parceiro, SDK fechado), **a sonda que provou a causa é a especificação executável da correção —
+   não a descrição dela.** Registre, no artefato desta rodada **e no corpo da instrução passada ao
+   agente**, a **sequência exata** que a sonda executou: cada passo, na ordem, com os intervalos
+   medidos entre eles ("esperar 250 ms antes de reler o campo", não "reler depois de preencher").
+   Exija explicitamente que a implementação **e** o knob de mock que a exercita reproduzam essa
+   sequência passo a passo, com os mesmos intervalos — não uma paráfrase dela. Descrever a sonda em
+   prosa perde justamente o detalhe que a faz funcionar: já aconteceu de verdade, e custou uma
+   rodada inteira de implementação evitável. A sonda esperava ~250 ms entre preencher o campo e
+   reler o valor, e era esse intervalo que fazia a correção funcionar (a hidratação do framework da
+   página reescrevia o input algumas centenas de milissegundos depois). A instrução virou
+   "preencher → reler → repetir", o intervalo não chegou ao código, a implementação releu colada na
+   escrita — medindo o DOM **antes** do efeito que queria detectar — e passou nos testes.
 4. **Rode a suíte completa com cobertura** (e o comando de build/empacotamento real, se a trilha
    afetada tiver um — `docs/TESTING.md`) ao final, gravando o resumo em
    `specs/<slug-da-spec-relacionada-ou-dedicada>/coverage/hotfix-<data>-<trilha>.md`, mesmo padrão
    de qualquer fatia.
+4b. **Se o defeito só era observável contra o sistema real, revalide ao vivo antes de acionar
+   qualquer revisão — com artefato próprio, nunca como relato em comentário de PR.** Repita a
+   medição original (a sequência do passo 3a) contra o sistema real e grave o resultado em
+   `specs/<slug-da-spec-relacionada-ou-dedicada>/coverage/hotfix-<data>-validacao-ao-vivo.md`, uma
+   seção por rodada, append-only: sequência executada, o que foi observado **antes** da correção, o
+   que foi observado **depois**, e o veredito (`defeito reproduzido` / `não reproduzido`). **Suíte
+   verde não substitui esta medição** — o cenário que originou este passo é exatamente o de uma
+   suíte verde sobre código que media o DOM antes do efeito. Enquanto o veredito não for `não
+   reproduzido`, **não prossiga para o passo 5**: mandar para revisão um código que ainda não
+   corrige o defeito gasta a cadeia inteira de revisão numa rodada que vai ser refeita — já
+   aconteceu, três rodadas de implementação até a validação ao vivo passar. Isto é de rodada de
+   hotfix e **não substitui** o teste geral de fim de spec de `docs/POST-MERGE-VALIDATION.md`, que
+   continua valendo depois do merge.
 5. **Decida as revisões desta rodada** — critério objetivo, não uma decisão manual reavaliada a
    cada vez:
    - **Code review: sempre.** Toda correção pontual passa por `/btt-sdd:code-review` contra o PR
