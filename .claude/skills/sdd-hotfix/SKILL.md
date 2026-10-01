@@ -103,6 +103,17 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    afetada tiver um — `docs/TESTING.md`) ao final, gravando o resumo em
    `specs/<slug-da-spec-relacionada-ou-dedicada>/coverage/hotfix-<data>-<trilha>.md`, mesmo padrão
    de qualquer fatia.
+4a. **Todo valor medido ao vivo é substituído por equivalente não atribuível antes de entrar em
+   qualquer lugar — inclusive na instrução que você passa ao agente.** A medição com dado real é
+   legítima (foi ela que provou o defeito), mas o valor medido não viaja cru: substitua no momento em
+   que ele sai da medição, preservando a **assinatura do incidente** (contagem de dígitos, zeros à
+   esquerda, máscara aplicada, qual validação ele passa ou falha) — `docs/TESTING.md`, seção "Valor
+   medido ao vivo entra no repositório já substituído por equivalente não atribuível". Isso vale para
+   o artefato do passo 4b, para os testes, para o knob de mock do passo 3a, para comentário/XML doc,
+   e **principalmente para o corpo da instrução passada ao `backend-developer`/`frontend-developer`**
+   — foi por ali que, numa rodada real, CPF com dígitos verificadores válidos, telefone, nome e
+   e-mail reais chegaram a seis arquivos do repositório, dois deles de código de produção, custando
+   uma rodada inteira só para redigir.
 4b. **Se o defeito só era observável contra o sistema real, revalide ao vivo antes de acionar
    qualquer revisão — com artefato próprio, nunca como relato em comentário de PR.** Repita a
    medição original (a sequência do passo 3a) contra o sistema real e grave o resultado em
