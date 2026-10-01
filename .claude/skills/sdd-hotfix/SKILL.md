@@ -99,6 +99,28 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    página reescrevia o input algumas centenas de milissegundos depois). A instrução virou
    "preencher → reler → repetir", o intervalo não chegou ao código, a implementação releu colada na
    escrita — medindo o DOM **antes** do efeito que queria detectar — e passou nos testes.
+3b. **Registre cada rodada desta skill em `specs/<slug>/timing-log.md`** (crie a partir de
+   `specs/_template/timing-log.template.md` se ainda não existir, como qualquer outra etapa). Esta
+   skill invoca `backend-developer`/`frontend-developer` **direto**, contornando `/sdd-implement` — e
+   com ele a instrução de registro que vive lá (passos 3b e 5a). Sem este passo, a série de hotfix
+   fica sistematicamente incompleta, e é justamente ela que a retrospectiva de fatia lê para achar
+   etapa anormalmente lenta. Uma linha (etapa, agente, `hotfix-<data>` na coluna Fatia, duração) para
+   **cada**:
+   - **rodada de implementação** — uma linha por invocação de agente, não uma linha pelo hotfix
+     inteiro; três rodadas de correção são três linhas;
+   - **validação ao vivo** do passo 4b, inclusive as que reprovaram;
+   - **diagnóstico de causa raiz conduzido por você mesmo**, sem invocar agente — `orquestrador (sem
+     agente)` é um valor legítimo da coluna Agente, com seção própria no template
+     (`specs/_template/timing-log.template.md`, seção "Trabalho conduzido pelo orquestrador (sem
+     agente)"). Se a cópia de `timing-log.md` já existente no projeto afirmar que o template "não tem
+     lugar para tempo de orquestrador", é a cópia que está desatualizada em relação ao template desta
+     instalação — vale o template (`docs/SKILL-PREAMBLE.md`), e a nota obsoleta pode ser corrigida na
+     mesma rodada.
+   Já aconteceu de verdade: um hotfix com **seis** rodadas de trabalho — cinco de implementação, três
+   validações ao vivo contra produção, um diagnóstico de causa raiz do orquestrador e uma rodada de
+   SRE — deixou exatamente **duas** linhas no `timing-log.md` (code review e segurança). Quem lesse a
+   série concluiria que o hotfix custou ~71 minutos. As rodadas anteriores tinham sido registradas por
+   zelo do orquestrador, não por instrução.
 4. **Rode a suíte completa com cobertura** (e o comando de build/empacotamento real, se a trilha
    afetada tiver um — `docs/TESTING.md`) ao final, gravando o resumo em
    `specs/<slug-da-spec-relacionada-ou-dedicada>/coverage/hotfix-<data>-<trilha>.md`, mesmo padrão
@@ -127,6 +149,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    aconteceu, três rodadas de implementação até a validação ao vivo passar. Isto é de rodada de
    hotfix e **não substitui** o teste geral de fim de spec de `docs/POST-MERGE-VALIDATION.md`, que
    continua valendo depois do merge.
+   Cada execução desta validação — inclusive as que reprovaram — rende a sua própria linha no
+   `timing-log.md` (passo 3b).
 5. **Decida as revisões desta rodada** — critério objetivo, não uma decisão manual reavaliada a
    cada vez:
    - **Code review: sempre.** Toda correção pontual passa por `/sdd-code-review` contra o PR desta
@@ -166,6 +190,10 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    identificado no passo 1, com a linha `hotfix-<data>` no histórico de aprovações. Mesma regra de
    "Auto-aprovação nunca é o gate real" (`.claude/skills/sdd-implement/SKILL.md`) — nenhum agente
    que implementou a correção escreve o próprio veredito.
+   Cada skill de revisão registra a própria invocação no `timing-log.md`; antes de seguir para o
+   passo 6b, confirme que isso aconteceu de fato para esta rodada e acrescente a linha que faltar
+   (passo 3b) — um hotfix em que só as revisões aparecem no log é o sintoma do problema que aquele
+   passo existe para evitar.
 6b. **Antes de informar que o merge fica a critério do usuário, confirme explicitamente que toda
    revisão decidida como aplicável no passo 5 já rodou com veredito aprovado** — não confie em
    lembrar de tê-las rodado todas. Releia a decisão do passo 5 contra o estado real dos artefatos
