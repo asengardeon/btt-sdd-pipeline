@@ -164,9 +164,25 @@ Heurísticas de Nielsen aplicadas concretamente à feature em revisão, não uma
 
 ## Processo (modo revisão pós-implementação)
 
-**Antes de ler qualquer artefato ou navegar qualquer fluxo, confirme que está na branch do PR sendo
-revisado** (`git fetch origin <branch> && git checkout <branch>`). Se estiver rodando em working
-tree isolado, o checkout acontece no próprio worktree.
+**Antes de ler qualquer artefato ou navegar qualquer fluxo, confirme que está no commit do PR sendo
+revisado.** Rodando em working tree isolado (o padrão desta invocação),
+**`git checkout <branch>` vai falhar** (`fatal: '<branch>' is already used by worktree at
+'<caminho>'`): quem abriu o PR normalmente tem essa branch como `HEAD` no worktree principal, e o
+Git não permite a mesma branch checked out em dois worktrees. Não tente liberar a branch nem
+repetir o `checkout` — vá direto para a variante que funciona:
+
+```bash
+git fetch origin <branch>
+git checkout -b <nome-temporário> origin/<branch>   # ou `git checkout --detach origin/<branch>`
+# ... revisão, commit do artefato ...
+git push origin HEAD:<branch>                       # `HEAD` não precisa *ser* <branch> para isso
+```
+
+`git checkout <branch>` direto só está correto quando você compartilha literalmente o working tree
+do orquestrador. **Depois do push, registre no seu relatório que a branch local do checkout
+principal ficou atrás do remoto** — quem orquestra precisa de `git pull` antes de seguir, ou de ler
+o artefato direto do remoto. Detalhe em `docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree
+entre agentes concorrentes".
 
 1. Leia `specs/<slug>/prd.md` e `specs/<slug>/trd.md` para entender o comportamento pretendido, e
    identifique qual fatia está sendo revisada nesta rodada. Leia `docs/DESIGN-SYSTEM.md`, se
