@@ -529,6 +529,13 @@ entre agentes concorrentes".
    revisão) nas colunas correspondentes. Atualize também, no TRD, a coluna Status das tarefas
    desta fatia: `aprovado` se o veredito geral for aprovado (ou aprovado com ressalvas), ou
    `bloqueado` (com o motivo em uma linha) se reprovado.
+   **Nunca marque ✅ um item de checklist com qualquer sub-condição dele falhando** — mesmo que o
+   conjunto esteja "essencialmente certo" e você descreva a exceção na evidência ao lado. Ou o item
+   vira ⚠️ e a sub-condição que falha entra como **achado** (com ID, como qualquer outro), ou você
+   decompõe o item em uma linha por sub-condição. Quem lê o checklist numa rodada seguinte lê os
+   marcadores, não os parágrafos de evidência — foi assim que `enforce_admins: false` atravessou
+   **7 ocorrências em 6 specs** do mesmo projeto, relatado como *estado* dentro da evidência de um
+   item ✅ e nunca como ressalva. Regra geral em `docs/gates/governanca.md`.
 4a. **Se um achado (mesmo não-bloqueante/ressalva) recomenda uma ação a ser feita por uma fatia
    futura** (ex.: "estender X quando a fatia N fizer Y"), não deixe essa recomendação só em prosa
    dentro do corpo do achado — registre-a também como uma entrada na seção "Pendências de
