@@ -50,6 +50,22 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes concorrentes"). Não é
    uma condição a avaliar caso a caso ("outra tarefa pode estar ativa?") — é o padrão desta
    invocação.
+3a. **Ao incluir na instrução um fato que outra etapa mediu, diga quem mediu e como — e marque se
+   ele é carga para alguma conclusão desta etapa.** Repassar o que a etapa anterior já mediu é
+   desejável (é para isso que as seções "o que a próxima etapa herda" existem), mas a repetição
+   **lava a origem**: o que era "medido pela etapa X, com o método Y" chega como premissa sem
+   procedência, indistinguível de um fato do desenho — e quem recebe não tem como saber que precisa
+   reconferir. Rotule assim: *"medido pelo `security-engineer` lendo `pull_request.base.sha` —
+   **reconfira se sua conclusão depender disso**"*. Vale também para medição **sua**, de
+   orquestrador: diga o que você leu para chegar nela. Já aconteceu de verdade, duas vezes na mesma
+   fatia: (a) um achado de segurança afirmava que o pulo de um job de CI vinha "inteiramente" de uma
+   condição, com base em ler `pull_request.base.sha`; repassado como fato medido, o `sre` reconferiu
+   por iniciativa própria e descobriu que em evento `synchronize` o `base` efetivo é
+   `github.event.before` — a causa variava de run para run, e **o defeito era pior do que o
+   descrito**; (b) o orquestrador afirmou "1 módulo do Workbox importado", verdade no fonte e errado
+   sobre o artefato construído (que tinha marcadores de 4), e o `security-engineer` corrigiu. Nos
+   dois casos o resultado foi bom **por iniciativa do agente que recebeu**, não por instrução — e
+   uma medição errada herdada custa mais que uma remedição.
 3b. **Registre a duração desta invocação em `specs/<slug>/timing-log.md`** (crie a partir de
    `specs/_template/timing-log.template.md` se ainda não existir): uma linha com o horário do
    passo 3, o horário atual, e a diferença calculada (etapa "Segurança", agente
