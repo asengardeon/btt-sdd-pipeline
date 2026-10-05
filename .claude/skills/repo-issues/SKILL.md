@@ -109,7 +109,14 @@ outra tarefa, pare e informe o usuário em vez de misturar.
       - **Origem**: `spec:<projeto>/<slug>` **só quando o corpo da issue citar claramente** um
         projeto e uma spec de origem (ex.: "ridersbnu-app/specs/0012-..."). Não invente essa
         referência quando a issue não a menciona — nesse caso, deixe a issue só com o label de
-        tipo.
+        tipo. **Nome de label tem no máximo 50 caracteres** (limite do GitHub): se
+        `spec:<projeto>/<slug>` passar disso, trunque o `<slug>` no último limite de palavra (`-`)
+        que couber, preservando o prefixo numérico da spec, e registre o slug completo na
+        `--description` — e **procure o label existente por prefixo**
+        (`spec:<projeto>/<prefixo-numérico>`), reusando o que já houver em vez de criar um segundo
+        com outro corte. Mesma regra de `.claude/skills/sdd-sre/SKILL.md`, passo 5c, que é onde
+        esses labels nascem; já falhou aqui de verdade com `HTTP 422: name is too long` num slug de
+        60 caracteres, derrubando em seguida o `--add-label` com `'<label>' not found`.
    d3. **Aplique os mesmos labels da issue ao PR que a fecha** — o PR também deve carregar os
       labels compatíveis (tipo + origem, se houver), não só a issue. `gh pr edit <PR> --repo
       asengardeon/btt-sdd-pipeline --add-label <nome>` para cada label confirmado no passo `d2`

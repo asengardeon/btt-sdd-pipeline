@@ -173,13 +173,29 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
      sessão está rodando agora (`basename "$(git remote get-url origin)" .git`, ou o nome do
      diretório de trabalho se não houver remote configurado) e `<slug>` é a feature desta fatia —
      permite filtrar depois, no `asengardeon/btt-sdd-pipeline`, todas as issues originadas da
-     mesma spec/projeto.
+     mesma spec/projeto. **Nome de label tem no máximo 50 caracteres** — limite do GitHub, não
+     recomendação: `gh label create` falha com `HTTP 422: Validation Failed / name is too long
+     (maximum is 50 characters)`, e aí o `gh issue create --label` seguinte também falha, com
+     `'<label>' not found`, cuja causa real está na chamada anterior. Isso **não** é um caso de
+     borda: `spec:` + nome do repositório já consome ~20 caracteres (`spec:ridersbnu-app/` = 19),
+     e slug de spec com 32+ caracteres é rotineiro. Duas regras, então:
+     - **Se passar de 50, trunque o `<slug>`** no último limite de palavra (`-`) que couber,
+       **sempre preservando o prefixo numérico da spec** (é ele que identifica), e registre o slug
+       completo na `--description`, que não tem esse limite. Ex.:
+       `spec:ridersbnu-app/0006-navegacao-global-menu-topbar-alertas` (60) →
+       `spec:ridersbnu-app/0006-navegacao-global-menu` (45).
+     - **Procure o label existente por prefixo, não por nome exato.** O nome truncado é a *chave de
+       filtro* da spec, e precisa ser o mesmo em todas as fatias dela: busque por
+       `spec:<projeto>/<prefixo-numérico>` e **reuse** o label que já existir, em vez de criar um
+       segundo com outro ponto de corte — dois labels para a mesma origem quebram exatamente o
+       filtro que o label existe para dar.
 
    Antes de usar qualquer um desses labels pela primeira vez neste repositório, confirme que
-   existe (`gh label list --repo asengardeon/btt-sdd-pipeline --json name`); se não existir, crie
-   com `gh label create <nome> --repo asengardeon/btt-sdd-pipeline --color <hex> --description
-   "<descrição curta>"` antes do `gh issue create` — `gh issue create --label` falha se o label
-   ainda não existir no repositório de destino.
+   existe (`gh label list --repo asengardeon/btt-sdd-pipeline --json name`; para o label de
+   origem, procure por prefixo conforme acima); se não existir, crie com `gh label create <nome>
+   --repo asengardeon/btt-sdd-pipeline --color <hex> --description "<descrição curta>"` antes do
+   `gh issue create` — `gh issue create --label` falha se o label ainda não existir no repositório
+   de destino.
 5d. **Se aprovado (ou aprovado com ressalvas não-bloqueantes), tire o PR do modo draft antes da
    mensagem do passo 6.** `docs/GIT-WORKFLOW.md`, regra 4, já instrui abrir o PR cedo em modo draft
    no primeiro commit da fatia — mas nada no pipeline transiciona ele para "Ready for review"
