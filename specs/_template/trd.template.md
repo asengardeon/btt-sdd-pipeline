@@ -165,6 +165,15 @@ este TRD é emendado antes de a fatia prosseguir. O motivo é que o dublê escri
 estrutura suposta **valida a suposição, não a realidade**: a suíte fica verde e nenhuma etapa de
 revisão posterior consegue distinguir isso de uma suíte verde contra a realidade.
 
+**...exceto quando ela mede a plataforma contra o artefato desta própria fatia.** Uma investigação
+que mede a plataforma **isoladamente** ("que código HTTP o serviço devolve para endereço revogado")
+roda antes do código e pode ter "Depende de" = `nenhuma`. Uma que mede o comportamento da
+plataforma **contra artefato produzido por outras tarefas desta fatia** ("o navegador oferece
+instalar com *este* manifest e *este* service worker?") não pode precedê-lo: a coluna "Depende de"
+lista as tarefas cujo artefato a medição exige, o texto da tarefa diz que ela roda **ao fim** da
+fatia, e a seção 11 (plano de testes) não afirma que as investigações rodam antes do código sem
+qualificar quais. Teste de um passo: *a medição é possível com o repositório como está hoje?*
+
 | ID   | Tarefa                    | Trilha                    | Fatia (PRD) | Depende de | Status | Issue GitHub |
 |------|------------------------------|------------------------------|--------------|---------------|-----------|------------------|
 | T-1  | <descrição da tarefa>         | backend / frontend / ambos    | F-1           | nenhuma        | pendente  | `<#N ou "não espelhada">` |

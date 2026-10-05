@@ -261,6 +261,24 @@ não se aplica.
    na coluna de dependências. Isso não é sequenciamento cauteloso: implementar contra uma estrutura
    suposta produz uma suíte verde contra a suposição, que nenhuma etapa de revisão posterior consegue
    distinguir de uma suíte verde contra a realidade.
+   **Mas "primeiro" só vale para investigação que mede a plataforma isoladamente — declare qual dos
+   dois casos é o seu, tarefa por tarefa.** São duas classes, e só uma pode preceder o código:
+   - **Mede a plataforma isoladamente** (ex.: "que código HTTP o serviço devolve para endereço
+     revogado", "qual o nome acessível real daquele elemento no site de terceiro"): roda **antes** de
+     qualquer código, "Depende de" pode ser `nenhuma`. É o caso default.
+   - **Mede o comportamento da plataforma contra artefato produzido por outras tarefas da mesma
+     fatia** (ex.: "o navegador oferece instalar com *este* manifest e *este* service worker?", "a
+     sessão sobrevive a reabrir *no app instalado*?"): **não pode** preceder o artefato. Aqui a
+     coluna "Depende de" **nunca** diz `nenhuma` — lista as tarefas cujo artefato a medição exige —,
+     o texto da tarefa diz que ela roda **ao fim** da fatia, e o plano de testes não afirma que "as
+     investigações rodam antes de escrever código" sem qualificar **quais**.
+   Pergunta que separa os dois casos em um passo: *a medição é possível com o repositório como está
+   hoje?* Se a resposta exige um arquivo que outra tarefa desta fatia vai criar, é o segundo caso.
+   Já aconteceu de verdade: uma investigação com cinco perguntas, "Depende de" marcado `nenhuma` e
+   plano de testes afirmando que rodava antes do código — **todas as cinco** exigiam o manifest, os
+   ícones e o service worker de três tarefas irmãs. A fatia teve de ser reordenada em execução, com
+   emenda ao TRD, e o mesmo TRD tinha outras duas investigações com o mesmo defeito, prontas para
+   repetir o episódio duas vezes.
    **Para cada fatia que introduz uma mudança de contrato obrigatória** (campo novo obrigatório
    numa API, mensagem/evento com formato incompatível, remoção de suporte a um formato antigo):
    pergunte explicitamente se essa mudança só fica coerente depois que outra fatia (posterior, ex.:
