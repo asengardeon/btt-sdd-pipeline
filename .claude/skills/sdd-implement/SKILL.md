@@ -26,7 +26,15 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    nova nem redesenho de arquitetura), **prefira retomar o mesmo agente** que implementou a fatia,
    via `SendMessage` (usando o `agentId`/nome dele), em vez de invocar um agente novo do zero.
    Passe os achados do relatório de revisão (`code-review.md`/`qa-report.md`/
-   `security-review.md`/`sre-review.md`) diretamente na mensagem.
+   `security-review.md`/`sre-review.md`) diretamente na mensagem. **Antes do `SendMessage`, anote o
+   horário atual** (`date -u +%Y-%m-%dT%H:%M:%SZ`) — vai precisar dele no passo 3b, e a retomada
+   não passa pelos passos de invocação numerados que já pedem isso. Sem essa anotação, ao terminar
+   você só tem o horário de fim e precisa derivar o início subtraindo o `duration_ms` reportado —
+   que em agente retomado pode ser cumulativo desde a criação do agente e não bater com o relógio
+   de parede (`specs/_template/timing-log.template.md`, seção "O que a coluna 'Duração' mede"). Já
+   aconteceu de verdade: três linhas de um mesmo `timing-log.md` registradas como "horário de
+   início aproximado — não anotado antes do `SendMessage`", uma delas com número derivado
+   incompatível com o relógio, e três outras numa segunda spec.
 1b. **Dose o contexto que você inclui na mensagem pela complexidade real da correção — não pelo
    hábito de sempre anexar tudo.** Para uma correção mecânica/pequena (ex.: um teste faltante, um
    valor incorreto, uma validação faltando), aponte o agente para o trecho específico do artefato

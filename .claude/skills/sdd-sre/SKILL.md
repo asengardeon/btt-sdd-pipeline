@@ -68,7 +68,9 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    commitado antes do passo 5c (retrospectiva), que lê este arquivo. **Vale também quando esta
    invocação é só uma reverificação pontual de um achado específico** — nunca pule este registro
    por ser "só uma reverificação", senão o `timing-log.md` da fatia fica sistematicamente
-   incompleto.
+   incompleto. **Quando a reverificação pontual retoma o agente via `SendMessage` em vez de
+   abrir uma invocação nova, o passo 3 não acontece — anote o horário antes do `SendMessage` do
+   mesmo jeito.**
 4. O agente `sre` já embute o gate de aprovação: qualquer proposta de mudança real de
    infraestrutura (`terraform apply`) é apresentada como plano e só executada após aprovação
    explícita do usuário via `AskUserQuestion`. Você não precisa duplicar essa confirmação, mas
