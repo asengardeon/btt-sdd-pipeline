@@ -61,7 +61,9 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    relacionados). **Vale também quando esta invocação é só uma reverificação pontual de um achado
    específico** (`code-reviewer.md`, seção "Escopo de uma rodada de reverificação de achado
    específico") — nunca pule este registro por ser "só uma reverificação", senão o `timing-log.md`
-   da fatia fica sistematicamente incompleto.
+   da fatia fica sistematicamente incompleto. **Quando a reverificação pontual retoma o agente
+   via `SendMessage` em vez de abrir uma invocação nova, o passo 3 não acontece — anote o horário
+   antes do `SendMessage` do mesmo jeito.**
 3c. **Se o agente registrou perguntas como "VALIDAR DEPOIS" por não ter `AskUserQuestion` disponível
    nesta invocação** (subagente isolado/assíncrono — sinal típico: uma nota de processo no topo de
    `code-review.md`, ou um item de pendência dizendo "não pude perguntar"), **você** — o
