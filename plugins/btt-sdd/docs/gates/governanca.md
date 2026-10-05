@@ -28,6 +28,17 @@
   branch base a partir da qual a branch da fatia foi criada (normalmente `main`), volta para ela
   (`git checkout <branch base>`). Já causou dano real deixar o working directory na branch errada
   (ex.: um `git pull origin main` rodado sem perceber a branch atual gerou um merge commit espúrio).
+- [ ] **Nenhum veredito agregado fica verde com uma sub-condição falhando.** Vale para item de
+  checklist que agrega várias verificações (ex.: "proteção de `main` configurada", que reúne PR
+  obrigatório, checks obrigatórios, `strict`, sem force-push, sem deleção, `enforce_admins`) e para
+  o veredito de uma "área de revisão" que agrega vários achados. Ou o item vira ⚠️ e a
+  sub-condição que falha entra como **achado**, ou cada sub-condição ganha a própria linha.
+  Descrever a exceção em prosa ao lado de um ✅ é exatamente o modo de falha a evitar: **quem lê o
+  checklist não lê a prosa**, e a exceção atravessa rodadas. Já aconteceu de verdade: uma
+  sub-condição de proteção de branch desligada foi reportada como *estado*, dentro do parágrafo de
+  evidência de um item marcado ✅, em **7 ocorrências ao longo de 6 specs do mesmo projeto**, sempre
+  no mesmo item, e nunca como achado. O custo não é teórico — aquela sub-condição era a única
+  camada do pipeline que não depende de um agente obedecer.
 - [ ] **Nenhum agente aprova/reprova o próprio trabalho.** Um agente implementador
   (`backend-developer`/`frontend-developer`, ou `sre` fazendo um ajuste pontual de infra) nunca
   escreve veredito em `code-review.md`/`ux-review.md`/`qa-report.md`/`security-review.md`/

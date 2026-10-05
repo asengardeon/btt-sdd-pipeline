@@ -48,8 +48,19 @@ Evidência/observações:
 - [ ] Deploy só roda após CI verde
 - [ ] `terraform apply` gated (plan revisável, aprovação manual quando aplicável)
 - [ ] Estratégia de rollback documentada
-- [ ] `main` protegida (GitHub Flow, ver `docs/GIT-WORKFLOW.md`): push direto bloqueado, PR
-  obrigatório, status checks do CI obrigatórios
+
+### Proteção de `main` (GitHub Flow, ver `docs/GIT-WORKFLOW.md`)
+
+Uma linha por sub-condição de propósito: um item único agregando as seis esconde a que falha atrás
+de um ✅ (`docs/gates/governanca.md`). Sub-condição que falha vira achado, não observação na evidência.
+
+- [ ] Push direto em `main` bloqueado
+- [ ] PR obrigatório antes do merge
+- [ ] Status checks do CI obrigatórios
+- [ ] Checks obrigatórios em modo `strict` (branch atualizada com `main` antes do merge)
+- [ ] Force-push e deleção de `main` bloqueados
+- [ ] Proteção aplicada também a administradores (`enforce_admins`) — a única camada aqui que não
+  depende de um agente obedecer
 
 Evidência/observações:
 
