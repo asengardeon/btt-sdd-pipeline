@@ -36,6 +36,28 @@ trabalho lento (ou por uma espera que o próprio agente escolheu fazer), registr
 explique a causa na nota — inventar um número arredondado corrompe a série histórica tanto quanto
 deixar o outlier sem explicação.
 
+**Agente retomado via `SendMessage`: confira o `duration_ms` contra o relógio de parede antes de
+registrá-lo.** Em agente retomado, o `duration_ms` da notificação de conclusão **pode** ser
+cumulativo desde a criação do agente, e não o da invocação isolada — e o comportamento observado é
+inconsistente, tanto entre campos (`tool_uses` e `subagent_tokens` tendem a crescer entre rodadas)
+quanto entre invocações (num caso real, três rodadas do mesmo agente reportaram 48m → 83m → 12m,
+com a segunda não cabendo no wall-clock disponível depois da primeira; noutra spec, três rodadas do
+mesmo agente tiveram durações decrescentes, incompatíveis com cumulativo). Se o número não couber
+depois da rodada anterior, registre a diferença que o relógio sustenta e **diga na própria linha**
+que o valor reportado é ambíguo e não deve ser somado ingenuamente às outras rodadas daquele
+agente:
+
+```
+| 2026-10-03T20:00:00Z | Correção pontual | frontend-developer | F-1 | ~35m (duration_ms reportado de 83m04s é incompatível com o relógio — provavelmente cumulativo desde a criação do agente; não somar com a linha da rodada anterior) |
+```
+
+**Anotar o horário antes do `SendMessage` resolve o caso na origem** e é a instrução que vale
+seguir — `/sdd-implement`, seção "Retomando para corrigir achados de revisão", passo 1.
+A conferência acima é a rede de segurança para quando esse horário não existe, e não é zelo
+opcional: a retrospectiva de fatia (`/sdd-sre`, passo 5c) lê este arquivo como evidência
+concreta de performance, e uma linha de 83m que na verdade foram ~35m faz a análise concluir o
+oposto do que os dados mostram.
+
 ## Trabalho conduzido pelo orquestrador (sem agente)
 
 **`orquestrador (sem agente)` é um valor legítimo da coluna `Agente`** — não uma convenção
