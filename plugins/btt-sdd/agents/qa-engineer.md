@@ -140,7 +140,15 @@ entre agentes concorrentes".
    também `docs/LESSONS-LEARNED.md`, se existir. Ao avaliar a correção de um teste que era instável,
    pergunte se mudou a **classe** da asserção ou só a **constante de tempo**: aumentar timeout/delay
    é adiamento, não correção (`docs/TESTING.md`, seção "Instabilidade de teste: classe da asserção,
-   não constante de tempo").
+   não constante de tempo"). **Varra os artefatos de tarefa de investigação da spec**
+   (`premissa-nao-validada`, ver `architect.md`, passo 1c) — desta fatia e das anteriores —
+   procurando perguntas cuja resposta muda como um critério de aceite desta fatia deve ser lido,
+   **inclusive quando catalogadas sob outra área da feature**. Cada pergunta deve declarar qual
+   decisão depende dela, justamente para você achar as suas sem ler tudo; quando essa declaração
+   faltar, a pergunta ainda pode ser sua. Uma resposta que restringe o alcance de um comportamento
+   (ex.: "vale por contexto de armazenamento, não por aparelho") reescreve o critério de aceite que
+   você está validando — e um critério validado contra a leitura errada passa verde sem cobrir o
+   requisito.
 2. Reaproveite a evidência de teste/cobertura em vez de regenerá-la por padrão
    (`docs/TESTING.md`, seção "Reaproveitamento do artefato de cobertura entre etapas"): procure
    `specs/<slug>/coverage/<fatia>-backend.md`/`<fatia>-frontend.md` (conforme a trilha desta

@@ -200,7 +200,15 @@ entre agentes concorrentes".
 1. Leia o TRD (seção de pilares/segurança, `docs/ENGINEERING-PILLARS.md` se relevante, e a tabela
    "Decomposição de tarefas e dependências" para saber se esta é a última fatia pendente) e o
    `qa-report.md`, e identifique a fatia/PR desta rodada. Leia também `docs/LESSONS-LEARNED.md`,
-   se existir.
+   se existir. **Varra os artefatos de tarefa de investigação da spec** (`premissa-nao-validada`,
+   ver `architect.md`, passo 1c) — desta fatia e das anteriores — procurando perguntas cuja resposta
+   alimenta uma decisão de segurança, **inclusive quando catalogadas sob outra área da feature**.
+   Cada pergunta deve declarar qual decisão depende dela, justamente para você achar as suas sem ler
+   tudo; quando essa declaração faltar, a pergunta ainda pode ser sua. Já aconteceu de verdade: uma
+   pergunta catalogada como "instalabilidade" — se a sessão sobrevive a reabrir o app instalado —
+   decidia se o `clearAll()` do logout de outra fatia alcançava o aparelho ou só um contexto de
+   armazenamento, e com isso se o requisito de "outra pessoa no mesmo aparelho" valia por aparelho
+   ou por contexto.
 2. Revise o código implementado e o PR desta fatia (`docs/GIT-WORKFLOW.md`) contra as áreas acima.
 3. Para cada área, registre achado (se houver) com severidade, ou "não aplicável" com
    justificativa — nunca deixe uma área sem veredito. Para cada achado, verifique se corresponde a

@@ -109,6 +109,20 @@ não se aplica.
      artefato em `specs/<slug>/` com a estrutura real capturada (snapshot ARIA/DOM, payload real,
      amostra do arquivo) e uma seção "correções obrigatórias ao desenho do TRD"; o TRD é emendado
      (log de revisões) **antes** de a fatia prosseguir.
+   - **Cada pergunta declara a decisão que depende dela** — não só a área da feature a que ela
+     pertence superficialmente. Nomeie a tarefa, a fatia e, quando a consequência é de outro
+     domínio, a etapa de revisão que vai precisar da resposta (ex.: "alimenta o controle de limpeza
+     de armazenamento da T-15, F-3; consequência de **segurança**"). O risco é de catalogação:
+     perguntas são agrupadas pela área onde nasceram (instalabilidade, upload, notificação), e
+     quando a decisão que elas alimentam está em outra fatia, outra etapa ou outro domínio, **o
+     agente que precisa da resposta nunca vê a pergunta** — ele procura premissas do seu próprio
+     domínio, não a lista de perguntas da área onde ela foi catalogada. Já aconteceu de verdade: uma
+     pergunta catalogada como "instalabilidade" ("a sessão sobrevive a fechar e reabrir no
+     standalone?") decidia uma propriedade de **segurança** de outra fatia — se o standalone tem
+     partição de armazenamento própria, o `clearAll()` do logout alcança só o contexto que executou
+     o logout, e o requisito escrito para "outra pessoa no mesmo aparelho" passa a valer por
+     contexto, não por aparelho. Só foi percebido porque o `security-engineer` leu o artefato de
+     investigação inteiro por iniciativa própria, numa fatia em que não era obrigado a isso.
    - **Marcação por afirmação, dentro do artefato**: cada frase é `[medido]` (com o comando/caminho
      que produziu a observação) ou `[inferido]` (com o que precisaria ser medido para confirmar).
      Uma seção de "nota operacional"/"consequência prática" é justamente onde a inferência se
