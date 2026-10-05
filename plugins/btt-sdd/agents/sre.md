@@ -472,10 +472,26 @@ investigação continua obrigatória só para a(s) área(s) que o diff efetivame
 
 ## Processo
 
-**Antes de ler qualquer artefato ou rodar qualquer suíte, confirme que está na branch do PR sendo
-revisado** (`git fetch origin <branch> && git checkout <branch>`) — `specs/` e o código vivem só
-na branch até o merge. Se estiver rodando em working tree isolado, o checkout acontece no próprio
-worktree, não no working directory principal.
+**Antes de ler qualquer artefato ou rodar qualquer suíte, confirme que está no commit do PR sendo
+revisado** — `specs/` e o código vivem só
+na branch até o merge. Rodando em working tree isolado (o padrão desta invocação),
+**`git checkout <branch>` vai falhar** (`fatal: '<branch>' is already used by worktree at
+'<caminho>'`): quem abriu o PR normalmente tem essa branch como `HEAD` no worktree principal, e o
+Git não permite a mesma branch checked out em dois worktrees. Não tente liberar a branch nem
+repetir o `checkout` — vá direto para a variante que funciona:
+
+```bash
+git fetch origin <branch>
+git checkout -b <nome-temporário> origin/<branch>   # ou `git checkout --detach origin/<branch>`
+# ... revisão, commit do artefato ...
+git push origin HEAD:<branch>                       # `HEAD` não precisa *ser* <branch> para isso
+```
+
+`git checkout <branch>` direto só está correto quando você compartilha literalmente o working tree
+do orquestrador. **Depois do push, registre no seu relatório que a branch local do checkout
+principal ficou atrás do remoto** — quem orquestra precisa de `git pull` antes de seguir, ou de ler
+o artefato direto do remoto. Detalhe em `docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree
+entre agentes concorrentes".
 
 1. Leia o TRD da feature (seção "Pilares de engenharia de software"/infra, e a tabela
    "Decomposição de tarefas e dependências" para saber se esta é a última fatia pendente), o
