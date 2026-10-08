@@ -33,6 +33,17 @@
 - [ ] O método usado nesta rodada (verificação ao vivo via automação de navegador, ou leitura de
   código na ausência dela) está documentado em `ux-review.md` — um veredito baseado só em leitura
   estática nunca é apresentado como equivalente a uma verificação ao vivo.
+- [ ] **Afirmação de que um nó "está montado" / "está na árvore de acessibilidade" é asseverada
+  contra o documento com CSS aplicado, nunca contra a presença da classe no JSX.** Quando a rodada
+  roda em jsdom (ou outro DOM sem engine de estilo) e o veredito depende de visibilidade, presença
+  na árvore de acessibilidade, ordem de foco ou geometria, a regra de CSS relevante é **compilada
+  com a toolchain do projeto e injetada no documento** antes da consulta; sem isso, a área é
+  declarada **não medida**, não "sem achados". Isso não é redundante com o item de método acima:
+  ali o problema é leitura estática apresentada como verificação ao vivo, aqui o método **era**
+  execução instrumentada e ainda assim mediu o documento errado. Já aconteceu de `empty:hidden` (que
+  compila para `display:none`) fazer `getByRole('status')` devolver **0** enquanto a região estava
+  vazia, enquanto quatro artefatos afirmavam que ela era "sempre montada" e a suíte ficava verde —
+  três etapas de revisão passaram por isso sem pegar nada por leitura.
 - [ ] `ux-review.md` referencia o PR e a fatia desta rodada.
 - [ ] **A linha desta rodada existe em `specs/<slug>/timing-log.md` e nomeia uma única etapa.** Etapa
   cujo trabalho de orquestrador foi zero registra `0m` com justificativa — nunca nenhuma linha; e

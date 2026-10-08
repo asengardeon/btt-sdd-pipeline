@@ -29,6 +29,16 @@
   distinto do código-fonte, o comando de build/empacotamento real de produção (`docs/STACK.md`) foi
   verificado antes de aprovar — lint/tipo/teste unitário sozinhos não são "suíte completa" nesse
   caso (`docs/TESTING.md`, seção "Build/empacotamento real como parte da suíte completa").
+- [ ] **Garantia observável que depende de uma classe de CSS utilitário é asseverada contra o CSS
+  publicado do build, não contra o fonte** — presença da regra quando a garantia depende de ela
+  existir, ausência quando depende de ela ter sido removida. O extrator varre o arquivo inteiro,
+  **comentários incluídos**, então o fonte não decide o que existe em produção: citar o nome literal
+  de uma classe antiga no comentário que explica a mudança mantém a regra morta dela no CSS de
+  produção, e uma classe que o código escreve pode não gerar regra nenhuma. Já aconteceu nas duas
+  direções na mesma fatia — `empty:hidden` com contagem **0** nos dois arquivos de CSS do build,
+  enquanto quatro artefatos afirmavam a garantia que ela deveria dar e a suíte ficava verde. É a
+  contrapartida, do lado do build, do item equivalente de `docs/gates/ux.md` (compilar e injetar a
+  regra no jsdom antes de consultar).
 - [ ] Todo critério de aceite coberto pela fatia desta rodada tem veredito individual com evidência
   (teste ou passo manual).
 - [ ] Suíte completa rodou (regressão, inclui fatias anteriores já mergeadas), não só os testes
