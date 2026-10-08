@@ -53,6 +53,23 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    própria implementação (1h21m). Um dos achados era da mesma classe de outro da fatia anterior, e
    tinha potencial de contaminar uma fatia futura que ainda não tinha começado.
 
+3b. **Se a emenda reescreve uma frase que descreve o *mecanismo* pelo qual uma garantia é obtida**
+   (e não o critério que tem de ser verdade), responda as duas perguntas de
+   `docs/gates/governanca.md` antes de considerar a emenda fechada:
+
+   1. **Quantas enumerações esta frase tem?** Uma linha de plano de testes costuma ter duas — *o
+      que* é coberto e *quais propriedades* são asseveradas. Corrigir uma e deixar a outra move o
+      defeito em vez de eliminá-lo, e a frase passa a *parecer* corrigida.
+   2. **Em quantos lugares este mesmo mecanismo está descrito?** `grep` pela afirmação antiga no
+      repositório inteiro (artefatos de spec, docstrings, docblocks, ADRs) e substitua cada
+      reaparição por referência ao lugar canônico, em vez de repetir a frase corrigida. Já aconteceu
+      de um mecanismo estar em quatro lugares e a correção acertar três.
+
+   A classe mais exposta é a seção 11 do TRD (plano de testes): seu conteúdo **é** mecanismo por
+   definição, e mecanismo é o que cada rodada de correção troca. Quando possível, troque a frase de
+   mecanismo pelo critério que sobrevive à troca — é a emenda que não precisa ser refeita na rodada
+   seguinte.
+
 4. Determine as etapas posteriores afetadas usando a ordem fixa do pipeline
    (PRD → TRD → implementação → revisão de código → QA → segurança → SRE, ver
    `docs/SDD-WORKFLOW.md`):

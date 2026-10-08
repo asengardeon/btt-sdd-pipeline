@@ -22,6 +22,23 @@
 - [ ] **Artefatos aprovados são editados in-place, nunca recriados do zero.** Mudar uma decisão já
   aprovada usa `/btt-sdd:amend`, que registra a mudança no "Log de revisões" e só reabre as etapas
   posteriores realmente afetadas — etapas anteriores aprovadas continuam válidas.
+- [ ] **Corrigir uma frase de mecanismo exige duas perguntas antes de fechar o achado.** Prosa que
+  descreve *como* uma garantia é obtida continua sendo lida como verdade depois que o *como* mudou —
+  e o pipeline reescreve o *como* a cada rodada de correção, então qualquer projeto com mais de uma
+  rodada de revisão por fatia produz isso. Ao reescrever uma frase dessa classe (num PRD, TRD, ADR,
+  docstring, docblock ou relatório de revisão), responda explicitamente:
+  - **"Quantas enumerações esta frase tem?"** Uma linha de plano de testes costuma ter **duas** — *o
+    que* é coberto e *quais propriedades* são asseveradas. Trocar uma e deixar a outra **move** o
+    defeito em vez de eliminá-lo, e o movimento é invisível porque a frase agora *parece* corrigida.
+    Já aconteceu de verdade: a contagem foi trocada por critério ("nos 6 estados" → "toda
+    renderização visível"), a reescrita estava certa, e o defeito seguinte entrou pelo segundo eixo —
+    duas mutações sobreviveram à suíte inteira (1644/1644 verdes), e uma terceira propriedade nem
+    constava do relatório.
+  - **"Em quantos lugares este mesmo mecanismo está descrito?"** Rode `grep` pela afirmação antiga
+    antes de fechar o achado, e substitua cada reaparição por referência ao lugar canônico em vez de
+    repetir a frase. Já aconteceu de um mecanismo estar descrito em **quatro** lugares (port no TRD,
+    docstring do port, docblock do provider, docblock da cópia) mais a célula de critério de outra
+    seção, e a correção acertar três — um `grep` acha o que nenhuma revisão de prosa acha.
 - [ ] **Nenhum agente encerra numa branch de feature.** Todo agente que faz `git checkout`/ `git
   switch` para uma branch de fatia (implementadores e revisores que commitam achados na branch do
   PR) confirma a branch atual (`git branch --show-current`) antes de finalizar e, se não for a
