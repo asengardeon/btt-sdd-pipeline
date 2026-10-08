@@ -11,6 +11,21 @@
   review pulado (justificado)`, nunca simplesmente omitida.
 - [ ] `code-review.md` com veredito aprovado (ou aprovado com ressalvas aceitas pelo usuário) —
   sem isso, a UX review não começa.
+- [ ] **A aprovação de code review vigente cobre o HEAD atual da branch.** Não basta
+  `code-review.md` existir aprovado: `git diff --name-only <sha da rodada que aprovou>..HEAD --
+  <diretórios de produção>` tem de ser **vazio**. Se não for, esta etapa não começa — roda-se uma
+  rodada de code review escopada ao delta, numa instância nova, antes de prosseguir. A checagem de
+  sincronia que as skills já fazem é contra `main` (`git rev-list --count HEAD..origin/main`) e
+  **não cobre este caso**: o que avançou foi a própria branch da fatia, depois do carimbo. Isso
+  acontece no caminho normal, não num desvio — a etapa 4b roda depois da 4 e **gera código de
+  produção**, então correções de achados de UX aceitas pelo usuário atravessam duas etapas com um
+  carimbo que já não corresponde ao código. Já aconteceu de verdade: 5 arquivos de produção e 824
+  inserções depois do sha aprovado, dois commits de correção de UX sem rodada nenhuma de revisão —
+  a rodada escopada ao delta **reprovou**, achando um bloqueante (um `useEffect` dependendo do
+  **valor** e não da **transição**, roubando o foco a cada volta à tela) e um 5º sinal de plataforma
+  sem nenhuma menção em `specs/`, `docs/` ou código. Foi pego só porque o `qa-engineer` inventou a
+  checagem por iniciativa própria — ela não estava escrita em lugar nenhum. O custo da checagem é
+  um comando.
 - [ ] Cada uma das 7 áreas de revisão (consistência e padrões; visibilidade do estado do sistema e
   prevenção de erro; controle/liberdade do usuário e navegabilidade; consciência de estado/ciclo
   de vida do domínio; robustez de conteúdo gerado pelo usuário; hierarquia de informação; alvo de

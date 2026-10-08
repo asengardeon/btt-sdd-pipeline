@@ -33,6 +33,13 @@ pulado" em `/sdd-hotfix`), em vez de simplesmente não mencionar a etapa.
 1. Identifique o slug da feature (mesma lógica das skills anteriores).
 2. Confirme que existe um PR aberto com `code-review.md` aprovado (ou aprovado com ressalvas
    aceitas pelo usuário) para a fatia desta rodada. Se não, sugira `/sdd-code-review` primeiro.
+2a. **Confirme que a aprovação de code review vigente cobre o HEAD atual da branch — não só que
+   ela existe.** Pegue o sha que a rodada de code review aprovou (o commit em que `code-review.md`
+   foi gravado com o veredito vigente) e rode `git diff --name-only <sha>..HEAD -- <diretórios de
+   produção>`. Se vier **não vazio**, esta etapa não começa: volte para `/sdd-code-review` com uma
+   rodada escopada ao delta (instância nova do `code-reviewer`), e só então rode a UX review
+   (`docs/gates/ux.md`, item sobre frescor da aprovação). Isso é diferente do passo 2b abaixo, que
+   checa `main`: aqui o que avançou foi a **própria branch da fatia** depois do carimbo.
 2b. **Confirme que a branch está sincronizada com `main` antes de revisar** — mesmo passo 2b de
    `.claude/skills/sdd-code-review/SKILL.md`: `git fetch origin main` + `git rev-list --count
    HEAD..origin/main`; rebaseie se houver commits novos, resolvendo conflitos em arquivos de
@@ -75,6 +82,15 @@ pulado" em `/sdd-hotfix`), em vez de simplesmente não mencionar a etapa.
    siga a seção "Retomando para corrigir achados de revisão" de
    `.claude/skills/sdd-implement/SKILL.md`. Se aprovado (ou aprovado com ressalvas aceitas pelo
    usuário), ou se a etapa foi pulada por não aplicável, informe que a próxima etapa é `/sdd-qa`.
+6b. **Quando as correções de achados desta etapa tocam código de produção, o retorno é para
+   `/sdd-code-review` escopado ao delta — não direto para `/sdd-qa`.** Vale tanto para um veredito
+   reprovado quanto para ressalvas de comportamento que o usuário aceitou e mandou corrigir: esta
+   etapa roda **depois** da 4, então todo código que ela faz nascer é código que nenhuma rodada de
+   revisão viu. Depois da correção, o carimbo de `code-review.md` cobre um HEAD que já não existe —
+   e as etapas 5/6/7 têm, cada uma, um item de gate que **bloqueia** nesse estado
+   (`docs/gates/ux.md`/`qa.md`/`seguranca.md`, item sobre frescor da aprovação). A rodada de volta é
+   escopada ao delta (só o que mudou desde o sha aprovado), numa instância nova do `code-reviewer`,
+   não uma revisão completa da fatia do zero.
 
 ## Quando usar sem o agente
 
