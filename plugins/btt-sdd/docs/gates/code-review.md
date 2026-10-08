@@ -33,6 +33,13 @@
   dois-pontos (ou o rodapé `BREAKING CHANGE:` no corpo) — checagem de um caractere, três etapas
   antes do SRE (`docs/GIT-WORKFLOW.md`, seção "Quebra de contrato e o título do PR"). Uma quebra
   encontrada no diff que o TRD **não** declarou é achado por si só.
+- [ ] **A rodada declara no artefato se a fatia tem ou não superfície de UI perceptível pelo
+  usuário final** (critério objetivo em `docs/gates/ux.md`), porque é esta etapa que roteia a
+  seguinte: com superfície, a próxima é a 4b (`/btt-sdd:ux-review`); sem, é o QA, e a decisão de pular
+  fica registrada sob o heading padronizado de `ux-review.md`. A informação é de quem leu o diff —
+  declará-la aqui deixa a decisão auditável em vez de implícita. Já aconteceu de uma fatia com
+  superfície de UI pular a 4b inteira e ser mergeada em `main` sem revisão de usabilidade, numa
+  spec onde a etapa já existia.
 - [ ] `code-review.md` existe, referencia o PR e a fatia desta rodada, e cada área de revisão tem
   veredito com evidência (arquivo/linha) ou "sem achados".
 - [ ] `code-review.md` commitado (só esse arquivo, nunca `git add -A`/`.`) e enviado (push) na

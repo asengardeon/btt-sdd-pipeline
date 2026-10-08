@@ -10,9 +10,11 @@ de software sênior, entre a implementação e o QA.
 
 **Sempre passe por esta skill — nunca invoque o agente `code-reviewer` diretamente via Agent tool**
 (diferente da etapa 3, onde invocar `backend-developer`/`frontend-developer` direto é o padrão
-correto). Esta skill em si não carrega lógica extra além de acionar o agente, mas o hábito de
-pular a skill nas etapas 4-7 já causou passos de outras skills de revisão (`/sdd-sre`) serem
-pulados silenciosamente numa sessão real — ver `CLAUDE.md`, seção do pipeline.
+correto). Esta skill carrega o **roteamento da etapa seguinte** (passo 5: etapa 4b ou QA, conforme
+o diff da fatia), que o agente sozinho não faz — e o hábito de pular a skill nas etapas 4-7 já
+causou passos de outras skills de revisão (`/sdd-sre`) serem pulados silenciosamente numa sessão
+real, além de uma fatia inteira atravessar o pipeline sem a etapa 4b — ver `CLAUDE.md`, seção do
+pipeline.
 
 **Antes de qualquer coisa, leia `docs/SKILL-PREAMBLE.md`** — onde ficam os docs de governança
 deste pipeline e de onde vêm os templates de `specs/_template/` (nenhum dos dois vive dentro do
@@ -100,8 +102,26 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    siga a seção "Retomando para corrigir achados de revisão" de
    `.claude/skills/sdd-implement/SKILL.md` (prefira retomar o mesmo agente que implementou a
    fatia via `SendMessage` para correções pequenas e objetivas, em vez de invocar um agente novo).
-   Se aprovado (ou aprovado com ressalvas aceitas pelo usuário), informe que a próxima etapa é
-   `/sdd-qa`.
+   Se aprovado (ou aprovado com ressalvas aceitas pelo usuário), **a próxima etapa depende do diff
+   desta fatia — não é sempre `/sdd-qa`.** Aplique o critério objetivo de `docs/gates/ux.md` sobre o
+   diff que você acabou de revisar:
+   - **O diff toca superfície de UI perceptível pelo usuário final** (layout, navegação,
+     visibilidade condicional de controles, estado vazio/erro, conteúdo de mídia) → a próxima etapa
+     é **`/sdd-ux-review`** (etapa 4b), não `/sdd-qa`.
+   - **Não toca** → a próxima etapa é `/sdd-qa`, e a decisão de pular a 4b fica registrada em
+     `specs/<slug>/ux-review.md` sob o heading padronizado que `docs/gates/ux.md` já define (`##
+     Decisão: UX review pulado (justificado)`), nunca simplesmente omitida.
+
+   **Por que esta bifurcação está escrita aqui.** A etapa 4b tem gate próprio, critério objetivo e
+   skill própria — mas nada no caminho que o orquestrador percorre a mencionava, e um gate
+   condicional cujo roteamento não está escrito é um gate que depende de memória. Já aconteceu de
+   verdade: uma fatia com superfície de UI (a marca do app virou link, +31/-4 num componente de
+   topbar) **pulou a 4b inteira** e foi mergeada em `main` sem nenhuma revisão de usabilidade,
+   numa spec onde a etapa já existia havia semanas — descoberto só na fatia seguinte, pelo próprio
+   `ux-designer`. E quando a 4b finalmente rodou, achou um defeito da classe que **só** ela encontra
+   (um desfecho de instalação descartado, deixando o card idêntico depois de uma instalação
+   bem-sucedida e respondendo "não foi possível" a quem acabou de instalar). Este é o único ponto do
+   pipeline em que uma etapa pode desaparecer silenciosamente de uma fatia inteira.
 
 ## Quando usar sem o agente
 
