@@ -36,6 +36,17 @@
   (`specs/<slug>/coverage/`) quando o commit bate com o HEAD atual; re-executada e regravada só se o
   arquivo estiver ausente ou desatualizado (`docs/TESTING.md`).
 - [ ] `qa-report.md` referencia o PR e a fatia desta rodada.
+- [ ] **A linha desta rodada existe em `specs/<slug>/timing-log.md` e nomeia uma única etapa.** Etapa
+  cujo trabalho de orquestrador foi zero registra `0m` com justificativa — nunca nenhuma linha; e
+  uma linha que nomeia duas etapas ("Segurança + code review") deixa uma das duas com zero minuto
+  atribuível, então duas etapas que rodaram em paralelo são duas linhas com o mesmo horário de
+  início. Em agente **retomado**, o valor registrado é a **diferença** contra a notificação anterior
+  do mesmo agente, nunca o contador bruto — crescimento monotônico entre rodadas é a assinatura de
+  contador cumulativo desde a criação (`specs/_template/timing-log.template.md`, seções "O que a
+  coluna 'Duração' mede" e "Uma linha por etapa, sempre"). A retrospectiva de fatia lê este arquivo
+  como evidência concreta de performance, e os três defeitos de medição empurram na **mesma
+  direção**: superestimam as etapas de agente e subestimam as do orquestrador — numa fatia medida,
+  29% do esforço era de orquestrador.
 - [ ] `qa-report.md` (e o arquivo de cobertura, se regravado) commitados (só esses arquivos, nunca
   `git add -A`/`.`) e enviados (push) na branch do PR pelo próprio `qa-engineer` antes de devolver o
   resultado.

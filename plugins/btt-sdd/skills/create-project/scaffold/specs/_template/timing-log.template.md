@@ -51,12 +51,54 @@ agente:
 | 2026-10-03T20:00:00Z | Correção pontual | frontend-developer | F-1 | ~35m (duration_ms reportado de 83m04s é incompatível com o relógio — provavelmente cumulativo desde a criação do agente; não somar com a linha da rodada anterior) |
 ```
 
+**A assinatura de detecção é a monotonia entre rodadas — e, detectada, o número a registrar é a
+diferença.** Contador cumulativo e contador por invocação se distinguem sem precisar do relógio:
+compare o mesmo campo entre rodadas sucessivas do mesmo agente. Se ele **cresce monotonicamente**
+enquanto o trabalho de cada rodada oscila, é total de vida, não custo da rodada. Já aconteceu de
+verdade: os `subagent_tokens` de um `frontend-developer` ao longo de 8 invocações foram
+`288.900 → 380.204 → 437.478 → 527.579 → 621.760 → 648.938 → 719.348 → 761.011` — monotônicos —
+com os usos de ferramenta oscilando (150, 56, 30, 52, 66, 21, 42, 31). Nesse caso, **registre a
+diferença entre o contador desta notificação e o da notificação anterior do mesmo agente**
+(duração e tokens), não o valor bruto, e diga na linha que é diferença:
+
+```
+| 2026-10-06T14:12:40Z | Correção pontual | frontend-developer | F-2 | 11m18s (diferença contra a rodada anterior do mesmo agente; contadores reportados são cumulativos desde a criação — 719.348 → 761.011 tokens = 41.663 nesta rodada) |
+```
+
+Sem isso, a conclusão se inverte: 761k lido como custo de uma rodada faz o log afirmar que
+**retomar agente é caro**, quando a medida correta prova o contrário — nessa mesma fatia, o custo
+marginal das 7 rodadas de correção foi 472.111 tokens (~67k/rodada), enquanto cada instância fresca
+de revisor custou 223k–266k só para se orientar.
+
 **Anotar o horário antes do `SendMessage` resolve o caso na origem** e é a instrução que vale
 seguir — `/btt-sdd:implement`, seção "Retomando para corrigir achados de revisão", passo 1.
 A conferência acima é a rede de segurança para quando esse horário não existe, e não é zelo
 opcional: a retrospectiva de fatia (`/btt-sdd:sre`, passo 5c) lê este arquivo como evidência
 concreta de performance, e uma linha de 83m que na verdade foram ~35m faz a análise concluir o
 oposto do que os dados mostram.
+
+## Uma linha por etapa, sempre
+
+**Etapa com trabalho real e nenhuma linha é pior que uma linha imperfeita.** Toda etapa desta fatia
+aparece no log, inclusive quando o trabalho de orquestrador nela foi zero — aí a linha registra
+`0m` com a justificativa, em vez de não existir. A ausência de linha é indistinguível de "não
+medido", e a série passa a comparar coisas diferentes: já aconteceu de o SRE de uma fatia ter só a
+linha do agente (47m32s) enquanto a rodada roteava 6 pendências ao orquestrador, entregava um texto
+de issue para ele criar, e conduzia a retrospectiva da fatia — contra a fatia anterior, que tinha a
+linha equivalente de ~15m. A série comparou "SRE F-1 = 29m27s + 15m" com "SRE F-2 = 47m32s + 0".
+
+**Nenhuma linha nomeia duas etapas na coluna `Etapa`.** Quando duas etapas rodam em paralelo — o
+que é legítimo —, são **duas linhas com o mesmo horário de início**, exatamente como
+`/btt-sdd:implement`, passo 4d, já manda fazer para as duas trilhas de uma feature full-stack. Uma
+linha "Segurança + code review" deixa uma das duas etapas com zero minuto atribuível: já aconteceu
+de a segurança de uma fatia ficar sem nenhum tempo de orquestrador registrado, apesar de 2
+perguntas de decisão intermediadas e de uma convenção gravada em `docs/PROJECT-CONVENTIONS.md`.
+
+**Por que os três defeitos importam juntos:** contador cumulativo, etapa sem linha e linha agregada
+empurram todos na **mesma direção** — superestimam as etapas de agente e subestimam as do
+orquestrador, que é justamente o viés que a seção "Trabalho conduzido pelo orquestrador" existe para
+corrigir. Numa fatia medida, 29% do esforço era do orquestrador (~177 min contra ~439 de agente): o
+viés não é marginal.
 
 ## Trabalho conduzido pelo orquestrador (sem agente)
 
