@@ -25,6 +25,14 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 2. Confirme que existe `specs/<slug>/code-review.md` com veredito aprovado (ou aprovado com
    ressalvas aceitas pelo usuário). Se não existir, sugira `/btt-sdd:code-review` primeiro; se
    existir reprovado, sugira `/btt-sdd:implement` para tratar os achados antes de rodar o QA.
+2a. **Confirme que a aprovação de code review vigente cobre o HEAD atual da branch — não só que
+   ela existe.** Pegue o sha que a rodada de code review aprovou (o commit em que `code-review.md`
+   foi gravado com o veredito vigente) e rode `git diff --name-only <sha>..HEAD -- <diretórios de
+   produção>`. Se vier **não vazio**, esta etapa não começa: volte para `/btt-sdd:code-review` com uma
+   rodada escopada ao delta (instância nova do `code-reviewer`), e só então rode o QA
+   (`docs/gates/qa.md`, item sobre frescor da aprovação). Isso é diferente do passo 2b abaixo, que
+   checa `main`: aqui o que avançou foi a **própria branch da fatia** depois do carimbo, e é o caso
+   **normal**, não o excepcional — a etapa 4b roda depois da 4 e gera código de produção.
 2b. **Se a branch/PR original da fatia já foi mergeado e apagado** (comum em revisão retroativa
    pedida depois do fato — ex.: um `/btt-sdd:hotfix` que pulou QA no momento do merge, e o usuário
    pede para formalizar essa etapa depois), não tente localizar/rebasear uma branch inexistente:
