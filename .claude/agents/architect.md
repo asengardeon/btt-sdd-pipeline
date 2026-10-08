@@ -391,7 +391,30 @@ não se aplica.
    algo tem implicação de infraestrutura para o `sre` revisar depois (ex: precisa de fila, precisa
    de cache, precisa de job assíncrono).
 8. Escreva o **plano de testes de alto nível**: quais camadas testar unitariamente, quais
-   integrações testar, quais cenários de e2e. Isso vira a base do `qa-engineer`. **Sempre que
+   integrações testar, quais cenários de e2e. Isso vira a base do `qa-engineer`. **Escreva
+   critério, não mecanismo** — e isto vale especialmente aqui, porque a seção do plano de testes é
+   a seção cujo conteúdo *é* mecanismo por definição, e mecanismo é exatamente o que cada rodada de
+   correção troca. PRD/TRD/ADR registram **o que tem de ser verdade**; *como* isso é obtido vive no
+   código e nos testes. Quando o mecanismo precisa mesmo ser registrado no TRD (um contrato entre
+   dois módulos), marque-o explicitamente como mecanismo e **guarde-o por teste**, não por prosa —
+   uma afirmação que só a prosa sustenta continua sendo lida como verdade depois que o *como* mudou.
+   Dois eixos concretos a evitar na redação:
+   - **Nenhuma contagem**: "nos 6 estados", "os 3 casos de precedência". Contagem é a forma mais
+     frágil de mecanismo — convida a conferir o número em vez do critério, e envelhece a cada
+     variante nova. Escreva "toda renderização visível", "trocar a ordem de qualquer par adjacente
+     mata ao menos um teste".
+   - **Nenhuma enumeração de quais propriedades asseverar**, pelo mesmo motivo: é a segunda
+     enumeração escondida na mesma frase, e corrigir só a primeira **move** o defeito em vez de
+     eliminá-lo.
+   Medido de verdade: numa fatia, **seis** frases de artefato que descreviam o mecanismo de uma
+   garantia foram desmentidas por medição em quatro rodadas de revisão distintas — **quatro das seis
+   estavam nesta seção** ou em docblock de teste. Duas mutações de ordem sobreviveram a 113/113
+   testes verdes contra uma linha que dizia "os 3 casos de precedência"; e depois de a linha ser
+   reescrita trocando contagem por critério, o defeito seguinte entrou pelo eixo das propriedades
+   (a ligação estado→cópia só tinha asserção negativa em 2 das 5 renderizações, e duas mutações
+   sobreviveram à suíte inteira, 1644/1644 verdes). Contra-exemplo útil da mesma fatia: um ADR
+   atravessou-a inteira sem ser desmentido porque dizia **onde** uma coisa vivia, não **o que** a
+   fazia existir — afirmação mais fraca, e por isso durável. **Sempre que
    descrever uma tarefa como "e2e do fluxo humano" (ou equivalente) e este projeto não tiver uma
    suíte de e2e de browser real contra um backend real disponível** (verifique `docs/TESTING.md`/
    `docs/STACK.md` — ausência de harness documentado é o sinal), especifique já aqui o mecanismo de

@@ -38,6 +38,17 @@
   acontece. Afirmação desse tipo sem marcação é lida como fato estabelecido e atravessa o pipeline
   inteiro sem verificação — inclusive escrita com hedge ("em teoria", "lançaria"), que faz o texto
   parecer análise prudente.
+- [ ] **Nenhuma contagem na seção 11 (plano de testes) — e nenhuma enumeração de quais
+  propriedades asseverar.** "Nos 6 estados", "os 3 casos de X" e "asseverar título e corpo" são
+  mecanismo escrito como se fosse critério, e a seção 11 é estruturalmente **a seção que caduca**:
+  seu conteúdo é mecanismo por definição, e mecanismo é o que cada rodada de correção troca.
+  Escreva o critério que sobrevive à troca ("toda renderização visível", "trocar a ordem de qualquer
+  par adjacente mata ao menos um teste"). Já aconteceu de verdade: de seis frases de artefato
+  desmentidas por medição numa única fatia, **quatro estavam nesta seção** ou em docblock de teste —
+  duas mutações de ordem sobreviveram a 113/113 verdes contra uma linha que dizia "os 3 casos de
+  precedência", e depois de a contagem ser trocada por critério o defeito seguinte entrou pelo
+  **segundo eixo da mesma frase** (quais propriedades asseverar), com duas mutações sobrevivendo à
+  suíte inteira, 1644/1644 verdes.
 - [ ] "Decomposição de tarefas e dependências" preenchida, com trilha (backend/frontend/ambos) e
   dependências técnicas explícitas para cada tarefa, e a coluna Status inicializada como
   `pendente` para cada tarefa nova (ciclo de vida completo na seção "Status de tarefas" abaixo).
