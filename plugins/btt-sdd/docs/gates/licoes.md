@@ -120,6 +120,24 @@ confirmado ainda").
   - **`adiado` ou `sem resposta` numa entrada que atinge 5 ocorrências vira issue rastreada** no
     repositório do projeto, com a decisão pendente explicitada. É a saída que tira o item do
     artefato de revisão — onde ele é relido por todo mundo e resolvido por ninguém.
+  - **O preenchimento da resposta tem dono nominal: o orquestrador da skill de revisão que obteve a
+    decisão do usuário, no mesmo turno.** Quem aciona `AskUserQuestion` com a oferta
+    (`skills/code-review/SKILL.md` passo 3c, `skills/ux-review/SKILL.md`
+    passo 4c, `skills/qa/SKILL.md` passo 3c, `skills/security/SKILL.md`
+    passo 3c, `skills/sre/SKILL.md` passo 4b) escreve a resposta no campo
+    `Escalonamento` da entrada correspondente de `docs/LESSONS-LEARNED.md` — **não só no artefato da
+    rodada**. O pipeline instruía a **ler** o campo e a **ofertar**, mas não a **responder**: é
+    assimetria de ciclo fechado, e o custo é uma oferta repetida ao usuário, exatamente o que o
+    campo foi criado para evitar.
+  - **Entrada com `sem resposta` cuja decisão consta em artefato de rodada anterior é
+    inconsistência a corrigir, não oferta em aberto.** Quem lê o campo antes de ofertar confere
+    também o artefato da rodada em que a oferta foi feita; se a decisão estiver lá e o campo não,
+    complete o campo citando onde a decisão foi registrada, em vez de reabrir a oferta. Já aconteceu
+    de verdade: uma entrada tinha `Escalonamento: sem resposta` **e a resposta existia** — o usuário
+    havia decidido, e a decisão estava no corpo do artefato da rodada. Foi a terceira vez na mesma
+    spec que uma decisão do usuário existia em prosa e não no campo estruturado que a consome, e só
+    não virou oferta repetida porque um agente completou o campo por iniciativa própria.
+
 
   Já aconteceu de verdade, em três entradas da mesma spec: uma na **5ª** ocorrência ("oferecido e
   não aplicado" em três fatias seguidas), uma na **6ª spec** consecutiva, e uma com **29**
