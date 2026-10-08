@@ -81,7 +81,15 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    específico") — nunca pule este registro por ser "só uma reverificação", senão o `timing-log.md`
    da fatia fica sistematicamente incompleto. **Quando a reverificação pontual retoma o agente
    via `SendMessage` em vez de abrir uma invocação nova, o passo 3 não acontece — anote o horário
-   antes do `SendMessage` do mesmo jeito.**
+   antes do `SendMessage` do mesmo jeito.** **Uma linha por etapa, sempre, e
+   nenhuma linha nomeando duas etapas**: se o trabalho de orquestrador nesta etapa foi zero,
+   registre `0m` com justificativa em vez de omitir a linha; se esta etapa rodou em paralelo com
+   outra, são duas linhas com o mesmo horário de início, nunca uma linha "X + Y"
+   (`specs/_template/timing-log.template.md`, seção "Uma linha por etapa, sempre"). **E se esta
+   invocação retomou o agente em vez de criá-lo**, registre a **diferença** contra a notificação
+   anterior do mesmo agente, não o contador bruto — crescimento monotônico entre rodadas é a
+   assinatura de contador cumulativo desde a criação (mesmo template, seção "O que a coluna
+   'Duração' mede").
 3c. **Se o agente registrou perguntas como "VALIDAR DEPOIS" por não ter `AskUserQuestion` disponível
    nesta invocação** (subagente isolado/assíncrono — sinal típico: uma nota de processo no topo de
    `code-review.md`, ou um item de pendência dizendo "não pude perguntar"), **você** — o

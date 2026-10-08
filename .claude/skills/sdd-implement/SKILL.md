@@ -95,7 +95,16 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    `security-engineer`/`sre` — mesma observação nas skills dessas etapas). Sem isso, o
    `timing-log.md` de uma fatia com achados fica sistematicamente incompleto, reduzindo a precisão
    de qualquer análise de performance futura (ex.: a retrospectiva do próprio `sre`, que lê este
-   arquivo).
+   arquivo). **Em agente retomado, nunca registre o contador bruto da notificação como custo desta
+   rodada.** Se o horário anotado antes do `SendMessage` (passo 1 da seção "Retomando para corrigir
+   achados de revisão") não existir e você só tiver os contadores, compare o mesmo campo com a
+   notificação anterior do mesmo agente: **crescimento monotônico entre rodadas, com o trabalho de
+   cada rodada oscilando, é a assinatura de contador cumulativo desde a criação** — registre então a
+   **diferença** contra a rodada anterior, dizendo na linha que é diferença
+   (`specs/_template/timing-log.template.md`, seção "O que a coluna 'Duração' mede"). Registrar o
+   bruto inverte a conclusão da retrospectiva: faz o log afirmar que retomar agente é caro, quando o
+   custo marginal medido de uma rodada de correção é uma fração do que uma instância fresca gasta só
+   para se orientar.
 3d. **Se esta fatia (ou a spec inteira) existe para eliminar uma classe de defeito, verifique
    explicitamente que a correção do achado não a reintroduz numa forma vizinha** — e inclua essa
    verificação no pedido que você manda ao agente, em vez de esperar que ele lembre. O risco é
@@ -330,7 +339,11 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    custaram tempo real de relógio, intermediação de plano/pergunta de subagente isolado —,
    **registre-o como uma linha própria** com `Agente = orquestrador (sem agente)`, em vez de
    deixá-lo invisível no log (`specs/_template/timing-log.template.md`, seção "Trabalho conduzido
-   pelo orquestrador"). Diferente de PRD/TRD (passo 2c-bis), aqui já existe branch/PR — commit e
+   pelo orquestrador"). **Uma linha por etapa, sempre**: etapa cujo trabalho de orquestrador foi
+   zero registra `0m` com justificativa em vez de nenhuma linha, e nenhuma linha nomeia duas etapas
+   na coluna "Etapa" — duas etapas em paralelo são duas linhas com o mesmo horário de início, igual
+   ao que o passo 4d já manda para as trilhas full-stack (`specs/_template/timing-log.template.md`,
+   seção "Uma linha por etapa, sempre"). Diferente de PRD/TRD (passo 2c-bis), aqui já existe branch/PR — commit e
    envie (push) essa atualização junto com o resto do que esta rodada já for commitar (não é um push
    extra só para isso, salvo se nada mais estiver pendente — `docs/GIT-WORKFLOW.md`, regra 4, sobre
    agrupar pushes relacionados).

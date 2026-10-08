@@ -61,7 +61,15 @@ review pulado (justificado)` com a justificativa (mesmo padrão já usado para "
    `specs/_template/timing-log.template.md` se ainda não existir): uma linha com o horário do
    passo 4, o horário atual, e a diferença calculada (etapa "UX review", agente "ux-designer",
    fatia desta rodada). Commit e envie (push) essa atualização junto com o resto do que esta
-   rodada já for commitar.
+   rodada já for commitar. **Uma linha por etapa, sempre, e
+   nenhuma linha nomeando duas etapas**: se o trabalho de orquestrador nesta etapa foi zero,
+   registre `0m` com justificativa em vez de omitir a linha; se esta etapa rodou em paralelo com
+   outra, são duas linhas com o mesmo horário de início, nunca uma linha "X + Y"
+   (`specs/_template/timing-log.template.md`, seção "Uma linha por etapa, sempre"). **E se esta
+   invocação retomou o agente em vez de criá-lo**, registre a **diferença** contra a notificação
+   anterior do mesmo agente, não o contador bruto — crescimento monotônico entre rodadas é a
+   assinatura de contador cumulativo desde a criação (mesmo template, seção "O que a coluna
+   'Duração' mede").
 4c. **Se o agente registrou perguntas como "VALIDAR DEPOIS" por não ter `AskUserQuestion` disponível
    nesta invocação** (subagente isolado/assíncrono — sinal típico: uma nota de processo no topo de
    `ux-review.md`, ou um item de pendência dizendo "não pude perguntar"), **você** — o orquestrador

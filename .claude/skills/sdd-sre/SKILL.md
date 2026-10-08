@@ -86,7 +86,15 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    por ser "só uma reverificação", senão o `timing-log.md` da fatia fica sistematicamente
    incompleto. **Quando a reverificação pontual retoma o agente via `SendMessage` em vez de
    abrir uma invocação nova, o passo 3 não acontece — anote o horário antes do `SendMessage` do
-   mesmo jeito.**
+   mesmo jeito.** **Uma linha por etapa, sempre, e
+   nenhuma linha nomeando duas etapas**: se o trabalho de orquestrador nesta etapa foi zero,
+   registre `0m` com justificativa em vez de omitir a linha; se esta etapa rodou em paralelo com
+   outra, são duas linhas com o mesmo horário de início, nunca uma linha "X + Y"
+   (`specs/_template/timing-log.template.md`, seção "Uma linha por etapa, sempre"). **E se esta
+   invocação retomou o agente em vez de criá-lo**, registre a **diferença** contra a notificação
+   anterior do mesmo agente, não o contador bruto — crescimento monotônico entre rodadas é a
+   assinatura de contador cumulativo desde a criação (mesmo template, seção "O que a coluna
+   'Duração' mede").
 4. O agente `sre` já embute o gate de aprovação: qualquer proposta de mudança real de
    infraestrutura (`terraform apply`) é apresentada como plano e só executada após aprovação
    explícita do usuário via `AskUserQuestion`. Você não precisa duplicar essa confirmação, mas
