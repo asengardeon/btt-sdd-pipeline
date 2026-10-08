@@ -107,7 +107,16 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    legitimamente. Registrar em vez de perguntar é o fallback correto **do agente**, que não tinha a
    ferramenta; não é o seu, que tem — e o usuário está disponível justamente no turno em que a etapa
    roda. Perguntas binárias de política ou de comportamento, que o usuário responderia em segundos,
-   já viraram dívida em `/sdd-pending` exatamente por este passo não existir.
+   já viraram dívida em `/sdd-pending` exatamente por este passo não existir. **E se a pergunta que você
+   intermediou era uma oferta de escalonamento de uma entrada de `docs/LESSONS-LEARNED.md`**
+   (`docs/gates/licoes.md`, bullets sobre entrada que atinge 3 ocorrências), **escreva a resposta do
+   usuário no campo `Escalonamento` da entrada correspondente neste mesmo turno** — não só no
+   artefato da rodada. O gate instrui a *ler* o campo antes de ofertar de novo, mas sem dono para o
+   preenchimento ele acumula `sem resposta` em entradas cuja resposta já foi dada, e a rodada
+   seguinte repete a oferta que o campo existe para evitar. Já aconteceu de uma entrada ter
+   `Escalonamento: sem resposta` com a decisão do usuário registrada em prosa no corpo do artefato
+   da rodada — terceira vez na mesma spec que uma decisão existia em prosa e não no campo
+   estruturado que a consome.
 4. Mostre ao usuário o veredito geral (aprovado/reprovado) e os pontos principais do relatório.
 5. Se reprovado, informe que a feature volta para `/sdd-implement` com os achados listados — e
    siga a seção "Retomando para corrigir achados de revisão" de

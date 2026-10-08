@@ -105,7 +105,16 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    usuário via *sua própria* `AskUserQuestion` antes de instruir o agente a prosseguir. Nunca
    repasse "pode prosseguir" para o agente sem ter, você mesmo, obtido a aprovação explícita do
    usuário nesse turno — aprovação de uma etapa anterior (ex. do Docker base) não cobre
-   automaticamente uma extensão nova (ex. adicionar um serviço novo ao compose).
+   automaticamente uma extensão nova (ex. adicionar um serviço novo ao compose). **E se a pergunta que você
+   intermediou era uma oferta de escalonamento de uma entrada de `docs/LESSONS-LEARNED.md`**
+   (`docs/gates/licoes.md`, bullets sobre entrada que atinge 3 ocorrências), **escreva a resposta do
+   usuário no campo `Escalonamento` da entrada correspondente neste mesmo turno** — não só no
+   artefato da rodada. O gate instrui a *ler* o campo antes de ofertar de novo, mas sem dono para o
+   preenchimento ele acumula `sem resposta` em entradas cuja resposta já foi dada, e a rodada
+   seguinte repete a oferta que o campo existe para evitar. Já aconteceu de uma entrada ter
+   `Escalonamento: sem resposta` com a decisão do usuário registrada em prosa no corpo do artefato
+   da rodada — terceira vez na mesma spec que uma decisão existia em prosa e não no campo
+   estruturado que a consome.
 5. Mostre ao usuário o veredito e os checklists de CI, Docker e Terraform — incluindo a
    verificação de proteção da branch `main` (`docs/GIT-WORKFLOW.md`).
 5b. **Spec finalizada → aciona `tech-writer` automaticamente.** Se a fatia aprovada (ou aprovada com
