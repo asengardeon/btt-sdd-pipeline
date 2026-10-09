@@ -40,6 +40,11 @@ atualizado sozinho.
 - **`AGENT-PREAMBLE.md`** / **`SKILL-PREAMBLE.md`** — o que todo agente / toda skill lê antes de
   começar: onde ficam os docs de governança, de onde vêm os templates de `specs/_template/`, e
   como tratar `docs/PROJECT-CONVENTIONS.md`. Cada agente/skill carrega só um ponteiro.
+- **`MODEL-TIERING.md`** — quando um subagente de **trabalho bem definido** pode rodar num modelo
+  mais barato e quando nunca pode: etapa com veredito usa sempre o padrão da sessão, sub-tarefa
+  auxiliar isolada pode usar tier econômico. Traz o teste das cinco condições, os limites rígidos e
+  o laço de avaliação via coluna `Modelo` do `timing-log.md`. Gate transversal correspondente em
+  `docs/gates/governanca.md`.
 - **`GIT-WORKFLOW.md`** — GitHub Flow aplicado ao pipeline.
 - **`BASELINE.md`** — **gerado condicionalmente** pelo `codebase-archaeologist`, só se este projeto
   vier a incorporar código pré-existente sem documentação suficiente. Não existe por padrão num

@@ -224,7 +224,11 @@ em `asengardeon/btt-sdd-pipeline` assim que fica claro, não só quando uma fati
   fluxo de Git e guia arquivo-a-arquivo. Inclui `docs/AGENT-PREAMBLE.md` e
   `docs/SKILL-PREAMBLE.md`: o contexto que todo agente / toda skill lê antes de começar (onde
   ficam os docs deste pipeline, de onde vêm os templates, como tratar
-  `docs/PROJECT-CONVENTIONS.md`), referenciado por ponteiro em vez de copiado em cada arquivo. Inclui `docs/LESSONS-LEARNED.md` (condicional): padrões
+  `docs/PROJECT-CONVENTIONS.md`), referenciado por ponteiro em vez de copiado em cada arquivo.
+  Inclui `docs/MODEL-TIERING.md`: quando um subagente de trabalho bem definido roda num modelo mais
+  barato (sub-tarefa auxiliar isolada) e quando nunca roda (qualquer etapa com veredito), com o
+  laço de avaliação registrado na coluna `Modelo` do `timing-log.md`. Inclui
+  `docs/LESSONS-LEARNED.md` (condicional): padrões
   de achados já repetidos entre features, que `backend-developer`/`frontend-developer` aplicam
   desde o início da implementação seguinte — critério de promoção em `docs/QUALITY-GATES.md`. Inclui
   também `docs/PROJECT-CONVENTIONS.md` (condicional, mesmo padrão de `BASELINE.md`): particularidades

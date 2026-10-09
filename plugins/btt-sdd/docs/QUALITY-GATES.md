@@ -13,7 +13,7 @@ deriva que a #280 documentou — cada gate vive em exatamente um arquivo.
 
 | Arquivo | O que cobre |
 |---|---|
-| [`gates/governanca.md`](gates/governanca.md) | Regras que valem em **todas** as etapas: nenhuma suposição silenciosa, limite de 3 tentativas, plano aprovado antes de agir, nenhum agente aprova o próprio trabalho, pergunta de subagente isolado é recolhida por quem o invocou, feedback vira issue. |
+| [`gates/governanca.md`](gates/governanca.md) | Regras que valem em **todas** as etapas: nenhuma suposição silenciosa, limite de 3 tentativas, plano aprovado antes de agir, nenhum agente aprova o próprio trabalho, pergunta de subagente isolado é recolhida por quem o invocou, tier de modelo por perfil de subagente, feedback vira issue. |
 | [`gates/licoes.md`](gates/licoes.md) | Mecanismo de memória do projeto (`docs/LESSONS-LEARNED.md`): quando uma entrada nasce, como registrar ocorrência, escalonamento com estado, e quando uma entrada fica obsoleta. |
 | [`gates/status-de-tarefas.md`](gates/status-de-tarefas.md) | Ciclo de vida da coluna Status da decomposição do TRD e de quem é cada transição — `architect` inicializa, implementação promove, revisões bloqueiam. |
 | [`gates/baseline.md`](gates/baseline.md) | Etapa 0, condicional (`codebase-archaeologist`). |
