@@ -193,7 +193,20 @@ seguinte:
    apontando para um SHA docs-only faz quem comparar literalmente concluir "desatualizado" e
    reexecutar a suíte à toa. É esse arquivo que `code-reviewer`/`qa-engineer` reaproveitam em vez de
    rodar a suíte de novo (`docs/TESTING.md`, seção "Reaproveitamento do artefato de cobertura entre
-   etapas"). Se depois de reportar a trilha como pronta você ainda precisar commitar de novo nessa
+   etapas").
+   **Grave o artefato depois de reconciliar com a branch compartilhada da fatia, nunca antes.** A
+   ordem é: rode a suíte completa; `git fetch` + `git rebase origin/<branch>`
+   (`docs/GIT-WORKFLOW.md`, seção "Reconciliação para a branch compartilhada da fatia"); **então**
+   grave o artefato com o SHA final e publique. O motivo é mecânico. O rebase reescreve os SHAs de
+   todos os commits locais. Isso inclui o commit de código que o campo `Commit` acabou de apontar.
+   Um artefato gravado antes do rebase aponta para um objeto que já não existe na branch. É o mesmo
+   sintoma que este passo existe para evitar, produzido pela ordem das instruções em vez de por
+   descuido. **Se o push for rejeitado** e você precisar de um segundo `fetch`+`rebase`, o campo
+   caduca de novo: recompute-o antes de republicar. Nesse recálculo, decida também se a suíte roda
+   outra vez. Se o que o rebase trouxe não toca código (`git diff --stat <base>..HEAD -- src/
+   frontend/ tests/` vazio), só o SHA muda. Se toca, a suíte roda de novo antes de você reportar a
+   trilha como pronta.
+   Se depois de reportar a trilha como pronta você ainda precisar commitar de novo nessa
    branch (ex.: corrigindo um achado de code review), rode a suíte completa de novo ao final e
    regrave esse arquivo com o novo commit — nunca deixe um resumo apontando para um commit antigo.
    **Exceção: se o commit adicional é só documentação** (ex.: um ajuste de texto em

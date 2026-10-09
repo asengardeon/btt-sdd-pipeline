@@ -30,7 +30,11 @@
 - [ ] Resultado da suíte completa com cobertura gravado em
   `specs/<slug>/coverage/<fatia>-<trilha>.md` (`docs/TESTING.md`), com o commit SHA da execução —
   formato condensado, nunca o relatório bruto (HTML) colado — para as etapas seguintes
-  reaproveitarem em vez de re-executar a suíte. **Tarefa que não produziu código de produção**
+  reaproveitarem em vez de re-executar a suíte. **O artefato é gravado depois da reconciliação com
+  a branch compartilhada da fatia.** O SHA gravado existe de fato na branch publicada. O rebase
+  reescreve SHAs, então artefato gravado antes dele sai inválido (`docs/GIT-WORKFLOW.md`, seção
+  "Reconciliação para a branch compartilhada da fatia"). **Tarefa que não produziu código de
+  produção**
   (investigação/spike, ferramental, docs-only) não é exceção à suíte — ela roda igual —, mas o
   resultado é gravado no **artefato da própria tarefa** e o arquivo de cobertura **não ganha rodada
   nova**: nenhum código se moveu, então o campo `Commit` já está correto, e uma rodada de "0 linhas
