@@ -208,6 +208,14 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
   vez — critério completo em `docs/gates/licoes.md`. Cada
   entrada vira uma restrição que `backend-developer`/`frontend-developer` aplicam na próxima
   implementação, sem esperar a revisão apontar de novo.
+- **`MODEL-TIERING.md`** — quando um subagente de **trabalho bem definido** pode rodar num modelo
+  mais barato e quando nunca pode. Separa os dois perfis de invocação do pipeline: etapa com
+  veredito (artefato aprovável, decide gate — sempre o padrão da sessão) e sub-tarefa auxiliar
+  isolada (formato de saída definido antes de invocar, resultado conferível sem refazer o trabalho —
+  tier econômico). Traz o teste das cinco condições, os limites rígidos (nunca pelo frontmatter do
+  agente, nunca em correção de achado, uma única repromoção) e o laço de avaliação via coluna
+  `Modelo` do `timing-log.md`, lida pela retrospectiva de fatia. O gate transversal correspondente
+  está em `docs/gates/governanca.md`.
 - **`POST-MERGE-VALIDATION.md`** — checklist leve para validação manual contra produção real
   depois de um merge (sessão autenticada real, confirmação de deploy efetivo, DNS/certificados,
   limpeza de dados de teste, e o lembrete de fechar itens "VALIDAR DEPOIS" via `/sdd-amend`).

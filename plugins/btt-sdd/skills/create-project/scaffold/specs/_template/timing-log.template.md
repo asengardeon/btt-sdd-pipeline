@@ -21,7 +21,7 @@ subagente envolvidas** (o `duration_ms` que cada notificação de conclusão de 
 e acrescente uma nota parentética explícita dizendo o que ficou de fora:
 
 ```
-| 2026-09-22T03:47:59Z | Implementação | backend-developer | F-3 | 27m58s (tempo de trabalho do agente, exclui a espera de aprovação do usuário entre Fase 1 e Fase 2 — gap real de wall-clock foi maior) |
+| 2026-09-22T03:47:59Z | Implementação | backend-developer | F-3 | padrão da sessão | 27m58s (tempo de trabalho do agente, exclui a espera de aprovação do usuário entre Fase 1 e Fase 2 — gap real de wall-clock foi maior) |
 ```
 
 Sem essa distinção, a linha registra o tempo de resposta do usuário como se fosse custo do
@@ -48,7 +48,7 @@ que o valor reportado é ambíguo e não deve ser somado ingenuamente às outras
 agente:
 
 ```
-| 2026-10-03T20:00:00Z | Correção pontual | frontend-developer | F-1 | ~35m (duration_ms reportado de 83m04s é incompatível com o relógio — provavelmente cumulativo desde a criação do agente; não somar com a linha da rodada anterior) |
+| 2026-10-03T20:00:00Z | Correção pontual | frontend-developer | F-1 | padrão da sessão | ~35m (duration_ms reportado de 83m04s é incompatível com o relógio — provavelmente cumulativo desde a criação do agente; não somar com a linha da rodada anterior) |
 ```
 
 **A assinatura de detecção é a monotonia entre rodadas — e, detectada, o número a registrar é a
@@ -62,7 +62,7 @@ diferença entre o contador desta notificação e o da notificação anterior do
 (duração e tokens), não o valor bruto, e diga na linha que é diferença:
 
 ```
-| 2026-10-06T14:12:40Z | Correção pontual | frontend-developer | F-2 | 11m18s (diferença contra a rodada anterior do mesmo agente; contadores reportados são cumulativos desde a criação — 719.348 → 761.011 tokens = 41.663 nesta rodada) |
+| 2026-10-06T14:12:40Z | Correção pontual | frontend-developer | F-2 | padrão da sessão | 11m18s (diferença contra a rodada anterior do mesmo agente; contadores reportados são cumulativos desde a criação — 719.348 → 761.011 tokens = 41.663 nesta rodada) |
 ```
 
 Sem isso, a conclusão se inverte: 761k lido como custo de uma rodada faz o log afirmar que
@@ -115,7 +115,7 @@ orquestra, sem invocar agente nenhum:
   não conseguiu perguntar e retomá-lo (`/btt-sdd:implement`, passos 4c e 5b; `/btt-sdd:sre`, passo 4b).
 
 ```
-| 2026-09-25T14:02:11Z | Implementação | orquestrador (sem agente) | F-1 | 14m09s (investigação ao vivo do DOM real — tarefa T-1; derrubou o seletor desenhado no TRD) |
+| 2026-09-25T14:02:11Z | Implementação | orquestrador (sem agente) | F-1 | padrão da sessão | 14m09s (investigação ao vivo do DOM real — tarefa T-1; derrubou o seletor desenhado no TRD) |
 ```
 
 **Por que isso não é burocracia:** a retrospectiva de fatia lê este arquivo para achar etapas
@@ -125,6 +125,27 @@ etapa de PRD com 13m30s de agente ter ~23 min de trabalho de orquestrador invis�
 rodadas de `AskUserQuestion` com 7 decisões de produto e uma investigação que **reescreveu a
 motivação da spec**, ou seja, a atividade de maior valor da etapa, sem linha nenhuma.
 
-| Início (UTC)          | Etapa           | Agente               | Fatia | Duração |
-|------------------------|-----------------|-----------------------|-------|---------|
-| <AAAA-MM-DDThh:mm:ssZ> | <PRD/TRD/Implementação/Code review/QA/Segurança/SRE> | <nome do agente, ou `orquestrador (sem agente)`> | <F-N ou —> | <XmYs> |
+## A coluna "Modelo": qual tier pagou por esta invocação
+
+`padrão da sessão` ou `econômico` — os dois tiers de `MODEL-TIERING.md` do pipeline (o nome
+concreto do modelo cabe entre parênteses, quando quem registra o souber). Toda linha preenche a
+coluna, inclusive `orquestrador (sem agente)`, que roda no padrão da sessão por definição.
+
+Só **sub-tarefa auxiliar de trabalho bem definido** aparece como `econômico`; nenhuma das etapas do
+pipeline aparece assim, porque etapa escreve artefato aprovável e decide gate. Uma linha de etapa
+marcada `econômico` é um gate violado, não uma economia — é exatamente o que esta coluna torna
+auditável depois do fato.
+
+**Sub-tarefa repromovida gera duas linhas, não uma corrigida** (o arquivo é append-only): a
+econômica que não entregou e a do padrão da sessão que a substituiu, com a nota dizendo o que veio
+inutilizável. É esse par que a retrospectiva de fatia lê para dizer se o rebaixamento se pagou —
+uma linha sobrescrita apaga justamente a evidência de que não se pagou, e a mesma sub-tarefa é
+rebaixada de novo na fatia seguinte.
+
+```
+| 2026-10-07T11:02:40Z | SRE | sub-tarefa (leitura do timing-log) | F-2 | econômico | 1m12s |
+```
+
+| Início (UTC)          | Etapa           | Agente               | Fatia | Modelo | Duração |
+|------------------------|-----------------|-----------------------|-------|--------|---------|
+| <AAAA-MM-DDThh:mm:ssZ> | <PRD/TRD/Implementação/Code review/QA/Segurança/SRE> | <nome do agente, ou `orquestrador (sem agente)`> | <F-N ou —> | <padrão da sessão / econômico> | <XmYs> |

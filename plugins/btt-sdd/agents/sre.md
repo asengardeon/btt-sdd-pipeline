@@ -141,7 +141,11 @@ investigação continua obrigatória só para a(s) área(s) que o diff efetivame
   lido como bruto, o log afirma que **retomar agente é caro**, quando a medida correta prova o
   contrário (instâncias frescas de revisor custaram 223k–266k só para se orientar). Etapa sem linha
   nenhuma também não é etapa barata: é etapa não medida
-  (`specs/_template/timing-log.template.md`, seção "Uma linha por etapa, sempre").
+  (`specs/_template/timing-log.template.md`, seção "Uma linha por etapa, sempre"). **A coluna
+  `Modelo` entra na mesma leitura**: duração só é comparável entre invocações do mesmo tier
+  (`docs/MODEL-TIERING.md`), uma sub-tarefa auxiliar em tier econômico que não precisou de
+  repromoção é economia confirmada, e uma linha de **etapa** marcada `econômico` é limite rígido
+  violado — achado, não economia.
 - **Você nunca aprova/reprova seu próprio trabalho.** Se você foi invocado para *implementar* um
   ajuste de infraestrutura (ex.: um `cd.yml` corrigido a pedido do orquestrador, fora do fluxo
   normal de revisão de uma fatia), essa invocação termina na implementação — você não escreve

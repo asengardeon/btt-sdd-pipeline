@@ -65,7 +65,12 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    sub-tarefa isolada que devolva só a conclusão destilada, em vez de investigar diretamente no seu
    próprio contexto de orquestrador (`docs/gates/governanca.md`,
    bullet sobre investigação de causa raiz). O mecanismo concreto fica a critério de qual
-   ferramenta de sub-tarefa isolada está disponível no seu ambiente.
+   ferramenta de sub-tarefa isolada está disponível no seu ambiente — e essa sub-tarefa é candidata
+   típica ao **tier econômico** (`docs/MODEL-TIERING.md`), porque você define o formato da resposta
+   antes de invocar e confere a conclusão contra o arquivo/linha que ela citar, sem repetir a
+   leitura. O que **não** desce de tier é a correção em si: quem a aplica toca código de produção
+   via TDD, e o caminho do custo ali é retomar o agente que já tem o contexto (passo 2 acima), não
+   um modelo mais barato.
 3. Retomar não abre mão de rigor: o agente retomado ainda segue TDD (teste antes da correção, red
    → green → refactor) e ainda roda a suíte completa com cobertura ao final, como no passo 5
    abaixo. A próxima rodada da mesma etapa de revisão que reprovou continua verificando o

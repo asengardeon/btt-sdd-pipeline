@@ -158,11 +158,22 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    orquestrador"). Se uma etapa tem só linhas de agente e você sabe, pelos artefatos desta rodada,
    que houve trabalho de orquestrador nela, a série está subestimando essa etapa: diga isso na
    análise em vez de concluir que ela foi barata.
+   **Leia também a coluna `Modelo`** desse arquivo: ela diz em que tier cada invocação rodou
+   (`docs/MODEL-TIERING.md`). Duas leituras saem dela, e as duas são achado de retrospectiva como
+   qualquer outro — (a) sub-tarefa auxiliar que atravessou a fatia em tier econômico **sem
+   repromoção** é candidata a virar padrão para esse tipo de sub-tarefa; (b) o mesmo tipo de
+   sub-tarefa repromovido duas vezes (duas linhas, a econômica e a que a substituiu) é sinal de que
+   ele não passa no teste das cinco condições — e insistir custa mais que nunca ter rebaixado. Uma
+   **linha de etapa** marcada `econômico` não é economia: é um limite rígido violado, e entra como
+   achado explícito.
    Essa avaliação é
    investigação somente-leitura que não precisa ficar retida no seu contexto depois de concluída —
    prefira delegar a uma sub-tarefa isolada que devolva só as sugestões destiladas
    (`docs/gates/governanca.md`, bullet sobre investigação de causa
-   raiz).
+   raiz). Essa sub-tarefa é candidata típica ao **tier econômico** (`docs/MODEL-TIERING.md`): o
+   formato do que você espera de volta é definido por você antes de invocar, e a conclusão é
+   conferível contra as linhas do arquivo sem reler o arquivo inteiro. A decisão de abrir issue
+   continua sua, no padrão da sessão — a sub-tarefa levanta, você decide.
 
    Para cada sugestão concreta e acionável (não "poderia ser melhor" genérico), abra uma issue
    nova em `asengardeon/btt-sdd-pipeline` — o repositório de origem deste plugin, **sempre esse

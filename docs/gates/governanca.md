@@ -96,6 +96,18 @@
   concreto (o que o operador do plugin tiver disponível para isolar uma sub-tarefa) não é definido
   por este template — só o princípio de não reter no contexto principal o que só serve para chegar
   à conclusão.
+- [ ] **Sub-tarefa auxiliar de trabalho bem definido roda em tier econômico; etapa com veredito,
+  nunca.** As duas coisas que este pipeline invoca como subagente têm perfis de custo opostos
+  (`docs/MODEL-TIERING.md`): a sub-tarefa isolada do bullet acima tem formato de saída definido
+  antes da invocação e resultado conferível sem refazer o trabalho — rebaixar o modelo dela erra
+  barato, no mesmo turno, para quem pode reinvocar. Já qualquer etapa do pipeline — inclusive as
+  condicionais — escreve artefato aprovável e decide gate: ali o modelo é **sempre o padrão da
+  sessão**, porque o
+  risco de um gate aprovado indevidamente não é pago por quem economizou, e sim por quem lê o
+  artefato três etapas adiante. O teste das cinco condições, os limites rígidos (nunca pelo
+  frontmatter do agente, nunca em correção de achado, uma única repromoção) e o registro na coluna
+  `Modelo` do `timing-log.md` estão em `docs/MODEL-TIERING.md` — e a dúvida sempre resolve para o
+  modelo mais capaz, nunca para o mais barato.
 - [ ] **Instrução de processo permanente que o usuário emite no meio de uma execução é registrada em
   `docs/PROJECT-CONVENTIONS.md` na mesma hora — não repassada no prompt de cada agente seguinte.**
   Distinga da decisão pontual sobre esta fatia (essa vive no artefato da etapa): é permanente quando
