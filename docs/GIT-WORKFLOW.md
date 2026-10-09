@@ -192,6 +192,25 @@ e escalar ao usuário. Essa sincronização é o que garante que múltiplos agen
 produzem uma única branch/PR coerente por fatia, sem que a isolação de working tree vire duas
 branches divergentes por engano.
 
+**O rebase invalida todo SHA de commit já gravado dentro de um artefato — recompute antes de
+publicar.** O caso concreto deste pipeline é o campo `Commit` de
+`specs/<slug>/coverage/<fatia>-<trilha>.md`, que aponta para o último commit que tocou código
+(`.claude/agents/backend-developer.md`, passo 5). O rebase reescreve os SHAs de todos os commits
+locais. Um artefato gravado **antes** dele aponta para um objeto que não existe mais na branch.
+Duas obrigações, não uma:
+
+- **Grave o artefato depois da reconciliação, não antes.** Rode a suíte, reconcilie, então grave
+  e publique. É a ordem que resolve o problema na raiz, sem acrescentar verificação nenhuma.
+- **Se o `push` for rejeitado**, um segundo `fetch`+`rebase` é necessário. Recompute o campo
+  antes de republicar. Decida, no mesmo momento, se a suíte precisa rodar outra vez. Se o que o
+  rebase trouxe não toca código (`git diff --stat <base>..HEAD -- src/ frontend/ tests/` vazio), só
+  o SHA muda. Se toca, a suíte roda de novo.
+
+Já aconteceu de verdade: um artefato de cobertura foi gravado antes do rebase, o rebase trouxe um
+commit docs-only, e o SHA gravado ficou inválido. Os números da suíte continuavam corretos e bastou
+corrigir o campo — mas só porque o agente conferiu por iniciativa própria. Com um commit de código
+no lugar do docs-only, a correção certa teria sido reexecutar a suíte.
+
 **`git checkout <branch-da-fatia>` falhar dentro do worktree isolado é o caminho esperado, não uma
 exceção rara, sempre que mais de uma etapa de revisão roda em sequência sobre a mesma branch**
 (code review → UX, quando aplicável → QA → segurança → SRE, o fluxo padrão deste pipeline com
