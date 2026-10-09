@@ -35,11 +35,19 @@ atualizado sozinho.
   endereçar explicitamente em todo TRD.
 - **`QUALITY-GATES.md`** — **índice** dos gates críticos, dividido por etapa; mapeia cada
   etapa para o arquivo em `gates/` e diz qual agente lê quais.
-- **`gates/*.md`** — um arquivo por etapa, cada gate em exatamente um lugar. Cada agente
-  carrega os 2-4 que são dele, não o checklist inteiro.
+- **`gates/*.md`** — um arquivo por etapa, cada gate em exatamente um lugar. Três são
+  transversais (`governanca`, `licoes`, `escrita`); cada agente carrega esses mais os da sua
+  etapa, não o checklist inteiro.
 - **`AGENT-PREAMBLE.md`** / **`SKILL-PREAMBLE.md`** — o que todo agente / toda skill lê antes de
   começar: onde ficam os docs de governança, de onde vêm os templates de `specs/_template/`, e
   como tratar `docs/PROJECT-CONVENTIONS.md`. Cada agente/skill carrega só um ponteiro.
+- **`WRITING-STYLE.md`** — estilo de escrita dos artefatos: as regras da **ASD-STE100** adaptadas
+  ao idioma em que o artefato já é escrito (uma ideia por frase, limite de palavras, voz ativa, um
+  termo por conceito, procedimento em imperativo), e o que a adoção não autoriza — frase longa se
+  divide, fato nunca se apaga. Os itens verificáveis viram gate em `docs/gates/escrita.md`.
+- **`GLOSSARY.md`** — **gerado condicionalmente** (mesmo padrão de `BASELINE.md`): nasce na
+  primeira colisão confirmada de termo neste projeto — um conceito com dois nomes, ou um nome para
+  dois conceitos. Qualquer agente acrescenta entrada; o `tech-writer` consolida.
 - **`MODEL-TIERING.md`** — quando um subagente de **trabalho bem definido** pode rodar num modelo
   mais barato e quando nunca pode: etapa com veredito usa sempre o padrão da sessão, sub-tarefa
   auxiliar isolada pode usar tier econômico. Traz o teste das cinco condições, os limites rígidos e

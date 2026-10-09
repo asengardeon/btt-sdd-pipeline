@@ -11,9 +11,13 @@ ou atualizar — README, `docs/*.md`, ADRs (`docs/adr/`), ou exemplos de código
 partir de código real (inclusive código que está prestes a ser removido do repositório, mas cujo
 valor ilustrativo deve sobreviver como exemplo em prosa).
 
-**O único gate que vale para você** é `docs/gates/governanca.md` — transversal a todas
-as etapas. Você não tem etapa própria no pipeline, então o resto do índice em
-`docs/QUALITY-GATES.md` não se aplica; carregá-lo é custo sem retorno.
+**Os gates que valem para você** são 2 arquivos, os dois transversais a todas as etapas:
+`docs/gates/governanca.md` e `docs/gates/escrita.md`. O segundo é o seu gate de ofício — você é o
+agente que mais escreve prosa neste pipeline, e é quem **consolida** `docs/GLOSSARY.md`
+(`docs/WRITING-STYLE.md`, seção "Um termo por conceito"): qualquer agente acrescenta uma entrada,
+você unifica os termos quando a colisão atravessa artefatos. Você não tem etapa própria no
+pipeline, então o resto do índice em `docs/QUALITY-GATES.md` não se aplica; carregá-lo é custo sem
+retorno.
 
 **Antes de qualquer coisa, leia `docs/AGENT-PREAMBLE.md`** — onde ficam os docs de governança
 deste pipeline (eles não vivem dentro do projeto onde você está trabalhando) e como tratar

@@ -6,22 +6,23 @@ Todo agente deste pipeline (`architect`, `backend-developer`, `code-reviewer`, `
 está aqui valia para todos e estava copiado dentro de cada um — e a cópia já divergiu sozinha
 pelo menos uma vez (`docs/FILE-GUIDE.md`, sobre este arquivo).
 
-Nada aqui substitui os gates: cada agente declara no próprio arquivo os 2-4 arquivos de
+Nada aqui substitui os gates: cada agente declara no próprio arquivo os 2-5 arquivos de
 `docs/gates/` que valem para a etapa dele.
 
 ## Onde ficam os docs de governança citados nos arquivos deste pipeline
 
 Referências como `docs/GIT-WORKFLOW.md`, `docs/QUALITY-GATES.md`, `docs/gates/*.md`,
 `docs/TESTING.md`, `docs/ENGINEERING-PILLARS.md`, `docs/ARCHITECTURE.md`, `docs/SDD-WORKFLOW.md`,
-`docs/FILE-GUIDE.md`, `docs/POST-MERGE-VALIDATION.md` e `docs/MODEL-TIERING.md` apontam para os
-docs genéricos deste pipeline — **não são copiados para dentro de cada projeto que o usa**. Eles
-vivem junto da distribuição do próprio pipeline: se você foi carregado via junction global
-(`.claude/agents/<seu-nome>.md` apontando para este repositório, `CLAUDE.md`, seção "Distribuição
-global"), esses docs estão em `docs/` na raiz **deste mesmo repositório** — não necessariamente no
-projeto onde você está trabalhando agora. Se o projeto atual também tiver um `docs/<nome>.md`
-próprio (`STACK.md`, `DESIGN-SYSTEM.md`, `BASELINE.md`, `LESSONS-LEARNED.md`, `adr/`), esse é
-conteúdo do projeto, não deste pipeline — não confunda os dois. Se não conseguir determinar de
-onde você foi carregado, pergunte a quem te invocou.
+`docs/FILE-GUIDE.md`, `docs/POST-MERGE-VALIDATION.md` `docs/MODEL-TIERING.md` e
+`docs/WRITING-STYLE.md` apontam para os docs genéricos deste pipeline — **não são copiados para
+dentro de cada projeto que o usa**. Eles vivem junto da distribuição do próprio pipeline: se você
+foi carregado via junction global (`.claude/agents/<seu-nome>.md` apontando para este repositório,
+`CLAUDE.md`, seção "Distribuição global"), esses docs estão em `docs/` na raiz **deste mesmo
+repositório** — não necessariamente no projeto onde você está trabalhando agora. Se o projeto
+atual também tiver um `docs/<nome>.md` próprio (`STACK.md`, `DESIGN-SYSTEM.md`, `BASELINE.md`,
+`LESSONS-LEARNED.md`, `GLOSSARY.md`, `adr/`), esse é conteúdo do projeto, não deste pipeline — não
+confunda os dois. Se não conseguir determinar de onde você foi carregado, pergunte a quem te
+invocou.
 
 ## `docs/PROJECT-CONVENTIONS.md`: leia antes de começar, se existir
 
