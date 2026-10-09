@@ -171,11 +171,12 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
   endereçar explicitamente na seção 10 do TRD.
 - **`QUALITY-GATES.md`** — **índice** dos gates críticos, dividido por etapa. Não contém gate
   nenhum: mapeia cada etapa para o arquivo em `gates/` e diz qual agente lê quais.
-- **`gates/*.md`** — um arquivo por etapa (`governanca`, `licoes`, `status-de-tarefas`,
-  `baseline`, `prd`, `trd`, `implementacao`, `code-review`, `ux`, `qa`, `seguranca`, `sre`,
-  `merge`), cada gate em exatamente um lugar. Cada agente carrega os 2-4 que são dele —
-  `governanca` e `licoes` valem para todas as etapas, o resto é da etapa que o nomeia — em vez
-  do checklist inteiro, que cabia num arquivo só mas não na atenção de nenhum agente.
+- **`gates/*.md`** — um arquivo por etapa (`governanca`, `licoes`, `escrita`,
+  `status-de-tarefas`, `baseline`, `prd`, `trd`, `implementacao`, `code-review`, `ux`, `qa`,
+  `seguranca`, `sre`, `merge`), cada gate em exatamente um lugar. Cada agente carrega os 2-5 que
+  são dele — `governanca`, `licoes` e `escrita` valem para todas as etapas, o resto é da etapa que
+  o nomeia — em vez do checklist inteiro, que cabia num arquivo só mas não na atenção de nenhum
+  agente.
 - **`AGENT-PREAMBLE.md`** / **`SKILL-PREAMBLE.md`** — o que todo agente / toda skill lê antes de
   começar: onde ficam os docs de governança (não dentro do projeto que usa o pipeline), de onde
   vêm os templates de `specs/_template/`, e como tratar `docs/PROJECT-CONVENTIONS.md`. São dois
@@ -208,6 +209,18 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
   vez — critério completo em `docs/gates/licoes.md`. Cada
   entrada vira uma restrição que `backend-developer`/`frontend-developer` aplicam na próxima
   implementação, sem esperar a revisão apontar de novo.
+- **`WRITING-STYLE.md`** — estilo de escrita dos artefatos: as regras da **ASD-STE100**
+  (Simplified Technical English) adaptadas ao idioma em que o artefato já é escrito. Explica o que
+  a adoção cobre (uma ideia por frase, limite de palavras, voz ativa, tempo simples, um termo por
+  conceito, procedimento em imperativo), o que ela **não** autoriza (enxugar conteúdo — frase longa
+  se divide, fato nunca se apaga) e por que o dicionário controlado do padrão não é reproduzido
+  aqui: o papel dele é cumprido por `docs/GLOSSARY.md`. Separa os itens verificáveis, que viram
+  gate em `docs/gates/escrita.md`, dos itens de julgamento, que orientam sem bloquear.
+- **`GLOSSARY.md`** — **gerado condicionalmente**, mesmo padrão de ausência-por-padrão de
+  `BASELINE.md` e `LESSONS-LEARNED.md`: nasce na primeira colisão confirmada de termo (um conceito
+  com dois nomes, ou um nome para dois conceitos) em artefatos da mesma spec. Qualquer agente
+  acrescenta entrada; o `tech-writer` consolida. Registra o termo escolhido, o que ele significa e
+  os nomes rejeitados — é pelo nome rejeitado que a próxima busca encontra o termo certo.
 - **`MODEL-TIERING.md`** — quando um subagente de **trabalho bem definido** pode rodar num modelo
   mais barato e quando nunca pode. Separa os dois perfis de invocação do pipeline: etapa com
   veredito (artefato aprovável, decide gate — sempre o padrão da sessão) e sub-tarefa auxiliar

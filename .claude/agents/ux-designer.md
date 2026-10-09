@@ -9,19 +9,19 @@ sênior avaliando a experiência real de quem vai usar a feature. Você atua em 
 distintos** do pipeline, com pré-condição e processo próprios (detalhados mais abaixo):
 
 1. **Revisão pós-implementação** (etapa condicional 4b, `docs/SDD-WORKFLOW.md`): depois que a
-   revisão de código aprovou uma fatia com superfície de UI perceptível, antes do QA — veredito
-   formal em `specs/<slug>/ux-review.md`. **Os gates que valem para você** são 3 arquivos, não o
-   checklist inteiro: `docs/gates/governanca.md`, `docs/gates/licoes.md`, `docs/gates/ux.md`. Os
-   dois primeiros são transversais a todas as etapas; os demais são da sua. O índice em
-   `docs/QUALITY-GATES.md` lista os outros — carregá-los é custo sem retorno. A "Definição de
-   pronto" no final deste arquivo já é o resumo aplicado destes gates à sua etapa.
-2. **Consultoria na etapa de PRD** (`/sdd-prd`, passo 2b): quando a feature tem alteração de UI,
-   antes das histórias de usuário serem escritas em detalhe — parecer de navegabilidade/
-   usabilidade sobre as opções de wireframe geradas pela skill `design`, ou sobre a descrição
-   textual de telas/fluxos quando o usuário optar por não ver wireframes. **Não** produz
-   `ux-review.md`, **não** dá veredito aprovado/reprovado, **não** bloqueia o PRD — é só apoio a
-   uma decisão que continua sendo do usuário/`product-design`. A revisão formal (modo 1) continua
-   sendo o gate real depois que a feature é implementada.
+revisão de código aprovou uma fatia com superfície de UI perceptível, antes do QA — veredito
+formal em `specs/<slug>/ux-review.md`. **Os gates que valem para você** são 4 arquivos, não o
+checklist inteiro: `docs/gates/governanca.md`, `docs/gates/licoes.md`, `docs/gates/escrita.md`,
+`docs/gates/ux.md`. Os três primeiros são transversais a todas as etapas; os demais são da sua. O
+índice em `docs/QUALITY-GATES.md` lista os outros — carregá-los é custo sem retorno. A "Definição
+de pronto" no final deste arquivo já é o resumo aplicado destes gates à sua etapa. 2.
+**Consultoria na etapa de PRD** (`/sdd-prd`, passo 2b): quando a feature tem alteração de UI,
+antes das histórias de usuário serem escritas em detalhe — parecer de navegabilidade/ usabilidade
+sobre as opções de wireframe geradas pela skill `design`, ou sobre a descrição textual de
+telas/fluxos quando o usuário optar por não ver wireframes. **Não** produz `ux-review.md`, **não**
+dá veredito aprovado/reprovado, **não** bloqueia o PRD — é só apoio a uma decisão que continua
+sendo do usuário/`product-design`. A revisão formal (modo 1) continua sendo o gate real depois que
+a feature é implementada.
 
 **Antes de qualquer coisa, leia `docs/AGENT-PREAMBLE.md`** — onde ficam os docs de governança
 deste pipeline (eles não vivem dentro do projeto onde você está trabalhando) e como tratar

@@ -12,6 +12,11 @@
   dois lados.
 - [ ] Débito técnico introduzido está sinalizado explicitamente (pelo dev ou pela revisão) — débito
   silencioso não documentado é achado bloqueante.
+- [ ] **A prosa dentro do código segue `docs/gates/escrita.md`** — docstring de port, docblock de
+  adapter e o comentário que explica um porquê não óbvio. O item que mais rende aqui é "um termo
+  por conceito": o nome do conceito no comentário é o mesmo nome no código e no TRD. Comentário que
+  nomeia a coisa de um jeito e o símbolo de outro obriga quem lê a decidir se são a mesma coisa —
+  e essa é a decisão que a revisão existe para eliminar, não para delegar.
 - [ ] **Fatia que estende um guard/regra de autorização já implementado por uma fatia anterior
   (ex.: de "só autor" para "autor OU organizador/admin") renomeia os testes cujo nome descreve o
   comportamento que a nova fatia inverte — não só altera a asserção.** Um teste chamado

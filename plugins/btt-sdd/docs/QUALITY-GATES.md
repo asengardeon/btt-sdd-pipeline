@@ -15,6 +15,7 @@ deriva que a #280 documentou — cada gate vive em exatamente um arquivo.
 |---|---|
 | [`gates/governanca.md`](gates/governanca.md) | Regras que valem em **todas** as etapas: nenhuma suposição silenciosa, limite de 3 tentativas, plano aprovado antes de agir, nenhum agente aprova o próprio trabalho, pergunta de subagente isolado é recolhida por quem o invocou, tier de modelo por perfil de subagente, feedback vira issue. |
 | [`gates/licoes.md`](gates/licoes.md) | Mecanismo de memória do projeto (`docs/LESSONS-LEARNED.md`): quando uma entrada nasce, como registrar ocorrência, escalonamento com estado, e quando uma entrada fica obsoleta. |
+| [`gates/escrita.md`](gates/escrita.md) | Regras de escrita que valem em **todas** as etapas que escrevem artefato, derivadas da ASD-STE100 (`docs/WRITING-STYLE.md`): uma ideia por frase, limite de palavras, voz ativa, um termo por conceito, procedimento em imperativo — e a regra de que dividir frase nunca apaga fato. |
 | [`gates/status-de-tarefas.md`](gates/status-de-tarefas.md) | Ciclo de vida da coluna Status da decomposição do TRD e de quem é cada transição — `architect` inicializa, implementação promove, revisões bloqueiam. |
 | [`gates/baseline.md`](gates/baseline.md) | Etapa 0, condicional (`codebase-archaeologist`). |
 | [`gates/prd.md`](gates/prd.md) | Etapa 1 (`product-design`). |
@@ -29,21 +30,22 @@ deriva que a #280 documentou — cada gate vive em exatamente um arquivo.
 
 ## Quem lê o quê
 
-Os dois transversais (`governanca`, `licoes`) valem para todas as etapas. Os demais são da
-etapa que os nomeia.
+Os três transversais (`governanca`, `licoes`, `escrita`) valem para todas as etapas. Os demais
+são da etapa que os nomeia — e `escrita` vale para toda etapa que escreve artefato, o que inclui
+os dois utilitários no fim da tabela.
 
 | Agente | Lê |
 |---|---|
-| `product-design` | governanca, licoes, prd |
-| `architect` | governanca, licoes, trd, status-de-tarefas |
-| `backend-developer` / `frontend-developer` | governanca, licoes, implementacao, status-de-tarefas |
-| `code-reviewer` | governanca, licoes, code-review, status-de-tarefas |
-| `ux-designer` | governanca, licoes, ux |
-| `qa-engineer` | governanca, licoes, qa |
-| `security-engineer` | governanca, licoes, seguranca |
-| `sre` | governanca, licoes, sre, merge |
-| `codebase-archaeologist` | governanca, baseline |
-| `tech-writer` | governanca |
+| `product-design` | governanca, licoes, escrita, prd |
+| `architect` | governanca, licoes, escrita, trd, status-de-tarefas |
+| `backend-developer` / `frontend-developer` | governanca, licoes, escrita, implementacao, status-de-tarefas |
+| `code-reviewer` | governanca, licoes, escrita, code-review, status-de-tarefas |
+| `ux-designer` | governanca, licoes, escrita, ux |
+| `qa-engineer` | governanca, licoes, escrita, qa |
+| `security-engineer` | governanca, licoes, escrita, seguranca |
+| `sre` | governanca, licoes, escrita, sre, merge |
+| `codebase-archaeologist` | governanca, escrita, baseline |
+| `tech-writer` | governanca, escrita |
 
 ## Seção antiga → arquivo
 
