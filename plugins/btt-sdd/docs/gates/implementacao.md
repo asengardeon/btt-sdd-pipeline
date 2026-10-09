@@ -30,7 +30,12 @@
 - [ ] Resultado da suíte completa com cobertura gravado em
   `specs/<slug>/coverage/<fatia>-<trilha>.md` (`docs/TESTING.md`), com o commit SHA da execução —
   formato condensado, nunca o relatório bruto (HTML) colado — para as etapas seguintes
-  reaproveitarem em vez de re-executar a suíte.
+  reaproveitarem em vez de re-executar a suíte. **Tarefa que não produziu código de produção**
+  (investigação/spike, ferramental, docs-only) não é exceção à suíte — ela roda igual —, mas o
+  resultado é gravado no **artefato da própria tarefa** e o arquivo de cobertura **não ganha rodada
+  nova**: nenhum código se moveu, então o campo `Commit` já está correto, e uma rodada de "0 linhas
+  novas" só disputa a tabela de histórico com a trilha concorrente e induz reexecução da suíte por
+  metadado parado.
 - [ ] Se a fatia tem trilha de frontend, ou gera qualquer outro artefato de build/empacotamento
   distinto do código-fonte, o comando de build/empacotamento real de produção (`docs/STACK.md`)
   também rodou e passou, registrado no mesmo arquivo de cobertura (`docs/TESTING.md`, seção
