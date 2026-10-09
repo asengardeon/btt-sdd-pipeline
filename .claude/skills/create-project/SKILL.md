@@ -7,9 +7,9 @@ description: Skill global. Use quando o usuário quiser começar um projeto novo
 
 Bootstrap de um projeto novo, em qualquer lugar do sistema de arquivos, com a estrutura SDD
 completa (`CLAUDE.md`, `docs/`, `specs/_template/`) pronta para o pipeline
-(`docs/SDD-WORKFLOW.md`) rodar nele desde o primeiro PRD. Não aciona um subagente próprio — você
-mesmo (a sessão atual) faz o scaffolding e depois segue o processo do `product-design`
-diretamente.
+(`docs/SDD-WORKFLOW.md`) rodar nele desde o primeiro PRD. Não aciona um subagente próprio para o
+scaffolding — você mesmo (a sessão atual) monta a estrutura e, para o primeiro PRD, conduz o
+processo completo de `/sdd-prd` (passo 6), não só o do agente `product-design`.
 
 **Antes de qualquer coisa, leia `docs/SKILL-PREAMBLE.md`** — onde ficam os docs de governança
 deste pipeline e de onde vêm os templates de `specs/_template/` (nenhum dos dois vive dentro do
@@ -57,10 +57,24 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    crie o arquivo nesse caso; ele nasce mais tarde, via `/sdd-project-conventions` ou
    `/sdd-baseline`, assim que o projeto acumular convenções reais.
 
-6. **Gere o primeiro PRD**: siga o processo descrito em `.claude/agents/product-design.md` (o
-   mesmo que `/sdd-prd` aciona) usando os requisitos coletados no passo 1, salvando em
-   `<diretório novo>/specs/0001-<slug>/prd.md`. Aplique a mesma governança de não-suposição —
-   pergunte o que for ambíguo, com "VALIDAR DEPOIS" como opção.
+6. **Gere o primeiro PRD**: conduza o processo completo de `/sdd-prd`
+   (`.claude/skills/sdd-prd/SKILL.md`, passos 2b a 5) usando os requisitos coletados no passo 1
+   como o pedido, salvando em `<diretório novo>/specs/0001-<slug>/prd.md`. **Não basta seguir
+   `.claude/agents/product-design.md`** — aquele é o processo do agente, e dois gates obrigatórios
+   de `docs/gates/prd.md` vivem no orquestrador da etapa 1, fora do agente: (a) a oferta de
+   wireframes/protótipos ao usuário, com a consulta sobre estabelecer `docs/DESIGN-SYSTEM.md`
+   quando ele ainda não existe, e (b) a consultoria de `ux-designer`, que
+   `.claude/agents/ux-designer.md` só aceita vinda de quem orquestra a etapa 1, nunca direto. O
+   agente não tem as ferramentas (`Artifact`, skill `design`, Agent tool) para produzir nenhum dos
+   dois sozinho. Aplique a mesma governança de não-suposição — pergunte o que for ambíguo, com
+   "VALIDAR DEPOIS" como opção.
+
+   **Aqui o passo 2b praticamente sempre dispara**: é um produto inteiro nascendo, então "a
+   aplicação tem UI?" é sim, salvo quando o usuário descreveu explicitamente algo sem interface
+   (biblioteca, CLI, serviço headless). E é a rodada de maior efeito composto — é nela que
+   `docs/DESIGN-SYSTEM.md` nasce para toda feature seguinte reaproveitar, e em que o parecer de UX
+   ainda pode mudar a forma do produto. Pular esses dois gates aqui faz o primeiro PRD do projeto
+   nascer reprovado no gate da própria etapa.
 
 7. **Pare aqui.** Não continue o pipeline sozinho (TRD, implementação, etc.) — cada etapa exige
    aprovação explícita do usuário (`docs/gates/governanca.md`). Apresente um resumo do PRD gerado,
