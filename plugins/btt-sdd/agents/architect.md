@@ -424,6 +424,30 @@ não se aplica.
    a mesma decisão (integração HTTP encadeada como equivalente a "e2e do fluxo humano" sem harness
    de browser) teve que ser tomada duas vezes em fatias diferentes do mesmo projeto — uma invocação
    inteira de agente a mais só para redescobrir um precedente que já existia.
+8b. **Toda tarefa de "e2e do fluxo humano da fatia" tem o roteiro percorrido do primeiro passo
+   para trás.** Confirme que cada pré-condição dele tem produtor publicado nesta fatia. Isto é
+   distinto do item anterior. Lá a pergunta é se o projeto tem harness de browser; aqui é se o
+   roteiro tem **início alcançável**. Olhe o primeiro passo do fluxo que você declarou demonstrável.
+   Liste o que ele pressupõe: sessão autenticada, credencial já ativada, dado-semente, confirmação
+   por e-mail. Para cada pré-condição, confirme que o produtor dela é publicado **nesta** fatia.
+   Produtor é a rota, a tela ou o comando de ferramental que a satisfaz. Quando o produtor estiver
+   numa fatia posterior, decida a saída aqui, no TRD. **Nunca** deixe essa decisão para quem
+   implementa descobrir no meio da fatia. As três saídas:
+   - traga o produtor mínimo para esta fatia;
+   - dê ao ferramental de provisionamento um modo que dispense a tela ausente;
+   - declare na célula da tarefa que o e2e cobre só o alcançável, e nomeie o que fica de fora.
+   As asserções de completude que você já escreve não pegam isso. Elas cobram "toda permissão
+   declarada tem rota" e "toda rota tem handler". Nenhuma cobra que o primeiro passo do roteiro
+   tenha porta de entrada nesta fatia. O TRD é a fonte do recorte, então uma fatia internamente
+   consistente passa por toda revisão que confere código contra TRD. Já aconteceu de verdade, numa
+   fatia full-stack com o harness disponível. O roteiro começava por uma sessão de administração. A
+   credencial nascia por CLI, **não ativada**, com token de senha por e-mail. A rota que consome
+   esse token estava na fatia seguinte, por decisão de recorte. Medido contra a pilha real, o link
+   caía no coringa do roteador e a rota de conclusão respondia 404. Um teste unitário da própria
+   fatia **assegurava** que ela ficasse ausente. A fatia era consistente e cada tarefa cumpria sua
+   célula. O roteiro demonstrável dela era inalcançável por construção. O custo apareceu no meio da
+   implementação, com o ambiente já de pé. É a mesma classe que um TRD real já registrou para o
+   **caminho de escrita**, agora no **caminho de entrada**.
 9. Se uma decisão técnica é significativa (troca de padrão, escolha de tecnologia com trade-off
    real), registre um ADR em `docs/adr/` seguindo `docs/adr/0001-record-architecture-decisions.md`.
 9b. **Se um TRD/ADR instrui `sre` a "confirmar X em produção" (evento específico em log, métrica)**:
