@@ -71,6 +71,11 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    leitura. O que **não** desce de tier é a correção em si: quem a aplica toca código de produção
    via TDD, e o caminho do custo ali é retomar o agente que já tem o contexto (passo 2 acima), não
    um modelo mais barato.
+2b. **Promova você mesmo a coluna Status de volta para `em andamento` ao retomar uma trilha
+   bloqueada.** Faça isso antes de mandar a mensagem. O agente retomado comenta a transição na
+   Issue GitHub de cada tarefa, mas não edita a tabela (`.claude/agents/backend-developer.md`,
+   passo 1b). É a mesma regra do passo 4e, aplicada à retomada. A transição continua existindo, só
+   muda quem a grava.
 3. Retomar não abre mão de rigor: o agente retomado ainda segue TDD (teste antes da correção, red
    → green → refactor) e ainda roda a suíte completa com cobertura ao final, como no passo 5
    abaixo. A próxima rodada da mesma etapa de revisão que reprovou continua verificando o
@@ -309,7 +314,12 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    exige isolamento de working tree** (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree
    entre agentes concorrentes") — passe `isolation: "worktree"` em cada chamada da Agent tool; não
    deixe os dois agentes dividirem o mesmo diretório de trabalho só porque tocam pastas diferentes
-   (`src/` vs. `frontend/`).
+   (`src/` vs. `frontend/`). e. **Promova a coluna Status das tarefas desta fatia para `em
+   andamento` você mesmo, numa única passada, antes de invocar as trilhas.** Os agentes de
+   implementação não editam essa transição. Eles só comentam na Issue GitHub de cada tarefa
+   (`.claude/agents/backend-developer.md`, passo 1b). É simétrico à promoção para `implementado` do
+   passo 5, e pelo mesmo motivo: duas trilhas despachadas em paralelo editariam a mesma coluna da
+   mesma tabela no mesmo minuto.
 5. Ao terminar (uma ou duas trilhas), confirme que cada agente rodou a **suíte completa** com
    relatório de cobertura **uma única vez, ao final da sua trilha** (não a cada task/incremento —
    durante o TDD, cada task roda só os testes que ela toca) em cada pacote afetado (`src/` e/ou

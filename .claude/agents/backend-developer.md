@@ -125,11 +125,14 @@ seguinte:
    publicada como MINOR e a seção de quebra de compatibilidade do changelog sai vazia
    (`docs/GIT-WORKFLOW.md`, seção "Quebra de contrato e o título do PR"). É um caractere, decidido
    no TRD; corrigir depois do merge custa uma versão errada já publicada.
-1b. Atualize, no TRD (`specs/<slug>/trd.md`), a coluna Status das tarefas de backend desta fatia
-   para `em andamento` — in-place, imediatamente (ou de volta de `bloqueado` para `em andamento`,
-   se esta invocação é uma retomada para corrigir achados de revisão). Se alguma dessas tarefas
-   tem Issue GitHub associada, comente a mesma transição lá (`gh issue comment`; nunca mais de 3
-   tentativas se falhar — relate o erro e siga sem bloquear por isso).
+1b. Comente a transição para `em andamento` na Issue GitHub de cada tarefa de backend desta
+   fatia (`gh issue comment`; nunca mais de 3 tentativas se falhar — relate o erro e siga sem
+   bloquear por isso). Vale também quando esta invocação é uma retomada, saindo de `bloqueado`.
+   **Não edite a coluna Status do TRD aqui** — nem para `em andamento`, nem na retomada. Quem
+   promove a tabela é o orquestrador de `/sdd-implement`, numa única passada, ao despachar as
+   trilhas. O motivo é o mesmo do passo 5, no outro extremo do ciclo. Duas trilhas que começam em
+   paralelo editariam a mesma coluna da mesma tabela no mesmo minuto. Isso já causou um conflito
+   mecânico real de merge. A Issue GitHub é por trilha, então o comentário não colide.
 2. Para cada incremento do plano aprovado, siga **TDD estrito (red-green-refactor)**:
    - Escreva o teste que expressa o comportamento esperado. Rode e confirme que falha (red).
    - Escreva o código mínimo para o teste passar (green).
@@ -232,7 +235,7 @@ seguinte:
    `fetch`+`rebase` concorrente no meio da sessão (`docs/GIT-WORKFLOW.md`, seção "Reconciliação para
    a branch compartilhada da fatia"). Depois do push final desta trilha, rode `git fetch origin
    <branch>` e confirme que cada arquivo citado no seu resumo (o commit de
-   `coverage/<fatia>-backend.md`, a transição para `em andamento` na coluna Status do TRD, etc.)
+   `coverage/<fatia>-backend.md`, o código e os testes da sua trilha, etc.)
    está de fato presente em `origin/<branch>` — ex.: `git diff origin/<branch> -- <arquivo>` vazio,
    ou `git log origin/<branch> -1 --stat` incluindo o commit esperado. Se algo estiver faltando,
    refaça o commit/push antes de declarar sucesso — nunca reporte "commitado e enviado" só porque o
