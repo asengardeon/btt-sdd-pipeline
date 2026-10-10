@@ -8,9 +8,15 @@ fonte de verdade de onde cada atividade da spec está — nunca inferida depois 
 gravada por quem causa a transição.
 
 - [ ] `architect` inicializa toda tarefa nova como `pendente`.
-- [ ] `backend-developer`/`frontend-developer` atualizam, in-place no TRD, para `em andamento` ao
-  começar a Fase 2 (execução) das tarefas da fatia — inclusive ao retomar uma tarefa que estava
-  `bloqueado` — e para `implementado` ao concluir sua trilha.
+- [ ] **`backend-developer`/`frontend-developer` nunca editam a coluna Status.** A etapa de
+  implementação tem duas transições: para `em andamento` ao despachar a fatia, e para
+  `implementado` ao concluir. As duas são gravadas pelo orquestrador de `/sdd-implement`, cada uma
+  numa única passada (`.claude/skills/sdd-implement/SKILL.md`, passos 4e e 5). Os agentes só
+  comentam a transição na Issue GitHub da própria tarefa (`.claude/agents/backend-developer.md`,
+  passo 1b). Ela é por trilha, e por isso não colide. O motivo é o mesmo nos dois extremos do
+  ciclo: duas trilhas em paralelo editando a mesma coluna da mesma tabela já causou um conflito
+  mecânico real de merge. Vale também na retomada de uma tarefa que estava `bloqueado`. O
+  orquestrador a devolve para `em andamento` antes de remandar a trilha.
 - [ ] `code-reviewer`/`ux-designer`/`qa-engineer`/`security-engineer`/`sre` atualizam para
   `bloqueado` (com o motivo em uma linha) as tarefas da fatia cujo veredito desta rodada foi
   reprovado.
