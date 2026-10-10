@@ -49,6 +49,17 @@
   precedência", e depois de a contagem ser trocada por critério o defeito seguinte entrou pelo
   **segundo eixo da mesma frase** (quais propriedades asseverar), com duas mutações sobrevivendo à
   suíte inteira, 1644/1644 verdes.
+- [ ] **Toda tarefa de "e2e do fluxo humano da fatia" tem ponto de entrada dentro da própria
+  fatia.** Percorra o roteiro do primeiro passo para trás. As pré-condições típicas são sessão
+  autenticada, credencial ativada, dado-semente e confirmação por e-mail. Cada uma tem produtor
+  publicado **nesta** fatia, não numa posterior (`.claude/agents/architect.md`, passo 8b). Quando
+  não tem, o TRD traz a saída já decidida. São três: trazer o produtor mínimo para a fatia; dar ao
+  ferramental um modo que dispense a tela ausente; declarar que o e2e cobre só o alcançável.
+  Nenhuma outra
+  asserção de completude pega isto. Elas cobram "permissão tem rota" e "rota tem handler", nunca "o
+  roteiro tem início". Já aconteceu de verdade: uma fatia consistente, com cada tarefa cumprindo sua
+  célula, tinha roteiro demonstrável inalcançável por construção. O custo apareceu no meio da
+  implementação.
 - [ ] "Decomposição de tarefas e dependências" preenchida, com trilha (backend/frontend/ambos) e
   dependências técnicas explícitas para cada tarefa, e a coluna Status inicializada como `pendente`
   para cada tarefa nova (ciclo de vida completo na seção "Status de tarefas" abaixo).
