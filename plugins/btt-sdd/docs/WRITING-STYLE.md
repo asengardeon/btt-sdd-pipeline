@@ -17,7 +17,8 @@ dicionário é material licenciado da ASD. Não é reproduzível aqui, e não te
 português. O papel funcional dele é cumprido pelo **glossário do projeto** (seção "Um termo por
 conceito" abaixo): a mesma garantia — um conceito, um nome — obtida pelo uso em vez de por lista
 fechada. As regras de estrutura de frase, voz, tempo e procedimento valem em qualquer idioma. São
-elas que este doc aplica.
+elas que este doc aplica. O único **valor** que a adaptação muda é o limite de palavras por frase,
+e a regra 2 abaixo explica por quê.
 
 **2. O limite é por frase, nunca por conteúdo.** Aplicada ingenuamente, a STE apaga justamente o
 que dá autoridade aos documentos deste pipeline: a narrativa de incidente concreto ("já aconteceu
@@ -33,10 +34,19 @@ gosto:
 
 1. **Uma ideia por frase.** Duas afirmações independentes numa frase são duas frases. O sinal mais
    comum é a conjunção carregando conteúdo novo em vez de ligar partes da mesma ideia.
-2. **Limite de palavras por frase: 20 em texto de procedimento, 25 em texto descritivo.** São os
-   limites da STE. Procedimento é toda instrução a executar (passo de skill, item de gate, critério
-   de aceite); descritivo é o resto. Contar é o último recurso — a frase que estoura o limite quase
-   sempre já falhou na regra 1.
+2. **Limite de palavras por frase: 25 em texto de procedimento, 30 em texto descritivo.**
+   Procedimento é toda instrução a executar (passo de skill, item de gate, critério de aceite);
+   descritivo é o resto. Contar é o último recurso. A frase que estoura o limite quase sempre já
+   falhou na regra 1.
+   **Estes dois números divergem do padrão por decisão deliberada de adaptação ao idioma.** A STE
+   publica 20 e 25, calibrados para inglês. Português gasta mais palavras funcionais para o mesmo
+   conteúdo: artigos onde o inglês dispensa, preposições onde ele compõe substantivos, locuções onde
+   ele tem verbo único ("depois de" por *after*, "a partir de" por *from*). Com 20, o item passava a
+   reprovar frases de **uma** ideia só, e a correção virava divisão artificial — duas frases curtas
+   que o leitor recompõe na cabeça. Medido nas três primeiras mudanças deste repositório sob o gate:
+   a primeira redação reprovou em todas as três, inclusive em oito frases de uma só vez, sempre em
+   prosa escrita no estilo que o repositório já usava (issue #393). O limite serve à regra 1; quando
+   aperta mais que ela, mede outra coisa.
 3. **Voz ativa sempre que a frase tem agente identificável.** "O `architect` decide a stack", não
    "a stack é decidida". Passiva fica reservada para quando o agente é genuinamente irrelevante ou
    desconhecido.

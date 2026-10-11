@@ -11,8 +11,9 @@ comentários e docstrings de código. **Não** cobre mensagem de commit, corpo d
 issue — exclusão deliberada, registrada em `docs/WRITING-STYLE.md`.
 
 - [ ] **Uma ideia por frase.** Duas afirmações independentes são duas frases.
-- [ ] **Frase dentro do limite: 20 palavras em texto de procedimento, 25 em texto descritivo.**
-  Procedimento é toda instrução a executar (passo de skill, item de gate, critério de aceite).
+- [ ] **Frase dentro do limite: 25 palavras em texto de procedimento, 30 em texto descritivo.**
+  Procedimento é toda instrução a executar (passo de skill, item de gate, critério de aceite). Os
+  dois números divergem do padrão por adaptação ao idioma (`docs/WRITING-STYLE.md`, regra 2).
 - [ ] **Voz ativa onde existe agente identificável.** Passiva só quando o agente é irrelevante ou
   desconhecido de verdade.
 - [ ] **Tempo simples** — presente, passado ou futuro simples. Sem perífrase nem condicional
