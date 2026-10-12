@@ -51,6 +51,17 @@
   deleteFrom` fundamentou uma premissa de "risco nulo" escrita num TRD. Um segundo agente repassou
   a premissa ao usuário sem reverificar por conta própria. `grep -rni 'delete from'` achou em
   seguida os dois adapters que apagavam por template literal.
+- [ ] **Nenhuma variável de ambiente é exportada com escopo amplo sem auditar todo leitor do mesmo
+  nome.** Exportar para `$GITHUB_ENV` (ou equivalente) vale para todos os passos seguintes do job,
+  não só para o consumidor que motivou a exportação. Antes de exportar, grepe o **nome exato** da
+  variável em todo o pacote que o job executa. Confirme não só quem precisa dela, mas quem **mais**
+  a lê — inclusive código que não parece ter relação com a mudança. O leitor perigoso é o que tem
+  fallback silencioso (`process.env.X ?? PADRÃO`). Ele troca de comportamento sem erro, sem aviso e
+  sem falhar nenhum teste local. Já aconteceu de verdade: uma variável de URL base foi exportada
+  job-wide para um consumidor que nem a lia. Isso desviou toda a suíte de outra história de usuário
+  para um caminho de rede diferente. Foram ~80 falhas de `502 Bad Gateway`, descobertas só no
+  primeiro run real do job. O mecanismo de override só importava dentro do CI, então nenhuma
+  validação local pegava.
 - [ ] **Nenhum agente encerra numa branch de feature.** Todo agente que faz `git checkout`/ `git
   switch` para uma branch de fatia (implementadores e revisores que commitam achados na branch do
   PR) confirma a branch atual (`git branch --show-current`) antes de finalizar e, se não for a
