@@ -293,6 +293,15 @@ não se aplica.
    ícones e o service worker de três tarefas irmãs. A fatia teve de ser reordenada em execução, com
    emenda ao TRD, e o mesmo TRD tinha outras duas investigações com o mesmo defeito, prontas para
    repetir o episódio duas vezes.
+   **O mesmo critério vale para tarefa de e2e ou de integração que exercita código de outra tarefa
+   desta fatia**, não só para investigação `[medido]`. A tarefa de e2e depende de toda tarefa que
+   implementa algo que ela exercita. Declare isso na coluna "Depende de", mesmo quando a ordem
+   parece óbvia. Exemplo: uma tarefa de e2e que testa rotas HTTP depende de cada tarefa que
+   implementa uma dessas rotas. Numa fatia de UI, a tarefa que bate contra o backend depende das
+   tarefas que expõem as rotas chamadas. "Parece óbvio" não é dependência declarada: quem monta o
+   plano da rodada lê a coluna, não a intenção. Já aconteceu de verdade: numa única fatia, duas
+   tarefas de e2e ficaram com a dependência ausente da tabela. Nas duas vezes foi leitura manual
+   antes de planejar a rodada que pegou a lacuna, não um gate.
    **Para cada fatia que introduz uma mudança de contrato obrigatória** (campo novo obrigatório
    numa API, mensagem/evento com formato incompatível, remoção de suporte a um formato antigo):
    pergunte explicitamente se essa mudança só fica coerente depois que outra fatia (posterior, ex.:
