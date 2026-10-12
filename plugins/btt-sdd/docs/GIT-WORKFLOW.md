@@ -132,6 +132,26 @@ git worktree add <caminho-separado> -b <branch-temporária-do-agente> <branch-da
 git worktree remove <caminho-separado>   # ao terminar — nunca deixe worktree órfão
 ```
 
+**Worktree isolado nasce na base da invocação anterior — sincronize contra a ponta remota antes de
+qualquer leitura ou trabalho.** O harness reaproveita um worktree já existente em vez de criar um
+novo a partir do `HEAD` atual da branch. Então a branch local dentro dele fica na base de quem
+rodou antes, que pode estar dezenas de commits atrás. Primeiro comando de todo agente que recebe
+um worktree isolado, antes de ler código:
+
+```bash
+git fetch origin <branch-da-fatia>
+git status -sb                                 # confirma o atraso contra origin/<branch>
+git reset --hard origin/<branch-da-fatia>      # só com worktree sem trabalho local seu
+```
+
+`reset --hard` é seguro aqui porque o worktree ainda não tem trabalho seu. Se já tiver commit seu,
+use `rebase` contra `origin/<branch>` em vez de `reset`. Já aconteceu de verdade: **sete de sete**
+invocações isoladas da mesma fatia relataram o worktree desatualizado. Eram as duas trilhas de
+implementação e as cinco etapas de revisão. Cada agente gastou tempo e tokens próprios resolvendo
+o mesmo problema de infraestrutura, por iniciativa própria e sem ter sido instruído. O custo
+visível é esse desperdício repetido. O risco invisível é pior: um agente que não checar revisa ou
+implementa sobre a base errada, e nada avisa até o push divergir.
+
 **Reaproveite o cache de dependências entre worktrees do mesmo repositório.** Isolamento de
 working tree separa árvore de arquivos e estado de Git — não precisa (e não deve) forçar
 reinstalação de dependências do zero a cada worktree novo. Aponte a instalação de dependências

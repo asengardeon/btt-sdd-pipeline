@@ -24,6 +24,14 @@ atual também tiver um `docs/<nome>.md` próprio (`STACK.md`, `DESIGN-SYSTEM.md`
 confunda os dois. Se não conseguir determinar de onde você foi carregado, pergunte a quem te
 invocou.
 
+## Se você recebeu um worktree isolado, sincronize antes de ler qualquer código
+
+Worktree isolado reaproveitado nasce na base da invocação anterior, não na ponta da branch. Rode
+`git fetch` e compare com `origin/<branch>` antes de qualquer leitura ou trabalho. O passo a passo
+e o porquê estão em `docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes
+concorrentes". Isso já aconteceu em sete de sete invocações isoladas da mesma fatia, e nenhuma
+delas tinha sido instruída a checar.
+
 ## `docs/PROJECT-CONVENTIONS.md`: leia antes de começar, se existir
 
 É o canal pelo qual cada projeto registra como particulariza este pipeline — modelo de workflow de
