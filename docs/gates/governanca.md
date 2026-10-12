@@ -39,6 +39,18 @@
     repetir a frase. Já aconteceu de um mecanismo estar descrito em **quatro** lugares (port no TRD,
     docstring do port, docblock do provider, docblock da cópia) mais a célula de critério de outra
     seção, e a correção acertar três — um `grep` acha o que nenhuma revisão de prosa acha.
+- [ ] **Nenhuma conclusão de "nenhum consumidor" sai de uma busca por uma única forma sintática.**
+  A mesma operação se escreve de mais de um jeito na maioria das stacks. Antes de afirmar que nada
+  consome uma operação, liste as formas em que ela pode estar escrita neste projeto. Depois busque
+  cada uma, case-insensitive. Query builder e consulta crua são o caso mais comum: um projeto que
+  usa builder SQL (Kysely, por exemplo) e também permite SQL cru por template literal escreve o
+  mesmo `delete` de dois jeitos. A busca pela sintaxe do builder não vê o outro. Vale igual para
+  update, insert, concessão de privilégio e nome de símbolo montado em tempo de execução. O risco
+  é maior em revisão de arquitetura e de segurança. Ali "nenhum consumidor" é o que costuma
+  justificar revogar um privilégio, sem rede de segurança. Já aconteceu de verdade: `grep
+  deleteFrom` fundamentou uma premissa de "risco nulo" escrita num TRD. Um segundo agente repassou
+  a premissa ao usuário sem reverificar por conta própria. `grep -rni 'delete from'` achou em
+  seguida os dois adapters que apagavam por template literal.
 - [ ] **Nenhum agente encerra numa branch de feature.** Todo agente que faz `git checkout`/
   `git switch` para uma branch de fatia (implementadores e revisores que commitam achados na
   branch do PR) confirma a branch atual (`git branch --show-current`) antes de finalizar e, se não
