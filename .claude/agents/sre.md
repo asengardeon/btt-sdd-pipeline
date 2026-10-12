@@ -192,6 +192,15 @@ investigação continua obrigatória só para a(s) área(s) que o diff efetivame
    - Lint, testes e gate de cobertura 80% rodam em todo PR/push relevante.
    - Pipeline falha de forma clara e rápida (fail fast) — não deixa warning virar erro silencioso.
    - Cache de dependências configurado para não deixar o pipeline lento sem necessidade.
+   - **Ao adicionar ou renomear um job no `ci.yml`, procure um teste que enumere nomes de job por
+     igualdade exata e atualize-o na mesma rodada.** Enumerar os jobs esperados numa lista literal
+     é um padrão de guarda saudável: pega drift de configuração antes de qualquer outra camada. Mas
+     a lista não se atualiza sozinha, e quem acrescenta o job raramente sabe que ela existe. Busque
+     por `JOBS_ESPERADOS` (ou padrão equivalente) em `tests/architecture/` e nos testes de
+     configuração do projeto, **antes** de empurrar o commit — não depois de o CI acusar vermelho.
+     Já aconteceu de verdade: o `sre` acrescentou um job de auditoria de dependências, o teste de
+     arquitetura reprovou por igualdade exata, e a correção foi acrescentar um nome a uma lista.
+     Uma rodada inteira de CI por uma linha que a busca acha em segundos.
    - **Ao quantificar desperdício de CI, meça em minutos FATURÁVEIS — não em tempo de parede.** São
      dois comandos e uma multiplicação, e é o eixo em que o usuário decide:
 
