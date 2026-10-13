@@ -156,6 +156,22 @@ das 6 áreas a cada rodada intermediária que só confirma uma correção já ap
    aceitar a limitação como definitiva. Uma correção de autorização já existente e não propagada
    para todos os consumidores análogos é um achado de segurança nesta área, não só de qualidade de
    código — acompanha o item equivalente do `code-reviewer`.
+9. **Isolamento por tenant/escopo se confirma por medição, nunca por leitura do filtro.** Quando a
+   feature separa dados por tenant/espaço/organização, o método padrão é a **mutação**: alterar no
+   código de produção a consulta que delimita o escopo, de forma que ela deixe de delimitá-lo, e
+   confirmar que a suíte de isolamento pega a falha — ou, se a suíte continuar verde, que o
+   controle no banco (política de row-level security ou equivalente) sustenta o isolamento
+   sozinho. Reverta a mutação antes de qualquer commit, como qualquer mutação de teste. **Se a
+   edição do arquivo de produção for recusada pelo classificador de segurança do ambiente** — essa
+   classe de mutação casa com um padrão que o classificador reconhece como perigoso, mesmo dentro
+   de um teste que seria revertido —, não insista numa 4ª tentativa (regra 2 de
+   `docs/QUALITY-GATES.md`) **e não desista da medição**, aceitando o relato do QA sem evidência
+   própria. O método equivalente, que não toca código de produção: acrescente um **teste de
+   integração temporário** que executa a consulta crua já sem a delimitação de escopo, contra o
+   banco real em container, e assevere ali o que a mutação provaria. A evidência é a mesma; o
+   arquivo de produção fica intocado; os testes temporários são revertidos antes do push. Registre
+   no relatório qual dos dois métodos você usou e por quê — um veredito de isolamento sem medição
+   nenhuma nunca é apresentado como equivalente aos dois.
 
 **Controle que repousa sobre premissa nunca validada: conte os consumidores ao propagar.** Quando um
 achado seu **propaga** um controle (guard, marcador, seletor, código de erro) que se apoia numa
