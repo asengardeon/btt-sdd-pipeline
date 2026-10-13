@@ -108,6 +108,22 @@ pulado" em `/sdd-hotfix`), em vez de simplesmente não mencionar a etapa.
    (`docs/gates/ux.md`/`qa.md`/`seguranca.md`, item sobre frescor da aprovação). A rodada de volta é
    escopada ao delta (só o que mudou desde o sha aprovado), numa instância nova do `code-reviewer`,
    não uma revisão completa da fatia do zero.
+6c. **Achado desta etapa só fecha com reconfirmação desta etapa — a reverificação técnica do
+   `code-reviewer` não substitui.** É a regra simétrica do passo 6b: ali, a correção que toca
+   produção volta para `/sdd-code-review` escopado ao delta, porque é o `code-reviewer` quem sabe
+   avaliar código. Aqui, depois dessa rodada técnica, **o retorno antes de `/sdd-qa` é uma rodada de
+   `/sdd-ux-review` escopada ao achado** (não uma revisão completa nova das 7 áreas): o
+   `code-reviewer` confirma "o código faz o que devia", e confirmar "isso resolve o problema de
+   usabilidade real" é papel desta etapa, não dele. A rodada escopada acrescenta a `ux-review.md`
+   uma seção de reverificação nomeando o achado fechado, o método usado e a evidência — e só então
+   o fluxo segue para `/sdd-qa`. Sem essa simetria, um achado bloqueante de usabilidade pode ser
+   formalmente fechado **só com evidência técnica**, que é exatamente o tipo de lacuna que a etapa
+   4b existe para evitar. Já aconteceu de verdade: um achado bloqueante de navegação (edição
+   pendente descartada em silêncio) foi corrigido, reverificado só pelo `code-reviewer`, e o
+   pipeline seguiu direto para `/sdd-qa` — `code-review.md` chegou a atribuir a aprovação a uma
+   seção de `ux-review.md` que não existia. O `qa-engineer`, não o orquestrador, percebeu a lacuna
+   por iniciativa própria e a registrou como achado de processo, forçando uma rodada extra fora do
+   fluxo.
 
 ## Quando usar sem o agente
 

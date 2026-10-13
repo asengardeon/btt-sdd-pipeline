@@ -140,6 +140,17 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    bem-sucedida e respondendo "não foi possível" a quem acabou de instalar). Este é o único ponto do
    pipeline em que uma etapa pode desaparecer silenciosamente de uma fatia inteira.
 
+5b. **Se esta rodada foi escopada ao delta de uma correção de achado levantado pela etapa 4b, a
+   próxima etapa é `/btt-sdd:ux-review` escopado ao achado — não `/btt-sdd:qa`.** A sua aprovação cobre "o
+   código faz o que devia"; quem fecha "isso resolve o problema de usabilidade real" é a etapa que
+   levantou o achado. É a regra simétrica do passo 6b de `skills/ux-review/SKILL.md`
+   (que manda a correção de UX voltar para cá quando toca produção) — e sem ela um achado
+   bloqueante de usabilidade fecha só com evidência técnica. Já aconteceu de verdade: o pipeline
+   seguiu direto para `/btt-sdd:qa` depois de uma reverificação técnica, `code-review.md` atribuiu a
+   aprovação a uma seção de `ux-review.md` que não existia, e foi o `qa-engineer` — não o
+   orquestrador — que percebeu a lacuna. Detalhe em
+   `skills/ux-review/SKILL.md`, passo 6c.
+
 ## Quando usar sem o agente
 
 Se o Agent tool não estiver disponível, siga `agents/code-reviewer.md` diretamente — leia o diff do
