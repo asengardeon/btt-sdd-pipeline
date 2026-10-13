@@ -25,6 +25,18 @@
   via grep pelo nome antigo do teste no restante da suíte, que nenhuma referência órfã (import,
   chamada direta, menção em comentário) ficou para trás. Achado bloqueante se algum teste tocado
   pela fatia mantiver um nome que descreve o comportamento anterior.
+- [ ] **Nenhum tradutor de erro com conjunto fechado de códigos descarta em silêncio a entrada que
+  não sabe traduzir.** Se a fatia toca um mapeador entre vocabulário aberto (issues de validador de
+  esquema, códigos de driver, erros de SDK) e vocabulário fechado do projeto (enum de código de
+  campo, envelope único de resposta de erro), o caso não-mapeado tem destino explícito: log do
+  identificador bruto, código de fallback na saída, e teste dedicado para a entrada que o enum
+  **não** conhece. Achado bloqueante quando a resposta pode sair sem pista alguma — `fields: []`
+  num `422` que de fato recusou algo é indepurável de fora. O defeito é estrutural: um campo
+  `.optional()` sem o `.nullable()` correspondente, recebendo `null`, não quebra compilação nem
+  reprova teste; só produz uma resposta vazia. Já custou uma rodada de correção inteira, com duas
+  hipóteses descartadas por leitura de código antes de alguém capturar o corpo real da resposta
+  (`agents/backend-developer.md`, "Regras inegociáveis de código", regra sobre tradutor de
+  erro).
 - [ ] Se a fatia tem trilha de frontend, ou gera qualquer outro artefato de build/empacotamento
   distinto do código-fonte, o comando de build/empacotamento real de produção (`docs/STACK.md`) foi
   verificado (reaproveitado do arquivo de cobertura da fatia ou reexecutado nesta rodada) antes de
