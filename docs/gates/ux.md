@@ -44,6 +44,20 @@
   compila para `display:none`) fazer `getByRole('status')` devolver **0** enquanto a região estava
   vazia, enquanto quatro artefatos afirmavam que ela era "sempre montada" e a suíte ficava verde —
   três etapas de revisão passaram por isso sem pegar nada por leitura.
+- [ ] **Nenhum achado desta etapa fica fechado só com evidência técnica.** Quando uma correção de
+  achado bloqueante (ou de ressalva que o usuário mandou corrigir) levantado **por esta etapa** é
+  reverificada pelo `code-reviewer` escopado ao delta, essa rodada técnica não fecha o achado: o
+  retorno antes de `/sdd-qa` é uma rodada de UX review **escopada ao achado**, que acrescenta a
+  `ux-review.md` uma seção de reverificação nomeando o achado, o método e a evidência. O
+  `code-reviewer` confirma "o código faz o que devia"; "isso resolve o problema de usabilidade
+  real" é veredito desta etapa. É a regra simétrica da que já existe no sentido inverso (correção
+  de UX que toca produção volta para code review escopado) — sem ela, a etapa que existe para
+  pegar essa classe de defeito carimba o fechamento sem nunca ter olhado o resultado. Já aconteceu
+  de verdade: um achado bloqueante de navegação (edição pendente descartada em silêncio) foi
+  corrigido com `useBlocker`, reverificado só tecnicamente, e o pipeline seguiu para `/sdd-qa` —
+  `code-review.md` atribuiu a aprovação a uma seção de `ux-review.md` que **não existia**. Foi o
+  `qa-engineer`, por iniciativa própria, que conferiu via `git log` e registrou a lacuna como
+  achado de processo, forçando uma rodada extra fora do fluxo.
 - [ ] `ux-review.md` referencia o PR e a fatia desta rodada.
 - [ ] **A linha desta rodada existe em `specs/<slug>/timing-log.md` e nomeia uma única etapa.** Etapa
   cujo trabalho de orquestrador foi zero registra `0m` com justificativa — nunca nenhuma linha; e
