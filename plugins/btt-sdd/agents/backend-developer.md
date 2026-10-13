@@ -340,6 +340,27 @@ seguinte:
    fazia a distinção certa; o bug só foi pego na revisão de código, gerando uma rodada extra de
    correção evitável.
 
+6. **Tradutor de erro com conjunto fechado de códigos nunca descarta em silêncio o que não souber
+   traduzir.** Vale para qualquer mapeador entre um vocabulário aberto (issues de um validador de
+   esquema, códigos de um driver de banco, erros de um SDK externo) e um vocabulário **fechado**
+   definido pelo seu projeto (um enum de código de campo, um envelope único de resposta de erro).
+   O caso não-mapeado tem de ter um destino explícito, e esse destino nunca é "ignorar":
+   1. **Preserve a evidência diagnosticável** — registre em log o identificador bruto da entrada
+      não traduzida (o `path` e o código interno do validador, o código do driver), nunca a
+      mensagem crua do mecanismo de origem numa resposta ao cliente.
+   2. **Garanta um código de fallback na saída** — a resposta nunca sai com a lista de campos
+      vazia quando a validação de fato recusou algo, porque uma recusa sem pista alguma é
+      indepurável do lado de quem chama.
+   3. **Cubra os dois caminhos com teste dedicado**: uma entrada que o enum conhece e uma entrada
+      que ele **não** conhece, asseverando que a segunda ainda produz resposta com pista.
+   Sem isso o defeito é estrutural, não descuido: um esquema que não cobre uma forma de rejeição
+   (um campo `.optional()` sem o `.nullable()` correspondente, recebendo `null`) não quebra a
+   compilação nem reprova nenhum teste — produz um `422` com `fields: []`. Já aconteceu de verdade:
+   duas hipóteses plausíveis foram descartadas por leitura de código antes de alguém capturar o
+   corpo real da resposta e rastrear o mapeador. Se o TRD desenha esse padrão de envelope único de
+   erro, o docblock do mapeador diz qual é o comportamento do caso não-mapeado — é o que avisa quem
+   acrescentar um campo novo ao contrato depois.
+
 **Erro opaco se depura capturando a evidência bruta primeiro — não formulando a correção primeiro.**
 Erro opaco é o que não nomeia sua própria causa: um `422` sem detalhe de campo, uma geometria que
 não bate (overflow de N pixels), uma falha de e2e com mensagem genérica. Diante dele, o primeiro
