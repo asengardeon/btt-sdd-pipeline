@@ -136,6 +136,18 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    guarda — o invariante era "nunca uma falha sem classificação", e o `throw` não produz falha sem
    classificação, produz **nenhum relatório para nenhuma linha**, inclusive as bem-sucedidas. A
    forma final foi degradação local + teste de exaustividade mais apertado.
+3e. **Se o achado é um erro opaco, peça a medição direta antes da correção — e cobre-a como critério
+   de aceite da rodada.** Erro opaco é o que não nomeia sua própria causa: um `422` sem detalhe de
+   campo, um overflow de N pixels, uma falha de e2e com mensagem genérica. Nesse caso, inclua no
+   pedido que o agente **capture primeiro a evidência bruta mais próxima da causa** (o corpo real da
+   resposta HTTP, a geometria real medida no navegador) e só então formule a correção — e que o
+   relatório diga **qual medição confirmou a causa**. Eliminação de hipóteses por leitura de código
+   não fecha causa, só estreita a busca; e correção que não move a medição não é a correção. A regra
+   completa, com os dois casos reais que a motivaram, está em `.claude/agents/backend-developer.md`/
+   `.claude/agents/frontend-developer.md` (seção "Regras inegociáveis de código", bloco sobre erro
+   opaco) — aqui o ponto é que **quem pede a correção** não deixa isso implícito: já aconteceu de
+   duas rodadas de correção da mesma fatia partirem de uma representação indireta do problema
+   (árvore de acessibilidade para geometria; inferência de VO para resposta HTTP) e serem perdidas.
 4. **Enquanto o agente retomado ainda está ativo, não dispare outra tarefa que também vá tocar
    `checkout`/`commit`/`push` na mesma branch** (ex.: uma nova rodada de revisão independente,
    ou uma verificação sua própria via `Bash`) sem isolamento — mesma regra de
