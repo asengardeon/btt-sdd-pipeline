@@ -201,6 +201,28 @@ de silêncio.
   domínio/aplicação, ou que um caso de uso está fazendo coisa demais. A correção correta costuma ser
   revisar o TRD com o `architect`, não forçar um teste artificial.
 
+### Armadilha conhecida: comando de cobertura que termina sem relatório nenhum
+
+Se o comando de cobertura terminar com os testes rodando normalmente mas **sem imprimir nenhuma
+tabela de cobertura e sem criar o diretório de relatório em disco** — nenhum erro, nenhum aviso —
+a primeira hipótese é **um teste falhando na mesma execução**, não ambiente quebrado. Vários
+provedores de cobertura só geram relatório quando a execução inteira passa; o caso conhecido é a
+opção `coverage.reportOnFailure` do `@vitest/coverage-v8`, cujo padrão é `false`. Com qualquer
+teste vermelho, o provedor não escreve nem o resumo no console nem os arquivos.
+
+O sintoma não aponta para a causa: silêncio total se confunde com "o comando não terminou" ou "o
+ambiente está quebrado", e o padrão de um relatório só para várias suítes (unitária + arquitetura
++ integração reunidas numa execução, via `test.projects` ou equivalente da stack) é exatamente
+onde ele morde — numa fatia grande é comum ter uma falha pontual e alheia à trilha enquanto se
+quer medir a cobertura.
+
+Confirme antes de investigar o ambiente: rode de novo pedindo relatório mesmo com falha
+(`--coverage.reportOnFailure=true` no Vitest, a opção equivalente na stack em uso) e veja se o
+relatório aparece. **Não ligue isso por padrão** no comando de cobertura do projeto — cobertura
+medida sobre uma suíte com teste vermelho pode ser enganosa. Use como diagnóstico, e depois trate
+a falha: o `Commit` do artefato de cobertura (seção "Reaproveitamento do artefato de cobertura
+entre etapas") só vale com a suíte verde.
+
 ## Instabilidade de teste: classe da asserção, não constante de tempo
 
 **Ajustar a constante de tempo de uma asserção instável não é correção — é adiamento.** Já foi
