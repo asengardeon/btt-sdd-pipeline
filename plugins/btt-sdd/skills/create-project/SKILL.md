@@ -25,7 +25,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
      de uma pasta comum de projetos que você identificar no sistema), mas **pergunte
      explicitamente**, nunca crie em um lugar sem confirmação.
    - Os requisitos da aplicação — o que ela deve fazer. Se o usuário já descreveu isso no pedido
-     que disparou `/btt-sdd:create-project`, use isso como ponto de partida e só pergunte o que faltar.
+     que disparou `/btt-sdd:create-project`, use isso como ponto de partida e só pergunte o que
+     faltar.
 
 2. **Confirme que o diretório não existe ainda** (ou está vazio). Se já existe com conteúdo, pare
    e pergunte ao usuário como proceder — nunca sobrescreva silenciosamente.
@@ -53,8 +54,14 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    `/btt-sdd:baseline`, assim que o projeto acumular convenções reais.
 
 6. **Gere o primeiro PRD**: conduza o processo completo de `/btt-sdd:prd`
-   (`skills/prd/SKILL.md`, passos 2b a 5) usando os requisitos coletados no passo 1
-   como o pedido, salvando em `<diretório novo>/specs/0001-<slug>/prd.md`. **Não basta seguir
+   (`skills/prd/SKILL.md`, passos 2a a 5) usando os requisitos coletados no passo 1
+   como o pedido, salvando em `<diretório novo>/specs/0001-<slug>/prd.md`. **Aqui o passo 2a é a
+   regra, não a exceção**: o pedido que cria um projeto do zero quase sempre reúne várias features
+   de usuário, e uma spec é **uma** feature (`agents/product-design.md`, passo 1b). Quebre em
+   sequência numerada com o usuário e escreva o PRD só da primeira — `specs/0001-...` — deixando
+   as seguintes como números reservados na ordem acordada. Um PRD inicial cobrindo o produto
+   inteiro é o caminho mais rápido para uma spec que fica lenta já na terceira fatia. **Não basta
+   seguir
    `agents/product-design.md`** — aquele é o processo do agente, e dois gates obrigatórios
    de `docs/gates/prd.md` vivem no orquestrador da etapa 1, fora do agente: (a) a oferta de
    wireframes/protótipos ao usuário, com a consulta sobre estabelecer `docs/DESIGN-SYSTEM.md`
@@ -80,5 +87,6 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 
 A stack (linguagem, framework, banco, infra) só é decidida no primeiro TRD, pelo `architect` —
 criar essas pastas agora seria uma suposição sobre a stack antes de qualquer decisão técnica.
-Elas nascem naturalmente quando o projeto chegar em `/btt-sdd:implement` e `/btt-sdd:sre` pela primeira
+Elas nascem naturalmente quando o projeto chegar em `/btt-sdd:implement` e `/btt-sdd:sre` pela
+primeira
 vez.

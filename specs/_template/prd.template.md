@@ -8,6 +8,13 @@
 
 Uma a três frases: o que é a feature e por que ela existe agora.
 
+**Escopo: uma spec é uma feature de usuário.** Nomeie aqui, em uma linha, o **objetivo de usuário
+único** que esta spec atende. Se o pedido original reunia mais de um, registre a sequência de specs
+em que ele foi quebrado e qual é a posição desta — ex.: "2ª de 3: `0007-convite-de-membro`,
+**`0008-permissao-por-papel`**, `0009-auditoria-de-acesso`". A spec seguinte da sequência só começa
+depois desta fechar, igual ao que já vale entre fatias. Critério de quebra e o custo que ele evita:
+`.claude/agents/product-design.md`, passo 1b.
+
 ## 2. Problema
 
 Qual problema real do usuário/negócio isto resolve. Evite descrever a solução aqui — só o

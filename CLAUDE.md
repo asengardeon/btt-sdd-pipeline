@@ -184,7 +184,8 @@ em `asengardeon/btt-sdd-pipeline` assim que fica claro, não só quando uma fati
 
 ## Princípios de arquitetura (não negociáveis)
 
-1. **Ports & Adapters (arquitetura hexagonal).** `src/domain` não importa nada de fora. `src/application`
+1. **Ports & Adapters (arquitetura hexagonal).** `src/domain` não importa nada de fora.
+   `src/application`
    define casos de uso e *ports* (interfaces) — nunca implementações concretas de infraestrutura.
    `src/adapters` implementa os ports (saída: banco, filas, APIs externas) ou aciona os casos de uso
    (entrada: HTTP, CLI, eventos). Dependências sempre apontam para dentro (regra da dependência).
@@ -193,7 +194,8 @@ em `asengardeon/btt-sdd-pipeline` assim que fica claro, não só quando uma fati
    `docs/ARCHITECTURE.md`.
 
 2. **SOLID.** Toda classe/módulo novo deve justificar sua responsabilidade única (S). Extensão de
-   comportamento se dá por composição/novos adapters, não por `if/else` crescente (O). Implementações
+   comportamento se dá por composição/novos adapters, não por `if/else` crescente (O).
+   Implementações
    de um port são substituíveis entre si sem quebrar o caso de uso (L). Interfaces de port são
    pequenas e específicas por caso de uso, não um "God interface" (I). Casos de uso dependem de
    abstrações (ports), nunca de classes concretas de adapter (D).
@@ -231,7 +233,8 @@ em `asengardeon/btt-sdd-pipeline` assim que fica claro, não só quando uma fati
   repositório hoje).
 - `tests/unit`, `tests/integration`, `tests/e2e` — testes de backend espelhando a arquitetura.
 - `infra/docker`, `infra/terraform` — containerização e infraestrutura como código.
-- `.github/workflows` — pipelines de CI (lint + testes + gate de cobertura) e CD (deploy via Terraform).
+- `.github/workflows` — pipelines de CI (lint + testes + gate de cobertura) e CD (deploy via
+   Terraform).
 - `docs/` — arquitetura, workflow SDD, política de testes, pilares de engenharia, gates críticos,
   fluxo de Git e guia arquivo-a-arquivo. Inclui `docs/AGENT-PREAMBLE.md` e
   `docs/SKILL-PREAMBLE.md`: o contexto que todo agente / toda skill lê antes de começar (onde
@@ -248,7 +251,8 @@ em `asengardeon/btt-sdd-pipeline` assim que fica claro, não só quando uma fati
   `tech-writer`. Inclui `docs/LESSONS-LEARNED.md` (condicional): padrões
   de achados já repetidos entre features, que `backend-developer`/`frontend-developer` aplicam
   desde o início da implementação seguinte — critério de promoção em `docs/QUALITY-GATES.md`. Inclui
-  também `docs/PROJECT-CONVENTIONS.md` (condicional, mesmo padrão de `BASELINE.md`): particularidades
+  também `docs/PROJECT-CONVENTIONS.md` (condicional, mesmo padrão de `BASELINE.md`):
+  particularidades
   deste projeto em relação ao padrão genérico do próprio pipeline (git workflow, estrutura de
   pastas etc.), geradas/atualizadas pelo `codebase-archaeologist` via `/sdd-project-conventions`.
 
@@ -274,6 +278,12 @@ Detalhe completo em `docs/QUALITY-GATES.md` — aqui só o resumo:
    souber responder agora, **"VALIDAR DEPOIS"** é sempre uma opção válida; o item fica registrado
    na seção "Pendências de validação (VALIDAR DEPOIS)" do artefato e pode ser revisado depois com
    `/sdd-pending` e resolvido com `/sdd-amend`.
+1b. **Uma spec é uma feature de usuário.** Pedido que reúne mais de uma vira uma sequência
+   numerada de specs, decidida com o usuário antes de escrever o PRD — nunca um PRD único grande.
+   Spec grande não custa só mais trabalho: todos os artefatos dela crescem juntos e são relidos a
+   cada etapa de cada fatia, então o custo de contexto por etapa cresce com o tamanho da spec, e
+   ela fica progressivamente mais lenta conforme avança. Critério objetivo de quebra em
+   `.claude/agents/product-design.md`, passo 1b, e `docs/gates/prd.md`.
 2. **Nenhuma ação ou pergunta se repete mais de 3 vezes.** Na 3ª tentativa (correção de teste,
    comando, reformulação de pergunta) sem sucesso, o agente para e escala ao usuário com o que
    tentou e sua recomendação — nunca insiste numa 4ª vez.
