@@ -69,7 +69,10 @@ nesta mesma branch":
 1. consulte, via `gh api`, o run mais recente **bem-sucedido** deste workflow nesta branch e pegue
    o `headSha`;
 2. `git diff --name-only <esseSha> HEAD` e confirme que **todo** arquivo do diff casa o filtro de
-   caminhos de documentação (`specs/`, `docs/`, `*.md` da raiz);
+   caminhos de documentação — `specs/` (**documentação de spec**: `prd.md`, `trd.md` e todo
+   artefato de revisão da fatia — `code-review.md`, `qa-report.md`, `security-review.md`,
+   `sre-review.md`, `timing-log.md`, `coverage/`), `docs/` (**documentação da aplicação**) e `*.md`
+   da raiz;
 3. se nada sobrou fora do filtro, os passos caros são pulados e o check reporta sucesso em
    segundos;
 4. **qualquer falha em qualquer etapa** (sem run anterior, SHA inalcançável, API fora) → trate como

@@ -314,6 +314,20 @@ investigação continua obrigatória só para a(s) área(s) que o diff efetivame
        push subsequente, inclusive os de documentação pura. O short-circuit só funciona em `push`
        para `main`, ou seja, exatamente onde o custo não está.
 
+       **Já aconteceu de verdade, num projeto real que usa este pipeline**: um `ci.yml` nasceu com
+       exatamente essa forma, e a suíte completa reexecutava a cada commit de revisão gravado na
+       própria branch da fatia — inclusive o `qa-report.md` do próprio `qa-engineer` —, porque
+       `docs_only` nunca mais voltava a `true` depois do primeiro commit de fontes. **A correção
+       não é só "comparar sempre contra `base.sha` em `pull_request`" — é que `github.event.
+       before`/`.after` também existem no payload de `pull_request` quando a ação é `synchronize`**
+       (todo push numa branch de PR já aberta), com o mesmo significado que em `push`: o commit
+       anterior **desta referência**, não a base do PR. `base.sha` só é o ponto de comparação certo
+       em `opened`/`reopened`, onde ainda não há "antes" dentro do PR. Mesmo corrigido assim, isto
+       continua **mais fraco** que a receita abaixo: comparar contra o commit anterior não confirma
+       que aquele commit teve CI **verde** — só que ele existiu. Um run cancelado pelo
+       `cancel-in-progress` do item seguinte (código substituído por um commit de documentação
+       logo depois) nunca chega a provar nada, e esta variante aceitaria isso mesmo assim.
+
      **A receita que funciona**: pular o build apenas quando o código em `HEAD` for comprovadamente
      idêntico ao de um SHA que **já passou** no CI nesta mesma branch.
 
@@ -325,7 +339,10 @@ investigação continua obrigatória só para a(s) área(s) que o diff efetivame
         quebra nada visivelmente** — o workflow continua correto, o desperdício continua inteiro, e
         ninguém descobre que o short-circuit nunca funcionou.
      2. `git diff --name-only <esseSha> HEAD` e verifique se **todo** arquivo do diff casa o filtro
-        de caminhos de documentação — `specs/`, `docs/` e `*.md` da raiz.
+        de caminhos de documentação — `specs/` (**documentação de spec**: `prd.md`, `trd.md` e
+        todo artefato de revisão da fatia — `code-review.md`, `qa-report.md`,
+        `security-review.md`, `sre-review.md`, `timing-log.md`, `coverage/`), `docs/`
+        (**documentação da aplicação**) e `*.md` da raiz.
      3. Se nada sobrou fora do filtro, é mudança só de documentação sobre código que já passou: o
         check reporta sucesso em segundos.
      4. **Qualquer falha em qualquer etapa** (sem run anterior, SHA inalcançável, API fora) →
