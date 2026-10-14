@@ -43,6 +43,12 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    VALIDAR DEPOIS | etapas "requer revalidação". A etapa atual é a última etapa concluída; o
    próximo comando é a skill seguinte na ordem
    `sdd-prd → sdd-trd → sdd-implement → sdd-code-review → sdd-qa → sdd-security → sdd-sre`.
+**A ausência de `ux-review.md`/`security-review.md`/`sre-review.md` numa spec com fatias ainda
+   pendentes não é lacuna** — essas três etapas rodam ao final da spec, sobre o diff acumulado
+   (`docs/SDD-WORKFLOW.md`, seção "Cadência: o que roda por fatia e o que roda ao final da spec").
+   Enquanto houver fatia pendente na decomposição do TRD, o próximo comando depois de `sdd-qa` é
+   `sdd-implement` da fatia seguinte; as três só entram na última. A exceção é a fatia cuja
+   decomposição marca `Validação na fatia` — ali a etapa marcada é a próxima, antes do merge.
 4. Conte, por feature, quantos itens com status "pendente" existem nas seções "Pendências de
    validação (VALIDAR DEPOIS)" de cada artefato.
 5. Verifique se algum artefato tem uma entrada no "Log de revisões" marcando uma etapa posterior

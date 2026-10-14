@@ -174,9 +174,25 @@ lista as tarefas cujo artefato a medição exige, o texto da tarefa diz que ela 
 fatia, e a seção 11 (plano de testes) não afirma que as investigações rodam antes do código sem
 qualificar quais. Teste de um passo: *a medição é possível com o repositório como está hoje?*
 
-| ID   | Tarefa                    | Trilha                    | Fatia (PRD) | Depende de | Status | Issue GitHub |
-|------|------------------------------|------------------------------|--------------|---------------|-----------|------------------|
-| T-1  | <descrição da tarefa>         | backend / frontend / ambos    | F-1           | nenhuma        | pendente  | `<#N ou "não espelhada">` |
+| ID   | Tarefa                    | Trilha                    | Fatia (PRD) | Depende de | Validação na fatia | Status | Issue GitHub |
+|------|------------------------------|------------------------------|--------------|---------------|--------------------|-----------|------------------|
+| T-1  | <descrição da tarefa>         | backend / frontend / ambos    | F-1           | nenhuma        | — / segurança / ux / sre | pendente  | `<#N ou "não espelhada">` |
+
+A coluna **Validação na fatia** decide se uma das três etapas de fim de spec (4b UX, 6 segurança,
+7 SRE) é **antecipada** para a fatia desta tarefa, em vez de rodar sobre o diff acumulado no fim da
+spec (`docs/SDD-WORKFLOW.md`, seção "Cadência: o que roda por fatia e o que roda ao final da
+spec"). `—` é o caso normal. **Em branco não é opção**, e a marcação não é julgamento quando a
+tarefa toca:
+
+| Marque | Quando a tarefa toca |
+|--------|------------------------|
+| `segurança` | autenticação, autorização, gestão de sessão, dado pessoal/sensível, ou ponto de entrada que aceita identificador externo |
+| `sre` | `ci.yml`/`cd.yml`, `Dockerfile`/compose, `infra/terraform`, segredo ou variável de ambiente de deploy, ou campo que passa a ser obrigatório numa rota ativa já consumida por cliente implantado |
+| `ux` | fluxo ou tela **nova** exposta ao usuário final (ajuste dentro de fluxo que a 4b já revisou não qualifica) |
+
+Fora desses casos a antecipação é julgamento do `architect` — permitida, com o motivo em uma linha
+na descrição da tarefa — ou pedido explícito do usuário. Valores combinam quando mais de uma se
+aplica (ex.: `segurança, sre`).
 
 ### Janelas de quebra de contrato entre fatias
 

@@ -20,7 +20,10 @@ dependências entre histórias (fatias verticais de entrega)"), PR obrigatório 
    fatia anterior ainda não estiver mergeada, **pare** e informe o usuário.
 4. **PR aberto cedo**, em modo *draft*, no primeiro commit — não só no final (mantém o CI rodando
    continuamente e dá visibilidade do progresso). O PR sai do modo draft automaticamente ao final
-   de `/sdd-sre` quando a fatia é aprovada (`.claude/skills/sdd-sre/SKILL.md`, passo 5d) — nunca
+   da **última etapa que roda naquela fatia**, quando ela é aprovada — `/sdd-sre` na última fatia
+   da spec (`.claude/skills/sdd-sre/SKILL.md`, passo 5d), `/sdd-qa` nas intermediárias
+   (`.claude/skills/sdd-qa/SKILL.md`, mesmo passo), conforme a cadência de
+   `docs/SDD-WORKFLOW.md` — nunca
    fica como transição manual pendente para o usuário perceber sozinho. "Commita por incremento"
    (`backend-developer`/
    `frontend-developer`, Fase 2 — TDD red-green-refactor) é sobre **commits locais**, não sobre um
@@ -62,18 +65,21 @@ dependências entre histórias (fatias verticais de entrega)"), PR obrigatório 
 
 ## Mapeamento no pipeline SDD
 
-Com mais de uma fatia, as etapas de `/sdd-implement` a `/sdd-sre` **se repetem por fatia**:
-implementa, revisa/QA/segurança/SRE, mergeia, só então a fatia seguinte começa. Nunca implementa
-todas as fatias de uma vez para revisar depois.
+Com mais de uma fatia, a cadeia que **se repete por fatia** é `/sdd-implement` → `/sdd-code-review`
+→ `/sdd-qa` → merge: implementa, revisa, QA, mergeia, só então a fatia seguinte começa. Nunca
+implementa todas as fatias de uma vez para revisar depois. `/sdd-ux-review`, `/sdd-security` e
+`/sdd-sre` rodam **na última fatia pendente da spec**, sobre o diff acumulado, ou antes quando a
+coluna `Validação na fatia` da decomposição do TRD as antecipa para uma fatia específica — seção
+canônica em `docs/SDD-WORKFLOW.md`, "Cadência: o que roda por fatia e o que roda ao final da spec".
 
 | Etapa                  | Ação de Git                                                                 |
 |-------------------------|-------------------------------------------------------------------------------|
 | `/sdd-prd`, `/sdd-trd`  | Nenhuma — documentos em `specs/`, sem código/branch ainda (ficam como mudança não commitada até `/sdd-implement`, passo 2c-bis, incluí-los no primeiro commit da branch da 1ª fatia). |
 | `/sdd-implement`        | Escolhe a próxima fatia pendente (TRD, seção 13); confirma merge da fatia anterior (regra 3); cria a branch, abre PR draft no primeiro commit, commita por incremento. Full-stack: backend e frontend na mesma branch, em paralelo. |
 | `/sdd-code-review`      | Contra o PR desta fatia; registra em `code-review.md`, preservando o histórico das fatias anteriores; commita e envia (push) esse arquivo na mesma branch antes de devolver o resultado. |
-| `/sdd-qa`               | Contra o PR desta fatia, só os critérios de aceite cobertos por ela; registra em `qa-report.md`; commita e envia (push) esse arquivo (e o de cobertura, se regravado) na mesma branch. |
-| `/sdd-security`         | Contra o PR desta fatia; registra em `security-review.md`; commita e envia (push) esse arquivo na mesma branch. |
-| `/sdd-sre`              | CI/CD/infra impactados por esta fatia; aprovado = PR pronto para merge (tira o PR do modo draft, `gh pr ready`); commita e envia (push) `sre-review.md` (e qualquer ajuste de infra desta rodada) na mesma branch. |
+| `/sdd-qa`               | Contra o PR desta fatia, só os critérios de aceite cobertos por ela; registra em `qa-report.md`; commita e envia (push) esse arquivo (e o de cobertura, se regravado) na mesma branch. **Em fatia intermediária é a última etapa**: aprovado = PR pronto para merge (tira do draft, `gh pr ready`) e conduz a retrospectiva da fatia. |
+| `/sdd-security`         | Na última fatia da spec (ou na fatia que a coluna `Validação na fatia` antecipar), contra o diff acumulado da spec; registra em `security-review.md`; commita e envia (push) esse arquivo na mesma branch. |
+| `/sdd-sre`              | Na última fatia da spec (ou na fatia antecipada): CI/CD/infra impactados pelo diff acumulado; aprovado = PR pronto para merge (tira o PR do modo draft, `gh pr ready`); commita e envia (push) `sre-review.md` (e qualquer ajuste de infra desta rodada) na mesma branch. |
 | Merge do PR             | Decisão do usuário, nunca automática. Dispara CD e libera a fatia seguinte.   |
 
 ## Revisão retroativa de um PR já mergeado

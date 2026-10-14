@@ -28,6 +28,54 @@ validam objetivamente contra critérios escritos".
 - **Gate de saída**: `docs/BASELINE.md` existe para a área relevante, ou a suficiência foi
   constatada explicitamente — nunca um silêncio sem conclusão.
 
+## Cadência: o que roda por fatia e o que roda ao final da spec
+
+Esta é a seção canônica da cadência — os gates, as skills e os agentes apontam para cá em vez de
+repetir a regra.
+
+Numa spec com mais de uma fatia vertical de entrega, **não** se repetem todas as etapas por fatia:
+
+- **Por fatia**, sempre: **3** (implementação) → **4** (code review) → **5** (QA) → merge. Essa é
+  a cadeia que toda fatia percorre, sem exceção.
+- **Ao final da spec**, na última fatia pendente da decomposição do TRD e antes do merge dela:
+  **4b** (UX), **6** (segurança) e **7** (SRE) — cada uma cobrindo o **diff acumulado da spec**,
+  não só o da última fatia. `docs/gates/sre.md` já exigia exatamente isso da fatia final; a
+  diferença é que agora essa é a regra das três etapas, não a exceção da última.
+- **Antecipado para dentro de uma fatia**, quando a tarefa pede: a coluna **`Validação na fatia`**
+  da decomposição de tarefas do TRD (seção 13) nomeia, por tarefa, qual dessas três roda na própria
+  fatia (`segurança`, `ux`, `sre`, combináveis; `—` quando nenhuma). O orquestrador lê essa coluna
+  ao encerrar o QA da fatia, em vez de depender de alguém lembrar.
+
+**A antecipação não é discricionária** quando a tarefa cai num critério objetivo que já é gate duro
+em outro lugar deste pipeline — nesses casos o `architect` **tem de** marcar a coluna:
+
+| Validação | A tarefa é marcada quando toca |
+|-----------|----------------------------------|
+| `segurança` | autenticação; autorização; gestão de sessão; dado pessoal/sensível; ou ponto de entrada que aceita identificador externo (o mesmo critério objetivo de `docs/gates/seguranca.md`) |
+| `sre` | `ci.yml`/`cd.yml`; `Dockerfile`/compose; `infra/terraform`; segredo ou variável de ambiente de deploy; ou campo que passa a ser obrigatório numa rota ativa já consumida por cliente implantado |
+| `ux` | fluxo ou tela **nova** exposta ao usuário final naquela fatia — ajuste dentro de fluxo que a 4b já revisou não qualifica |
+
+Fora desses casos, antecipar é julgamento do `architect` (registrado na coluna, com o motivo em uma
+linha na descrição da tarefa) ou pedido explícito do usuário.
+
+**Por que a cadência é essa.** Três etapas por fatia numa spec de N fatias são 3N invocações de
+agente de revisão, cada uma relendo PRD/TRD/artefatos só para se orientar. O custo dominante não é
+o tempo de parede: é o **contexto consumido**, que cresce com o tamanho da spec e torna todo o
+fluxo mais lento justamente nas specs grandes. Uma spec de 5 fatias passa de 15 rodadas dessas três
+etapas para 3, mais as antecipadas por critério objetivo.
+
+**O que se perde, dito explicitamente.** Um defeito de segurança, UX ou infraestrutura introduzido
+na fatia 1 de uma spec de 5 fatias chega a `main` e fica lá até o fim da spec. Três coisas limitam
+o dano: o piso objetivo da tabela acima antecipa exatamente as classes de maior consequência; a
+revisão final cobre o **diff acumulado**, então nada escapa de revisão — só chega mais tarde; e o
+que a revisão final achar já mergeado vira `/sdd-hotfix`, que é o caminho que já existe para isso.
+
+**Duas coisas que moravam no `/sdd-sre` mudam de dono nas fatias intermediárias**, porque não são
+sobre infraestrutura e desapareceriam junto com a etapa 7: a **retrospectiva da fatia** (as issues
+de melhoria/aprendizado abertas em toda fatia aprovada) e o **`gh pr ready`** (sem o qual o PR fica
+bloqueado na UI do GitHub). As duas passam para a última etapa por fatia, `/sdd-qa`. Na fatia final
+seguem com o `sre`, junto do acionamento do `tech-writer`.
+
 ## As 7 etapas (+ 4b condicional: revisão de UX)
 
 ### 1. Produto & Design → PRD
@@ -109,11 +157,14 @@ validam objetivamente contra critérios escritos".
 
 - **Agente**: `.claude/agents/ux-designer.md`
 - **Skill**: `/sdd-ux-review`
-- **Quando roda**: só quando a fatia toca alguma tela/fluxo com superfície de UI perceptível pelo
-  usuário final (layout, navegação, visibilidade condicional de controles, estado vazio/erro,
-  conteúdo de mídia) — mesmo critério condicional usado para a etapa 0. Uma fatia 100%
-  backend/infra sem tela afetada pula esta etapa, registrando a decisão como "não aplicável"
-  (mesmo padrão já usado para QA pulado em `/sdd-hotfix`).
+- **Quando roda**: **ao final da spec** (seção "Cadência", acima), sobre o diff acumulado, e só
+  quando a spec toca alguma tela/fluxo com superfície de UI perceptível pelo usuário final
+  (layout, navegação, visibilidade condicional de controles, estado vazio/erro, conteúdo de
+  mídia). Roda **antes**, dentro de uma fatia intermediária, quando a coluna `Validação na fatia`
+  da decomposição do TRD marca `ux` para alguma tarefa daquela fatia — obrigatório quando a tarefa
+  expõe fluxo ou tela **nova** ao usuário final. Uma spec 100% backend/infra sem tela afetada pula
+  esta etapa, registrando a decisão como "não aplicável" (mesmo padrão já usado para QA pulado em
+  `/sdd-hotfix`).
 - **Entrada**: revisão de código aprovada + PRD + TRD.
 - **Saída**: `specs/<slug>/ux-review.md` — veredito sobre consistência e padrões, visibilidade do
   estado do sistema e prevenção de erro, controle/liberdade do usuário e navegabilidade,
@@ -141,6 +192,10 @@ validam objetivamente contra critérios escritos".
 
 - **Agente**: `.claude/agents/security-engineer.md`
 - **Skill**: `/sdd-security`
+- **Quando roda**: **ao final da spec** (seção "Cadência", acima), sobre o diff acumulado — ou
+  antes, dentro de uma fatia intermediária, quando a coluna `Validação na fatia` marca `segurança`
+  para alguma tarefa daquela fatia (obrigatório para autenticação, autorização, gestão de sessão,
+  dado pessoal/sensível, ou ponto de entrada que aceita identificador externo).
 - **Entrada**: QA aprovado.
 - **Saída**: `specs/<slug>/security-review.md` — superfície de ataque, checklist OWASP Top 10,
   gestão de segredos na aplicação, autenticação/autorização, validação de entrada, dependências
@@ -153,6 +208,11 @@ validam objetivamente contra critérios escritos".
 
 - **Agente**: `.claude/agents/sre.md`
 - **Skill**: `/sdd-sre`
+- **Quando roda**: **ao final da spec** (seção "Cadência", acima), sobre o diff acumulado — ou
+  antes, dentro de uma fatia intermediária, quando a coluna `Validação na fatia` marca `sre` para
+  alguma tarefa daquela fatia (obrigatório para `ci.yml`/`cd.yml`, `Dockerfile`/compose,
+  `infra/terraform`, segredo ou variável de ambiente de deploy, e campo que passa a ser obrigatório
+  numa rota ativa já consumida).
 - **Entrada**: QA **e** segurança aprovados.
 - **Plano antes de executar**: qualquer alteração real de infraestrutura (`terraform apply`) é
   apresentada como plano e só executada após aprovação explícita do usuário.
@@ -167,13 +227,15 @@ validam objetivamente contra critérios escritos".
   sobre o merge. Depois desse merge, `/sdd-implement` conduz o teste geral obrigatório de fim de
   spec contra produção real (`docs/POST-MERGE-VALIDATION.md`) — a spec só é considerada concluída
   com esse teste feito, não só com o merge.
-- **Retrospectiva da fatia (toda fatia, não só a última)**: antes de informar o usuário sobre o
-  merge, `/sdd-sre` também avalia a execução da rodada e abre issues de melhoria de fluxo/
-  performance/custo de token e de aprendizado generalizável em `asengardeon/btt-sdd-pipeline` — o
-  repositório de origem do plugin, sempre esse, independente de qual projeto está rodando o
-  pipeline (`.claude/skills/sdd-sre/SKILL.md`, seção "Retrospectiva da fatia"). Não é opcional nem
-  condicionado a achar algo — "nenhuma sugestão concreta desta fatia" é uma conclusão válida da
-  avaliação, pular a própria avaliação não é.
+- **Retrospectiva da fatia (toda fatia, não só a última — mas não sempre aqui)**: antes de informar
+  o usuário sobre o merge, a **última etapa que rodou naquela fatia** avalia a execução da rodada e
+  abre issues de melhoria de fluxo/performance/custo de token e de aprendizado generalizável em
+  `asengardeon/btt-sdd-pipeline` — o repositório de origem do plugin, sempre esse, independente de
+  qual projeto está rodando o pipeline. Na fatia final da spec, essa etapa é `/sdd-sre`
+  (`.claude/skills/sdd-sre/SKILL.md`, seção "Retrospectiva da fatia"); nas fatias intermediárias,
+  em que o SRE não roda, é `/sdd-qa` (`.claude/skills/sdd-qa/SKILL.md`), com o mesmo procedimento.
+  Não é opcional nem condicionado a achar algo — "nenhuma sugestão concreta desta fatia" é uma
+  conclusão válida da avaliação, pular a própria avaliação não é.
 
 ## Governança de decisão (vale para todas as etapas, incluindo a condicional)
 

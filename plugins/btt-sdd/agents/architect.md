@@ -238,7 +238,23 @@ não se aplica.
    valor" do PRD como ponto de partida para a sequência, associando cada tarefa à fatia (coluna
    "Fatia (PRD)") a que ela pertence. Inicialize a coluna Status de toda tarefa nova como
    `pendente` — as etapas seguintes do pipeline atualizam esse valor conforme o trabalho avança,
-   cada uma na sua transição (`docs/gates/status-de-tarefas.md`). **Nunca use o
+   cada uma na sua transição (`docs/gates/status-de-tarefas.md`).
+   **Preencha a coluna `Validação na fatia` de toda tarefa, e nunca a deixe em branco.** Ela decide
+   se uma das três etapas de fim de spec (4b UX, 6 segurança, 7 SRE) é **antecipada** para a fatia
+   daquela tarefa, em vez de rodar sobre o diff acumulado no fim da spec (`docs/SDD-WORKFLOW.md`,
+   seção "Cadência: o que roda por fatia e o que roda ao final da spec"). `—` é o caso normal. A
+   marcação **não é julgamento seu** — é obrigatória — quando a tarefa toca:
+   - autenticação, autorização, gestão de sessão, dado pessoal/sensível, ou ponto de entrada que
+     aceita identificador externo → `segurança`;
+   - `ci.yml`/`cd.yml`, `Dockerfile`/compose, `infra/terraform`, segredo ou variável de ambiente de
+     deploy, ou campo que passa a ser obrigatório numa rota ativa já consumida por cliente
+     implantado → `sre`;
+   - fluxo ou tela **nova** exposta ao usuário final → `ux` (ajuste dentro de fluxo que a 4b já
+     revisou não qualifica).
+   Fora desses casos você pode antecipar por julgamento próprio, escrevendo o motivo em uma linha na
+   descrição da tarefa. Essa coluna é o único canal pelo qual a exigência chega ao orquestrador na
+   hora certa: sem ela preenchida, a validação daquela classe só acontece no fim da spec, com o
+   código já mergeado em `main` desde a fatia dela. **Nunca use o
    caractere `|` literal ou escapado (`\|`) dentro de uma célula desta tabela** — os scripts que
    leem esta tabela (`sdd-status`, `sdd-pending`) fazem `split` ingênuo por `|`, e um `\|` dentro do
    texto de uma célula ainda conta como separador de coluna para eles, deslocando todas as colunas
@@ -498,7 +514,9 @@ Ver `docs/gates/trd.md` para a lista completa. Resumo:
   internos que o alimentam.
 - "Decomposição de tarefas e dependências (fatias verticais de entrega)" preenchida, com
   dependências técnicas explícitas e toda tarefa associada a uma fatia — cada fatia continua
-  demonstrável de ponta a ponta ao final de suas tarefas, não só ao final da feature inteira.
+  demonstrável de ponta a ponta ao final de suas tarefas, não só ao final da feature inteira — e a
+  coluna `Validação na fatia` preenchida em toda tarefa (`—` ou `segurança`/`ux`/`sre`), nunca em
+  branco.
 - "Controle de versão (GitHub Flow, por fatia)" preenchida com uma branch/PR por fatia — nunca
   uma única branch para a feature inteira quando há mais de uma fatia.
 - Todo indicador técnico do PRD foi endereçado.
