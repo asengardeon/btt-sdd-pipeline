@@ -145,7 +145,8 @@ seguinte:
    - Commite ao final de cada incremento coerente (não um commit gigante no final).
    - **Rode todo comando de teste deste ciclo em primeiro plano (bloqueante), nunca em
      `run_in_background`** — você não tem nenhum outro trabalho útil para fazer enquanto espera o
-     próprio resultado que decide se o incremento passou (`docs/gates/governanca.md`, bullet sobre comando de build/teste que o próprio agente precisa
+     próprio resultado que decide se o incremento passou (`docs/gates/governanca.md`, bullet sobre
+     comando de build/teste que o próprio agente precisa
      aguardar). Já aconteceu de verdade 3 vezes na mesma invocação: um `dotnet test` disparado em
      background encerrou o turno do agente à espera de um processo que ele mesmo poderia ter
      aguardado em primeiro plano, exigindo do orquestrador descobrir o PID, esperar manualmente, e
@@ -179,10 +180,13 @@ seguinte:
    padrão. **Nunca** `git rev-parse HEAD`: o HEAD avança a cada commit de documentação das etapas de
    revisão, e um `Commit` apontando para um SHA docs-only faz quem comparar literalmente concluir
    "desatualizado" e reexecutar a suíte à toa. E **nunca os caminhos das duas trilhas juntos**
-   (`-- src/ frontend/`): é o mesmo defeito num eixo diferente — uma correção só de frontend passaria
+   (`-- src/ frontend/`): é o mesmo defeito num eixo diferente — uma correção só de frontend
+   passaria
    a invalidar esta evidência de backend sem uma linha de `src/` ter mudado, e vice-versa, forçando
-   reexecução da suíte completa **e** do build da trilha errada (`docs/TESTING.md`, bullet "O frescor
-   é por trilha, nunca global"). É esse arquivo que `code-reviewer`/`qa-engineer` reaproveitam em vez
+   reexecução da suíte completa **e** do build da trilha errada (`docs/TESTING.md`, bullet "O
+   frescor
+   é por trilha, nunca global"). É esse arquivo que `code-reviewer`/`qa-engineer` reaproveitam em
+   vez
    de rodar a suíte de novo (`docs/TESTING.md`, seção "Reaproveitamento do artefato de cobertura
    entre etapas").
    **Grave o artefato depois de reconciliar com a branch compartilhada da fatia, nunca antes.** A
@@ -319,6 +323,14 @@ seguinte:
    pergunte ao usuário como proceder em vez de decidir silenciosamente. Ao extrair os números para
    o resumo de cobertura, nunca use o relatório HTML como fonte — gere a saída legível por máquina
    que a stack já produz (`term-missing`/XML/JSON/`lcov.info`) e condense a partir dela.
+   **Execute pelo menor custo, sem cortar o que é evidência.** `docs/TESTING.md`, seção "Custo de
+   execução da suíte: tempo de parede, tokens e infraestrutura", tem as alavancas e os limites de
+   cada uma — em resumo: camadas do mais barato para o mais caro; parar na primeira falha só em
+   rodada de **investigação**, nunca nesta rodada final; paralelismo só nas camadas que
+   `docs/STACK.md` declara seguras; container/emulador subindo uma vez por execução, não por
+   arquivo; e a saída completa salva em arquivo e pesquisada com `grep`, em vez de despejada no seu
+   contexto — você lê o repórter condensado e reporta contagens no verde, nomes e mensagens dos
+   testes que falharam no vermelho.
 
 4. **Testes de infraestrutura preferem Docker/emuladores a produção real.** Todo teste de
    integração que fala com banco, fila, storage ou serviço de nuvem gerenciado roda contra um

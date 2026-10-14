@@ -188,6 +188,20 @@ não se aplica.
    por execução. Só pergunte ao usuário via `AskUserQuestion` se houver mais de uma opção razoável
    para esta stack; senão, proponha o padrão óbvio da stack e registre a proveniência. Se
    `docs/STACK.md` já tem essa decisão de uma feature anterior, reaproveite sem perguntar de novo.
+2c. **Registre em `docs/STACK.md` como a suíte desta stack se executa pelo menor custo**, junto do
+   comando de teste/cobertura que você já decide ali — são os campos que `docs/TESTING.md`, seção
+   "Custo de execução da suíte: tempo de parede, tokens e infraestrutura", espera encontrar
+   preenchidos, e sem eles cada agente improvisa o seu:
+   - **comando de execução paralela** da stack, e **quais camadas são seguras para paralelizar**
+     (unitário com dublê quase sempre é; integração contra serviço com estado só é com o
+     isolamento do passo 2b acima);
+   - **opção de parar na primeira falha** (`-x`/`--fail-fast`/`--bail`), marcada como de uso só em
+     rodada de investigação — nunca na rodada final de evidência;
+   - **repórter condensado** para a saída que um agente lê (`dot`, `--quiet`, equivalente) e a saída
+     legível por máquina de onde os números do resumo de cobertura são extraídos;
+   - **escopo de fixture do serviço com estado** (container/emulador sobe uma vez por execução) e a
+     estratégia de reset entre testes (transação revertida por teste, não recriação de schema);
+   - **cache de dependências** reaproveitável entre worktrees e no CI.
 3. Defina o **modelo de domínio**: entidades, invariantes, regras de negócio — sem framework.
 4. Defina os **ports** (interfaces) que a aplicação precisa: um por responsabilidade, nomeado pelo
    papel que cumpre (`TaskRepository`, não `Database`).
@@ -287,14 +301,17 @@ não se aplica.
    que ninguém observou ainda** (passo 1c acima): a **primeira tarefa da primeira fatia que depende
    dessa estrutura é a tarefa de investigação** que a captura — antes de qualquer tarefa que escreva
    código de produção contra ela. Ela entra na tabela como qualquer outra tarefa (com Issue GitHub,
-   Status, trilha), não como nota de rodapé, e as tarefas que dependem dela declaram essa dependência
+   Status, trilha), não como nota de rodapé, e as tarefas que dependem dela declaram essa
+   dependência
    na coluna de dependências. Isso não é sequenciamento cauteloso: implementar contra uma estrutura
-   suposta produz uma suíte verde contra a suposição, que nenhuma etapa de revisão posterior consegue
+   suposta produz uma suíte verde contra a suposição, que nenhuma etapa de revisão posterior
+   consegue
    distinguir de uma suíte verde contra a realidade.
    **Mas "primeiro" só vale para investigação que mede a plataforma isoladamente — declare qual dos
    dois casos é o seu, tarefa por tarefa.** São duas classes, e só uma pode preceder o código:
    - **Mede a plataforma isoladamente** (ex.: "que código HTTP o serviço devolve para endereço
-     revogado", "qual o nome acessível real daquele elemento no site de terceiro"): roda **antes** de
+     revogado", "qual o nome acessível real daquele elemento no site de terceiro"): roda **antes**
+     de
      qualquer código, "Depende de" pode ser `nenhuma`. É o caso default.
    - **Mede o comportamento da plataforma contra artefato produzido por outras tarefas da mesma
      fatia** (ex.: "o navegador oferece instalar com *este* manifest e *este* service worker?", "a
@@ -325,7 +342,8 @@ não se aplica.
    quebra entre fatias**, e o TRD precisa dizer isso, não deixar implícito. Registre a janela na
    tabela desta seção (nota na linha da tarefa, ou subseção própria "Janelas de quebra de contrato
    entre fatias" logo abaixo da tabela) e já proponha a mitigação como parte do desenho — campo
-   opcional com fallback para o valor antigo até a fatia seguinte mergear é o padrão default; segurar
+   opcional com fallback para o valor antigo até a fatia seguinte mergear é o padrão default;
+   segurar
    o merge até a fatia seguinte estar pronta, ou aceitar a janela conscientemente, são alternativas
    válidas se justificadas. Isso é uma decisão de arquitetura sua, não uma pergunta ao usuário por
    padrão — só vire `AskUserQuestion` se as opções de mitigação tiverem trade-off real (ex.: janela

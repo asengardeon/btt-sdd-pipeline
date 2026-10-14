@@ -71,7 +71,8 @@ alto nível") já especifica o mecanismo de verificação alternativo esperado (
 integração HTTP encadeando os endpoints reais envolvidos, sem dublê, como prova do fluxo)
 diretamente na tarefa, em vez de deixar para quem implementa decidir ou perguntar no meio da fatia.
 
-### Armadilha conhecida: `testPathIgnorePatterns` do Jest com `<rootDir>` e path com segmento iniciado por ponto
+### Armadilha conhecida: `testPathIgnorePatterns` do Jest com `<rootDir>` e path com segmento
+iniciado por ponto
 
 Se o TRD decidir Jest como test runner do frontend (`docs/STACK.md`), evite usar `<rootDir>` como
 prefixo literal em padrões regex de exclusão de path (`testPathIgnorePatterns`,
@@ -96,6 +97,68 @@ testPathIgnorePatterns: ['[\/]\.next[\/]', '[\/]node_modules[\/]', '[\/]e2e[\/]'
 (sem caminho absoluto literal na entrada, não há o que a normalização interna do Jest
 mal-interprete). Achado real, levou 3 rodadas de QA para diagnosticar numa sessão anterior — ver
 issue de origem para o diagnóstico completo com scripts de reprodução.
+## Custo de execução da suíte: tempo de parede, tokens e infraestrutura
+
+A pirâmide acima decide **o que** testar e em que nível. Esta seção decide **como executar** pelo
+menor custo, e nomeia os três custos que uma execução consome — eles não se otimizam juntos, e
+confundi-los é como se adota um atalho achando que é economia.
+
+**1. Ordem das camadas e falha rápida — só na rodada de investigação.** Rode sempre do mais barato
+para o mais caro: lint e checagem de tipos, depois unitário, depois integração, depois e2e/browser.
+Numa rodada em que você está **investigando ou corrigindo** (não produzindo evidência), use a opção
+de parar na primeira falha da stack (`-x`, `--fail-fast`, `--bail`) — ela corta a espera inteira da
+camada cara quando a causa já apareceu na barata. **Nunca na rodada final de evidência**: ali a
+execução é completa e não filtrada, porque é dela que sai a reconciliação **nominal** das falhas
+pré-existentes que `backend-developer`/`frontend-developer` já devem apresentar (passo 5a dos dois).
+Parar na primeira falha esconde as demais e torna impossível dizer se o `N` de "falhas
+pré-existentes" mudou — que é justamente o sinal de alerta que aquele passo existe para pegar.
+
+**2. Paralelismo é declarado, nunca presumido.** O comando de execução paralela da stack, **e quais
+camadas são seguras para paralelizar**, ficam em `docs/STACK.md` (decisão do `architect` ao definir
+a stack, junto do comando de teste/cobertura). Unitário com dublê quase sempre é seguro. Integração
+que fala com serviço **com estado** (banco, fila, emulador) **não é**, a menos que cada execução
+tenha sua própria instância/banco/schema — a mesma regra de `docs/GIT-WORKFLOW.md`, seção
+"Isolamento de arquivos não é isolamento de serviços com estado", onde um `migrate:fresh` de um
+agente corrompeu a leitura de schema de outro e produziu erros que pareciam bug de produto.
+Paralelizar sem isolar não economiza: troca tempo por investigação de falha espúria.
+
+**3. Infraestrutura se reaproveita, não se recria.** Em ordem de impacto medido:
+
+- **container/emulador sobe uma vez por execução**, em fixture de escopo de suíte — nunca por
+  arquivo de teste. Subida de container é o custo fixo mais caro de uma suíte de integração.
+- **schema migra uma vez; cada teste reverte a própria transação** em vez de recriar o banco. Além
+  de ordens de magnitude mais rápido, elimina a classe de corrupção cruzada do item 2.
+- **cache de dependências compartilhado** entre worktrees locais (`docs/GIT-WORKFLOW.md`,
+  "Reaproveite o cache de dependências entre worktrees") e **cache declarado no CI** — reinstalar
+  tudo do zero a cada run é custo puro de runner.
+- **reuso de container entre execuções** quando a stack oferece (ex.: a flag de *reuse* de
+  bibliotecas de container de teste), para a rodada local repetida de TDD.
+
+**4. Tokens: a saída da suíte não entra inteira no contexto.** O que decide uma aprovação são os
+números agregados e, no vermelho, **só os testes que falharam**. Então:
+
+- rode com o repórter mais condensado que a stack oferecer (`dot`, `--quiet`, equivalente) para a
+  saída que você **lê**;
+- **salve a saída completa em arquivo e procure nela** (`tee` + `grep` de `FAIL`/`ERROR`) em vez de
+  deixar a execução despejar tudo no seu contexto — a cauda visível do terminal engana em suíte
+  grande, e isso já está exigido para a reconciliação nominal de falhas;
+- **verde** → registre contagens e cobertura agregada, nada mais;
+- **vermelho** → nomes dos testes que falharam e a mensagem de falha deles, nunca o log inteiro;
+- nunca o relatório **bruto** (HTML em especial) como fonte do resumo — use a saída legível por
+  máquina que a mesma ferramenta já produz (regra que a seção "Reaproveitamento do artefato de
+  cobertura entre etapas" já fixa).
+
+**5. No CI, sharding troca um custo por outro — meça antes.** Dividir a camada caras em N jobs
+paralelos reduz o tempo de parede e **multiplica os minutos faturáveis** (N jobs pagam a subida de
+ambiente N vezes). Só adote com o eixo de custo explícito, do mesmo jeito que `docs/gates/sre.md`
+já exige para qualquer argumento de CI: minutos **faturáveis** (minutos × multiplicador do runner),
+não só relógio. Em repositório privado com runner Windows (2×) ou macOS (10×), sharding mal
+dimensionado é a troca mais cara que existe neste pipeline.
+
+**O que nunca é cortado por economia**: a rodada final completa com cobertura ao final da trilha, o
+gate de 80% por pacote, o comando de build/empacotamento real quando a fatia produz artefato, e a
+lista nominal de falhas pré-existentes. Economia que apaga uma dessas quatro não é economia — é o
+gate desligado sem ninguém declarar.
 
 ## Preferência por Docker/emuladores locais em vez de produção real
 
@@ -128,7 +191,8 @@ repositório.** Todo valor observado numa medição ao vivo entra em artefato de
 mock, comentário ou XML doc **já substituído** por um equivalente não atribuível a pessoa real — e a
 substituição acontece no momento em que o valor sai da medição, não numa limpeza posterior.
 
-**Substituir não é perder evidência.** Preserve a prosa e a **assinatura do incidente** — contagem de
+**Substituir não é perder evidência.** Preserve a prosa e a **assinatura do incidente** — contagem
+de
 dígitos, zeros à esquerda, presença/ausência de separadores, resultado da máscara, qual validação o
 valor passa ou falha —, porque é a assinatura que explica o defeito, nunca a identidade do titular.
 Um documento que diz "CPF de 11 dígitos com dígitos verificadores válidos, formatado sem pontuação,
@@ -147,7 +211,8 @@ observada:
 
 Já aconteceu de verdade: numa rodada de hotfix, dados reais do operador — CPF com dígitos
 verificadores válidos, telefone, nome e e-mail — alcançaram **seis** arquivos do repositório,
-incluindo **código de produção** (XML doc de um matcher) e três arquivos de teste. Só apareceu porque
+incluindo **código de produção** (XML doc de um matcher) e três arquivos de teste. Só apareceu
+porque
 o `security-engineer` conferiu os dígitos do CPF em vez de presumir que era placeholder sintético, e
 custou **uma rodada inteira** de implementação só para redigir. O achado registra explicitamente que
 não foi desatenção do desenvolvedor: nenhum lugar do pipeline dizia que artefato e teste usam dado
@@ -157,12 +222,15 @@ seguinte usa dado de cliente.
 ## Fidelidade do dublê derivado de captura real: página inteira e locator estrito
 
 Um mock construído a partir de uma captura do sistema real (DOM de uma página, resposta de uma API,
-layout de arquivo) só é evidência válida **para o que a captura inclui**. Duas regras, as duas vindas
+layout de arquivo) só é evidência válida **para o que a captura inclui**. Duas regras, as duas
+vindas
 do mesmo incidente real:
 
 - **A captura inclui a página/resposta inteira, não só o fragmento de interesse.** Capturar apenas o
-  formulário (ou apenas o objeto que importa) produz um dublê onde o elemento procurado é único **por
-  construção** — e um teste verde contra ele não disse nada sobre o sistema real, onde o mesmo seletor
+  formulário (ou apenas o objeto que importa) produz um dublê onde o elemento procurado é único
+  **por
+  construção** — e um teste verde contra ele não disse nada sobre o sistema real, onde o mesmo
+  seletor
   pode casar com mais de um elemento.
 - **Teste que exercita clique/interação usa a API estrita de locator** — a que **falha** quando o
   seletor casa com mais de um elemento —, nunca o atalho que resolve para "o primeiro que casar"
@@ -172,9 +240,11 @@ do mesmo incidente real:
 Já aconteceu de verdade, e passou por **seis specs**: `form button[type='submit']` casava com **2**
 elementos na página real — o primeiro era a lupa de busca do cabeçalho do site, dentro de outro
 `<form>` —, e a automação nunca clicou no botão da feature. Nenhuma submissão jamais aconteceu, e o
-desfecho sempre parecia um erro transitório genérico, retentado 5 vezes. O dublê vinha de uma captura
+desfecho sempre parecia um erro transitório genérico, retentado 5 vezes. O dublê vinha de uma
+captura
 só do fragmento do formulário, sem o cabeçalho do site; ali havia um único `<form>`, então o seletor
-era inequívoco. **O dado que fecha o argumento**: quando o dublê passou a servir a vizinhança do site
+era inequívoco. **O dado que fecha o argumento**: quando o dublê passou a servir a vizinhança do
+site
 por padrão, os testes de caminho feliz **que já existiam** passaram a falhar contra o código antigo,
 com a mensagem literal dos logs de produção — a suíte que já existia teria pego o defeito desde
 sempre, se o dublê tivesse a mesma ambiguidade do sistema real.
@@ -239,7 +309,8 @@ As duas correções legítimas são:
 `docs/LESSONS-LEARNED.md` ou num artefato de revisão), diga de qual população ela é:
 
 - **(a) Contenção** — há **timeout no rastro**. Não é corrigível por reescrita do teste; é ambiente.
-- **(b) Asserção presa a relógio** — **falha de asserção, sem timeout**: `Assert.Equal`/`Assert.Single`
+- **(b) Asserção presa a relógio** — **falha de asserção, sem timeout**:
+   `Assert.Equal`/`Assert.Single`
   sobre valor que depende de quanto tempo algo levou (contagem de tentativas via navegador, coleção
   produzida por *debounce*, janela de atraso). **Corrigível**, e comprovadamente.
 
@@ -265,7 +336,8 @@ resultado, tokens). Ela só precisa rodar **uma vez por commit**, não uma vez p
 - Qualquer etapa seguinte que precise de evidência de teste/cobertura (hoje, principalmente o
   `qa-engineer`) **lê esse arquivo em vez de rodar a suíte de novo**, desde que o campo `Commit`
   nele bata com o **commit mais recente que tocou os caminhos de produção da própria trilha**
-  (`git log -1 --format=%H -- <caminhos da trilha>`) — **nunca o HEAD literal da branch** (`git rev-parse HEAD`). Como
+  (`git log -1 --format=%H -- <caminhos da trilha>`) — **nunca o HEAD literal da branch** (`git
+  rev-parse HEAD`). Como
   cada etapa do pipeline (`code-review` → `qa` → `security` → `sre`) commita seu próprio relatório
   em Markdown antes da etapa seguinte rodar, o HEAD sempre avança por um commit docs-only entre uma
   verificação de frescor e a próxima — comparar contra o HEAD literal nunca bate a partir da segunda
@@ -311,7 +383,8 @@ arquivo já coberto. Um relatório HTML custa muito mais para ler/parsear (visua
 para navegador) do que o texto/XML/JSON que a mesma ferramenta já gera junto — prefira sempre a
 saída estruturada.
 
-## Build/empacotamento real como parte da suíte completa (quando há trilha de frontend/artefato de build)
+## Build/empacotamento real como parte da suíte completa (quando há trilha de frontend/artefato de
+build)
 
 Lint, checagem de tipos e teste automatizado não são a suíte completa quando a fatia tem uma trilha
 que produz um **artefato de build/empacotamento real** (frontend compilado, pacote distribuível,
@@ -336,7 +409,9 @@ das etapas anteriores reproduziu o **comando de build/empacotamento real** da st
   desatualizado, quem precisar da evidência (`code-reviewer`/ `qa-engineer`) roda o comando de
   build/empacotamento você mesmo antes de aprovar — nunca aprova uma fatia com trilha de
   frontend/build sem essa evidência (atual ou reexecutada).
-- **Isso é definição do agente, não depende de lições aprendidas.** `docs/gates/implementacao.md`, `docs/gates/code-review.md` e `docs/gates/qa.md` e `agents/code-reviewer.md`/ `agents/qa-engineer.md`
+- **Isso é definição do agente, não depende de lições aprendidas.** `docs/gates/implementacao.md`,
+   `docs/gates/code-review.md` e `docs/gates/qa.md` e `agents/code-reviewer.md`/
+   `agents/qa-engineer.md`
   já exigem isso diretamente — não fica condicionado a `docs/LESSONS-LEARNED.md` ter uma entrada
   sobre o assunto numa sessão futura.
 
