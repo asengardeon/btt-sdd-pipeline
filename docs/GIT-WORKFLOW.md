@@ -364,6 +364,42 @@ relevantes liberarem os handles. Já aconteceu de forma repetida numa mesma sess
 (múltiplos agentes: `code-reviewer`, `security-engineer`, `sre`), sempre resolvido apenas
 ignorando o erro depois de confirmar via `git worktree list`.
 
+**Sincronizar a branch da fatia com `main`: `merge`, nunca `rebase`.** Operação diferente da
+reconciliação acima, e a confusão entre as duas é o ponto desta regra. Ali você rebaseia **commits
+locais ainda não publicados** sobre a ponta da branch compartilhada — o push seguinte é
+fast-forward, sem força, e rebase é a escolha certa. Aqui a branch da fatia já está publicada e
+atrás de `main` (ex.: um hotfix concorrente da mesma spec mergeou enquanto a fatia estava em
+revisão), e rebasear **reescreve commits que o remoto já tem** — o que só sobe com
+`push --force-with-lease`. Use merge:
+
+```bash
+git fetch origin main
+git merge origin/main          # resolve conflito de artefato, se houver, e commita o merge
+git push origin HEAD:<branch-da-fatia>   # push normal, sem --force
+```
+
+Três motivos, em ordem de peso:
+
+1. **Força-push é recusado pelo classificador de segurança do modo automático** — a mensagem é
+   "Blocked by classifier", e a recusa não olha o contexto (branch de fatia exclusiva da sessão,
+   sem outro humano empurrando nela). Como o modo automático é o padrão para sessão longa, o
+   procedimento com rebase era **estruturalmente incompatível** com o modo em que este pipeline
+   mais roda. Já aconteceu de verdade: rebase limpo de 16 commits, push recusado, e a saída foi
+   desfazer tudo (`git reset --hard origin/<branch>`) e refazer por merge — que passou de primeira.
+2. **Força-push sobre branch que vários agentes isolados tocaram já apagou trabalho revisado**, em
+   silêncio, neste mesmo pipeline (o bloco "Antes de rebasear/forçar push manualmente", abaixo,
+   tem o caso completo: dois commits aprovados descartados, sem erro visível). Merge não tem essa
+   classe de falha, porque não reescreve nada.
+3. **Merge não invalida os SHAs gravados em artefato.** O campo `Commit` de
+   `specs/<slug>/coverage/<fatia>-<trilha>.md` aponta para o último commit que tocou código; o
+   rebase reescreve esse SHA e obriga a recomputar o campo (bloco acima). O merge preserva os
+   commits originais, então o artefato continua válido sozinho.
+
+**E o histórico não perde nada**, que é a objeção óbvia: o PR da fatia entra em `main` por *squash
+merge* (regra 6), então a história interna da branch vira um commit único de qualquer forma — um
+commit de merge trivial tocando artefato de spec não chega a `main`. Rebase aqui não compra
+legibilidade; só paga o risco do força-push.
+
 **Antes de rebasear/forçar push manualmente sobre uma branch que múltiplos agentes concorrentes já
 tocaram** (qualquer branch de fatia que já passou por 2+ rodadas de revisão, cada uma em worktree
 separado) — risco maior que o da sincronização de rotina acima, porque aqui é o orquestrador

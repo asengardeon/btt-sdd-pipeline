@@ -30,19 +30,23 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 2b. **Confirme que a branch está sincronizada com `main` antes de revisar.** Rode `git fetch origin
    main` e `git rev-list --count HEAD..origin/main` — se houver commits novos em `main` desde que
    esta branch nasceu (ex.: merge de um hotfix concorrente da mesma spec enquanto esta fatia ainda
-   estava em revisão), rebaseie a branch da fatia sobre `origin/main` antes de prosseguir,
+   estava em revisão), **sincronize com `git merge origin/main` — nunca `git rebase`**
+   (`docs/GIT-WORKFLOW.md`, seção "Sincronizar a branch da fatia com `main`: `merge`, nunca
+   `rebase`": a branch já está publicada, então rebase exigiria força-push, que o classificador do
+   modo automático recusa e que já apagou trabalho revisado em silêncio neste pipeline),
    resolvendo eventuais conflitos nos arquivos de artefato da spec (`code-review.md`/
    `qa-report.md`/`security-review.md`/`sre-review.md`/`trd.md`) preservando o conteúdo de ambos os
    lados quando tocarem os mesmos arquivos (`docs/GIT-WORKFLOW.md`, seção "Resolvendo conflitos de
    merge nos arquivos de artefato de revisão", tem o passo a passo de como preservar a estrutura
    Markdown desses arquivos), e envie (push) o resultado. Isso evita que esta e as
    etapas seguintes (QA, segurança, SRE) commitem "às cegas" sobre uma base que já vai gerar
-   conflito — descoberto só na última etapa, exigindo uma correção retroativa. **Se o rebase trouxe
+   conflito — descoberto só na última etapa, exigindo uma correção retroativa. **Se essa
+   sincronização trouxe
    commits substanciais de outra feature mergeada** (não só um hotfix pontual da mesma spec),
    informe explicitamente ao `code-reviewer` que vai revisar esta rodada: qualquer varredura
    exaustiva de propagação de campo/assinatura (ex.: "todo `new <Entidade>(` do repositório") que
-   `backend-developer`/`frontend-developer` tenha rodado *antes* deste rebase pode estar
-   desatualizada — código novo trazido pelo rebase pode ter introduzido um ponto de propagação que
+   `backend-developer`/`frontend-developer` tenha rodado *antes* dela pode estar
+   desatualizada — código novo trazido de `main` pode ter introduzido um ponto de propagação que
    a varredura original não podia ver. Não é motivo para reprovar de antemão; é sinal para o
    `code-reviewer` reconfirmar com uma varredura própria (área 9 de
    `.claude/agents/code-reviewer.md`)
