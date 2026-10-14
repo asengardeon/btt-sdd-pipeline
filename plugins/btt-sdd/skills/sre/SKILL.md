@@ -58,7 +58,10 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    ativo), **confirme que a branch está sincronizada com `main` antes de revisar.** Rode `git fetch
    origin main` e `git rev-list --count HEAD..origin/main` — se houver commits novos em `main` desde
    que esta branch nasceu (ex.: merge de um hotfix concorrente da mesma spec enquanto esta fatia
-   ainda estava em revisão), rebaseie a branch da fatia sobre `origin/main` antes de prosseguir,
+   ainda estava em revisão), **sincronize com `git merge origin/main` — nunca `git rebase`**
+   (`docs/GIT-WORKFLOW.md`, seção "Sincronizar a branch da fatia com `main`: `merge`, nunca
+   `rebase`": a branch já está publicada, então rebase exigiria força-push, que o classificador do
+   modo automático recusa e que já apagou trabalho revisado em silêncio neste pipeline),
    resolvendo eventuais conflitos nos arquivos de artefato da spec (`code-review.md`/
    `qa-report.md`/`security-review.md`/`sre-review.md`/`trd.md`) preservando o conteúdo de ambos os
    lados quando tocarem os mesmos arquivos (`docs/GIT-WORKFLOW.md`, seção "Resolvendo conflitos de

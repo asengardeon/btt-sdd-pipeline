@@ -52,7 +52,10 @@ review pulado (justificado)` com a justificativa (mesmo padrão já usado para "
    checa `main`: aqui o que avançou foi a **própria branch da fatia** depois do carimbo.
 2b. **Confirme que a branch está sincronizada com `main` antes de revisar** — mesmo passo 2b de
    `skills/code-review/SKILL.md`: `git fetch origin main` + `git rev-list --count
-   HEAD..origin/main`; rebaseie se houver commits novos, resolvendo conflitos em arquivos de
+   HEAD..origin/main`; se houver commits novos, sincronize com `git merge origin/main` — **nunca
+   `git rebase`**, porque a branch já está publicada e rebase exigiria força-push
+   (`docs/GIT-WORKFLOW.md`, seção "Sincronizar a branch da fatia com `main`: `merge`, nunca
+   `rebase`") —, resolvendo conflitos em arquivos de
    artefato de spec conforme `docs/GIT-WORKFLOW.md`, seção "Resolvendo conflitos de merge nos
    arquivos de artefato de revisão".
 3. **Se a fatia não tem superfície de UI perceptível** (ver "Quando esta etapa se aplica" acima),
