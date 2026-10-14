@@ -74,7 +74,9 @@ preço de etapa com veredito:
 
 - **Investigação de causa raiz somente-leitura** antes de decidir o que pedir numa correção
   pontual (`skills/implement/SKILL.md`, passo 2a) — ler vários arquivos, histórico de
-  Git ou log para devolver só a conclusão.
+  Git ou log para devolver só a conclusão. O mesmo padrão recorre em `skills/pending/SKILL.md`,
+  passo 4: resolver um item VALIDAR DEPOIS que exige ler código/histórico cujo conteúdo não
+  precisa ficar retido depois da conclusão.
 - **Leitura destilada do `timing-log.md`** na retrospectiva de fatia
   (`skills/sre/SKILL.md`, passo 5c): extrair as durações e a tendência entre fatias é
   extração; decidir que isso vira issue de melhoria é julgamento de quem invocou.
