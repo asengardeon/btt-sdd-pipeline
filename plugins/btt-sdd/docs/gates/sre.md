@@ -41,6 +41,11 @@
   código e o delta —, e o veredito que gate o merge continua sendo o run do HEAD atual do PR, não a
   presença de um run `cancelled` na lista. Na branch base **não** se cancela: ali cada commit é um
   estado final com veredito próprio.
+- [ ] **O job do short-circuit declara `permissions: actions: read`.** Sem esse escopo a consulta
+  ao último run verde falha, e como a direção de falha segura é "roda a suíte", o workflow continua
+  correto enquanto o desperdício continua inteiro — a falha é silenciosa por construção, então é
+  verificação, não observação. Mesma checagem para a forma completa do arquivo
+  (`docs/CI-WORKFLOW.md`): item de lá que falte no `ci.yml` do projeto é achado desta etapa.
 - [ ] Se este projeto tem hoje `paths`/`paths-ignore` no gatilho de um check obrigatório, isso é
   reportado como achado — é a forma que #146 pediu e que a medição depois mostrou ser errada, não
   uma configuração a preservar.

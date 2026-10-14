@@ -223,6 +223,11 @@ investigação continua obrigatória só para a(s) área(s) que o diff efetivame
      duas fatias seguidas e só olhou o eixo monetário na terceira, depois de o usuário já ter
      resolvido o problema por fora do pipeline.
 
+   - **A forma que um `ci.yml` recém-nascido já deve ter está em `docs/CI-WORKFLOW.md`** — você
+     audita contra ela, não contra o que lhe parecer razoável, e quem escreveu o arquivo seguiu o
+     mesmo documento. A medição e o histórico de cada regra continuam aqui nesta área; lá está só a
+     forma, para o `architect` e quem implementa não precisarem carregar a área inteira do `sre`.
+     Se o arquivo nasceu sem algum dos itens de lá, é achado desta etapa.
    - **Cadência de CI: leia `docs/PROJECT-CONVENTIONS.md` antes de desenhar ou revisar o `ci.yml`.**
      O padrão deste pipeline é rodar a suíte completa a cada push, e continua sendo o padrão quando
      o arquivo não diz nada. Mas o pipeline é estruturalmente caro em minutos de runner: cada etapa
@@ -313,8 +318,13 @@ investigação continua obrigatória só para a(s) área(s) que o diff efetivame
      **A receita que funciona**: pular o build apenas quando o código em `HEAD` for comprovadamente
      idêntico ao de um SHA que **já passou** no CI nesta mesma branch.
 
-     1. Consulte, via `gh api` com o `GITHUB_TOKEN` já disponível, o run mais recente
-        **bem-sucedido** do workflow de CI para esta branch, e pegue seu `headSha`.
+     1. Consulte, via `gh api` com o `GITHUB_TOKEN`, o run mais recente
+        **bem-sucedido** do workflow de CI para esta branch, e pegue seu `headSha`. **O job que faz
+        essa consulta declara `permissions: actions: read`** — o `GITHUB_TOKEN` padrão não traz esse
+        escopo em toda configuração de repositório, e sem ele a chamada falha. Confirme a permissão
+        ao auditar: como a direção de falha segura do passo 4 é "roda a suíte", a falta dela **não
+        quebra nada visivelmente** — o workflow continua correto, o desperdício continua inteiro, e
+        ninguém descobre que o short-circuit nunca funcionou.
      2. `git diff --name-only <esseSha> HEAD` e verifique se **todo** arquivo do diff casa o filtro
         de caminhos de documentação — `specs/`, `docs/` e `*.md` da raiz.
      3. Se nada sobrou fora do filtro, é mudança só de documentação sobre código que já passou: o
