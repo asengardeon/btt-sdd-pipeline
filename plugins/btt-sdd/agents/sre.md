@@ -340,6 +340,25 @@ investigação continua obrigatória só para a(s) área(s) que o diff efetivame
      temporal em vez de anedota. Isto é generalizável: todo projeto que usa este pipeline recebe a
      dezena de commits docs-only por fatia, logo todo projeto que adotar a receita perde o mesmo
      amostrador.
+   - **Run supersedido na mesma branch é cancelado, não terminado — `concurrency` com
+     `cancel-in-progress`.** O pipeline empurra vários pushes em sequência na mesma branch da fatia
+     (código, depois `fetch`+`rebase`, depois o artefato de cada etapa de revisão), e sem isso cada
+     run antigo segue até o fim validando um SHA que ninguém vai mergear. É a economia mais barata
+     que existe: nenhum sinal se perde, porque o run mais novo cobre o mesmo código **e** o delta.
+     Verifique que o `ci.yml` declara o grupo por workflow + ref, e **nunca cancele na branch
+     base** — ali cada commit é um estado final que merece seu próprio veredito:
+
+     ```yaml
+     concurrency:
+       group: ${{ github.workflow }}-${{ github.ref }}
+       cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+     ```
+
+     Duas observações ao reportar: o veredito que vale para o merge é sempre o run do HEAD atual do
+     PR (você já confere `headSha` contra `headRefOid` no item abaixo), então um run `cancelled` na
+     lista não é achado nenhum quando existe um run mais novo verde para o HEAD; e isto remove parte
+     da amostragem acidental de flakiness do item anterior — se o projeto adotar os dois, proponha
+     no mesmo movimento o amostrador deliberado (`schedule` na branch base).
    - Se um job falhar/for cancelado só por estourar `timeout-minutes` (sem nenhum teste vermelho),
      principalmente quando múltiplas fatias/PRs desta mesma sessão estão rodando CI em paralelo,
      trate como possível falso-negativo por contenção de runners antes de investigar como bug de

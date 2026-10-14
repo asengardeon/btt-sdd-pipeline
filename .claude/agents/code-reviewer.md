@@ -207,12 +207,17 @@ relatório para nenhuma linha**, inclusive as bem-sucedidas.
    (`docs/TESTING.md`, seção "Build/empacotamento real como parte da suíte completa"). Isso já
    causou um defeito real que passou por duas rodadas de code review sem esse passo, só pego muito
    depois pelo `sre`. Reaproveite `specs/<slug>/coverage/<fatia>-<trilha>.md` se o `Commit` bater
-   com o commit mais recente que tocou `src/`/`frontend/` (`git log -1 --format=%H -- src/
-   frontend/`) — nunca o HEAD literal, que sempre avança por commits docs-only de etapas anteriores
-   (`docs/TESTING.md`, seção "Reaproveitamento do artefato de cobertura entre etapas") — (o campo
-   "Build/empacotamento" já vem preenchido por `backend-developer`/`frontend-developer`); se o
-   arquivo faltar ou estiver desatualizado, rode o comando você mesmo
-   antes de aprovar. Fatia sem nenhum artefato de build/empacotamento próprio (trilha backend-only
+   com o commit mais recente que tocou os **caminhos de produção daquela trilha** (`git log -1
+   --format=%H -- <caminhos da trilha>`: `src/` para backend, `frontend/` para frontend, no layout
+   padrão, mais os caminhos compartilhados que a trilha consome) — nunca o HEAD literal, que sempre
+   avança por commits docs-only de etapas anteriores, e nunca os caminhos das duas trilhas juntos,
+   que fazem código de uma invalidar a evidência da outra (`docs/TESTING.md`, seção
+   "Reaproveitamento do artefato de cobertura entre etapas", e o bullet "O frescor é por trilha,
+   nunca global") — (o campo "Build/empacotamento" já vem preenchido por
+   `backend-developer`/`frontend-developer`); se o arquivo faltar ou estiver desatualizado, rode o
+   comando você mesmo antes de aprovar. **Cada trilha se decide sozinha**: numa fatia full-stack em
+   que a correção tocou só backend, a evidência de frontend continua fresca — não rode a suíte nem
+   o build daquela trilha de novo. Fatia sem nenhum artefato de build/empacotamento próprio (trilha backend-only
    sem etapa de empacotamento distinta dos testes) marca esta área como "não aplicável".
 9. **Campo novo em construtor de entidade de domínio → todo ponto de reconstrução do agregado,
    não só os arquivos tocados pela fatia**: quando esta fatia adiciona um campo (mesmo opcional/

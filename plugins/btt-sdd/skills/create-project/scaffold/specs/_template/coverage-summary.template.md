@@ -2,7 +2,7 @@
 
 > Gerado por: `<backend-developer|frontend-developer|qa-engineer>`
 > Branch: `<nome-da-branch>`
-> Commit (último que tocou código) **desta rodada**: `<saída de git log -1 --format=%H -- src/ frontend/>`
+> Commit (último que tocou código **desta trilha**) **desta rodada**: `<saída de git log -1 --format=%H -- <caminhos de produção da trilha>>`
 > Gerado em: `<data/hora>`
 > Comando executado: `<comando de lint + teste/cobertura da stack em uso>`
 
@@ -11,11 +11,17 @@ um relatório bruto (nunca cole aqui o HTML/XML/JSON original, nem um dump linha
 100% coberto). Extraia só o que muda uma decisão de aprovação: números agregados e as lacunas abaixo
 do gate. Qualquer etapa seguinte que precise desta evidência **lê este arquivo em vez de rodar a
 suíte de novo**, contanto que o campo `Commit` acima seja igual à saída atual de `git log -1
---format=%H -- src/ frontend/` na branch do PR — **nunca o HEAD literal** (`git rev-parse HEAD`),
+--format=%H -- <caminhos de produção desta trilha>` na branch do PR (`src/` para backend,
+`frontend/` para frontend, no layout padrão, mais os caminhos compartilhados que a trilha consome).
+**Nunca o HEAD literal** (`git rev-parse HEAD`),
 que avança a cada commit de documentação das etapas de revisão e faria o artefato parecer
-desatualizado sem nada de código ter mudado (ver `TESTING.md` do pipeline, seção "Reaproveitamento
-do artefato de cobertura entre etapas"). Se divergir, quem precisar da evidência roda a suíte e
-regrava este arquivo — nunca segue com um número desatualizado.
+desatualizado sem nada de código ter mudado — e **nunca os caminhos das duas trilhas juntos**
+(`-- src/ frontend/`), que fazem uma correção só de backend invalidar a evidência de frontend, e
+vice-versa, forçando a reexecução mais cara do pipeline sem que o código daquela trilha tenha
+mudado (ver `TESTING.md` do pipeline, seção "Reaproveitamento
+do artefato de cobertura entre etapas"). Se divergir, quem precisar da evidência roda a suíte **desta
+trilha** e regrava este arquivo — nunca segue com um número desatualizado, e nunca reexecuta a
+trilha cujo `Commit` continua batendo.
 
 **O cabeçalho acima é da rodada vigente, nunca histórico.** Toda rodada que regrava este arquivo —
 inclusive a 2ª, 3ª e 4ª rodadas de correção de um mesmo PR — **atualiza** `Branch`, `Commit` e `Gerado

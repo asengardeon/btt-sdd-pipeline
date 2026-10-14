@@ -96,6 +96,13 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    sem rerun: em ambiente de desenvolvimento contendido, o CI é o sinal **mais** confiável, não
    menos. Isso não vale como desculpa para pular validação de uma correção que mexe em produção —
    ali a suíte completa local continua obrigatória antes de empurrar para o CI.
+3a-bis. **E essa suíte completa obrigatória é a da trilha afetada, nunca a das duas.** Numa fatia
+   full-stack, uma correção que toca só `src/` exige a suíte completa de backend; a de frontend —
+   com navegador real e comando de build, as rodadas mais caras do pipeline — **não roda**, e o
+   artefato `coverage/<fatia>-frontend.md` continua válido como está, porque o frescor da evidência
+   é por trilha (`docs/TESTING.md`, bullet "O frescor é por trilha, nunca global"). O inverso vale
+   igual. A exceção é o caminho **compartilhado** pelas duas trilhas (contrato gerado, pacote
+   comum, esquema): ali as duas suítes rodam, porque o código que as duas consomem mudou de fato.
 3b. **Registre esta invocação em `specs/<slug>/timing-log.md` também**, mesmo sendo uma correção ou
    reverificação pontual fora dos passos numerados 1-5 (etapa "Correção pontual" ou "Reverificação
    pontual", agente, fatia) — mesmo mecanismo do passo 5a abaixo (horário de início antes de

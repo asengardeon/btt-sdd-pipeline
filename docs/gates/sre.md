@@ -27,6 +27,13 @@
   sempre acusa `src/` e por isso nunca dispara o short-circuit. Receita completa e a medição que a
   justifica em `.claude/agents/sre.md`, área "CI". Falha em qualquer etapa da checagem → roda a
   suíte (direção de falha segura).
+- [ ] **`ci.yml` declara `concurrency` com `cancel-in-progress` fora da branch base** (grupo por
+  workflow + ref). Sem isso, cada um dos vários pushes que o pipeline faz na mesma branch da fatia
+  (código → rebase → artefato de cada etapa de revisão) deixa um run antigo rodando até o fim para
+  validar um SHA que ninguém vai mergear. Nenhum sinal se perde — o run mais novo cobre o mesmo
+  código e o delta —, e o veredito que gate o merge continua sendo o run do HEAD atual do PR, não a
+  presença de um run `cancelled` na lista. Na branch base **não** se cancela: ali cada commit é um
+  estado final com veredito próprio.
 - [ ] Se este projeto tem hoje `paths`/`paths-ignore` no gatilho de um check obrigatório, isso é
   reportado como achado — é a forma que #146 pediu e que a medição depois mostrou ser errada, não
   uma configuração a preservar.

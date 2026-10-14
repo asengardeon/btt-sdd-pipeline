@@ -152,14 +152,21 @@ entre agentes concorrentes".
 2. Reaproveite a evidência de teste/cobertura em vez de regenerá-la por padrão
    (`docs/TESTING.md`, seção "Reaproveitamento do artefato de cobertura entre etapas"): procure
    `specs/<slug>/coverage/<fatia>-backend.md`/`<fatia>-frontend.md` (conforme a trilha desta
-   fatia) e confira se o `Commit` gravado ali bate com o **commit mais recente que tocou
-   `src/`/`frontend/`** na branch (`git log -1 --format=%H -- src/ frontend/`) — nunca o HEAD
-   literal da branch, que sempre avança por commits docs-only de etapas anteriores. Se bater, use
+   fatia) e confira, **para cada trilha separadamente**, se o `Commit` gravado ali bate com o
+   **commit mais recente que tocou os caminhos de produção daquela trilha** (`git log -1
+   --format=%H -- <caminhos da trilha>`: `src/` para backend, `frontend/` para frontend, no layout
+   padrão, mais os caminhos compartilhados que a trilha consome) — nunca o HEAD
+   literal da branch, que sempre avança por commits docs-only de etapas anteriores, e nunca os
+   caminhos das duas trilhas juntos, que fazem uma correção só de backend invalidar a evidência de
+   frontend (e vice-versa) sem código daquela trilha ter mudado (`docs/TESTING.md`, bullet "O
+   frescor é por trilha, nunca global"). Se bater, use
    esses números como evidência de teste/cobertura desta rodada — não rode a suíte completa de novo
    só para confirmar o que a implementação já rodou. Rode lint e a suíte completa de testes com
    relatório de cobertura (comando documentado em `docs/TESTING.md`) você mesmo só se o arquivo não
    existir, ou se o `Commit` estiver desatualizado em relação a esse commit (ex.: houve commit de
-   código novo depois da geração) — e, ao rodar, regrave o arquivo de resumo com o novo commit, no
+   código novo depois da geração) — **e só da trilha cujo `Commit` divergiu**, nunca das duas
+   porque uma delas divergiu. Ao rodar, regrave o arquivo de resumo daquela trilha com o novo
+   commit, no
    mesmo
    formato condensado (nunca copiando um relatório HTML bruto), para as etapas seguintes também
    reaproveitarem. Se estiver rodando isso num working tree isolado (`docs/GIT-WORKFLOW.md`, seção
