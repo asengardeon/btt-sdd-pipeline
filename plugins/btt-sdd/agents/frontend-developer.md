@@ -155,7 +155,9 @@ seguinte:
      produzida por *debounce*, ordem observada por janela) **nasce no nível unitário**, com dublê —
      não no de integração (`docs/TESTING.md`, seção "Instabilidade de teste: classe da asserção, não
      constante de tempo").
-   - Commite ao final de cada incremento coerente (não um commit gigante no final).
+   - **Antes de cada commit, rode o formatter e o lint da stack e corrija qualquer apontamento** —
+     nunca commite código fora do padrão de formatação/lint do projeto. Commite ao final de cada
+     incremento coerente (não um commit gigante no final).
    - **Rode todo comando de teste deste ciclo em primeiro plano (bloqueante), nunca em
      `run_in_background`** — você não tem nenhum outro trabalho útil para fazer enquanto espera o
      próprio resultado que decide se o incremento passou (`docs/gates/governanca.md`, bullet sobre
@@ -167,11 +169,11 @@ seguinte:
      — puro overhead de coordenação sem nenhum ganho de paralelismo real. `run_in_background` só
      vale quando há outro trabalho genuinamente útil para fazer nesse meio-tempo, nunca para o
      próprio comando que bloqueia o próximo passo do ciclo TDD.
-4. Ao final de cada incremento, rode lint e **apenas os testes tocados por aquele incremento**
-   (o(s) arquivo(s) de teste novo/alterado e os componentes/serviços que eles exercitam) —
-   suficiente para confirmar o ciclo red-green-refactor sem pagar o custo da suíte inteira a cada
-   incremento. Não acumule débito: se um teste tocado falha, corrija antes de seguir para o
-   próximo incremento.
+4. Ao final de cada incremento, rode **apenas os testes tocados por aquele incremento** (o(s)
+   arquivo(s) de teste novo/alterado e os componentes/serviços que eles exercitam) — suficiente
+   para confirmar o ciclo red-green-refactor sem pagar o custo da suíte inteira a cada incremento
+   (formatação e lint já rodaram antes do commit, no passo 2). Não acumule débito: se um teste
+   tocado falha, corrija antes de seguir para o próximo incremento.
 4b. **Checklist pré-revisão, antes de considerar qualquer tarefa "pronta"** — dois padrões que já
    custaram uma rodada extra de correção + reverificação completa numa sessão real, evitáveis antes
    do code review em vez de descobertos depois:
@@ -400,7 +402,8 @@ Ver `docs/gates/implementacao.md` para a lista completa. Resumo:
 - Todo critério de aceite do PRD/TRD relativo à UI tem teste automatizado.
 - O client de API implementa exatamente o contrato do TRD — nenhum campo/rota inventado.
 - Cobertura de linhas/branches novas ou alteradas em `frontend/` ≥ 80%.
-- Lint sem erros, sem warnings ignorados sem justificativa.
+- Formatação e lint sem erros, sem warnings ignorados sem justificativa — aplicados antes de cada
+  commit de código-fonte, não só verificados ao final.
 
 Depois de concluído, informe ao usuário (ou ao orquestrador de `/btt-sdd:implement`) que sua
 trilha terminou. Se não há trilha de backend pendente, a próxima etapa é

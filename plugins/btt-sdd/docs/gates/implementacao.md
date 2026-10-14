@@ -6,7 +6,8 @@
 - [ ] Todo código de produção nasceu de um teste que falhou primeiro (TDD).
 - [ ] Cobertura de linhas/branches novas ou alteradas ≥ 80%, **por pacote** (`src/` e, se aplicável,
   `frontend/` separadamente).
-- [ ] Lint sem erros.
+- [ ] Formatação e lint sem erros — aplicados antes de cada commit de código-fonte, não só
+  verificados ao final.
 - [ ] Nenhuma violação de fronteira ports & adapters (domain/application sem import de infra).
 - [ ] Se a feature é full-stack: todo adapter de entrada que o frontend consome implementa
   exatamente o contrato do TRD — nenhum campo/rota inventado por qualquer um dos dois lados.
