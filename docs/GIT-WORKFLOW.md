@@ -629,6 +629,16 @@ nem fatia (não é uma feature de produto), então usa uma branch simples em vez
    `plugins/btt-sdd/README.md`, seção "⚠️ Isto é uma cópia, não um link". Deriva nesses arquivos não
    degrada a experiência de quem usa o plugin: ela **desliga gates** — já aconteceu com a etapa 4b
    inteira (revisão de UX), ausente dos docs do plugin por cinco commits (issues #280 e #281).
+3b. **Se a mudança tocou qualquer arquivo dentro de `plugins/btt-sdd/`** (replicado no passo 3 ou
+   já nativo do plugin), incremente a versão em `plugins/btt-sdd/.claude-plugin/plugin.json` como
+   parte do mesmo commit/PR — patch por padrão (`1.X.Y` → `1.X.(Y+1)`), minor se a mudança
+   introduziu uma capacidade nova, não só um ajuste; pergunte ao usuário só se a escolha entre
+   patch/minor não for óbvia. Se a mudança não tocou nada em `plugins/btt-sdd/`, não bata a versão.
+   Até aqui, essa obrigação só estava escrita para a skill de manutenção deste repositório contra
+   suas próprias issues — generalizada aqui para **qualquer** PR de manutenção, manual inclusive,
+   que até agora não tinha o passo escrito em lugar nenhum e por isso deixava a versão parada em
+   silêncio (issue #439: três PRs seguidas tocaram conteúdo empacotado sem bater a versão, porque o
+   processo manual não previa este passo).
 4. Commite nessa branch, abra o PR **referenciando `Closes #N` da issue confirmada/criada no passo
    1**, e só mergeie em `main` com decisão explícita do usuário — as mesmas regras 1, 4, 6 e 7
    acima se aplicam (PR obrigatório, sem push direto, sem force-push). Não há gate de QA/segurança/
