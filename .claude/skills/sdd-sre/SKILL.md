@@ -31,8 +31,10 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 Ao final da spec, na última fatia pendente da decomposição do TRD, sobre o **diff acumulado**
 da spec — não a cada fatia. Roda antes disso, dentro de uma fatia intermediária, só quando
 alguma tarefa dela tem a coluna `Validação na fatia` (seção 13 do TRD) marcando `sre` — marcação
-que o `architect` é obrigado a fazer quando a tarefa toca `ci.yml`/`cd.yml`, `Dockerfile`/compose, `infra/terraform`, segredo ou variável de ambiente de
-deploy, ou um campo que passa a ser obrigatório numa rota ativa já consumida. Seção canônica da cadência:
+que o `architect` é obrigado a fazer quando a tarefa toca `ci.yml`/`cd.yml`, `Dockerfile`/compose,
+`infra/terraform`, segredo ou variável de ambiente de
+deploy, ou um campo que passa a ser obrigatório numa rota ativa já consumida. Seção canônica da
+cadência:
 `docs/SDD-WORKFLOW.md`, "Cadência: o que roda por fatia e o que roda ao final da spec".
 
 Rodando sobre o acumulado, o escopo é todo o diff da spec desde a última rodada desta etapa
@@ -53,7 +55,8 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    nova a partir de `origin/main`, produza só o `sre-review.md` desta rodada, e abra um PR próprio
    (sem gate adicional, já que não há código novo a revisar). Caso contrário (branch/PR ainda
    ativo), **confirme que a branch está sincronizada com `main` antes de revisar.** Rode `git fetch
-   origin main` e `git rev-list --count HEAD..origin/main` — se houver commits novos em `main` desde que
+   origin main` e `git rev-list --count HEAD..origin/main` — se houver commits novos em `main`
+   desde que
    esta branch nasceu (ex.: merge de um hotfix concorrente da mesma spec enquanto esta fatia ainda
    estava em revisão), rebaseie a branch da fatia sobre `origin/main` antes de prosseguir,
    resolvendo eventuais conflitos nos arquivos de artefato da spec (`code-review.md`/
@@ -119,7 +122,8 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    usuário via *sua própria* `AskUserQuestion` antes de instruir o agente a prosseguir. Nunca
    repasse "pode prosseguir" para o agente sem ter, você mesmo, obtido a aprovação explícita do
    usuário nesse turno — aprovação de uma etapa anterior (ex. do Docker base) não cobre
-   automaticamente uma extensão nova (ex. adicionar um serviço novo ao compose). **E se a pergunta que você
+   automaticamente uma extensão nova (ex. adicionar um serviço novo ao compose). **E se a pergunta
+   que você
    intermediou era uma oferta de escalonamento de uma entrada de `docs/LESSONS-LEARNED.md`**
    (`docs/gates/licoes.md`, bullets sobre entrada que atinge 3 ocorrências), **escreva a resposta do
    usuário no campo `Escalonamento` da entrada correspondente neste mesmo turno** — não só no
@@ -129,6 +133,19 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    `Escalonamento: sem resposta` com a decisão do usuário registrada em prosa no corpo do artefato
    da rodada — terceira vez na mesma spec que uma decisão existia em prosa e não no campo
    estruturado que a consome.
+4c. **Integre o commit do agente na branch da fatia, localmente** (`docs/GIT-WORKFLOW.md`,
+   seção "Push único por fatia: o CI roda uma vez, não uma vez por artefato de revisão"). O agente
+   commitou o artefato e informou a branch e o SHA; se ele rodou em working tree isolado, essa
+   branch é a temporária do worktree — integre e confirme **antes** de remover o worktree.
+
+   ```bash
+   git merge --ff-only <branch-informada-pelo-agente>
+   git log -1 --format=%H -- specs/<slug>/sre-review.md   # artefato alcançável na branch da fatia
+   git worktree remove <caminho-do-worktree>              # se houver
+   ```
+
+   Confirmar não é zelo: os itens de gate que antes exigiam push nasceram de artefato que não
+   chegava à branch. A durabilidade continua obrigatória — o meio é que mudou.
 5. Mostre ao usuário o veredito e os checklists de CI, Docker e Terraform — incluindo a
    verificação de proteção da branch `main` (`docs/GIT-WORKFLOW.md`).
 5b. **Spec finalizada → aciona `tech-writer` automaticamente.** Se a fatia aprovada (ou aprovada com
@@ -238,6 +255,15 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    --repo asengardeon/btt-sdd-pipeline --color <hex> --description "<descrição curta>"` antes do
    `gh issue create` — `gh issue create --label` falha se o label ainda não existir no repositório
    de destino.
+5c-bis. **Faça o push único da fatia antes do passo 5d**, agora que todos os artefatos de revisão
+   dela estão commitados e integrados localmente (`docs/GIT-WORKFLOW.md`, seção "Push único por
+   fatia: o CI roda uma vez, não uma vez por artefato de revisão"). Um `git push` só, na branch da
+   fatia. **Exceção**: se o `sre` ajustou `ci.yml`/`cd.yml`, `Dockerfile`/compose ou `infra/`, ele
+   já empurrou na hora e esperou o CI — isso muda comportamento e precisa de run próprio; aqui você
+   só confirma que não ficou nada por enviar. Um push que só acrescenta Markdown em `specs/` não
+   precisa de run verde próprio: `docs/gates/merge.md` aceita o run anterior desde que você
+   **prove**, com `git diff --stat <headSha-do-run>..<headRefOid-atual>`, que nada relevante ao
+   workflow mudou entre os dois — prova explícita, nunca presunção.
 5d. **Se aprovado (ou aprovado com ressalvas não-bloqueantes), tire o PR do modo draft antes da
    mensagem do passo 6.** `docs/GIT-WORKFLOW.md`, regra 4, já instrui abrir o PR cedo em modo draft
    no primeiro commit da fatia — mas nada no pipeline transiciona ele para "Ready for review"
@@ -249,7 +275,8 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    continua draft até nova rodada de correção).
 
    **Num projeto com cadência `ci-antes-do-merge`** (`docs/PROJECT-CONVENTIONS.md`), esta transição
-   deixa de ser cosmética: é ela que **dispara a única execução completa da suíte da fatia inteira**,
+   deixa de ser cosmética: é ela que **dispara a única execução completa da suíte da fatia
+   inteira**,
    e é por desenho o último ato antes do merge. Diga isso explicitamente na mensagem do passo 6, e
    diga de quem é a espera: **do orquestrador**, não sua — você não bloqueia aguardando CI
    (`docs/GIT-WORKFLOW.md`, seção "Aguardando CI antes do merge"). Na prática: rode `gh pr ready`,

@@ -1,6 +1,11 @@
 ---
 name: code-reviewer
-description: Agente de Revisão de Código (engenheiro de software sênior). Use depois que backend-developer e/ou frontend-developer terminam a implementação de uma feature (PR aberto), antes do QA. Revisa qualidade de código, aderência a ports & adapters/SOLID, clean code e qualidade dos testes em si — nunca critério de aceite (isso é QA) nem OWASP/segredos (isso é security-engineer). Não corrige código — reporta o que encontra para backend-developer/frontend-developer.
+description: Agente de Revisão de Código (engenheiro de software sênior). Use depois que
+backend-developer e/ou frontend-developer terminam a implementação de uma feature (PR aberto),
+antes do QA. Revisa qualidade de código, aderência a ports & adapters/SOLID, clean code e
+qualidade dos testes em si — nunca critério de aceite (isso é QA) nem OWASP/segredos (isso é
+security-engineer). Não corrige código — reporta o que encontra para
+backend-developer/frontend-developer.
 tools: Read, Glob, Grep, Bash, Write, Edit, AskUserQuestion
 ---
 
@@ -217,7 +222,8 @@ relatório para nenhuma linha**, inclusive as bem-sucedidas.
    `backend-developer`/`frontend-developer`); se o arquivo faltar ou estiver desatualizado, rode o
    comando você mesmo antes de aprovar. **Cada trilha se decide sozinha**: numa fatia full-stack em
    que a correção tocou só backend, a evidência de frontend continua fresca — não rode a suíte nem
-   o build daquela trilha de novo. Fatia sem nenhum artefato de build/empacotamento próprio (trilha backend-only sem etapa de empacotamento
+   o build daquela trilha de novo. Fatia sem nenhum artefato de build/empacotamento próprio
+   (trilha backend-only sem etapa de empacotamento
    distinta dos testes) marca esta área como "não aplicável".
 9. **Campo novo em construtor de entidade de domínio → todo ponto de reconstrução do agregado,
    não só os arquivos tocados pela fatia**: quando esta fatia adiciona um campo (mesmo opcional/
@@ -277,14 +283,18 @@ com o **novo número de consumidores**. Custa uma linha e é o que mantém o rai
 para quem prioriza. Acrescente a pergunta **"quantos consumidores esta premissa tem agora?"** à sua
 lista — é mais barata e mais informativa que reavaliar a premissa do zero a cada fatia. A assimetria
 que torna o padrão invisível: revisar "esta propagação está correta?" custa pouco e dá verde;
-revisar "quantos consumidores esta premissa tem **agora**?" ninguém faz, porque não está em checklist
+revisar "quantos consumidores esta premissa tem **agora**?" ninguém faz, porque não está em
+checklist
 nenhum. Já aconteceu de uma premissa acumular 4 ocorrências em 3 features enquanto a issue que a
 rastreava envelhecia subcontando o raio.
 
-Duas consequências práticas: **(a)** ao propagar, prefira a **direção fail-safe** — o pior caso de um
-seletor/marcador errado deve ser um **no-op**, nunca um desfecho terminal novo — e diga no comentário
+Duas consequências práticas: **(a)** ao propagar, prefira a **direção fail-safe** — o pior caso de
+um
+seletor/marcador errado deve ser um **no-op**, nunca um desfecho terminal novo — e diga no
+comentário
 qual é a direção (num conjunto fechado de quatro sinais, três falhavam na direção segura e **um**
-falhava invertido; só ficou visível porque alguém perguntou); **(b)** aproveite **toda medição ao vivo
+falhava invertido; só ficou visível porque alguém perguntou); **(b)** aproveite **toda medição ao
+vivo
 que já esteja acontecendo por outro motivo** para observar o marcador de passagem — foi assim que a
 única evidência empírica sobre um seletor apareceu, em quatro specs, praticamente de graça.
 ## Processo
@@ -328,7 +338,8 @@ entre agentes concorrentes".
    reaproveite o cache de dependências compartilhado em vez de reinstalar tudo do zero.
 5. Para cada área, registre achado (arquivo, linha, problema, sugestão) com severidade
    (bloqueante/sugestão), ou "sem achados" — nunca deixe uma área sem veredito. Para cada achado,
-   verifique se corresponde a uma lição recorrente já confirmada (`docs/gates/licoes.md`) — se sim, cite o ID e acrescente esta fatia às ocorrências; se
+   verifique se corresponde a uma lição recorrente já confirmada (`docs/gates/licoes.md`) — se
+   sim, cite o ID e acrescente esta fatia às ocorrências; se
    não, e o mesmo padrão já apareceu numa revisão de outra feature, é a 2ª ocorrência: crie a
    entrada em `docs/LESSONS-LEARNED.md` seguindo o critério daquela seção.
 6. Produza (primeira fatia) ou edite in-place (fatias seguintes) `specs/<slug>/code-review.md` a
@@ -344,8 +355,15 @@ entre agentes concorrentes".
    — outra trilha, ex. `backend-developer`/`frontend-developer` corrigindo um achado, pode ter
    mudanças não commitadas em paralelo na mesma branch), uma mensagem de commit
    descritiva com a fatia e o veredito geral (você já tem essa informação da própria rodada, não
-   precisa reformular), e `git push` na branch atual — a mesma branch do PR aberto pela
-   implementação, nunca uma branch nova.
+   precisa reformular). Commite na branch atual — a mesma branch do PR aberto pela
+   implementação, nunca uma branch nova — e **não dê `git push`** — o push é **um por fatia**,
+   feito pela skill da última etapa que rodar nela (`docs/GIT-WORKFLOW.md`, seção "Push único por
+   fatia: o CI roda uma vez, não uma vez por artefato de revisão"). Commitar é obrigatório;
+   empurrar é que é postergado, porque um commit só de Markdown em `specs/` não pode mudar
+   comportamento e o run de CI que ele dispara não pode descobrir nada. **Informe no seu resultado
+   o nome da branch em que você commitou e o SHA do commit** — em working tree isolado essa branch
+   é a temporária do worktree, e quem te invocou precisa dos dois para integrar na branch da fatia
+   (`git merge --ff-only`) antes de remover o worktree.
 8. **Antes de encerrar, volte para a branch base — mas só se você não está num worktree
    isolado.** Se esta execução usa um working tree isolado (`isolation: "worktree"` da Agent tool,
    ou um `git worktree add` equivalente — `docs/GIT-WORKFLOW.md`, seção "Isolamento de working

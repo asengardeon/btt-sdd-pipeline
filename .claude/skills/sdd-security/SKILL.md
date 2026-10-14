@@ -23,13 +23,16 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 
 Ao final da spec, na última fatia pendente da decomposição do TRD, sobre o **diff acumulado**
 da spec — não a cada fatia. Roda antes disso, dentro de uma fatia intermediária, só quando
-alguma tarefa dela tem a coluna `Validação na fatia` (seção 13 do TRD) marcando `segurança` — marcação
-que o `architect` é obrigado a fazer quando a tarefa toca autenticação, autorização, gestão de sessão, dado pessoal/sensível ou ponto de entrada que
+alguma tarefa dela tem a coluna `Validação na fatia` (seção 13 do TRD) marcando `segurança` —
+marcação
+que o `architect` é obrigado a fazer quando a tarefa toca autenticação, autorização, gestão de
+sessão, dado pessoal/sensível ou ponto de entrada que
 aceita identificador externo. Seção canônica da cadência:
 `docs/SDD-WORKFLOW.md`, "Cadência: o que roda por fatia e o que roda ao final da spec".
 
 Rodando sobre o acumulado, o escopo é todo o diff da spec desde a última rodada desta etapa
-registrada como completa — nunca só o da última fatia. Se este `/sdd-security` foi acionado por uma fatia
+registrada como completa — nunca só o da última fatia. Se este `/sdd-security` foi acionado por
+uma fatia
 intermediária sem essa marcação na tabela, diga isso ao usuário antes de rodar: a etapa cabe no
 fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe para cortar.
 
@@ -45,7 +48,8 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    uma branch nova a partir de `origin/main`, produza só o `security-review.md` desta rodada, e
    abra um PR próprio (sem gate adicional, já que não há código novo a revisar). Caso contrário
    (branch/PR ainda ativo), **confirme que a branch está sincronizada com `main` antes de revisar.**
-   Rode `git fetch origin main` e `git rev-list --count HEAD..origin/main` — se houver commits novos em `main` desde que
+   Rode `git fetch origin main` e `git rev-list --count HEAD..origin/main` — se houver commits
+   novos em `main` desde que
    esta branch nasceu (ex.: merge de um hotfix concorrente da mesma spec enquanto esta fatia ainda
    estava em revisão), rebaseie a branch da fatia sobre `origin/main` antes de prosseguir,
    resolvendo eventuais conflitos nos arquivos de artefato da spec (`code-review.md`/
@@ -100,7 +104,8 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    assinatura de contador cumulativo desde a criação (mesmo template, seção "O que a coluna
    'Duração' mede").
 3c. **Se o agente registrou perguntas como "VALIDAR DEPOIS" por não ter `AskUserQuestion`
-   disponível nesta invocação** (subagente isolado/assíncrono — sinal típico: uma nota de processo no
+   disponível nesta invocação** (subagente isolado/assíncrono — sinal típico: uma nota de processo
+   no
    topo de `security-review.md`, ou um item de pendência dizendo "não pude perguntar"), **você** — o
    orquestrador desta skill — apresenta essas perguntas ao usuário via *sua própria*
    `AskUserQuestion`, **antes** de informar o resultado da etapa no passo seguinte. Mesmo padrão já
@@ -112,7 +117,8 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    legitimamente. Registrar em vez de perguntar é o fallback correto **do agente**, que não tinha a
    ferramenta; não é o seu, que tem — e o usuário está disponível justamente no turno em que a etapa
    roda. Perguntas binárias de política ou de comportamento, que o usuário responderia em segundos,
-   já viraram dívida em `/sdd-pending` exatamente por este passo não existir. **E se a pergunta que você
+   já viraram dívida em `/sdd-pending` exatamente por este passo não existir. **E se a pergunta
+   que você
    intermediou era uma oferta de escalonamento de uma entrada de `docs/LESSONS-LEARNED.md`**
    (`docs/gates/licoes.md`, bullets sobre entrada que atinge 3 ocorrências), **escreva a resposta do
    usuário no campo `Escalonamento` da entrada correspondente neste mesmo turno** — não só no
@@ -122,6 +128,19 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    `Escalonamento: sem resposta` com a decisão do usuário registrada em prosa no corpo do artefato
    da rodada — terceira vez na mesma spec que uma decisão existia em prosa e não no campo
    estruturado que a consome.
+3d. **Integre o commit do agente na branch da fatia, localmente** (`docs/GIT-WORKFLOW.md`,
+   seção "Push único por fatia: o CI roda uma vez, não uma vez por artefato de revisão"). O agente
+   commitou o artefato e informou a branch e o SHA; se ele rodou em working tree isolado, essa
+   branch é a temporária do worktree — integre e confirme **antes** de remover o worktree.
+
+   ```bash
+   git merge --ff-only <branch-informada-pelo-agente>
+   git log -1 --format=%H -- specs/<slug>/security-review.md   # artefato alcançável na branch da fatia
+   git worktree remove <caminho-do-worktree>              # se houver
+   ```
+
+   Confirmar não é zelo: os itens de gate que antes exigiam push nasceram de artefato que não
+   chegava à branch. A durabilidade continua obrigatória — o meio é que mudou.
 4. Mostre ao usuário o veredito geral e os achados por área (OWASP, segredos, autenticação,
    validação de entrada, dependências).
 5. Se reprovado, informe que a feature volta para `/sdd-implement` com os achados listados — e

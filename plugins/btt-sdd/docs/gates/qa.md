@@ -13,7 +13,8 @@
 - [ ] **Em fatia intermediária, esta é a última etapa da fatia — e carrega o que o `/btt-sdd:sre`
   carrega na última.** Duas coisas que não são sobre infraestrutura e desapareceriam junto com a
   etapa 7: (a) o PR sai do modo draft aqui (`gh pr ready`, mesma mecânica do passo 5d de
-  `/btt-sdd:sre`) — sem isso o PR fica bloqueado na UI do GitHub; e (b) a **retrospectiva da fatia** é
+  `/btt-sdd:sre`) — sem isso o PR fica bloqueado na UI do GitHub; e (b) a **retrospectiva da
+  fatia** é
   conduzida aqui, com o mesmo procedimento da seção "Retrospectiva da fatia" de
   `skills/sre/SKILL.md`, antes de informar o resultado ao usuário. "Nenhuma sugestão
   concreta desta fatia" é conclusão válida; pular a avaliação não é. Na **última** fatia da spec
@@ -56,7 +57,8 @@
   (`specs/<slug>/coverage/`) quando o commit bate com o HEAD atual; re-executada e regravada só se o
   arquivo estiver ausente ou desatualizado (`docs/TESTING.md`).
 - [ ] `qa-report.md` referencia o PR e a fatia desta rodada.
-- [ ] **A linha desta rodada existe em `specs/<slug>/timing-log.md` e nomeia uma única etapa.** Etapa
+- [ ] **A linha desta rodada existe em `specs/<slug>/timing-log.md` e nomeia uma única etapa.**
+   Etapa
   cujo trabalho de orquestrador foi zero registra `0m` com justificativa — nunca nenhuma linha; e
   uma linha que nomeia duas etapas ("Segurança + code review") deixa uma das duas com zero minuto
   atribuível, então duas etapas que rodaram em paralelo são duas linhas com o mesmo horário de
@@ -68,5 +70,10 @@
   direção**: superestimam as etapas de agente e subestimam as do orquestrador — numa fatia medida,
   29% do esforço era de orquestrador.
 - [ ] `qa-report.md` (e o arquivo de cobertura, se regravado) commitados (só esses arquivos, nunca
-  `git add -A`/`.`) e enviados (push) na branch do PR pelo próprio `qa-engineer` antes de devolver o
-  resultado.
+  `git add -A`/`.`) na branch do PR pelo próprio `qa-engineer` antes de devolver o resultado, e
+  **integrados na branch da fatia** por quem o invocou (`git merge --ff-only` da branch informada,
+  artefato confirmado alcançável). **O push não é por etapa**: é um por fatia
+  (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia"). **Em fatia intermediária, é esta etapa
+  que faz esse push único** — mais o `gh pr ready` e a retrospectiva, conforme o item acima.
+  Commit e integração continuam obrigatórios: artefato que não chega à branch é o que este item
+  existe para impedir.

@@ -8,7 +8,8 @@
   nunca só o da última fatia. Roda antes, dentro de uma fatia intermediária, quando a coluna
   `Validação na fatia` da seção 13 do TRD marca `ux` para alguma tarefa dela — **obrigatório**
   quando a tarefa expõe fluxo ou tela **nova** ao usuário final. Ajuste dentro de fluxo que esta
-  etapa já revisou não qualifica (`docs/SDD-WORKFLOW.md`, seção "Cadência: o que roda por fatia e o que roda ao final da spec").
+  etapa já revisou não qualifica (`docs/SDD-WORKFLOW.md`, seção "Cadência: o que roda por fatia e
+  o que roda ao final da spec").
 - [ ] **Critério objetivo para UX review obrigatória**: sempre que o diff da fatia tocar alguma
   tela/fluxo com superfície de UI perceptível pelo usuário final (layout, navegação, visibilidade
   condicional de controles, estado vazio/erro, conteúdo de mídia) — nunca uma decisão de "merece ou
@@ -65,7 +66,8 @@
   `qa-engineer`, por iniciativa própria, que conferiu via `git log` e registrou a lacuna como
   achado de processo, forçando uma rodada extra fora do fluxo.
 - [ ] `ux-review.md` referencia o PR e a fatia desta rodada.
-- [ ] **A linha desta rodada existe em `specs/<slug>/timing-log.md` e nomeia uma única etapa.** Etapa
+- [ ] **A linha desta rodada existe em `specs/<slug>/timing-log.md` e nomeia uma única etapa.**
+  Etapa
   cujo trabalho de orquestrador foi zero registra `0m` com justificativa — nunca nenhuma linha; e
   uma linha que nomeia duas etapas ("Segurança + code review") deixa uma das duas com zero minuto
   atribuível, então duas etapas que rodaram em paralelo são duas linhas com o mesmo horário de
@@ -76,5 +78,11 @@
   como evidência concreta de performance, e os três defeitos de medição empurram na **mesma
   direção**: superestimam as etapas de agente e subestimam as do orquestrador — numa fatia medida,
   29% do esforço era de orquestrador.
-- [ ] `ux-review.md` commitado (só esse arquivo, nunca `git add -A`/`.`) e enviado (push) na branch
-  do PR pelo próprio `ux-designer` antes de devolver o resultado.
+- [ ] `ux-review.md` commitado (só esse arquivo, nunca `git add -A`/`.`) na branch do PR pelo
+  próprio `ux-designer` antes de devolver o resultado, e **integrado na branch da fatia** por
+  quem o invocou (`git merge --ff-only` da branch informada, com o artefato confirmado
+  alcançável) antes de a etapa seguinte começar. **O push não é por etapa**: é um por fatia,
+  ao final da cadeia de revisão dela (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia: o
+  CI roda uma vez, não uma vez por artefato de revisão"). Commit e integração continuam
+  obrigatórios — artefato que não chega à branch é o que estes itens existem para impedir; só
+  o meio mudou.

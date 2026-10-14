@@ -113,6 +113,20 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    `Escalonamento: sem resposta` com a decisão do usuário registrada em prosa no corpo do artefato
    da rodada — terceira vez na mesma spec que uma decisão existia em prosa e não no campo
    estruturado que a consome.
+3b. **Integre o commit do agente na branch da fatia, localmente, e não dê push aqui**
+   (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia: o CI roda uma vez, não uma vez por
+   artefato de revisão"). O agente commitou o artefato e informou a branch e o SHA. Se ele rodou em
+   working tree isolado, essa branch é a temporária do worktree: integre e confirme **antes** de
+   remover o worktree.
+
+   ```bash
+   git merge --ff-only <branch-informada-pelo-agente>
+   git log -1 --format=%H -- specs/<slug>/code-review.md   # artefato alcançável na branch da fatia
+   git worktree remove <caminho-do-worktree>              # se houver
+   ```
+
+   Confirmar não é zelo: os itens de gate que antes exigiam push nasceram de artefato que não
+   chegava à branch. A durabilidade continua obrigatória — o meio é que mudou.
 4. Mostre ao usuário o veredito geral (aprovado/aprovado com ressalvas/reprovado) e os achados
    principais do relatório.
 5. Se reprovado, informe que a feature volta para `/btt-sdd:implement` com os achados listados — e
@@ -141,7 +155,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    (justificado)`, nunca simplesmente omitida (`docs/gates/ux.md`).
 
 5b. **Se esta rodada foi escopada ao delta de uma correção de achado levantado pela etapa 4b, a
-   próxima etapa é `/btt-sdd:ux-review` escopado ao achado — não `/btt-sdd:qa`.** A sua aprovação cobre "o
+   próxima etapa é `/btt-sdd:ux-review` escopado ao achado — não `/btt-sdd:qa`.** A sua aprovação
+   cobre "o
    código faz o que devia"; quem fecha "isso resolve o problema de usabilidade real" é a etapa que
    levantou o achado. É a regra simétrica do passo 6b de `skills/ux-review/SKILL.md`
    (que manda a correção de UX voltar para cá quando toca produção) — e sem ela um achado

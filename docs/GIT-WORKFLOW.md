@@ -18,8 +18,10 @@ dependências entre histórias (fatias verticais de entrega)"), PR obrigatório 
    fatia. A branch da fatia N só nasce de `main` depois que o PR da fatia N-1 estiver mergeado —
    confira com `gh pr view <PR> --json state` ou `git log main` antes de criar a branch. Se a
    fatia anterior ainda não estiver mergeada, **pare** e informe o usuário.
-4. **PR aberto cedo**, em modo *draft*, no primeiro commit — não só no final (mantém o CI rodando
-   continuamente e dá visibilidade do progresso). O PR sai do modo draft automaticamente ao final
+4. **PR aberto cedo**, em modo *draft*, no primeiro commit — não só no final (dá visibilidade do
+   progresso, e o push da trilha de implementação dispara o run de CI que de fato exercita código;
+   os artefatos de revisão que vêm depois não disparam um run cada, seção "Push único por fatia").
+   O PR sai do modo draft automaticamente ao final
    da **última etapa que roda naquela fatia**, quando ela é aprovada — `/sdd-sre` na última fatia
    da spec (`.claude/skills/sdd-sre/SKILL.md`, passo 5d), `/sdd-qa` nas intermediárias
    (`.claude/skills/sdd-qa/SKILL.md`, mesmo passo), conforme a cadência de
@@ -31,7 +33,8 @@ dependências entre histórias (fatias verticais de entrega)"), PR obrigatório 
    fluxo (o orquestrador, fora de um agente de trilha específico, fazendo duas ou mais mudanças
    relacionadas na mesma branch/sessão — ex.: um fix pontual e o `qa-report.md`/artefato de revisão
    que o documenta): agrupe num commit e envie (push) uma vez só, salvo motivo real de durabilidade
-   incremental — cada push dispara seu próprio run de CI completo (`docs/gates/sre.md`, sobre o short-circuit de docs-only que reduz o custo dos pushes que só tocam
+   incremental — cada push dispara seu próprio run de CI completo (`docs/gates/sre.md`, sobre o
+   short-circuit de docs-only que reduz o custo dos pushes que só tocam
    `specs/`/`docs/`, mas não elimina a necessidade de agrupar quando o push toca código).
 5. **Revisão de código, QA, segurança e SRE revisam o PR de cada fatia**, não a feature inteira
    de uma vez. `code-review.md`/`qa-report.md`/`security-review.md`/`sre-review.md` são editados
@@ -76,11 +79,69 @@ canônica em `docs/SDD-WORKFLOW.md`, "Cadência: o que roda por fatia e o que ro
 |-------------------------|-------------------------------------------------------------------------------|
 | `/sdd-prd`, `/sdd-trd`  | Nenhuma — documentos em `specs/`, sem código/branch ainda (ficam como mudança não commitada até `/sdd-implement`, passo 2c-bis, incluí-los no primeiro commit da branch da 1ª fatia). |
 | `/sdd-implement`        | Escolhe a próxima fatia pendente (TRD, seção 13); confirma merge da fatia anterior (regra 3); cria a branch, abre PR draft no primeiro commit, commita por incremento. Full-stack: backend e frontend na mesma branch, em paralelo. |
-| `/sdd-code-review`      | Contra o PR desta fatia; registra em `code-review.md`, preservando o histórico das fatias anteriores; commita e envia (push) esse arquivo na mesma branch antes de devolver o resultado. |
-| `/sdd-qa`               | Contra o PR desta fatia, só os critérios de aceite cobertos por ela; registra em `qa-report.md`; commita e envia (push) esse arquivo (e o de cobertura, se regravado) na mesma branch. **Em fatia intermediária é a última etapa**: aprovado = PR pronto para merge (tira do draft, `gh pr ready`) e conduz a retrospectiva da fatia. |
-| `/sdd-security`         | Na última fatia da spec (ou na fatia que a coluna `Validação na fatia` antecipar), contra o diff acumulado da spec; registra em `security-review.md`; commita e envia (push) esse arquivo na mesma branch. |
-| `/sdd-sre`              | Na última fatia da spec (ou na fatia antecipada): CI/CD/infra impactados pelo diff acumulado; aprovado = PR pronto para merge (tira o PR do modo draft, `gh pr ready`); commita e envia (push) `sre-review.md` (e qualquer ajuste de infra desta rodada) na mesma branch. |
+| `/sdd-code-review`      | Contra o PR desta fatia; registra em `code-review.md`, preservando o histórico das fatias anteriores; **commita** esse arquivo na branch da fatia antes de devolver o resultado — sem push (seção "Push único por fatia"). |
+| `/sdd-qa`               | Contra o PR desta fatia, só os critérios de aceite cobertos por ela; registra em `qa-report.md`; **commita** esse arquivo (e o de cobertura, se regravado) na branch da fatia. **Em fatia intermediária é a última etapa**: faz o **push único** da fatia, tira o PR do draft (`gh pr ready`) e conduz a retrospectiva. |
+| `/sdd-security`         | Na última fatia da spec (ou na fatia que a coluna `Validação na fatia` antecipar), contra o diff acumulado da spec; registra em `security-review.md`; **commita** esse arquivo na branch da fatia, sem push. |
+| `/sdd-sre`              | Na última fatia da spec (ou na fatia antecipada): CI/CD/infra impactados pelo diff acumulado; aprovado = PR pronto para merge (tira o PR do modo draft, `gh pr ready`); commita `sre-review.md` e faz o **push único** da fatia — ajuste de infra desta rodada (`ci.yml`, `Dockerfile`, `infra/`) é push na hora, porque muda comportamento e precisa de run próprio. |
 | Merge do PR             | Decisão do usuário, nunca automática. Dispara CD e libera a fatia seguinte.   |
+
+## Push único por fatia: o CI roda uma vez, não uma vez por artefato de revisão
+
+Esta é a seção canônica do assunto — os gates, as skills e os agentes de revisão apontam para cá.
+
+**As etapas de revisão commitam seu artefato, mas não dão push cada uma.** O push é **um por
+fatia**, ao final da cadeia de revisão dela. O motivo é que um commit de artefato de revisão é, por
+construção, só Markdown em `specs/`: ele não pode mudar comportamento, e cada push dele dispara um
+run completo de CI que não pode descobrir nada. Numa fatia medida, ~206 min de runner Windows
+(~412 min faturáveis) foram gastos exatamente assim. O `sre` tem duas receitas para amortecer isso
+(cadência `ci-antes-do-merge` e o short-circuit de docs-only), mas as duas mitigam um desperdício
+que o pipeline **cria**: o gatilho é o push por etapa, e isso é escolha nossa.
+
+**O protocolo, por fatia:**
+
+1. A trilha de implementação dá **um** push ao final (`backend-developer`/`frontend-developer`, já
+   era assim). É esse push que dispara o run de CI que importa — o que de fato exercita código.
+2. Cada etapa de revisão **commita** seu artefato na branch da fatia e **não** dá push. Artefato
+   nunca fica como mudança não commitada: o commit é obrigatório, o push é que é postergado.
+3. Rodando em **working tree isolado** (seção acima), o agente commita na sua branch temporária e
+   **reporta o nome dela e o SHA** no resultado. Quem orquestra integra na branch da fatia
+   localmente, **antes de remover o worktree**:
+
+   ```bash
+   git merge --ff-only <branch-temporária-do-agente>
+   git log -1 --format=%H -- specs/<slug>/<artefato>.md   # confirma que o artefato está alcançável
+   git worktree remove <caminho-separado>
+   ```
+
+   Essa confirmação não é zelo: os itens de gate que antes exigiam push nasceram de artefato que
+   não chegava à branch. A durabilidade continua obrigatória — o que muda é o meio.
+4. **Um push ao final da cadeia de revisão da fatia**, feito pela última etapa que rodou nela
+   (`/sdd-qa` em fatia intermediária, `/sdd-sre` na última fatia da spec — mesma lógica de quem
+   tira o PR do draft, `docs/SDD-WORKFLOW.md`, seção "Cadência"). Daí em diante o PR está completo
+   para o gate de merge.
+
+**Esse push final não precisa do seu próprio run verde**, e é por isso que o saldo é de um run por
+fatia, não dois: `docs/gates/merge.md` já aceita um run verde cujo `headSha` difere do
+`headRefOid` atual **quando se prova, por `git diff --stat <headSha>..<headRefOid>`, que nada
+relevante ao workflow mudou entre os dois** (`src/`, `frontend/`, manifestos de dependência, os
+próprios workflows). Um push que só acrescenta Markdown em `specs/` é exatamente essa prova. Faça a
+prova explicitamente no gate de merge, como já é exigido — não presuma.
+
+**Quando uma etapa de revisão ainda dá push na hora** (as exceções, todas por motivo real, não por
+hábito):
+
+- **Ela mudou algo fora de `specs/`/`docs/`** — tipicamente o `sre` ajustando `ci.yml`, `Dockerfile`
+  ou `infra/`. Isso muda comportamento, então precisa de run próprio: push na hora e espere o CI.
+- **Rodada de correção de achado**: quem corrige toca código, empurra, e o CI roda — é o run que
+  substitui o gate local (`.claude/skills/sdd-implement/SKILL.md`, passo 3a).
+- **A sessão vai escalar ao usuário** e ele vai ler o artefato no GitHub, ou o trabalho precisa
+  atravessar para outra máquina/sessão.
+- **O CI falhou** no push final: isso vira rodada de correção normal, com o push dela. Um segundo
+  run nessa fatia é o custo de um defeito real, não de um commit de Markdown.
+
+**O que se aceita:** entre o commit e o push, o artefato existe só na máquina local. Está
+commitado, então é recuperável, e o push fica no máximo uma etapa adiante. É uma janela menor que a
+que o pipeline já aceita entre o primeiro commit da trilha e o push do final dela.
 
 ## Revisão retroativa de um PR já mergeado
 
@@ -213,7 +274,8 @@ git push origin HEAD:<branch-da-fatia>
 ```
 
 Se o `push` for rejeitado (non-fast-forward, sinal de que outro agente publicou nesse intervalo),
-repita `fetch` + `rebase` — mesmo limite de 3 tentativas de `docs/gates/governanca.md` antes de parar
+repita `fetch` + `rebase` — mesmo limite de 3 tentativas de `docs/gates/governanca.md` antes de
+parar
 e escalar ao usuário. Essa sincronização é o que garante que múltiplos agentes isolados ainda
 produzem uma única branch/PR coerente por fatia, sem que a isolação de working tree vire duas
 branches divergentes por engano.
@@ -496,11 +558,13 @@ nem fatia (não é uma feature de produto), então usa uma branch simples em vez
 `feature/<NNNN-slug>/<fatia>`:
 
 1. **Confirme que existe uma issue do GitHub descrevendo o porquê desta mudança antes de criar a
-   branch.** Mesma exigência já aplicada a `/sdd-hotfix` (`docs/gates/implementacao.md` — "a issue do bug/ajuste existe antes da branch ser criada"), estendida a
+   branch.** Mesma exigência já aplicada a `/sdd-hotfix` (`docs/gates/implementacao.md` — "a issue
+   do bug/ajuste existe antes da branch ser criada"), estendida a
    qualquer mudança no próprio pipeline: o diff mostra *o quê* mudou, mas só a issue registra *por
    quê* — histórico de revisão sem isso vira uma sequência de commits sem contexto recuperável
    meses depois. Se a mudança já nasceu de uma issue existente (ex.: `/repo-issues`, ou um pedido
-   do usuário que você já registrou como issue via `docs/gates/governanca.md`, "Todo feedback real sobre o próprio plugin vira issue"), reaproveite-a. Se não existir nenhuma, crie uma
+   do usuário que você já registrou como issue via `docs/gates/governanca.md`, "Todo feedback real
+   sobre o próprio plugin vira issue"), reaproveite-a. Se não existir nenhuma, crie uma
    (`gh issue create --repo asengardeon/btt-sdd-pipeline --title "..." --body "..."`) antes de
    prosseguir — nunca abra a branch/PR primeiro e a issue depois, como formalidade retroativa.
 2. Crie uma branch a partir de `main` atualizada, com o prefixo que descreve a natureza da
@@ -545,7 +609,8 @@ MINOR / PATCH e a seção "quebra de compatibilidade" do changelog. O rodapé `B
 corpo do commit de squash tem o mesmo efeito.
 
 Esse `!` **é decidido no TRD, não no momento do merge**. O `architect` registra qual fatia carrega a
-quebra na seção "Janelas de quebra de contrato entre fatias" (coluna "`!` no título do PR"), o agente
+quebra na seção "Janelas de quebra de contrato entre fatias" (coluna "`!` no título do PR"), o
+agente
 de implementação abre o PR já com ele, e `code-reviewer` confere — três etapas antes do SRE.
 
 Por que a regra mora aqui e não só no cabeçalho de um workflow de release: um guard procedimental

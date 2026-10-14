@@ -31,7 +31,8 @@ completa — nunca só a última fatia.
 **Sobre o quê**: só quando o diff em escopo toca alguma tela/fluxo com superfície de UI perceptível
 pelo usuário
 final (layout, navegação, visibilidade condicional de controles, estado vazio/erro, conteúdo de
-mídia) — mesmo critério usado por `skills/hotfix/SKILL.md` para decidir quando acionar esta mesma revisão numa correção pontual. Uma spec 100% backend/infra sem nenhuma tela afetada pula esta
+mídia) — mesmo critério usado por `skills/hotfix/SKILL.md` para decidir quando acionar esta mesma
+revisão numa correção pontual. Uma spec 100% backend/infra sem nenhuma tela afetada pula esta
 etapa: registre a decisão em `specs/<slug>/ux-review.md` sob um heading padronizado `## Decisão: UX
 review pulado (justificado)` com a justificativa (mesmo padrão já usado para "QA pulado" em
 `/btt-sdd:hotfix`), em vez de simplesmente não mencionar a etapa.
@@ -44,7 +45,8 @@ review pulado (justificado)` com a justificativa (mesmo padrão já usado para "
 2a. **Confirme que a aprovação de code review vigente cobre o HEAD atual da branch — não só que
    ela existe.** Pegue o sha que a rodada de code review aprovou (o commit em que `code-review.md`
    foi gravado com o veredito vigente) e rode `git diff --name-only <sha>..HEAD -- <diretórios de
-   produção>`. Se vier **não vazio**, esta etapa não começa: volte para `/btt-sdd:code-review` com uma
+   produção>`. Se vier **não vazio**, esta etapa não começa: volte para `/btt-sdd:code-review` com
+   uma
    rodada escopada ao delta (instância nova do `code-reviewer`), e só então rode a UX review
    (`docs/gates/ux.md`, item sobre frescor da aprovação). Isso é diferente do passo 2b abaixo, que
    checa `main`: aqui o que avançou foi a **própria branch da fatia** depois do carimbo.
@@ -101,6 +103,20 @@ review pulado (justificado)` com a justificativa (mesmo padrão já usado para "
    `Escalonamento: sem resposta` com a decisão do usuário registrada em prosa no corpo do artefato
    da rodada — terceira vez na mesma spec que uma decisão existia em prosa e não no campo
    estruturado que a consome.
+4c. **Integre o commit do agente na branch da fatia, localmente, e não dê push aqui**
+   (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia: o CI roda uma vez, não uma vez por
+   artefato de revisão"). O agente commitou o artefato e informou a branch e o SHA. Se ele rodou em
+   working tree isolado, essa branch é a temporária do worktree: integre e confirme **antes** de
+   remover o worktree.
+
+   ```bash
+   git merge --ff-only <branch-informada-pelo-agente>
+   git log -1 --format=%H -- specs/<slug>/ux-review.md   # artefato alcançável na branch da fatia
+   git worktree remove <caminho-do-worktree>              # se houver
+   ```
+
+   Confirmar não é zelo: os itens de gate que antes exigiam push nasceram de artefato que não
+   chegava à branch. A durabilidade continua obrigatória — o meio é que mudou.
 5. Mostre ao usuário o veredito geral (aprovado/aprovado com ressalvas/reprovado) e os achados
    principais do relatório.
 6. Se reprovado, informe que a feature volta para `/btt-sdd:implement` com os achados listados — e
@@ -108,7 +124,8 @@ review pulado (justificado)` com a justificativa (mesmo padrão já usado para "
    aprovado (ou aprovado com ressalvas aceitas pelo usuário), ou se a etapa foi pulada por não
    aplicável, informe que a próxima etapa é `/btt-sdd:qa`.
 6b. **Quando as correções de achados desta etapa tocam código de produção, o retorno é para
-   `/btt-sdd:code-review` escopado ao delta — não direto para `/btt-sdd:qa`.** Vale tanto para um veredito
+   `/btt-sdd:code-review` escopado ao delta — não direto para `/btt-sdd:qa`.** Vale tanto para um
+   veredito
    reprovado quanto para ressalvas de comportamento que o usuário aceitou e mandou corrigir: esta
    etapa roda **depois** da 4, então todo código que ela faz nascer é código que nenhuma rodada de
    revisão viu. Depois da correção, o carimbo de `code-review.md` cobre um HEAD que já não existe —
@@ -118,8 +135,10 @@ review pulado (justificado)` com a justificativa (mesmo padrão já usado para "
    não uma revisão completa da fatia do zero.
 6c. **Achado desta etapa só fecha com reconfirmação desta etapa — a reverificação técnica do
    `code-reviewer` não substitui.** É a regra simétrica do passo 6b: ali, a correção que toca
-   produção volta para `/btt-sdd:code-review` escopado ao delta, porque é o `code-reviewer` quem sabe
-   avaliar código. Aqui, depois dessa rodada técnica, **o retorno antes de `/btt-sdd:qa` é uma rodada de
+   produção volta para `/btt-sdd:code-review` escopado ao delta, porque é o `code-reviewer` quem
+   sabe
+   avaliar código. Aqui, depois dessa rodada técnica, **o retorno antes de `/btt-sdd:qa` é uma
+   rodada de
    `/btt-sdd:ux-review` escopada ao achado** (não uma revisão completa nova das 7 áreas): o
    `code-reviewer` confirma "o código faz o que devia", e confirmar "isso resolve o problema de
    usabilidade real" é papel desta etapa, não dele. A rodada escopada acrescenta a `ux-review.md`

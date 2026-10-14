@@ -10,7 +10,8 @@
   mesmos itens do critério objetivo do item abaixo (autenticação, autorização, gestão de sessão,
   dado pessoal/sensível, ponto de entrada que aceita identificador externo). O critério é o mesmo
   nos dois lugares de propósito: o que obriga segurança numa correção pontual pequena é o que
-  obriga segurança a não esperar o fim da spec (`docs/SDD-WORKFLOW.md`, seção "Cadência: o que roda por fatia e o que roda ao final da spec").
+  obriga segurança a não esperar o fim da spec (`docs/SDD-WORKFLOW.md`, seção "Cadência: o que
+  roda por fatia e o que roda ao final da spec").
 - [ ] **Critério objetivo para segurança obrigatória, mesmo numa correção pontual pequena** (fora
   do fluxo normal de fatia — ex. `/sdd-hotfix`, `docs/POST-MERGE-VALIDATION.md`, ou qualquer ajuste
   que o orquestrador considerou "pequeno demais" para o pipeline completo): `security-engineer`
@@ -47,7 +48,8 @@
   XML doc** — o valor observado numa medição ao vivo entra no repositório já substituído por
   equivalente não atribuível, preservando a assinatura do incidente (contagem de dígitos, zeros à
   esquerda, máscara aplicada, qual validação ele passa ou falha), nunca a identidade do titular
-  (`docs/TESTING.md`, seção "Valor medido ao vivo entra no repositório já substituído por equivalente
+  (`docs/TESTING.md`, seção "Valor medido ao vivo entra no repositório já substituído por
+  equivalente
   não atribuível"). Inclui o caminho menos visível: a **instrução passada a um agente**, que não é
   arquivo nenhum e é por onde o dado real costuma entrar. Não presuma que um identificador bem
   formado num teste é placeholder sintético — confira o dígito verificador: já aconteceu de verdade,
@@ -63,7 +65,8 @@
   a revisão é sempre completa nas 6 áreas — nunca fast-path — cobrindo o diff acumulado desde a
   última revisão registrada como `completo` na tabela "Histórico de aprovações por fatia", não só
   o diff desta última fatia isolada.
-- [ ] **A linha desta rodada existe em `specs/<slug>/timing-log.md` e nomeia uma única etapa.** Etapa
+- [ ] **A linha desta rodada existe em `specs/<slug>/timing-log.md` e nomeia uma única etapa.**
+  Etapa
   cujo trabalho de orquestrador foi zero registra `0m` com justificativa — nunca nenhuma linha; e
   uma linha que nomeia duas etapas ("Segurança + code review") deixa uma das duas com zero minuto
   atribuível, então duas etapas que rodaram em paralelo são duas linhas com o mesmo horário de
@@ -74,5 +77,11 @@
   como evidência concreta de performance, e os três defeitos de medição empurram na **mesma
   direção**: superestimam as etapas de agente e subestimam as do orquestrador — numa fatia medida,
   29% do esforço era de orquestrador.
-- [ ] `security-review.md` commitado (só esse arquivo, nunca `git add -A`/`.`) e enviado (push) na
-  branch do PR pelo próprio `security-engineer` antes de devolver o resultado.
+- [ ] `security-review.md` commitado (só esse arquivo, nunca `git add -A`/`.`) na branch do PR
+  pelo próprio `security-engineer` antes de devolver o resultado, e **integrado na branch da
+  fatia** por quem o invocou (`git merge --ff-only` da branch informada, com o artefato
+  confirmado alcançável) antes de a etapa seguinte começar. **O push não é por etapa**: é um
+  por fatia, ao final da cadeia de revisão dela (`docs/GIT-WORKFLOW.md`, seção "Push único por
+  fatia: o CI roda uma vez, não uma vez por artefato de revisão"). Commit e integração
+  continuam obrigatórios — artefato que não chega à branch é o que estes itens existem para
+  impedir; só o meio mudou.

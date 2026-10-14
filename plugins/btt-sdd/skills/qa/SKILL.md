@@ -28,7 +28,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 2a. **Confirme que a aprovação de code review vigente cobre o HEAD atual da branch — não só que
    ela existe.** Pegue o sha que a rodada de code review aprovou (o commit em que `code-review.md`
    foi gravado com o veredito vigente) e rode `git diff --name-only <sha>..HEAD -- <diretórios de
-   produção>`. Se vier **não vazio**, esta etapa não começa: volte para `/btt-sdd:code-review` com uma
+   produção>`. Se vier **não vazio**, esta etapa não começa: volte para `/btt-sdd:code-review` com
+   uma
    rodada escopada ao delta (instância nova do `code-reviewer`), e só então rode o QA
    (`docs/gates/qa.md`, item sobre frescor da aprovação). Isso é diferente do passo 2b abaixo, que
    checa `main`: aqui o que avançou foi a **própria branch da fatia** depois do carimbo, e é o caso
@@ -40,7 +41,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    nova a partir de `origin/main`, produza só o `qa-report.md` desta rodada, e abra um PR próprio
    (sem gate adicional, já que não há código novo a revisar). Caso contrário (branch/PR ainda
    ativo), **confirme que a branch está sincronizada com `main` antes de revisar.** Rode `git fetch
-   origin main` e `git rev-list --count HEAD..origin/main` — se houver commits novos em `main` desde que
+   origin main` e `git rev-list --count HEAD..origin/main` — se houver commits novos em `main`
+   desde que
    esta branch nasceu (ex.: merge de um hotfix concorrente da mesma spec enquanto esta fatia ainda
    estava em revisão), rebaseie a branch da fatia sobre `origin/main` antes de prosseguir,
    resolvendo eventuais conflitos nos arquivos de artefato da spec (`code-review.md`/
@@ -117,30 +119,54 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    `Escalonamento: sem resposta` com a decisão do usuário registrada em prosa no corpo do artefato
    da rodada — terceira vez na mesma spec que uma decisão existia em prosa e não no campo
    estruturado que a consome.
+3d. **Integre o commit do agente na branch da fatia, localmente** (`docs/GIT-WORKFLOW.md`,
+   seção "Push único por fatia: o CI roda uma vez, não uma vez por artefato de revisão"). O agente
+   commitou o artefato e informou a branch e o SHA; se ele rodou em working tree isolado, essa
+   branch é a temporária do worktree — integre e confirme **antes** de remover o worktree.
+
+   ```bash
+   git merge --ff-only <branch-informada-pelo-agente>
+   git log -1 --format=%H -- specs/<slug>/qa-report.md   # artefato alcançável na branch da fatia
+   git worktree remove <caminho-do-worktree>              # se houver
+   ```
+
+   Confirmar não é zelo: os itens de gate que antes exigiam push nasceram de artefato que não
+   chegava à branch. A durabilidade continua obrigatória — o meio é que mudou.
 4. Mostre ao usuário o veredito geral (aprovado/reprovado) e os pontos principais do relatório.
 5. Se reprovado, informe que a feature volta para `/btt-sdd:implement` com os achados listados — e
    siga a seção "Retomando para corrigir achados de revisão" de `skills/implement/SKILL.md` (prefira
    retomar o mesmo agente que implementou a fatia via `SendMessage` para correções pequenas e
-   objetivas, em vez de invocar um agente novo). Se aprovado, **a próxima etapa depende de esta ser ou não a última fatia pendente da spec** —
+   objetivas, em vez de invocar um agente novo). Se aprovado, **a próxima etapa depende de esta
+   ser ou não a última fatia pendente da spec** —
    não é sempre `/btt-sdd:security`. Veja o passo 6.
 6. **Decida o que vem depois pela cadência, não pelo hábito** (`docs/SDD-WORKFLOW.md`, seção
    "Cadência: o que roda por fatia e o que roda ao final da spec"). Leia a tabela "Decomposição de
    tarefas e dependências" do TRD:
    - **Esta fatia tem alguma tarefa com a coluna `Validação na fatia` preenchida** (`segurança`,
      `ux` e/ou `sre`) → essas etapas rodam **agora**, nesta fatia, antes do merge. Acione cada uma
-     pela skill própria (`/btt-sdd:ux-review`, `/btt-sdd:security`, `/btt-sdd:sre`), escopada ao diff desta
+     pela skill própria (`/btt-sdd:ux-review`, `/btt-sdd:security`, `/btt-sdd:sre`), escopada ao
+     diff desta
      fatia, e só então siga para o passo 7.
    - **Esta é a última fatia pendente da spec** (nenhuma outra fatia não implementada/não mergeada
      depois desta) → rodam as três etapas de fim de spec sobre o **diff acumulado**:
-     `/btt-sdd:ux-review` (se a spec tem superfície de UI perceptível; senão a decisão fica registrada
+     `/btt-sdd:ux-review` (se a spec tem superfície de UI perceptível; senão a decisão fica
+     registrada
      como "não aplicável"), `/btt-sdd:security` e `/btt-sdd:sre`, nessa ordem.
    - **Nenhum dos dois casos** (fatia intermediária, sem antecipação declarada) → **esta é a última
      etapa desta fatia**: siga para o passo 7 e depois o merge. Não acione `/btt-sdd:security` nem
-     `/btt-sdd:sre` "por garantia" — a cadência é deliberada, e rodá-las por fatia é exatamente o custo
+     `/btt-sdd:sre` "por garantia" — a cadência é deliberada, e rodá-las por fatia é exatamente o
+     custo
      que ela existe para cortar.
-7. **Se esta foi a última etapa desta fatia** (o terceiro caso do passo 6), você herda as duas
-   responsabilidades que o `/btt-sdd:sre` carrega quando é ele quem fecha a fatia — nenhuma das duas é
-   sobre infraestrutura, e as duas desapareceriam junto com a etapa 7:
+7. **Se esta foi a última etapa desta fatia** (o terceiro caso do passo 6), você herda as
+   responsabilidades que o `/btt-sdd:sre` carrega quando é ele quem fecha a fatia — nenhuma delas é
+   sobre infraestrutura, e todas desapareceriam junto com a etapa 7:
+   a0. **Faça o push único da fatia**, agora que todos os artefatos de revisão dela estão
+      commitados e integrados localmente (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia: o CI
+      roda uma vez, não uma vez por artefato de revisão"). Um `git push` só, na branch da fatia.
+      Esse push não precisa do seu próprio run verde de CI: ele só acrescenta Markdown em `specs/`,
+      e `docs/gates/merge.md` aceita o run verde anterior desde que você **prove**, com `git diff
+      --stat <headSha-do-run>..<headRefOid-atual>`, que nada relevante ao workflow mudou entre os
+      dois. Faça essa prova explicitamente no gate de merge, não por presunção.
    a. **Tire o PR do modo draft**: `gh pr view <PR> --json isDraft`; se `true`, `gh pr ready <PR>`.
       Sem isso o PR fica bloqueado na UI do GitHub mesmo com `mergeable=MERGEABLE`
       (`docs/GIT-WORKFLOW.md`, regra 4).
