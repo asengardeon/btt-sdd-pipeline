@@ -142,7 +142,9 @@ seguinte:
      produzida por *debounce*, ordem observada por janela) **nasce no nível unitário**, com dublê —
      não no de integração (`docs/TESTING.md`, seção "Instabilidade de teste: classe da asserção, não
      constante de tempo").
-   - Commite ao final de cada incremento coerente (não um commit gigante no final).
+   - **Antes de cada commit, rode o formatter e o lint da stack e corrija qualquer apontamento** —
+     nunca commite código fora do padrão de formatação/lint do projeto. Commite ao final de cada
+     incremento coerente (não um commit gigante no final).
    - **Rode todo comando de teste deste ciclo em primeiro plano (bloqueante), nunca em
      `run_in_background`** — você não tem nenhum outro trabalho útil para fazer enquanto espera o
      próprio resultado que decide se o incremento passou (`docs/gates/governanca.md`, bullet sobre
@@ -158,10 +160,11 @@ seguinte:
    exatamente conforme o contrato do TRD — mesmo formato de payload, mesmo formato de erro, mesma
    rota/mensagem. Qualquer necessidade de desviar do contrato é uma mudança de TRD, não uma
    decisão sua — volte para o `architect` (ou sinalize via `AskUserQuestion`/VALIDAR DEPOIS).
-4. Ao final de cada incremento, rode lint e **apenas os testes tocados por aquele incremento**
-   (o(s) arquivo(s) de teste novo/alterado e os módulos que eles exercitam) — suficiente para
-   confirmar o ciclo red-green-refactor sem pagar o custo da suíte inteira a cada incremento. Não
-   acumule débito: se um teste tocado falha, corrija antes de seguir para o próximo incremento.
+4. Ao final de cada incremento, rode **apenas os testes tocados por aquele incremento** (o(s)
+   arquivo(s) de teste novo/alterado e os módulos que eles exercitam) — suficiente para confirmar
+   o ciclo red-green-refactor sem pagar o custo da suíte inteira a cada incremento (formatação e
+   lint já rodaram antes do commit, no passo 2). Não acumule débito: se um teste tocado falha,
+   corrija antes de seguir para o próximo incremento.
 5. **Só depois de concluídos todos os incrementos da sua trilha**, rode a suíte completa com
    cobertura uma única vez (mesma regra do passo 2 acima: em primeiro plano, nunca
    `run_in_background`) — é esse resultado (não os testes parciais dos incrementos) que conta como
@@ -425,7 +428,8 @@ Ver `docs/gates/implementacao.md` para a lista completa. Resumo:
   feliz e as bordas relevantes.
 - Se a feature tem frontend: todo adapter de entrada implementa exatamente o contrato do TRD.
 - Cobertura de linhas/branches novas ou alteradas em `src/` ≥ 80%.
-- Lint sem erros, sem warnings ignorados sem justificativa.
+- Formatação e lint sem erros, sem warnings ignorados sem justificativa — aplicados antes de cada
+  commit de código-fonte, não só verificados ao final.
 - Nenhuma violação de fronteira ports & adapters (domain/application sem import de infra).
 
 Depois de concluído, informe ao usuário (ou ao orquestrador de `/btt-sdd:implement`) que sua
