@@ -109,6 +109,19 @@ via plugin, é `docs/` dentro do pacote. Se não conseguir determinar, pergunte 
    que não são visíveis do ponto de vista de produto, mas deve preservar o caráter demonstrável
    de cada fatia).
 
+   **"Fatias finas" não é "a fatia mais fina que der para separar."** Toda fatia aprovada paga o
+   mesmo custo fixo de três etapas de revisão — implementação → code review → QA
+   (`docs/SDD-WORKFLOW.md`, seção "Cadência") — independente do tamanho dela; é o mesmo raciocínio
+   de custo do passo 1b (quebra de spec) um nível abaixo, na granularidade da fatia em vez da spec
+   inteira: muitas fatias pequenas somam mais custo fixo do que poucas fatias bem dimensionadas,
+   cada uma ainda demonstrável de ponta a ponta. Separe duas fatias quando cada metade entrega
+   valor por si, ou quando uma delas precisa ser validada/aprovada isoladamente antes da outra
+   poder começar (ex.: uma fatia arriscada que vale isolar antes de comprometer o resto); quando a
+   única diferença entre juntar e separar é o tamanho do incremento, prefira a fatia maior. Não é
+   um corte duro como o 1b — fatia maior também é PR maior, mais difícil de revisar e de reverter
+   —, é mais um critério que você pesa ao desenhar a "Ordem de valor", registrando o motivo quando
+   a escolha não for óbvia.
+
 3c. **Registre a decisão de wireframe/protótipo, se a feature tem UI.** O orquestrador de
    `/btt-sdd:prd` (passo 2b daquela skill) já oferece ao usuário ver opções de wireframe/protótipo
    antes de você escrever as histórias em detalhe, usando ferramentas (`Artifact`, skill `design`)
