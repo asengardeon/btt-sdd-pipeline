@@ -343,6 +343,16 @@ investigação continua obrigatória só para a(s) área(s) que o diff efetivame
      temporal em vez de anedota. Isto é generalizável: todo projeto que usa este pipeline recebe a
      dezena de commits docs-only por fatia, logo todo projeto que adotar a receita perde o mesmo
      amostrador.
+- **Cache de dependências declarado no workflow, e sharding só com o eixo de custo medido.**
+     Reinstalar dependências do zero a cada run é custo puro de runner — confirme que o `ci.yml`
+     declara o cache do gerenciador de dependências da stack (`docs/STACK.md`). Já **sharding**
+     (dividir a camada cara em N jobs paralelos) não é economia: reduz o tempo de parede e
+     **multiplica os minutos faturáveis**, porque os N jobs pagam a subida de ambiente N vezes. Só
+     recomende com os dois eixos na mesa, do mesmo jeito que o item de minutos faturáveis acima já
+     exige — em repositório privado com runner Windows (2×) ou macOS (10×), sharding mal
+     dimensionado é a troca mais cara deste pipeline. As outras alavancas de custo de execução (e o
+     limite de cada uma) estão em `docs/TESTING.md`, seção "Custo de execução da suíte: tempo de
+     parede, tokens e infraestrutura".
    - **Run supersedido na mesma branch é cancelado, não terminado — `concurrency` com
      `cancel-in-progress`.** O pipeline empurra vários pushes em sequência na mesma branch da fatia
      (código, depois `fetch`+`rebase`, depois o artefato de cada etapa de revisão), e sem isso cada

@@ -83,7 +83,8 @@ pré-aprovado**, para quem orquestra corrigir a invocação em vez de repetir a 
 seguinte:
 
 1. Leia o TRD (`specs/<slug>/trd.md`, sobretudo a seção "Contrato Frontend↔Backend") e o PRD
-   relacionado. Leia também `docs/LESSONS-LEARNED.md`, se existir (`docs/gates/licoes.md`), e trate as entradas relevantes à trilha de frontend (e as
+   relacionado. Leia também `docs/LESSONS-LEARNED.md`, se existir (`docs/gates/licoes.md`), e
+   trate as entradas relevantes à trilha de frontend (e as
    transversais de segurança/infra que afetam decisão de código) como restrição adicional ao TRD
    ao planejar os incrementos abaixo.
 2. Quebre a trilha de frontend em incrementos pequenos e testáveis (idealmente um por tela/fluxo
@@ -157,7 +158,8 @@ seguinte:
    - Commite ao final de cada incremento coerente (não um commit gigante no final).
    - **Rode todo comando de teste deste ciclo em primeiro plano (bloqueante), nunca em
      `run_in_background`** — você não tem nenhum outro trabalho útil para fazer enquanto espera o
-     próprio resultado que decide se o incremento passou (`docs/gates/governanca.md`, bullet sobre comando de build/teste que o próprio agente precisa
+     próprio resultado que decide se o incremento passou (`docs/gates/governanca.md`, bullet sobre
+     comando de build/teste que o próprio agente precisa
      aguardar). Já aconteceu de verdade 3 vezes na mesma invocação (trilha de backend, mas o mesmo
      risco vale aqui): um comando de teste disparado em background encerrou o turno do agente à
      espera de um processo que ele mesmo poderia ter aguardado em primeiro plano, exigindo do
@@ -192,8 +194,10 @@ seguinte:
    esse artefato. Grave o resultado dessa rodada em `specs/<slug>/coverage/<fatia>-frontend.md` (a
    partir de `specs/_template/coverage-summary.template.md`). O campo `Commit` recebe a saída de
    `git log -1 --format=%H -- <caminhos de produção da SUA trilha>` — `frontend/` no layout padrão,
-   mais qualquer caminho compartilhado que a sua trilha consome (contrato gerado, pacote comum), e os
-   caminhos que `docs/STACK.md`/`docs/PROJECT-CONVENTIONS.md` documentarem quando o projeto não usa o
+   mais qualquer caminho compartilhado que a sua trilha consome (contrato gerado, pacote comum), e
+   os
+   caminhos que `docs/STACK.md`/`docs/PROJECT-CONVENTIONS.md` documentarem quando o projeto não
+   usa o
    layout padrão. **Nunca** `git rev-parse HEAD`: o HEAD avança a cada commit de documentação das
    etapas de revisão, e um `Commit` apontando para um SHA docs-only faz quem comparar literalmente
    concluir "desatualizado" e reexecutar a suíte à toa. E **nunca os caminhos das duas trilhas
@@ -318,6 +322,14 @@ seguinte:
    silenciosamente. Ao extrair os números para o resumo de cobertura, nunca use o relatório HTML
    como fonte — gere a saída legível por máquina que a stack já produz (`term-missing`/XML/JSON/
    `lcov.info`) e condense a partir dela.
+   **Execute pelo menor custo, sem cortar o que é evidência.** `docs/TESTING.md`, seção "Custo de
+   execução da suíte: tempo de parede, tokens e infraestrutura", tem as alavancas e os limites de
+   cada uma — em resumo: camadas do mais barato para o mais caro; parar na primeira falha só em
+   rodada de **investigação**, nunca nesta rodada final; paralelismo só nas camadas que
+   `docs/STACK.md` declara seguras; container/emulador subindo uma vez por execução, não por
+   arquivo; e a saída completa salva em arquivo e pesquisada com `grep`, em vez de despejada no seu
+   contexto — você lê o repórter condensado e reporta contagens no verde, nomes e mensagens dos
+   testes que falharam no vermelho.
 
 4. **Testes de navegação (e2e via browser) preferem Docker local a produção real.** Todo e2e que
    navega de verdade por um browser sobe a aplicação localmente (Docker ou equivalente) e navega
