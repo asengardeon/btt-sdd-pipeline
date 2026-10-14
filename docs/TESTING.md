@@ -267,8 +267,8 @@ pipeline:
   `specs/_template/coverage-summary.template.md`, com o commit SHA do momento da execução.
 - Qualquer etapa seguinte que precise de evidência de teste/cobertura (hoje, principalmente o
   `qa-engineer`) **lê esse arquivo em vez de rodar a suíte de novo**, desde que o campo `Commit`
-  nele bata com o **commit mais recente que tocou `src/`/`frontend/` na branch do PR**
-  (`git log -1 --format=%H -- src/ frontend/`) — **nunca o HEAD literal da branch**
+  nele bata com o **commit mais recente que tocou os caminhos de produção da própria trilha**
+  (`git log -1 --format=%H -- <caminhos da trilha>`) — **nunca o HEAD literal da branch**
   (`git rev-parse HEAD`). Como cada etapa do pipeline (`code-review` → `qa` → `security` → `sre`)
   commita seu próprio relatório em Markdown antes da etapa seguinte rodar, o HEAD sempre avança por
   um commit docs-only entre uma verificação de frescor e a próxima — comparar contra o HEAD literal
@@ -276,11 +276,24 @@ pipeline:
   mesmo quando nenhum código mudou. Comparar contra o último commit que efetivamente tocou código é
   o sinal correto de que nada mudou desde a geração — a suíte completa já rodou contra exatamente
   esse código.
-- Se o arquivo não existe, ou o `Commit` gravado é diferente desse último commit que tocou
-  `src/`/`frontend/` (alguém commitou uma mudança de código depois — ex.: uma correção em resposta
-  a um achado de code review), quem precisa da evidência roda a suíte completa com cobertura e
-  **regrava o arquivo** com o novo commit — para que a etapa seguinte também possa reaproveitar, em
-  vez de cada etapa refazer a mesma checagem de novo.
+- **O frescor é por trilha, nunca global — a mesma separação que o gate de 80% já tem.** O
+  artefato de backend compara contra os caminhos de produção de backend (`src/` no layout padrão);
+  o de frontend, contra os de frontend (`frontend/`). Projeto com outro layout usa os caminhos que
+  `docs/STACK.md`/`docs/PROJECT-CONVENTIONS.md` documentarem como produção de cada trilha. Um
+  caminho **compartilhado** pelas duas trilhas (contrato gerado, pacote comum, esquema) entra na
+  lista das duas — ali a reexecução cruzada está correta, porque o código que a trilha consome de
+  fato mudou. Comparar as duas trilhas contra `src/ frontend/` juntos é o mesmo defeito que usar o
+  HEAD literal, num eixo diferente: o metadado se move por código de **outra** trilha, e uma
+  correção só de backend passa a exigir reexecução da suíte completa de frontend **e** do comando
+  de build/empacotamento — as rodadas mais caras que existem (navegador real, empacotamento) — sem
+  que uma linha de `frontend/` tenha mudado. Em fatia full-stack com duas rodadas de correção, são
+  várias execuções completas pagas à toa, local e em runner.
+- Se o arquivo não existe, ou o `Commit` gravado é diferente desse último commit que tocou os
+  caminhos da trilha (alguém commitou uma mudança de código depois — ex.: uma correção em resposta
+  a um achado de code review), quem precisa da evidência roda a suíte completa com cobertura
+  **daquela trilha** e **regrava aquele arquivo** com o novo commit — para que a etapa seguinte
+  também possa reaproveitar, em vez de cada etapa refazer a mesma checagem de novo. A trilha cujo
+  `Commit` continua batendo não reexecuta nada: seu artefato segue válido como está.
 - Isso não substitui os testes tocados por incremento durante o TDD (rápidos, parciais, rodados a
   cada red-green-refactor) — só evita repetir a rodada completa final entre backend/frontend-
   developer, `qa-engineer`, e qualquer etapa futura que também precise da evidência.

@@ -191,12 +191,18 @@ seguinte:
    seção "Build/empacotamento real como parte da suíte completa") — sua trilha quase sempre gera
    esse artefato. Grave o resultado dessa rodada em `specs/<slug>/coverage/<fatia>-frontend.md` (a
    partir de `specs/_template/coverage-summary.template.md`). O campo `Commit` recebe a saída de
-   `git log -1 --format=%H -- src/ frontend/` — o último commit que tocou código —, **nunca** `git
-   rev-parse HEAD`: o HEAD avança a cada commit de documentação das etapas de revisão, e um `Commit`
-   apontando para um SHA docs-only faz quem comparar literalmente concluir "desatualizado" e
-   reexecutar a suíte à toa. É esse arquivo que `code-reviewer`/`qa-engineer` reaproveitam em vez de
-   rodar a suíte de novo (`docs/TESTING.md`, seção "Reaproveitamento do artefato de cobertura entre
-   etapas").
+   `git log -1 --format=%H -- <caminhos de produção da SUA trilha>` — `frontend/` no layout padrão,
+   mais qualquer caminho compartilhado que a sua trilha consome (contrato gerado, pacote comum), e os
+   caminhos que `docs/STACK.md`/`docs/PROJECT-CONVENTIONS.md` documentarem quando o projeto não usa o
+   layout padrão. **Nunca** `git rev-parse HEAD`: o HEAD avança a cada commit de documentação das
+   etapas de revisão, e um `Commit` apontando para um SHA docs-only faz quem comparar literalmente
+   concluir "desatualizado" e reexecutar a suíte à toa. E **nunca os caminhos das duas trilhas
+   juntos** (`-- src/ frontend/`): é o mesmo defeito num eixo diferente — uma correção só de backend
+   passaria a invalidar esta evidência de frontend sem uma linha de `frontend/` ter mudado, forçando
+   reexecução da sua suíte completa **e** do seu comando de build, que são as rodadas mais caras do
+   pipeline (`docs/TESTING.md`, bullet "O frescor é por trilha, nunca global"). É esse arquivo que
+   `code-reviewer`/`qa-engineer` reaproveitam em vez de rodar a suíte de novo (`docs/TESTING.md`,
+   seção "Reaproveitamento do artefato de cobertura entre etapas").
    **Grave o artefato depois de reconciliar com a branch compartilhada da fatia, nunca antes.** A
    ordem é: rode a suíte completa; `git fetch` + `git rebase origin/<branch>`
    (`docs/GIT-WORKFLOW.md`, seção "Reconciliação para a branch compartilhada da fatia"); **então**
