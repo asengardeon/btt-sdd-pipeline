@@ -63,6 +63,16 @@
 - [ ] "Decomposição de tarefas e dependências" preenchida, com trilha (backend/frontend/ambos) e
   dependências técnicas explícitas para cada tarefa, e a coluna Status inicializada como
   `pendente` para cada tarefa nova (ciclo de vida completo na seção "Status de tarefas" abaixo).
+- [ ] **Coluna `Validação na fatia` preenchida em toda tarefa** — `—` quando nenhuma validação é
+  antecipada, ou `segurança`/`ux`/`sre` (combináveis) quando a etapa correspondente tem de rodar na
+  própria fatia em vez de esperar o fim da spec (`docs/SDD-WORKFLOW.md`, seção "Cadência: o que
+  roda por fatia e o que roda ao final da spec"). **Em branco não é opção**, e a marcação é
+  **obrigatória**, não julgamento, quando a tarefa toca: autenticação, autorização, gestão de
+  sessão, dado pessoal/sensível ou ponto de entrada que aceita identificador externo (→
+  `segurança`); `ci.yml`/`cd.yml`, `Dockerfile`/compose, `infra/terraform`, segredo ou variável de
+  ambiente de deploy, ou campo que passa a ser obrigatório numa rota ativa já consumida (→ `sre`);
+  fluxo ou tela **nova** exposta ao usuário final (→ `ux`). Antecipação por julgamento próprio é
+  permitida, com o motivo em uma linha na descrição da tarefa.
 - [ ] **Toda tarefa tem a coluna "Issue GitHub" preenchida — obrigatório, não mais opcional.** Se
   não há remote GitHub configurado/autenticado, o TRD não pode ser aprovado ainda (`architect`
   para e pede para configurar `git remote`/`gh auth login` primeiro); só o PRD dispensa GitHub.

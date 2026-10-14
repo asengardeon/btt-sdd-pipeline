@@ -3,6 +3,12 @@
 > Parte de `docs/QUALITY-GATES.md` (índice). Gate crítico: o que está marcado aqui
 > **bloqueia mesmo** — não é sugestão, é a definição do que "pronto" significa.
 
+- [ ] **Esta etapa roda ao final da spec, sobre o diff acumulado — ou na fatia que a antecipar.**
+  O padrão é a última fatia pendente da decomposição do TRD, cobrindo o diff acumulado da spec,
+  nunca só o da última fatia. Roda antes, dentro de uma fatia intermediária, quando a coluna
+  `Validação na fatia` da seção 13 do TRD marca `ux` para alguma tarefa dela — **obrigatório**
+  quando a tarefa expõe fluxo ou tela **nova** ao usuário final. Ajuste dentro de fluxo que esta
+  etapa já revisou não qualifica (`docs/SDD-WORKFLOW.md`, seção "Cadência: o que roda por fatia e o que roda ao final da spec").
 - [ ] **Critério objetivo para UX review obrigatória**: sempre que o diff da fatia tocar alguma
   tela/fluxo com superfície de UI perceptível pelo usuário final (layout, navegação, visibilidade
   condicional de controles, estado vazio/erro, conteúdo de mídia) — nunca uma decisão de "merece

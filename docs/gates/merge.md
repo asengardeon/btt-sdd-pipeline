@@ -3,10 +3,18 @@
 > Parte de `docs/QUALITY-GATES.md` (índice). Gate crítico: o que está marcado aqui
 > **bloqueia mesmo** — não é sugestão, é a definição do que "pronto" significa.
 
-- [ ] PR desta fatia aberto, revisão de código aprovada, revisão de UX aprovada (ou
-  marcada "não aplicável" quando a fatia não tem superfície de UI), QA aprovado, segurança
-  aprovada, SRE aprovado (ou aprovado com ressalvas não-bloqueantes explicitamente aceitas pelo
-  usuário em qualquer uma dessas etapas) — tudo escopado a esta fatia, não à feature inteira.
+- [ ] PR desta fatia aberto, **revisão de código aprovada e QA aprovado** (ou aprovados com
+  ressalvas não-bloqueantes explicitamente aceitas pelo usuário) — escopados a esta fatia, não à
+  feature inteira. Mais as validações que esta fatia antecipou: para cada tarefa dela com a coluna
+  `Validação na fatia` preenchida (seção 13 do TRD), o artefato correspondente
+  (`ux-review.md`/`security-review.md`/`sre-review.md`) aprovado para esta fatia.
+- [ ] **Se esta é a última fatia pendente da spec**, as três etapas de fim de spec também estão
+  aprovadas sobre o **diff acumulado**: UX (ou "não aplicável" justificado quando a spec não tem
+  superfície de UI), segurança e SRE. Uma fatia intermediária mergeia sem elas — é a cadência
+  deliberada de `docs/SDD-WORKFLOW.md`, seção "Cadência: o que roda por fatia e o que roda ao final
+  da spec", que aceita explicitamente o risco de um defeito dessas três classes alcançar `main` e
+  ficar lá até o fim da spec, limitado pelo piso objetivo de antecipação e pela revisão final do
+  acumulado. O que a revisão final achar já mergeado vira `/sdd-hotfix`, não um merge revertido.
 - [ ] **CI verde verificado em duas partes, pelo orquestrador que conduz o merge** — não é "CI
   verde" sem qualificação, e não é tarefa de nenhuma etapa de revisão. Um agente de revisão
   **reporta** o estado dos checks no próprio artefato e encerra (`docs/GIT-WORKFLOW.md`, seção
@@ -33,10 +41,12 @@
 - [ ] Se houver fatia seguinte pendente na feature, ela só começa depois deste merge
   (`docs/GIT-WORKFLOW.md`).
 - [ ] Nenhum item "VALIDAR DEPOIS" bloqueante (marcado como tal pelo usuário) segue em aberto.
-- [ ] **Retrospectiva da fatia conduzida — em toda fatia aprovada, não só a última.** `/sdd-sre`
-  (`.claude/skills/sdd-sre/SKILL.md`, passo 5c) avalia a execução da rodada e abre issues de
+- [ ] **Retrospectiva da fatia conduzida — em toda fatia aprovada, não só a última.** Quem conduz é
+  a **última etapa que rodou naquela fatia**: `/sdd-sre` na última fatia da spec
+  (`.claude/skills/sdd-sre/SKILL.md`, passo 5c), `/sdd-qa` nas intermediárias, com o mesmo
+  procedimento. Ela avalia a execução da rodada e abre issues de
   melhoria/aprendizado em `asengardeon/btt-sdd-pipeline` **antes** de informar o resultado ao
-  usuário (passo 6) — nunca depois, e nunca pulado só porque a fatia já foi aprovada. "Nenhuma
+  usuário — nunca depois, e nunca pulado só porque a fatia já foi aprovada. "Nenhuma
   sugestão/aprendizado concreto desta fatia" é uma conclusão válida do passo; "não avaliei" não é.
 - [ ] Se esta é a **última fatia pendente** da feature (spec finalizada): `tech-writer` foi
   acionado para atualizar a documentação (`/sdd-sre`, passo 5b) **e** o teste geral obrigatório de

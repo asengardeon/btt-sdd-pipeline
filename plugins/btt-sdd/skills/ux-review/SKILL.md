@@ -20,10 +20,18 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 
 ## Quando esta etapa se aplica
 
-Só quando o diff desta fatia toca alguma tela/fluxo com superfície de UI perceptível pelo usuário
+**Quando no pipeline**: ao final da spec, na última fatia pendente da decomposição do TRD, sobre o
+**diff acumulado** da spec — não a cada fatia. Roda antes disso, dentro de uma fatia intermediária,
+só quando alguma tarefa dela tem a coluna `Validação na fatia` (seção 13 do TRD) marcando `ux` —
+obrigatório quando a tarefa expõe fluxo ou tela **nova** ao usuário final. Seção canônica:
+`docs/SDD-WORKFLOW.md`, "Cadência: o que roda por fatia e o que roda ao final da spec". Rodando
+sobre o acumulado, o escopo é todo o diff da spec desde a última rodada desta etapa registrada como
+completa — nunca só a última fatia.
+
+**Sobre o quê**: só quando o diff em escopo toca alguma tela/fluxo com superfície de UI perceptível
+pelo usuário
 final (layout, navegação, visibilidade condicional de controles, estado vazio/erro, conteúdo de
-mídia) — mesmo critério usado por `skills/hotfix/SKILL.md` para decidir quando acionar esta mesma
-revisão numa correção pontual. Uma fatia 100% backend/infra sem nenhuma tela afetada pula esta
+mídia) — mesmo critério usado por `skills/hotfix/SKILL.md` para decidir quando acionar esta mesma revisão numa correção pontual. Uma spec 100% backend/infra sem nenhuma tela afetada pula esta
 etapa: registre a decisão em `specs/<slug>/ux-review.md` sob um heading padronizado `## Decisão: UX
 review pulado (justificado)` com a justificativa (mesmo padrão já usado para "QA pulado" em
 `/btt-sdd:hotfix`), em vez de simplesmente não mencionar a etapa.

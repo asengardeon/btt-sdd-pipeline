@@ -2,8 +2,9 @@
 
 Este projeto usa **SDD — Spec-Driven Development**, o pipeline do agente/skill `btt-sdd`: toda
 feature nasce de uma especificação de produto, passa por um desenho técnico revisável, é
-implementada com TDD e só chega a produção depois de revisão de código, QA, revisão de segurança e
-validação de SRE.
+implementada com TDD e só chega a produção depois de revisão de código e QA — com revisão de UX,
+revisão de segurança e validação de SRE ao final de cada spec, sobre o diff acumulado (ou
+antecipadas para uma fatia específica quando a decomposição de tarefas do TRD declara isso).
 
 **Os agentes, skills e docs de governança genéricos deste pipeline (`GIT-WORKFLOW.md`,
 `QUALITY-GATES.md`, `TESTING.md`, `ENGINEERING-PILLARS.md`, `ARCHITECTURE.md`,
@@ -17,7 +18,7 @@ projeto em relação ao padrão genérico do pipeline: git workflow, estrutura d
 `LESSONS-LEARNED.md` (condicional) e `adr/` (decisões de arquitetura específicas deste projeto).
 
 Comandos disponíveis: `/sdd-prd`, `/sdd-trd`, `/sdd-implement`, `/sdd-code-review`,
-`/sdd-ux-review` (condicional — só quando a fatia tem superfície de UI perceptível), `/sdd-qa`,
+`/sdd-ux-review` (condicional — ao final da spec, se ela tem superfície de UI perceptível), `/sdd-qa`,
 `/sdd-security`, `/sdd-sre`, `/sdd-baseline`, `/sdd-project-conventions`, `/sdd-hotfix`,
 `/sdd-status`, `/sdd-amend`, `/sdd-pending`, `/sdd-gap-report` (ou os equivalentes `/btt-sdd:*` se
 instalado via plugin). Cada um explica seu próprio papel quando invocado — não precisa memorizar a

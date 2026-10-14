@@ -3,6 +3,14 @@
 > Parte de `docs/QUALITY-GATES.md` (índice). Gate crítico: o que está marcado aqui
 > **bloqueia mesmo** — não é sugestão, é a definição do que "pronto" significa.
 
+- [ ] **Esta etapa roda ao final da spec, sobre o diff acumulado — ou na fatia que a antecipar.**
+  O padrão é a última fatia pendente da decomposição do TRD, cobrindo o diff acumulado da spec.
+  Roda antes, dentro de uma fatia intermediária, quando a coluna `Validação na fatia` da seção 13
+  do TRD marca `segurança` para alguma tarefa dela — e essa marcação é **obrigatória** para os
+  mesmos itens do critério objetivo do item abaixo (autenticação, autorização, gestão de sessão,
+  dado pessoal/sensível, ponto de entrada que aceita identificador externo). O critério é o mesmo
+  nos dois lugares de propósito: o que obriga segurança numa correção pontual pequena é o que
+  obriga segurança a não esperar o fim da spec (`docs/SDD-WORKFLOW.md`, seção "Cadência: o que roda por fatia e o que roda ao final da spec").
 - [ ] **Critério objetivo para segurança obrigatória, mesmo numa correção pontual pequena** (fora
   do fluxo normal de fatia — ex. `/sdd-hotfix`, `docs/POST-MERGE-VALIDATION.md`, ou qualquer ajuste
   que o orquestrador considerou "pequeno demais" para o pipeline completo): `security-engineer`

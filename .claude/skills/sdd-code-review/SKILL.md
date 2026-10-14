@@ -119,26 +119,26 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    siga a seção "Retomando para corrigir achados de revisão" de
    `.claude/skills/sdd-implement/SKILL.md` (prefira retomar o mesmo agente que implementou a
    fatia via `SendMessage` para correções pequenas e objetivas, em vez de invocar um agente novo).
-   Se aprovado (ou aprovado com ressalvas aceitas pelo usuário), **a próxima etapa depende do diff
-   desta fatia — não é sempre `/sdd-qa`.** Aplique o critério objetivo de `docs/gates/ux.md` sobre o
-   diff que você acabou de revisar:
-   - **O diff toca superfície de UI perceptível pelo usuário final** (layout, navegação,
-     visibilidade condicional de controles, estado vazio/erro, conteúdo de mídia) → a próxima etapa
-     é **`/sdd-ux-review`** (etapa 4b), não `/sdd-qa`.
-   - **Não toca** → a próxima etapa é `/sdd-qa`, e a decisão de pular a 4b fica registrada em
-     `specs/<slug>/ux-review.md` sob o heading padronizado que `docs/gates/ux.md` já define (`##
-     Decisão: UX review pulado (justificado)`), nunca simplesmente omitida.
+   Se aprovado (ou aprovado com ressalvas aceitas pelo usuário), **a próxima etapa é `/sdd-qa` —
+   com uma exceção declarada.** A 4b (UX) roda ao final da spec, sobre o diff acumulado
+   (`docs/SDD-WORKFLOW.md`, seção "Cadência: o que roda por fatia e o que roda ao final da spec"),
+   então ela **não** entra aqui por padrão. Ela entra antes do QA **só** quando alguma tarefa desta
+   fatia tem a coluna `Validação na fatia` da seção 13 do TRD marcando `ux` — o que o `architect` é
+   obrigado a fazer quando a tarefa expõe fluxo ou tela **nova** ao usuário final. Leia a tabela
+   antes de responder; nos dois casos diga qual é a próxima etapa e por quê.
 
-   **Por que esta bifurcação está escrita aqui.** A etapa 4b tem gate próprio, critério objetivo e
-   skill própria — mas nada no caminho que o orquestrador percorre a mencionava, e um gate
-   condicional cujo roteamento não está escrito é um gate que depende de memória. Já aconteceu de
-   verdade: uma fatia com superfície de UI (a marca do app virou link, +31/-4 num componente de
-   topbar) **pulou a 4b inteira** e foi mergeada em `main` sem nenhuma revisão de usabilidade,
-   numa spec onde a etapa já existia havia semanas — descoberto só na fatia seguinte, pelo próprio
-   `ux-designer`. E quando a 4b finalmente rodou, achou um defeito da classe que **só** ela encontra
-   (um desfecho de instalação descartado, deixando o card idêntico depois de uma instalação
-   bem-sucedida e respondendo "não foi possível" a quem acabou de instalar). Este é o único ponto do
-   pipeline em que uma etapa pode desaparecer silenciosamente de uma fatia inteira.
+   **Por que este roteamento está escrito aqui, e não só no doc de cadência.** Um gate condicional
+   cujo roteamento não está escrito no caminho que o orquestrador percorre é um gate que depende de
+   memória. Já aconteceu de verdade: uma fatia com superfície de UI (a marca do app virou link,
+   +31/-4 num componente de topbar) **pulou a 4b inteira** e foi mergeada em `main` sem nenhuma
+   revisão de usabilidade, numa spec onde a etapa já existia havia semanas — descoberto só na fatia
+   seguinte, pelo próprio `ux-designer`. E quando a 4b finalmente rodou, achou um defeito da classe
+   que **só** ela encontra (um desfecho de instalação descartado, deixando o card idêntico depois de
+   uma instalação bem-sucedida e respondendo "não foi possível" a quem acabou de instalar). Sob a
+   cadência atual o risco muda de forma, não desaparece: a 4b não pode **deixar de existir na spec**
+   — se a spec tem superfície de UI, ela roda na última fatia, e a decisão de não rodar é registrada
+   em `specs/<slug>/ux-review.md` sob o heading padronizado `## Decisão: UX review pulado
+   (justificado)`, nunca simplesmente omitida (`docs/gates/ux.md`).
 
 5b. **Se esta rodada foi escopada ao delta de uma correção de achado levantado pela etapa 4b, a
    próxima etapa é `/sdd-ux-review` escopado ao achado — não `/sdd-qa`.** A sua aprovação cobre "o

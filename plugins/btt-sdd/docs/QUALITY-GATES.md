@@ -22,11 +22,11 @@ deriva que a #280 documentou — cada gate vive em exatamente um arquivo.
 | [`gates/trd.md`](gates/trd.md) | Etapa 2 (`architect`). |
 | [`gates/implementacao.md`](gates/implementacao.md) | Etapa 3 (`backend-developer`/`frontend-developer`). |
 | [`gates/code-review.md`](gates/code-review.md) | Etapa 4 (`code-reviewer`). |
-| [`gates/ux.md`](gates/ux.md) | Etapa 4b, condicional (`ux-designer`). |
+| [`gates/ux.md`](gates/ux.md) | Etapa 4b, condicional (`ux-designer`) — ao final da spec, sobre o diff acumulado, ou na fatia que a decomposição do TRD antecipar. |
 | [`gates/qa.md`](gates/qa.md) | Etapa 5 (`qa-engineer`). |
-| [`gates/seguranca.md`](gates/seguranca.md) | Etapa 6 (`security-engineer`). |
-| [`gates/sre.md`](gates/sre.md) | Etapa 7 (`sre`) — CI/CD, Docker, Terraform, cadência de CI e custo de runner. |
-| [`gates/merge.md`](gates/merge.md) | O que precisa estar verdadeiro para uma fatia entrar em `main`. |
+| [`gates/seguranca.md`](gates/seguranca.md) | Etapa 6 (`security-engineer`) — ao final da spec, sobre o diff acumulado, ou na fatia que a decomposição do TRD antecipar. |
+| [`gates/sre.md`](gates/sre.md) | Etapa 7 (`sre`) — CI/CD, Docker, Terraform, cadência de CI e custo de runner; ao final da spec, sobre o diff acumulado, ou na fatia que a decomposição do TRD antecipar. |
+| [`gates/merge.md`](gates/merge.md) | O que precisa estar verdadeiro para uma fatia entrar em `main` — code review + QA em toda fatia, mais as três etapas de fim de spec na última. |
 
 ## Quem lê o quê
 

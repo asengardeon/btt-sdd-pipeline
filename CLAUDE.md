@@ -55,17 +55,29 @@ ideia/pedido
 
 Cada etapa só começa com o artefato aprovado da etapa anterior. Nenhuma etapa pula a anterior:
 backend/frontend não implementam sem TRD aprovado, o QA não assina sem os testes rodando, a
-segurança não aprova sem QA verde, o SRE não aprova pipeline/infra sem QA e segurança aprovados. A
-etapa [4b] é condicional: só roda quando a fatia toca alguma tela/fluxo com superfície de UI
-perceptível pelo usuário final; uma fatia 100% backend/infra pula direto de [4] para [5],
-registrando a decisão como "não aplicável" em vez de omiti-la silenciosamente.
+segurança não aprova sem QA verde, o SRE não aprova pipeline/infra sem QA e segurança aprovados. As
+etapas [4b], [6] e [7] rodam **ao final da spec** sobre o diff acumulado, não a cada fatia — ou
+antes, dentro de uma fatia, quando a decomposição de tarefas do TRD declara isso (ver cadência
+abaixo). A etapa [4b] é condicional também no conteúdo: só roda quando a spec toca alguma
+tela/fluxo com superfície de UI perceptível pelo usuário final; uma spec 100% backend/infra
+registra a decisão como "não aplicável" em vez de omiti-la silenciosamente.
 
 **Quando o TRD tem mais de uma fatia vertical de entrega** (seção "Decomposição de tarefas e
-dependências (fatias verticais de entrega)"), as etapas [3] a [7] (incluindo [4b] quando aplicável)
-se repetem **por fatia**, em loop: cada fatia é sua própria branch/PR, passa por code review/UX
-(quando aplicável)/QA/segurança/SRE, e só é mergeada em `main` antes da fatia seguinte começar —
-nunca se implementam todas as fatias de uma vez para só depois revisar tudo junto. Detalhe completo
-em `docs/GIT-WORKFLOW.md`.
+dependências (fatias verticais de entrega)"), **não** são todas as etapas que se repetem por fatia:
+
+- **por fatia**, sempre: [3] implementação → [4] code review → [5] QA → merge. Cada fatia é sua
+  própria branch/PR, e só é mergeada em `main` antes da fatia seguinte começar — nunca se
+  implementam todas as fatias de uma vez para só depois revisar tudo junto.
+- **ao final da spec**, na última fatia pendente e antes do merge dela: [4b] UX, [6] segurança e
+  [7] SRE, cada uma sobre o **diff acumulado da spec**.
+- **antecipado para dentro de uma fatia** quando a coluna `Validação na fatia` da decomposição do
+  TRD marca `ux`/`segurança`/`sre` para alguma tarefa daquela fatia — obrigatório nos critérios
+  objetivos (autenticação/autorização/sessão/dado sensível → `segurança`; CI/CD, Docker, Terraform,
+  segredo de deploy → `sre`; fluxo ou tela nova → `ux`).
+
+A seção canônica da cadência, com o custo que ela economiza e o risco que ela aceita, é "Cadência:
+o que roda por fatia e o que roda ao final da spec" em `docs/SDD-WORKFLOW.md`. Fluxo de branch/PR em
+`docs/GIT-WORKFLOW.md`.
 
 Cada agente vive em `.claude/agents/<nome>.md` e é acionado por uma skill em
 `.claude/skills/sdd-*`. Use os comandos:

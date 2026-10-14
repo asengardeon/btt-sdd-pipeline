@@ -122,7 +122,35 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    siga a seção "Retomando para corrigir achados de revisão" de
    `.claude/skills/sdd-implement/SKILL.md` (prefira retomar o mesmo agente que implementou a
    fatia via `SendMessage` para correções pequenas e objetivas, em vez de invocar um agente novo).
-   Se aprovado, informe que a próxima etapa é `/sdd-security`.
+   Se aprovado, **a próxima etapa depende de esta ser ou não a última fatia pendente da spec** —
+   não é sempre `/sdd-security`. Veja o passo 6.
+6. **Decida o que vem depois pela cadência, não pelo hábito** (`docs/SDD-WORKFLOW.md`, seção
+   "Cadência: o que roda por fatia e o que roda ao final da spec"). Leia a tabela "Decomposição de
+   tarefas e dependências" do TRD:
+   - **Esta fatia tem alguma tarefa com a coluna `Validação na fatia` preenchida** (`segurança`,
+     `ux` e/ou `sre`) → essas etapas rodam **agora**, nesta fatia, antes do merge. Acione cada uma
+     pela skill própria (`/sdd-ux-review`, `/sdd-security`, `/sdd-sre`), escopada ao diff desta
+     fatia, e só então siga para o passo 7.
+   - **Esta é a última fatia pendente da spec** (nenhuma outra fatia não implementada/não mergeada
+     depois desta) → rodam as três etapas de fim de spec sobre o **diff acumulado**:
+     `/sdd-ux-review` (se a spec tem superfície de UI perceptível; senão a decisão fica registrada
+     como "não aplicável"), `/sdd-security` e `/sdd-sre`, nessa ordem.
+   - **Nenhum dos dois casos** (fatia intermediária, sem antecipação declarada) → **esta é a última
+     etapa desta fatia**: siga para o passo 7 e depois o merge. Não acione `/sdd-security` nem
+     `/sdd-sre` "por garantia" — a cadência é deliberada, e rodá-las por fatia é exatamente o custo
+     que ela existe para cortar.
+7. **Se esta foi a última etapa desta fatia** (o terceiro caso do passo 6), você herda as duas
+   responsabilidades que o `/sdd-sre` carrega quando é ele quem fecha a fatia — nenhuma das duas é
+   sobre infraestrutura, e as duas desapareceriam junto com a etapa 7:
+   a. **Tire o PR do modo draft**: `gh pr view <PR> --json isDraft`; se `true`, `gh pr ready <PR>`.
+      Sem isso o PR fica bloqueado na UI do GitHub mesmo com `mergeable=MERGEABLE`
+      (`docs/GIT-WORKFLOW.md`, regra 4).
+   b. **Conduza a retrospectiva da fatia**, com o mesmo procedimento da seção "Retrospectiva da
+      fatia" de `.claude/skills/sdd-sre/SKILL.md` (passo 5c): avalie a execução desta fatia e abra
+      as issues de melhoria/aprendizado em `asengardeon/btt-sdd-pipeline` — sempre esse
+      repositório, qualquer que seja o projeto em que você está — **antes** de informar o resultado
+      ao usuário. "Nenhuma sugestão concreta desta fatia" é conclusão válida da avaliação; pular a
+      avaliação não é (`docs/gates/merge.md`).
 
 ## Quando usar sem o agente
 

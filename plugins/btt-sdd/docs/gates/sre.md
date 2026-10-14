@@ -3,6 +3,12 @@
 > Parte de `docs/QUALITY-GATES.md` (índice). Gate crítico: o que está marcado aqui
 > **bloqueia mesmo** — não é sugestão, é a definição do que "pronto" significa.
 
+- [ ] **Esta etapa roda ao final da spec, sobre o diff acumulado — ou na fatia que a antecipar.**
+  O padrão é a última fatia pendente da decomposição do TRD. Roda antes, dentro de uma fatia
+  intermediária, quando a coluna `Validação na fatia` da seção 13 do TRD marca `sre` para alguma
+  tarefa dela — **obrigatório** quando a tarefa toca `ci.yml`/`cd.yml`, `Dockerfile`/compose,
+  `infra/terraform`, segredo ou variável de ambiente de deploy, ou torna obrigatório um campo numa
+  rota ativa já consumida por cliente implantado (`docs/SDD-WORKFLOW.md`, seção "Cadência: o que roda por fatia e o que roda ao final da spec").
 - [ ] CI roda lint + testes + gate de cobertura em todo PR.
 - [ ] **Desperdício de CI quantificado em minutos faturáveis, não só em relógio** — repositório
   privado ou público (`gh api repos/<owner>/<repo> --jq .private`), multiplicador do runner lido do

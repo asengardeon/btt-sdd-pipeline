@@ -26,6 +26,20 @@ projeto onde você está trabalhando). Resolva esse caminho a partir do "Base di
 invocação: via junction global, é `docs/` na raiz do repositório do pipeline; via plugin, é
 `docs/` dentro do pacote.
 
+## Quando esta etapa roda
+
+Ao final da spec, na última fatia pendente da decomposição do TRD, sobre o **diff acumulado**
+da spec — não a cada fatia. Roda antes disso, dentro de uma fatia intermediária, só quando
+alguma tarefa dela tem a coluna `Validação na fatia` (seção 13 do TRD) marcando `sre` — marcação
+que o `architect` é obrigado a fazer quando a tarefa toca `ci.yml`/`cd.yml`, `Dockerfile`/compose, `infra/terraform`, segredo ou variável de ambiente de
+deploy, ou um campo que passa a ser obrigatório numa rota ativa já consumida. Seção canônica da cadência:
+`docs/SDD-WORKFLOW.md`, "Cadência: o que roda por fatia e o que roda ao final da spec".
+
+Rodando sobre o acumulado, o escopo é todo o diff da spec desde a última rodada desta etapa
+registrada como completa — nunca só o da última fatia. Se este `/sdd-sre` foi acionado por uma fatia
+intermediária sem essa marcação na tabela, diga isso ao usuário antes de rodar: a etapa cabe no
+fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe para cortar.
+
 ## Passos
 
 1. Identifique o slug da feature (mesma lógica das skills anteriores).
