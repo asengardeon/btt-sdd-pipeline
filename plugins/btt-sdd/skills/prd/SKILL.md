@@ -23,6 +23,14 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 2. Determine o próximo número sequencial de spec olhando os diretórios existentes em `specs/`
    (ex.: se o maior é `0001-...`, o próximo é `0002-...`) e um slug curto em kebab-case para a
    feature.
+2a. **Se o pedido reúne mais de uma feature de usuário, a quebra é decidida com o usuário antes
+   de numerar a spec.** O `product-design` aplica o critério no passo 1b dele (mais de um objetivo
+   de usuário, mais de ~3 fatias, fatia que serve jornada diferente, mais de ~15 cenários de
+   aceite — dois ou mais juntos é caso de quebrar). Quando a quebra se aplica, o PRD desta
+   invocação cobre **a primeira** feature da sequência, e as seguintes ganham seu próprio
+   `specs/<NNNN-slug>/` na ordem confirmada — a spec `N+1` começa depois de a `N` fechar, igual ao
+   que já vale entre fatias. Reserve os números sequenciais da sequência inteira agora (passo 2),
+   para a ordem ficar legível em `specs/` desde o começo, e diga ao usuário quais são.
 2b. **Feature com UI → ofereça wireframes/protótipos antes do PRD, com apoio de `ux-designer`.**
    Se o pedido descreve tela(s) nova(s) ou mudança visual relevante em tela existente, pergunte ao
    usuário via `AskUserQuestion` se ele quer ver 2-3 opções de wireframe/protótipo de baixa
@@ -105,7 +113,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    nesta etapa** — investigação executada sem agente, rodadas de `AskUserQuestion` que custaram
    tempo real de relógio, intermediação de plano/pergunta de subagente isolado —, **registre-o como
    uma linha própria** com `Agente = orquestrador (sem agente)`, em vez de deixá-lo invisível no log
-   (`specs/_template/timing-log.template.md`, seção "Trabalho conduzido pelo orquestrador"). Como o PRD em si (`docs/GIT-WORKFLOW.md`, seção "Mapeamento no pipeline SDD"), esse
+   (`specs/_template/timing-log.template.md`, seção "Trabalho conduzido pelo orquestrador"). Como
+   o PRD em si (`docs/GIT-WORKFLOW.md`, seção "Mapeamento no pipeline SDD"), esse
    arquivo ainda não tem branch/PR nesta etapa — fica como mudança não commitada até
    `/btt-sdd:implement`, passo 2c-bis, incluí-lo no primeiro commit da branch da 1ª fatia junto com
    PRD/TRD.

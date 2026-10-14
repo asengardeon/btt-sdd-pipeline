@@ -34,6 +34,29 @@ via plugin, é `docs/` dentro do pacote. Se não conseguir determinar, pergunte 
 1. **Entenda o pedido.** Leia o que o usuário descreveu. Se o repositório já tem specs
    relacionadas (`specs/*/prd.md`), leia-as para não contradizer decisões de produto já tomadas.
 
+1b. **Decida o escopo da spec antes de escrever qualquer coisa: uma spec é uma feature de
+   usuário.** Se o pedido reúne mais de uma, quebre numa **sequência numerada de specs** e confirme
+   a ordem com o usuário (`AskUserQuestion`) em vez de produzir um PRD único grande. Sinais
+   objetivos de que o pedido reúne mais de uma feature:
+   - mais de um **objetivo de usuário** distinto — várias telas do mesmo objetivo não contam;
+   - a entrega em fatias verticais passaria de **~3 fatias** (passo 3b abaixo);
+   - alguma fatia entregaria valor para uma **jornada diferente** da das outras — é ali que começa
+     a outra feature;
+   - os critérios de aceite passariam de **~15 cenários**.
+
+   Nenhum isolado é corte duro; **dois ou mais juntos é o caso de quebrar**. Registre a decisão na
+   seção 1 do PRD (o objetivo único desta spec e, quando houver, a sequência e a posição dela).
+
+   **Por que o escopo da spec é um gate de custo, não de gosto.** Spec grande sai caro de um jeito
+   que não aparece na medição de nenhuma etapa isolada: todos os artefatos da spec crescem juntos e
+   são **relidos a cada etapa de cada fatia**. `code-review.md`, `qa-report.md`,
+   `security-review.md` e `sre-review.md` acumulam uma seção por fatia — histórico que, por regra,
+   nunca é apagado; `timing-log.md` acumula uma linha por etapa por fatia; `coverage/` acumula um
+   arquivo por fatia por trilha; PRD e TRD já nascem proporcionais ao escopo. O custo de contexto
+   por etapa **cresce com o tamanho da spec**, então a spec grande fica progressivamente mais lenta
+   conforme avança — exatamente quando ainda resta mais trabalho. Quebrar não reduz o trabalho
+   total: reduz o que cada etapa precisa carregar para fazer a sua parte.
+
 2. **Identifique lacunas reais e pergunte — não assuma.** Toda ambiguidade que mudaria
    materialmente o PRD (quem é o usuário, qual problema resolve, o que está fora de escopo, como
    se mede sucesso) vira uma pergunta via `AskUserQuestion`. Sempre inclua **"VALIDAR DEPOIS"**

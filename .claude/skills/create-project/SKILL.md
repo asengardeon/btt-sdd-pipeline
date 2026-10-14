@@ -58,8 +58,14 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    `/sdd-baseline`, assim que o projeto acumular convenções reais.
 
 6. **Gere o primeiro PRD**: conduza o processo completo de `/sdd-prd`
-   (`.claude/skills/sdd-prd/SKILL.md`, passos 2b a 5) usando os requisitos coletados no passo 1
-   como o pedido, salvando em `<diretório novo>/specs/0001-<slug>/prd.md`. **Não basta seguir
+   (`.claude/skills/sdd-prd/SKILL.md`, passos 2a a 5) usando os requisitos coletados no passo 1
+   como o pedido, salvando em `<diretório novo>/specs/0001-<slug>/prd.md`. **Aqui o passo 2a é a
+   regra, não a exceção**: o pedido que cria um projeto do zero quase sempre reúne várias features
+   de usuário, e uma spec é **uma** feature (`.claude/agents/product-design.md`, passo 1b). Quebre
+   em sequência numerada com o usuário e escreva o PRD só da primeira — `specs/0001-...` — deixando
+   as seguintes como números reservados na ordem acordada. Um PRD inicial cobrindo o produto
+   inteiro é o caminho mais rápido para uma spec que fica lenta já na terceira fatia. **Não basta
+   seguir
    `.claude/agents/product-design.md`** — aquele é o processo do agente, e dois gates obrigatórios
    de `docs/gates/prd.md` vivem no orquestrador da etapa 1, fora do agente: (a) a oferta de
    wireframes/protótipos ao usuário, com a consulta sobre estabelecer `docs/DESIGN-SYSTEM.md`
