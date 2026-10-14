@@ -202,6 +202,16 @@ não se aplica.
    - **escopo de fixture do serviço com estado** (container/emulador sobe uma vez por execução) e a
      estratégia de reset entre testes (transação revertida por teste, não recriação de schema);
    - **cache de dependências** reaproveitável entre worktrees e no CI.
+2d. **Se este projeto ainda não tem `.github/workflows/ci.yml` e esta spec vai produzir a
+   primeira suíte de testes, crie a tarefa que faz o workflow nascer** na decomposição (seção 13),
+   com `Validação na fatia = sre` — obrigatório para tarefa que toca `ci.yml`. A tarefa aponta para
+   `docs/CI-WORKFLOW.md`, que é a forma mínima que o arquivo já precisa ter; você **não** redesenha
+   essa forma no TRD, só decide os comandos da stack, que já vão para `docs/STACK.md` no passo 2.
+   Sem essa tarefa, o workflow nasce na forma que parecer razoável a quem implementa a primeira
+   fatia e só é confrontado com as regras do pipeline na etapa 7 — que, pela cadência de
+   `docs/SDD-WORKFLOW.md`, roda **uma vez, ao final da spec**: um `ci.yml` malformado atravessaria
+   a spec inteira antes de alguém olhar a forma dele. Se o projeto já tem o arquivo, não crie a
+   tarefa: evoluir workflow existente é da etapa 7.
 3. Defina o **modelo de domínio**: entidades, invariantes, regras de negócio — sem framework.
 4. Defina os **ports** (interfaces) que a aplicação precisa: um por responsabilidade, nomeado pelo
    papel que cumpre (`TaskRepository`, não `Database`).

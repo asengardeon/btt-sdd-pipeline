@@ -82,7 +82,8 @@ DEPOIS" como opção quando cabível.
   feature tem alteração de UI, parecer de navegabilidade/usabilidade sobre wireframes ou telas
   descritas, sem veredito nem artefato próprio, sem escrever/editar nenhum arquivo.
 - **`qa-engineer.md`** — valida a implementação contra PRD/TRD e o PR aberto, depois da revisão
-  de código (e de UX, quando aplicável) aprovada. Tem `Bash` para rodar a suíte de testes e o relatório de cobertura quando
+  de código (e de UX, quando aplicável) aprovada. Tem `Bash` para rodar a suíte de testes e o
+  relatório de cobertura quando
   precisa (o resumo já gerado pela implementação em `specs/<slug>/coverage/` é reaproveitado
   quando ainda corresponde ao commit atual — `docs/TESTING.md`), e para commitar/enviar (push) o
   próprio `qa-report.md` na branch do PR antes de terminar; `Write`/`Edit` só para esse arquivo —
@@ -186,6 +187,11 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
   divergido sozinho em duas variantes.
 - **`GIT-WORKFLOW.md`** — GitHub Flow aplicado ao pipeline: convenção de branch, PR, proteção de
   `main`, e como cada etapa do SDD se relaciona com branch/PR/merge.
+- **`CI-WORKFLOW.md`** — a forma mínima que `.github/workflows/ci.yml` já precisa ter **quando
+  nasce**: jobs e gate de cobertura, `concurrency`, short-circuit de docs-only pela comparação com
+  o último run verde, cache, e o que não entra por padrão. É o contrato entre o `architect` (que
+  cria a tarefa que faz o arquivo nascer), quem a implementa, e o `sre` (que audita) — a medição e
+  o histórico de cada regra ficam em `.claude/agents/sre.md`, área "CI".
 - **`BASELINE.md`** — **gerado condicionalmente** pelo `codebase-archaeologist` (não existe por
   padrão neste repositório, já que ele nasceu 100% documentado pelo próprio pipeline). Quando
   existe, descreve um sistema/código pré-existente "como é" (as-is), não como deveria ser.
@@ -264,11 +270,13 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
   salvos junto da spec para conferência futura mesmo que o Artifact publicado não esteja mais
   acessível.
 
-## `src/`, `tests/`, `frontend/`, `infra/`, `.github/workflows/` — não existem neste repositório hoje
+## `src/`, `tests/`, `frontend/`, `infra/`, `.github/workflows/` — não existem neste repositório
+hoje
 
 Este é um template de **pipeline**, não de aplicação — depois que o app de exemplo
 (`specs/0001-example-task-management/`) cumpriu seu papel de ilustrar o fluxo ponta a ponta, o
-código executável foi removido (ver ADR `docs/adr/0002-remover-app-exemplo-manter-exemplos-documentados.md`)
+código executável foi removido (ver ADR
+`docs/adr/0002-remover-app-exemplo-manter-exemplos-documentados.md`)
 e o valor ilustrativo ficou preservado como exemplo documentado em
 `specs/0001-example-task-management/code-examples.md`. As convenções abaixo continuam sendo o que
 `backend-developer`/`frontend-developer`/`sre` criam do zero na stack decidida no TRD, seja neste

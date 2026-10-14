@@ -25,9 +25,11 @@
 - [ ] **Todo seletor/locator/contrato concreto contra um sistema externo cuja estrutura real não foi
   observada está marcado como provisório no próprio texto onde aparece, e tem uma tarefa de
   investigação agendada como primeira tarefa da primeira fatia que depende dele** — nunca só uma
-  pendência "VALIDAR DEPOIS", que não bloqueia nada. Vale para seletor de DOM de terceiro, formato de
+  pendência "VALIDAR DEPOIS", que não bloqueia nada. Vale para seletor de DOM de terceiro, formato
+  de
   resposta de API não documentada, layout de arquivo de parceiro, esquema de webhook, nome de campo
-  de SSO. O motivo é que nenhuma etapa posterior pega esse erro: o dublê escrito a partir da suposição
+  de SSO. O motivo é que nenhuma etapa posterior pega esse erro: o dublê escrito a partir da
+  suposição
   valida a suposição, e a suíte fica verde contra ela — code review, UX, QA, segurança e SRE revisam
   o código contra o TRD, e aqui o TRD é a fonte do erro. Já aconteceu de um locator desenhado casar
   zero elementos no DOM real por um defeito do próprio site de terceiro, pego só porque a tarefa de
@@ -73,6 +75,12 @@
   ambiente de deploy, ou campo que passa a ser obrigatório numa rota ativa já consumida (→ `sre`);
   fluxo ou tela **nova** exposta ao usuário final (→ `ux`). Antecipação por julgamento próprio é
   permitida, com o motivo em uma linha na descrição da tarefa.
+- [ ] **Se o projeto ainda não tem `.github/workflows/ci.yml` e esta spec produz a primeira suíte
+  de testes, existe uma tarefa na decomposição que faz o workflow nascer**, com `Validação na
+  fatia = sre` e apontando para `docs/CI-WORKFLOW.md` (a forma mínima). Sem ela o arquivo nasce sem
+  dono e só é auditado na etapa 7, que roda uma vez ao final da spec — toda regra sobre a forma do
+  `ci.yml` viraria corretiva por construção. Projeto que já tem o arquivo não precisa da tarefa:
+  evoluir workflow existente é da etapa 7.
 - [ ] **Toda tarefa tem a coluna "Issue GitHub" preenchida — obrigatório, não mais opcional.** Se
   não há remote GitHub configurado/autenticado, o TRD não pode ser aprovado ainda (`architect`
   para e pede para configurar `git remote`/`gh auth login` primeiro); só o PRD dispensa GitHub.

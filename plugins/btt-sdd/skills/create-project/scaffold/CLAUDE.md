@@ -7,7 +7,7 @@ revisão de segurança e validação de SRE ao final de cada spec, sobre o diff 
 antecipadas para uma fatia específica quando a decomposição de tarefas do TRD declara isso).
 
 **Os agentes, skills e docs de governança genéricos deste pipeline (`GIT-WORKFLOW.md`,
-`QUALITY-GATES.md`, `TESTING.md`, `ENGINEERING-PILLARS.md`, `ARCHITECTURE.md`,
+`QUALITY-GATES.md`, `TESTING.md`, `CI-WORKFLOW.md`, `ENGINEERING-PILLARS.md`, `ARCHITECTURE.md`,
 `SDD-WORKFLOW.md`, `FILE-GUIDE.md`, `POST-MERGE-VALIDATION.md`) não vivem neste projeto** — vêm
 do plugin `btt-sdd` instalado (`claude plugin install`) ou da distribuição global via junction,
 e se mantêm sempre atualizados sozinhos (`claude plugin update`, ou live via junction). Não há
@@ -18,7 +18,8 @@ projeto em relação ao padrão genérico do pipeline: git workflow, estrutura d
 `LESSONS-LEARNED.md` (condicional) e `adr/` (decisões de arquitetura específicas deste projeto).
 
 Comandos disponíveis: `/sdd-prd`, `/sdd-trd`, `/sdd-implement`, `/sdd-code-review`,
-`/sdd-ux-review` (condicional — ao final da spec, se ela tem superfície de UI perceptível), `/sdd-qa`,
+`/sdd-ux-review` (condicional — ao final da spec, se ela tem superfície de UI perceptível),
+`/sdd-qa`,
 `/sdd-security`, `/sdd-sre`, `/sdd-baseline`, `/sdd-project-conventions`, `/sdd-hotfix`,
 `/sdd-status`, `/sdd-amend`, `/sdd-pending`, `/sdd-gap-report` (ou os equivalentes `/btt-sdd:*` se
 instalado via plugin). Cada um explica seu próprio papel quando invocado — não precisa memorizar a

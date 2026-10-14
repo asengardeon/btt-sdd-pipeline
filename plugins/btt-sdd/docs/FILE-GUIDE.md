@@ -16,7 +16,8 @@ Os agentes (`product-design`, `architect`, `backend-developer`, `frontend-develo
 `tech-writer`) e as skills (`/btt-sdd:*`) **não vivem neste projeto** — vêm do plugin `btt-sdd`
 instalado via `claude plugin install`, e funcionam aqui porque este projeto segue a mesma estrutura
 de `specs/`, `docs/`, `CLAUDE.md` que eles esperam. Os docs de governança genéricos do pipeline
-(`GIT-WORKFLOW.md`, `QUALITY-GATES.md`, `TESTING.md`, `ENGINEERING-PILLARS.md`, `ARCHITECTURE.md`,
+(`GIT-WORKFLOW.md`, `CI-WORKFLOW.md`, `QUALITY-GATES.md`, `TESTING.md`, `ENGINEERING-PILLARS.md`,
+`ARCHITECTURE.md`,
 `SDD-WORKFLOW.md`, `FILE-GUIDE.md`, `POST-MERGE-VALIDATION.md`) também vêm do plugin, não deste
 projeto — o `docs/` deste projeto só tem conteúdo próprio (`STACK.md`, `BASELINE.md`,
 `LESSONS-LEARNED.md`, `adr/`). Não é necessário (nem esperado) copiar `agents/`, `skills/` ou os
@@ -54,6 +55,11 @@ atualizado sozinho.
   o laço de avaliação via coluna `Modelo` do `timing-log.md`. Gate transversal correspondente em
   `docs/gates/governanca.md`.
 - **`GIT-WORKFLOW.md`** — GitHub Flow aplicado ao pipeline.
+- **`CI-WORKFLOW.md`** — a forma mínima que `.github/workflows/ci.yml` deste projeto já precisa ter
+  **quando nasce**: jobs e gate de cobertura, `concurrency`, short-circuit de docs-only pela
+  comparação com o último run verde, cache, e o que não entra por padrão. Contrato entre o
+  `architect` (que cria a tarefa que faz o arquivo nascer), quem a implementa, e o `sre` (que
+  audita) — a medição de cada regra fica em `agents/sre.md`, área "CI".
 - **`BASELINE.md`** — **gerado condicionalmente** pelo `codebase-archaeologist`, só se este projeto
   vier a incorporar código pré-existente sem documentação suficiente. Não existe por padrão num
   projeto criado do zero.

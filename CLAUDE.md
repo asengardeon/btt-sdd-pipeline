@@ -236,7 +236,8 @@ em `asengardeon/btt-sdd-pipeline` assim que fica claro, não só quando uma fati
 - `.github/workflows` — pipelines de CI (lint + testes + gate de cobertura) e CD (deploy via
    Terraform).
 - `docs/` — arquitetura, workflow SDD, política de testes, pilares de engenharia, gates críticos,
-  fluxo de Git e guia arquivo-a-arquivo. Inclui `docs/AGENT-PREAMBLE.md` e
+  fluxo de Git, forma mínima do workflow de CI (`docs/CI-WORKFLOW.md`) e guia arquivo-a-arquivo.
+  Inclui `docs/AGENT-PREAMBLE.md` e
   `docs/SKILL-PREAMBLE.md`: o contexto que todo agente / toda skill lê antes de começar (onde
   ficam os docs deste pipeline, de onde vêm os templates, como tratar
   `docs/PROJECT-CONVENTIONS.md`), referenciado por ponteiro em vez de copiado em cada arquivo.

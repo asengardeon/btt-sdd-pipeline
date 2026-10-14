@@ -239,6 +239,15 @@ seguinte:
    a última vez que essa classe de erro pré-existente foi documentada (`docs/LESSONS-LEARNED.md` ou
    um `coverage/*.md` anterior da mesma spec), isso é sinal de alerta — investigue antes de declarar
    sucesso, nunca presuma "mais do mesmo".
+5a-bis. **Se a tarefa que você está implementando é "criar o workflow de CI"**, siga
+   `docs/CI-WORKFLOW.md` — a forma mínima que o arquivo já precisa ter (jobs de lint/teste/gate de
+   80%, `concurrency` com `cancel-in-progress` fora da branch base, short-circuit de docs-only pela
+   comparação com o último run verde **com `permissions: actions: read` no job**, passo informativo
+   do caminho pulado, cache de dependências, e o `schedule` amostrador que acompanha o
+   short-circuit). Não escreva um `ci.yml` mínimo "para começar" deixando o resto para depois:
+   "depois" é a etapa 7, que pela cadência de `docs/SDD-WORKFLOW.md` roda uma vez, ao final da
+   spec. O que **não** entra por padrão está na mesma página (filtro de `paths` no gatilho, cadência
+   `ci-antes-do-merge`, sharding).
 5b. **Antes de reportar a trilha como concluída, confirme contra `origin/<branch>` — não só que `git
    push` retornou sucesso.** Um push bem-sucedido só garante que os commits que existiam localmente
    *naquele momento* foram enviados — não protege contra um commit anterior ter sido perdido por um
