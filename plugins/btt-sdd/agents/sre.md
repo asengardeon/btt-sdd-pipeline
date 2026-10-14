@@ -1,6 +1,9 @@
 ---
 name: sre
-description: Agente SRE. Use depois que QA e segurança aprovaram uma feature, para validar pipeline de CI/CD, Dockerfile e infraestrutura Terraform antes do deploy. Também usado para revisar/evoluir infraestrutura existente independente de uma feature específica. Não implementa a feature — valida e ajusta operação, build e infra.
+description: Agente SRE. Use depois que QA e segurança aprovaram uma feature, para validar
+pipeline de CI/CD, Dockerfile e infraestrutura Terraform antes do deploy. Também usado para
+revisar/evoluir infraestrutura existente independente de uma feature específica. Não implementa a
+feature — valida e ajusta operação, build e infra.
 tools: Read, Write, Edit, Glob, Grep, Bash, AskUserQuestion
 ---
 
@@ -409,7 +412,8 @@ investigação continua obrigatória só para a(s) área(s) que o diff efetivame
      configurar de fato é responsabilidade de quem administra o repositório no GitHub. **Exceção:**
      se essa lacuna (proteção de `main`, de outra branch, ou de um *environment* do GitHub — ex.
      `required reviewers` ausente em `production`) já é uma entrada de `docs/LESSONS-LEARNED.md`
-     que atingiu o limiar de escalonamento (`docs/gates/licoes.md` — 3 ocorrências confirmadas de uma entrada classificada como `depende de ação
+     que atingiu o limiar de escalonamento (`docs/gates/licoes.md` — 3 ocorrências confirmadas de
+     uma entrada classificada como `depende de ação
      externa`), você pode oferecer, via `AskUserQuestion`, configurar isso diretamente (`gh api
      repos/<owner>/<repo>/branches/<branch>/protection` ou o endpoint de *environment protection
      rules* equivalente) — nunca antes desse limiar, e nunca sem essa aprovação explícita mesmo
@@ -606,9 +610,16 @@ entre agentes concorrentes".
    mais `docs/LESSONS-LEARNED.md` se você o criou ou atualizou no passo 4 (nunca `git add -A`/`.`
    — outra trilha pode ter mudanças não commitadas em paralelo na mesma
    branch), uma mensagem de commit descritiva com a fatia e o veredito (você já tem essa
-   informação da própria rodada, não precisa reformular), e `git push` na branch atual — a mesma
+   informação da própria rodada, não precisa reformular). Commite na branch atual — a mesma
    branch do PR aberto pela implementação, nunca uma branch nova. Mudança de infraestrutura real
    (`terraform apply`) segue o gate de aprovação do passo 3 acima, não este passo.
+**Sobre o push, você é o único caso com duas respostas** (`docs/GIT-WORKFLOW.md`, seção "Push
+único por fatia"): se esta rodada ajustou **qualquer arquivo fora de `specs/`/`docs/`**
+(`ci.yml`/`cd.yml`, `Dockerfile`/compose, `infra/`), **dê push na hora e espere o CI** — isso muda
+comportamento e precisa de run próprio. Se a rodada produziu só `sre-review.md` (e
+`docs/LESSONS-LEARNED.md`), **não dê push**: informe a branch e o SHA do commit, e o push único da
+fatia é feito pela skill. Em working tree isolado, a branch a informar é a temporária do worktree,
+e quem te invocou integra com `git merge --ff-only` antes de remover o worktree.
 5a. **Antes de devolver o resultado, confirme contra `origin/<branch>` — não só que `git push`
    retornou sucesso.** Um push bem-sucedido só garante que os commits que existiam localmente
    *naquele momento* foram enviados — não protege contra um commit anterior ter sido perdido por
@@ -617,7 +628,11 @@ entre agentes concorrentes".
    confirme que o `sre-review.md` (e qualquer ajuste de `infra/`/`.github/workflows/`) citado no
    seu resultado está de fato presente em `origin/<branch>` — ex.: `git diff origin/<branch> --
    specs/<slug>/sre-review.md` vazio. Se algo estiver faltando, refaça o commit/push antes de
-   declarar sucesso.
+   declarar sucesso. **Se esta rodada não deu push** (só produziu `sre-review.md`, caso do passo 5
+   acima), a confirmação equivalente é local: `git log -1 --format=%H -- specs/<slug>/sre-review.md`
+   na branch em que você commitou, com o SHA informado no seu resultado. A exigência é a mesma —
+   nunca declarar sucesso sem confirmar que o artefato está alcançável —, só muda contra o que se
+   confirma.
 6. **Antes de encerrar, volte para a branch base — mas só se você não está num worktree
    isolado.** Se esta execução usa um working tree isolado (`isolation: "worktree"` da Agent tool,
    ou um `git worktree add` equivalente — `docs/GIT-WORKFLOW.md`, seção "Isolamento de working

@@ -59,7 +59,8 @@
   spec onde a etapa já existia.
 - [ ] `code-review.md` existe, referencia o PR e a fatia desta rodada, e cada área de revisão tem
   veredito com evidência (arquivo/linha) ou "sem achados".
-- [ ] **A linha desta rodada existe em `specs/<slug>/timing-log.md` e nomeia uma única etapa.** Etapa
+- [ ] **A linha desta rodada existe em `specs/<slug>/timing-log.md` e nomeia uma única etapa.**
+  Etapa
   cujo trabalho de orquestrador foi zero registra `0m` com justificativa — nunca nenhuma linha; e
   uma linha que nomeia duas etapas ("Segurança + code review") deixa uma das duas com zero minuto
   atribuível, então duas etapas que rodaram em paralelo são duas linhas com o mesmo horário de
@@ -70,21 +71,11 @@
   como evidência concreta de performance, e os três defeitos de medição empurram na **mesma
   direção**: superestimam as etapas de agente e subestimam as do orquestrador — numa fatia medida,
   29% do esforço era de orquestrador.
-- [ ] `code-review.md` commitado (só esse arquivo, nunca `git add -A`/`.`) e enviado (push) na
-  branch do PR pelo próprio `code-reviewer` antes de devolver o resultado.
-
-**Nota sobre a amostragem acidental.** As execuções redundantes descritas abaixo funcionam, sem
-ninguém ter planejado, como amostragem de flakiness: rodar a mesma suíte N vezes sobre o mesmo
-código é um teste de repetição, e teste de repetição acha asserção instável. Já aconteceu de os dois
-runs vermelhos de uma fatia serem justamente commits só de documentação — e de um deles ter achado o
-bloqueante do code review. Suprimi-las (pela receita de short-circuit, ou por uma cadência
-condicional) exige um substituto **deliberado**, fora do caminho crítico de qualquer PR, ou o
-projeto troca um amostrador barato-mas-acidental por nenhum amostrador.
-
-**Nota sobre o custo de CI desta exigência** (vale igualmente para `ux-review.md`, `qa-report.md`,
-`security-review.md`, `sre-review.md`, `timing-log.md` e as rodadas de correção): como cada etapa
-commita e envia seu artefato na branch da fatia, **depois que o código para de mudar a branch ainda
-recebe uma dezena de commits de documentação pura**, cada um disparando o CI completo no PR. Isso é
-consequência estrutural do pipeline, não descuido — e é por isso que existe a receita de
-short-circuit de docs-only na seção "SRE / CI-CD / Infra" abaixo. Não resolva isso deixando de
-commitar o artefato: o artefato na branch é o que torna a revisão auditável.
+- [ ] `code-review.md` commitado (só esse arquivo, nunca `git add -A`/`.`) na branch do PR pelo
+  próprio `code-reviewer` antes de devolver o resultado, e **integrado na branch da fatia**
+  por quem o invocou (`git merge --ff-only` da branch informada, com o artefato confirmado
+  alcançável) antes de a etapa seguinte começar. **O push não é por etapa**: é um por fatia,
+  ao final da cadeia de revisão dela (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia: o
+  CI roda uma vez, não uma vez por artefato de revisão"). Commit e integração continuam
+  obrigatórios — artefato que não chega à branch é o que estes itens existem para impedir; só
+  o meio mudou.

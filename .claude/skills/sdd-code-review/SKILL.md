@@ -44,7 +44,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    `backend-developer`/`frontend-developer` tenha rodado *antes* deste rebase pode estar
    desatualizada — código novo trazido pelo rebase pode ter introduzido um ponto de propagação que
    a varredura original não podia ver. Não é motivo para reprovar de antemão; é sinal para o
-   `code-reviewer` reconfirmar com uma varredura própria (área 9 de `.claude/agents/code-reviewer.md`)
+   `code-reviewer` reconfirmar com uma varredura própria (área 9 de
+   `.claude/agents/code-reviewer.md`)
    em vez de confiar que "já rodei isso uma vez" continua válido.
 3. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 3b para
    registrar a duração desta invocação. Invoque o agente `code-reviewer` (Agent tool,
@@ -91,7 +92,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    assinatura de contador cumulativo desde a criação (mesmo template, seção "O que a coluna
    'Duração' mede").
 3c. **Se o agente registrou perguntas como "VALIDAR DEPOIS" por não ter `AskUserQuestion`
-   disponível nesta invocação** (subagente isolado/assíncrono — sinal típico: uma nota de processo no
+   disponível nesta invocação** (subagente isolado/assíncrono — sinal típico: uma nota de processo
+   no
    topo de `code-review.md`, ou um item de pendência dizendo "não pude perguntar"), **você** — o
    orquestrador desta skill — apresenta essas perguntas ao usuário via *sua própria*
    `AskUserQuestion`, **antes** de informar o resultado da etapa no passo seguinte. Mesmo padrão já
@@ -103,7 +105,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    legitimamente. Registrar em vez de perguntar é o fallback correto **do agente**, que não tinha a
    ferramenta; não é o seu, que tem — e o usuário está disponível justamente no turno em que a etapa
    roda. Perguntas binárias de política ou de comportamento, que o usuário responderia em segundos,
-   já viraram dívida em `/sdd-pending` exatamente por este passo não existir. **E se a pergunta que você
+   já viraram dívida em `/sdd-pending` exatamente por este passo não existir. **E se a pergunta
+   que você
    intermediou era uma oferta de escalonamento de uma entrada de `docs/LESSONS-LEARNED.md`**
    (`docs/gates/licoes.md`, bullets sobre entrada que atinge 3 ocorrências), **escreva a resposta do
    usuário no campo `Escalonamento` da entrada correspondente neste mesmo turno** — não só no
@@ -113,6 +116,20 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    `Escalonamento: sem resposta` com a decisão do usuário registrada em prosa no corpo do artefato
    da rodada — terceira vez na mesma spec que uma decisão existia em prosa e não no campo
    estruturado que a consome.
+3b. **Integre o commit do agente na branch da fatia, localmente, e não dê push aqui**
+   (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia: o CI roda uma vez, não uma vez por
+   artefato de revisão"). O agente commitou o artefato e informou a branch e o SHA. Se ele rodou em
+   working tree isolado, essa branch é a temporária do worktree: integre e confirme **antes** de
+   remover o worktree.
+
+   ```bash
+   git merge --ff-only <branch-informada-pelo-agente>
+   git log -1 --format=%H -- specs/<slug>/code-review.md   # artefato alcançável na branch da fatia
+   git worktree remove <caminho-do-worktree>              # se houver
+   ```
+
+   Confirmar não é zelo: os itens de gate que antes exigiam push nasceram de artefato que não
+   chegava à branch. A durabilidade continua obrigatória — o meio é que mudou.
 4. Mostre ao usuário o veredito geral (aprovado/aprovado com ressalvas/reprovado) e os achados
    principais do relatório.
 5. Se reprovado, informe que a feature volta para `/sdd-implement` com os achados listados — e

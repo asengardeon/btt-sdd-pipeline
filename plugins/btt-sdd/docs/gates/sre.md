@@ -8,7 +8,8 @@
   intermediária, quando a coluna `Validação na fatia` da seção 13 do TRD marca `sre` para alguma
   tarefa dela — **obrigatório** quando a tarefa toca `ci.yml`/`cd.yml`, `Dockerfile`/compose,
   `infra/terraform`, segredo ou variável de ambiente de deploy, ou torna obrigatório um campo numa
-  rota ativa já consumida por cliente implantado (`docs/SDD-WORKFLOW.md`, seção "Cadência: o que roda por fatia e o que roda ao final da spec").
+  rota ativa já consumida por cliente implantado (`docs/SDD-WORKFLOW.md`, seção "Cadência: o que
+  roda por fatia e o que roda ao final da spec").
 - [ ] CI roda lint + testes + gate de cobertura em todo PR.
 - [ ] **Desperdício de CI quantificado em minutos faturáveis, não só em relógio** — repositório
   privado ou público (`gh api repos/<owner>/<repo> --jq .private`), multiplicador do runner lido do
@@ -65,7 +66,8 @@
   revisão é sempre completa no checklist — nunca fast-path — cobrindo o diff acumulado desde a
   última revisão registrada como `completo` na tabela "Histórico de aprovações por fatia", não só o
   diff desta última fatia isolada.
-- [ ] **A linha desta rodada existe em `specs/<slug>/timing-log.md` e nomeia uma única etapa.** Etapa
+- [ ] **A linha desta rodada existe em `specs/<slug>/timing-log.md` e nomeia uma única etapa.**
+   Etapa
   cujo trabalho de orquestrador foi zero registra `0m` com justificativa — nunca nenhuma linha; e
   uma linha que nomeia duas etapas ("Segurança + code review") deixa uma das duas com zero minuto
   atribuível, então duas etapas que rodaram em paralelo são duas linhas com o mesmo horário de
@@ -77,8 +79,12 @@
   direção**: superestimam as etapas de agente e subestimam as do orquestrador — numa fatia medida,
   29% do esforço era de orquestrador.
 - [ ] `sre-review.md` (e qualquer ajuste de `infra/`/`.github/workflows/` desta rodada) commitados
-  (arquivos explícitos, nunca `git add -A`/`.`) e enviados (push) na branch do PR pelo próprio `sre`
-  antes de devolver o resultado.
+   (arquivos explícitos, nunca `git add -A`/`.`) na branch do PR pelo próprio `sre` antes
+  de devolver o resultado. **Ajuste fora de `specs/`/`docs/`** (`ci.yml`/`cd.yml`,
+  `Dockerfile`/compose, `infra/`) **é push na hora, com o CI esperado** — muda comportamento e
+  precisa de run próprio. Rodada que só produziu `sre-review.md` não dá push na etapa: entra no
+  **push único da fatia**, que nesta (a última da spec) é feito por `/btt-sdd:sre`
+  (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia").
 - [ ] Se a fatia foi aprovada e tem issues do GitHub associadas a tarefas cobertas por ela, `sre`
   documentou a resolução em cada uma (`gh issue comment`, resumo + link do PR e dos artefatos de
   revisão) antes de finalizar — a issue fecha sozinha quando a fatia mergear, via `Closes #N` já

@@ -95,7 +95,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    assinatura de contador cumulativo desde a criação (mesmo template, seção "O que a coluna
    'Duração' mede").
 3c. **Se o agente registrou perguntas como "VALIDAR DEPOIS" por não ter `AskUserQuestion`
-   disponível nesta invocação** (subagente isolado/assíncrono — sinal típico: uma nota de processo no
+   disponível nesta invocação** (subagente isolado/assíncrono — sinal típico: uma nota de processo
+   no
    topo de `qa-report.md`, ou um item de pendência dizendo "não pude perguntar"), **você** — o
    orquestrador desta skill — apresenta essas perguntas ao usuário via *sua própria*
    `AskUserQuestion`, **antes** de informar o resultado da etapa no passo seguinte. Mesmo padrão já
@@ -107,7 +108,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    legitimamente. Registrar em vez de perguntar é o fallback correto **do agente**, que não tinha a
    ferramenta; não é o seu, que tem — e o usuário está disponível justamente no turno em que a etapa
    roda. Perguntas binárias de política ou de comportamento, que o usuário responderia em segundos,
-   já viraram dívida em `/sdd-pending` exatamente por este passo não existir. **E se a pergunta que você
+   já viraram dívida em `/sdd-pending` exatamente por este passo não existir. **E se a pergunta
+   que você
    intermediou era uma oferta de escalonamento de uma entrada de `docs/LESSONS-LEARNED.md`**
    (`docs/gates/licoes.md`, bullets sobre entrada que atinge 3 ocorrências), **escreva a resposta do
    usuário no campo `Escalonamento` da entrada correspondente neste mesmo turno** — não só no
@@ -117,6 +119,19 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    `Escalonamento: sem resposta` com a decisão do usuário registrada em prosa no corpo do artefato
    da rodada — terceira vez na mesma spec que uma decisão existia em prosa e não no campo
    estruturado que a consome.
+3d. **Integre o commit do agente na branch da fatia, localmente** (`docs/GIT-WORKFLOW.md`,
+   seção "Push único por fatia: o CI roda uma vez, não uma vez por artefato de revisão"). O agente
+   commitou o artefato e informou a branch e o SHA; se ele rodou em working tree isolado, essa
+   branch é a temporária do worktree — integre e confirme **antes** de remover o worktree.
+
+   ```bash
+   git merge --ff-only <branch-informada-pelo-agente>
+   git log -1 --format=%H -- specs/<slug>/qa-report.md   # artefato alcançável na branch da fatia
+   git worktree remove <caminho-do-worktree>              # se houver
+   ```
+
+   Confirmar não é zelo: os itens de gate que antes exigiam push nasceram de artefato que não
+   chegava à branch. A durabilidade continua obrigatória — o meio é que mudou.
 4. Mostre ao usuário o veredito geral (aprovado/reprovado) e os pontos principais do relatório.
 5. Se reprovado, informe que a feature volta para `/sdd-implement` com os achados listados — e
    siga a seção "Retomando para corrigir achados de revisão" de
@@ -139,9 +154,16 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
      etapa desta fatia**: siga para o passo 7 e depois o merge. Não acione `/sdd-security` nem
      `/sdd-sre` "por garantia" — a cadência é deliberada, e rodá-las por fatia é exatamente o custo
      que ela existe para cortar.
-7. **Se esta foi a última etapa desta fatia** (o terceiro caso do passo 6), você herda as duas
-   responsabilidades que o `/sdd-sre` carrega quando é ele quem fecha a fatia — nenhuma das duas é
-   sobre infraestrutura, e as duas desapareceriam junto com a etapa 7:
+7. **Se esta foi a última etapa desta fatia** (o terceiro caso do passo 6), você herda as
+   responsabilidades que o `/sdd-sre` carrega quando é ele quem fecha a fatia — nenhuma delas é
+   sobre infraestrutura, e todas desapareceriam junto com a etapa 7:
+   a0. **Faça o push único da fatia**, agora que todos os artefatos de revisão dela estão
+      commitados e integrados localmente (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia: o CI
+      roda uma vez, não uma vez por artefato de revisão"). Um `git push` só, na branch da fatia.
+      Esse push não precisa do seu próprio run verde de CI: ele só acrescenta Markdown em `specs/`,
+      e `docs/gates/merge.md` aceita o run verde anterior desde que você **prove**, com `git diff
+      --stat <headSha-do-run>..<headRefOid-atual>`, que nada relevante ao workflow mudou entre os
+      dois. Faça essa prova explicitamente no gate de merge, não por presunção.
    a. **Tire o PR do modo draft**: `gh pr view <PR> --json isDraft`; se `true`, `gh pr ready <PR>`.
       Sem isso o PR fica bloqueado na UI do GitHub mesmo com `mergeable=MERGEABLE`
       (`docs/GIT-WORKFLOW.md`, regra 4).
