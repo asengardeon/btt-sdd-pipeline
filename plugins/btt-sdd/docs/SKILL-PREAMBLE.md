@@ -11,9 +11,10 @@ um resolve o próprio caminho de instalação.
 
 Referências como `docs/GIT-WORKFLOW.md`, `docs/QUALITY-GATES.md`, `docs/gates/*.md`,
 `docs/TESTING.md`, `docs/ENGINEERING-PILLARS.md`, `docs/ARCHITECTURE.md`, `docs/SDD-WORKFLOW.md`,
-`docs/FILE-GUIDE.md`, `docs/POST-MERGE-VALIDATION.md` `docs/MODEL-TIERING.md` e
-`docs/WRITING-STYLE.md` apontam para os docs genéricos deste pipeline — **não são copiados para
-dentro de cada projeto que o usa**. Resolva-os a partir de onde a própria skill está instalada (o
+`docs/FILE-GUIDE.md`, `docs/POST-MERGE-VALIDATION.md` `docs/MODEL-TIERING.md`,
+`docs/WRITING-STYLE.md` e `docs/TOOLING.md` apontam para os docs genéricos deste pipeline — **não
+são copiados para dentro de cada projeto que o usa**. Resolva-os a partir de onde a própria skill
+está instalada (o
 "Base directory" da invocação): se for `.claude/skills/<esta-skill>/` apontando para este
 repositório via junction global (`CLAUDE.md`, seção "Distribuição global"), esses docs estão em
 `docs/` na raiz **deste mesmo repositório** — não necessariamente no projeto onde você está

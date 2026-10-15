@@ -8,14 +8,19 @@ antecipadas para uma fatia específica quando a decomposição de tarefas do TRD
 
 **Os agentes, skills e docs de governança genéricos deste pipeline (`GIT-WORKFLOW.md`,
 `QUALITY-GATES.md`, `TESTING.md`, `CI-WORKFLOW.md`, `ENGINEERING-PILLARS.md`, `ARCHITECTURE.md`,
-`SDD-WORKFLOW.md`, `FILE-GUIDE.md`, `POST-MERGE-VALIDATION.md`) não vivem neste projeto** — vêm
-do plugin `btt-sdd` instalado (`claude plugin install`) ou da distribuição global via junction,
-e se mantêm sempre atualizados sozinhos (`claude plugin update`, ou live via junction). Não há
-cópia local desses docs para sincronizar. O `docs/` deste projeto só tem conteúdo que é
-genuinamente dele: `STACK.md` (decisão de stack, criada pelo `architect` no primeiro TRD),
-`BASELINE.md` (condicional), `PROJECT-CONVENTIONS.md` (condicional — particularidades deste
+`SDD-WORKFLOW.md`, `FILE-GUIDE.md`, `POST-MERGE-VALIDATION.md`, `TOOLING.md`) não vivem neste
+projeto** — vêm do plugin `btt-sdd` instalado (`claude plugin install`) ou da distribuição global
+via junction, e se mantêm sempre atualizados sozinhos (`claude plugin update`, ou live via
+junction). Não há cópia local desses docs para sincronizar. O `docs/` deste projeto só tem
+conteúdo que é genuinamente dele: `STACK.md` (decisão de stack, criada pelo `architect` no primeiro
+TRD), `BASELINE.md` (condicional), `PROJECT-CONVENTIONS.md` (condicional — particularidades deste
 projeto em relação ao padrão genérico do pipeline: git workflow, estrutura de pastas etc.),
 `LESSONS-LEARNED.md` (condicional) e `adr/` (decisões de arquitetura específicas deste projeto).
+
+**Recomendado**: instale [rtk](https://github.com/rtk-ai/rtk) (uma vez por máquina, não por
+projeto) para reduzir o consumo de tokens dos comandos de shell que este pipeline roda com
+frequência (testes, lint, Git) — ver `TOOLING.md` do pipeline para o porquê e o passo a passo.
+Nenhuma etapa deste pipeline bloqueia por rtk ausente; é só uma economia de custo.
 
 Comandos disponíveis: `/sdd-prd`, `/sdd-trd`, `/sdd-implement`, `/sdd-code-review`,
 `/sdd-ux-review` (condicional — ao final da spec, se ela tem superfície de UI perceptível),
