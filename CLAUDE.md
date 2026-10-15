@@ -249,7 +249,11 @@ em `asengardeon/btt-sdd-pipeline` assim que fica claro, não só quando uma fati
   cobrados pelo gate transversal `docs/gates/escrita.md` — e o limite explícito de que frase longa
   se divide, fato nunca se apaga. Inclui `docs/GLOSSARY.md` (condicional): o termo canônico de cada
   conceito deste projeto, que nasce na primeira colisão confirmada e é consolidado pelo
-  `tech-writer`. Inclui `docs/LESSONS-LEARNED.md` (condicional): padrões
+  `tech-writer`. Inclui `docs/TOOLING.md`: ferramentas recomendadas para economia de tokens — hoje
+  só [rtk](https://github.com/rtk-ai/rtk), que comprime a saída de comandos de shell antes de
+  chegar ao contexto do agente, com script de diagnóstico em `scripts/check-rtk.py`; pura
+  otimização de custo, nenhuma etapa bloqueia por sua ausência. Inclui `docs/LESSONS-LEARNED.md`
+  (condicional): padrões
   de achados já repetidos entre features, que `backend-developer`/`frontend-developer` aplicam
   desde o início da implementação seguinte — critério de promoção em `docs/QUALITY-GATES.md`. Inclui
   também `docs/PROJECT-CONVENTIONS.md` (condicional, mesmo padrão de `BASELINE.md`):

@@ -227,6 +227,12 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
   com dois nomes, ou um nome para dois conceitos) em artefatos da mesma spec. Qualquer agente
   acrescenta entrada; o `tech-writer` consolida. Registra o termo escolhido, o que ele significa e
   os nomes rejeitados — é pelo nome rejeitado que a próxima busca encontra o termo certo.
+- **`TOOLING.md`** — ferramentas recomendadas para economia de tokens: hoje só
+  [rtk](https://github.com/rtk-ai/rtk), que comprime a saída de comandos de shell antes de chegar
+  ao contexto do agente. Explica como ele se integra (hook global, transparente), a convenção de
+  uso explícito quando o hook não estiver ativo, o script de diagnóstico
+  (`scripts/check-rtk.py`), e a recomendação equivalente para projetos que usam este pipeline. Pura
+  otimização de custo — nenhuma etapa bloqueia por rtk ausente.
 - **`MODEL-TIERING.md`** — quando um subagente de **trabalho bem definido** pode rodar num modelo
   mais barato e quando nunca pode. Separa os dois perfis de invocação do pipeline: etapa com
   veredito (artefato aprovável, decide gate — sempre o padrão da sessão) e sub-tarefa auxiliar

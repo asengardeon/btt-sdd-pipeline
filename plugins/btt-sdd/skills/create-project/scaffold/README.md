@@ -18,6 +18,11 @@ os agentes/skills, não copiado para dentro deste projeto — ver `CLAUDE.md` pa
 Use `/sdd-status` a qualquer momento para ver em que etapa cada feature está, e `/sdd-pending`
 para ver o que ainda precisa de validação.
 
+## Ferramentas recomendadas
+
+Instale [rtk](https://github.com/rtk-ai/rtk) (uma vez por máquina) para reduzir o consumo de
+tokens dos comandos de shell que este pipeline roda com frequência — ver `TOOLING.md` do pipeline.
+
 ## Estado atual
 
 Este projeto ainda não tem stack, código, nem infraestrutura definidos — foi criado agora por

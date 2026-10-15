@@ -49,6 +49,11 @@ atualizado sozinho.
 - **`GLOSSARY.md`** — **gerado condicionalmente** (mesmo padrão de `BASELINE.md`): nasce na
   primeira colisão confirmada de termo neste projeto — um conceito com dois nomes, ou um nome para
   dois conceitos. Qualquer agente acrescenta entrada; o `tech-writer` consolida.
+- **`TOOLING.md`** — ferramentas recomendadas para economia de tokens: hoje só
+  [rtk](https://github.com/rtk-ai/rtk), que comprime a saída de comandos de shell antes de chegar
+  ao contexto do agente. Explica como ele se integra (hook global, transparente) e a convenção de
+  uso explícito quando o hook não estiver ativo. Pura otimização de custo — nenhuma etapa bloqueia
+  por rtk ausente.
 - **`MODEL-TIERING.md`** — quando um subagente de **trabalho bem definido** pode rodar num modelo
   mais barato e quando nunca pode: etapa com veredito usa sempre o padrão da sessão, sub-tarefa
   auxiliar isolada pode usar tier econômico. Traz o teste das cinco condições, os limites rígidos e
