@@ -501,6 +501,24 @@ não se aplica.
    célula. O roteiro demonstrável dela era inalcançável por construção. O custo apareceu no meio da
    implementação, com o ambiente já de pé. É a mesma classe que um TRD real já registrou para o
    **caminho de escrita**, agora no **caminho de entrada**.
+8c. **Quando o TRD/ADR descreve um mecanismo de escopo explícito — uma chamada obrigatória antes
+   de outra, que o compilador não força (ex.: isolamento multi-tenant via transação/escopo de RLS,
+   ou qualquer "chame X antes de Y" que depende de disciplina do consumidor em vez de tipo)** —
+   registre também, na mesma seção que descreve o mecanismo, a recomendação de um **teste de
+   arquitetura dedicado**: percorrer todos os consumidores do port marcado como "escopado" e
+   falhar se algum não estiver dentro da chamada de escopo correspondente. É o mesmo espírito do
+   item 8 ("guarde-o por teste, não por prosa"), aplicado a um mecanismo que se repete por
+   consumidor em vez de existir num ponto só — e é exatamente por se repetir por consumidor que uma
+   garantia sustentada só por disciplina/revisão escala mal. Já aconteceu de verdade: numa
+   migração/reimplementação do mesmo mecanismo de escopo, o mesmo defeito estrutural (ler um port
+   escopado sem instalar o escopo primeiro) apareceu em **seis** consumidores diferentes, cada um
+   descoberto um a um por medição ao vivo — e mesmo depois da primeira rodada de correções, cada
+   lente de revisão subsequente (grep por sintaxe literal, leitura de todo consumidor, mutação
+   própria) achou instâncias novas que a lente anterior não cobria, porque cada uma buscava por um
+   ângulo ligeiramente diferente. Um teste de arquitetura dedicado, registrado no TRD/ADR desde o
+   início — do mesmo jeito que um teste de direção de dependência já audita ports & adapters —
+   teria pego a maioria desses bugs antes de qualquer medição manual (issue #444,
+   `asengardeon/btt-sdd-pipeline`).
 9. Se uma decisão técnica é significativa (troca de padrão, escolha de tecnologia com trade-off
    real), registre um ADR em `docs/adr/` seguindo `docs/adr/0001-record-architecture-decisions.md`.
 9b. **Se um TRD/ADR instrui `sre` a "confirmar X em produção" (evento específico em log, métrica)**:
