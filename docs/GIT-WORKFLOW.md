@@ -198,25 +198,42 @@ git worktree add <caminho-separado> -b <branch-temporária-do-agente> <branch-da
 git worktree remove <caminho-separado>   # ao terminar — nunca deixe worktree órfão
 ```
 
-**Worktree isolado nasce na base da invocação anterior — sincronize contra a ponta remota antes de
-qualquer leitura ou trabalho.** O harness reaproveita um worktree já existente em vez de criar um
-novo a partir do `HEAD` atual da branch. Então a branch local dentro dele fica na base de quem
-rodou antes, que pode estar dezenas de commits atrás. Primeiro comando de todo agente que recebe
-um worktree isolado, antes de ler código:
+**Worktree isolado nasce na base da invocação anterior — sincronize antes de qualquer leitura ou
+trabalho, contra a referência mais avançada entre a branch local e `origin/<branch>`, nunca contra
+`origin` às cegas.** O harness reaproveita um worktree já existente em vez de criar um novo a
+partir do `HEAD` atual da branch. Então a branch local dentro dele fica na base de quem rodou
+antes, que pode estar dezenas de commits atrás. O motivo de **não** sincronizar só contra
+`origin/<branch>`: a regra "Push único por fatia" (seção acima) deliberadamente retém o commit de
+uma etapa de revisão só localmente até o final da cadeia — se esse commit só existe na branch
+local do worktree principal, sincronizar contra `origin/<branch>` apaga exatamente o commit que a
+etapa anterior acabou de produzir, porque a branch local é compartilhada entre todos os worktrees
+do mesmo repositório (mesmo object store), mas `origin/<branch>` só sabe o que já foi publicado.
+Primeiro comando de todo agente que recebe um worktree isolado, antes de ler código:
 
 ```bash
 git fetch origin <branch-da-fatia>
-git status -sb                                 # confirma o atraso contra origin/<branch>
-git reset --hard origin/<branch-da-fatia>      # só com worktree sem trabalho local seu
+# a branch local (compartilhada entre worktrees deste repositório) pode estar na frente de
+# origin/<branch> por um commit de revisão retido (push único por fatia) — sincronize contra
+# quem estiver mais adiante, nunca assuma que é sempre a remota
+if git merge-base --is-ancestor origin/<branch-da-fatia> <branch-da-fatia> 2>/dev/null; then
+  git reset --hard <branch-da-fatia>              # local está em dia ou na frente: use a local
+else
+  git reset --hard origin/<branch-da-fatia>       # remota está na frente: use a remota
+fi
 ```
 
-`reset --hard` é seguro aqui porque o worktree ainda não tem trabalho seu. Se já tiver commit seu,
-use `rebase` contra `origin/<branch>` em vez de `reset`. Já aconteceu de verdade: **sete de sete**
-invocações isoladas da mesma fatia relataram o worktree desatualizado. Eram as duas trilhas de
-implementação e as cinco etapas de revisão. Cada agente gastou tempo e tokens próprios resolvendo
-o mesmo problema de infraestrutura, por iniciativa própria e sem ter sido instruído. O custo
-visível é esse desperdício repetido. O risco invisível é pior: um agente que não checar revisa ou
-implementa sobre a base errada, e nada avisa até o push divergir.
+Se nenhum dos dois lados for ancestral do outro (as duas divergiram), **não resolva com `reset`** —
+é o caso de divergência real, tratado em "Reconciliação para a branch compartilhada da fatia"
+abaixo. `reset --hard` é seguro no caminho feliz acima porque o worktree ainda não tem trabalho
+seu. Se já tiver commit seu, use `rebase` contra a referência mais avançada em vez de `reset`. Já
+aconteceu de verdade, duas vezes por motivos diferentes: **sete de sete** invocações isoladas da
+mesma fatia relataram o worktree desatualizado (as duas trilhas de implementação e as
+cinco etapas de revisão, cada agente resolvendo por iniciativa própria o mesmo problema sem ter
+sido instruído) — e, numa fatia posterior, um agente de segurança sincronizado só contra
+`origin/<branch>` concluiu (corretamente, dada a sincronização que seguiu) que o QA aprovado na
+etapa anterior não existia, porque esse commit só estava na branch local retida pela regra "Push
+único por fatia", custando uma rodada de orquestração inteira só para redescobrir que o commit
+existia — só não tinha sido publicado ainda (issue #443, `asengardeon/btt-sdd-pipeline`).
 
 **Reaproveite o cache de dependências entre worktrees do mesmo repositório.** Isolamento de
 working tree separa árvore de arquivos e estado de Git — não precisa (e não deve) forçar
