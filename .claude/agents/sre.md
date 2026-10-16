@@ -204,6 +204,18 @@ investigação continua obrigatória só para a(s) área(s) que o diff efetivame
      Já aconteceu de verdade: o `sre` acrescentou um job de auditoria de dependências, o teste de
      arquitetura reprovou por igualdade exata, e a correção foi acrescentar um nome a uma lista.
      Uma rodada inteira de CI por uma linha que a busca acha em segundos.
+   - **Se o diff desta fatia renomeia ou remove um `name:` de job em `ci.yml`/`cd.yml`, confira
+     `gh api repos/<owner>/<repo>/branches/main/protection/required_status_checks` antes de
+     escrever o veredito — não só ao notar `mergeStateStatus: BLOCKED` no fim.** O GitHub trata o
+     nome do status check como identidade: um nome que nunca mais reporta deixa o PR "pending"
+     nesse check para sempre, mesmo com tudo verde, e só a proteção de `main` sabe quais nomes ela
+     ainda exige. Se o nome antigo ainda está na lista e o novo não, isso é achado desta etapa —
+     reconcilie via `gh api` (ajuste de `required_status_checks.contexts`) com confirmação do
+     usuário antes de aplicar, nunca como correção silenciosa. Pegar isso no início desta área
+     custa menos do que descobrir só no fim, com o resto do relatório já escrito. Já aconteceu de
+     verdade: uma migração de stack renomeou dois jobs e removeu um terceiro, e o bloqueio só foi
+     percebido ao conferir `gh pr view --json mergeStateStatus` quase no fim da etapa, depois de
+     toda a implementação/revisão já pronta (issue #445, `asengardeon/btt-sdd-pipeline`).
    - **Ao quantificar desperdício de CI, meça em minutos FATURÁVEIS — não em tempo de parede.** São
      dois comandos e uma multiplicação, e é o eixo em que o usuário decide:
 

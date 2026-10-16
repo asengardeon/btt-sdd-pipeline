@@ -51,6 +51,10 @@
   uma configuração a preservar.
 - [ ] `main` protegida: sem push direto, PR obrigatório, status checks obrigatórios (verificado, não
   necessariamente configurado pelo agente — configuração real é do administrador do repo).
+- [ ] **Se o diff desta fatia renomeia ou remove um `name:` de job em `ci.yml`/`cd.yml`,
+  `required_status_checks.contexts` da proteção de `main` foi conferido e reconciliado** (com
+  confirmação do usuário, nunca correção silenciosa) **antes** do veredito — não só ao notar
+  `mergeStateStatus: BLOCKED` no fim. Receita completa em `agents/sre.md`, área "CI".
 - [ ] Deploy só roda após CI verde.
 - [ ] Se a fatia torna obrigatório um campo antes opcional/ausente numa rota já ativa consumida por
   um cliente já implantado que ainda não foi atualizado para enviá-lo, e os gates de deploy
