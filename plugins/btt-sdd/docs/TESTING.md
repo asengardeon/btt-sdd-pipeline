@@ -393,6 +393,21 @@ defeito passar por duas rodadas de `code-reviewer` e duas de `qa-engineer` — s
 unitário rodaram — e só ser pego depois pelo `sre`, várias execuções de CI adiante, porque nenhuma
 das etapas anteriores reproduziu o **comando de build/empacotamento real** da stack em uso.
 
+**Quando esse artefato é gerado a partir de um contrato commitado (tipos/cliente gerados de
+OpenAPI/GraphQL/protobuf, ou qualquer pipeline "gere e commite"), o build de desenvolvimento não
+é o comando certo para detectar desvio — a geração explícita seguida de diff contra o arquivo
+committed é.** Um build local costuma ter um passo `prebuild`/equivalente que regenera o artefato
+do zero a cada execução — o que faz o build local passar mesmo com o arquivo commitado
+desatualizado em relação ao contrato, porque o próprio build corrige o desvio silenciosamente
+antes de compilar, em vez de expô-lo. É exatamente o cenário que um passo de CI dedicado (geração
+explícita + `git diff --exit-code` contra o arquivo gerado) existe para pegar — mas só pega depois
+do push, uma rodada inteira de revisão mais tarde. Rode esse comando explícito (nunca o build, que
+mascara) como parte da suíte completa, antes de declarar pronta qualquer trilha que gera e commita
+um artefato assim. Já aconteceu de verdade: um defeito funcional (dado nunca persistia) atravessou
+a implementação inteira porque o build local regenerava o arquivo de tipos a cada execução, e o
+desvio só foi notado pelo `code-reviewer` numa rodada inteira depois, com o CI já vermelho desde o
+primeiro push.
+
 - **O que roda**: o comando que reproduz o artefato de build/produção real desta stack — não um
   "modo dev"/watch, não só `tsc --noEmit`/checagem de tipos isolada. Qual comando é esse nunca é
   hardcoded neste template — é o que `docs/STACK.md` do projeto documentar como comando de
