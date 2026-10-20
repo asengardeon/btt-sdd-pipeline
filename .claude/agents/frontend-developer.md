@@ -268,6 +268,18 @@ seguinte:
    "depois" é a etapa 7, que pela cadência de `docs/SDD-WORKFLOW.md` roda uma vez, ao final da
    spec. O que **não** entra por padrão está na mesma página (filtro de `paths` no gatilho, cadência
    `ci-antes-do-merge`, sharding).
+5a-ter. **Se esta trilha gera e commita um artefato a partir de um contrato (tipos/cliente
+   gerados de OpenAPI/GraphQL/protobuf, ou qualquer pipeline "gere e commite"), rode a geração
+   explícita seguida de diff contra o arquivo committed — nunca só o build de desenvolvimento —
+   antes de declarar a trilha pronta para code review.** Build local costuma regenerar esse
+   artefato do zero a cada execução, o que mascara desvio entre o contrato e o arquivo commitado
+   (`docs/TESTING.md`, seção "Build/empacotamento real"). Rode o mesmo comando que o CI roda para
+   detectar esse desvio (geração + `git diff --exit-code` contra o arquivo gerado), não o build.
+   Já aconteceu de verdade: um arquivo de tipos à mão ficou desatualizado em relação ao contrato
+   publicado pela trilha de backend, o build local regenerava e mascarava o desvio a cada
+   execução, e o defeito funcional resultante só foi notado pelo `code-reviewer` numa rodada
+   inteira depois, com o CI já vermelho desde o primeiro push (issue #449,
+   `asengardeon/btt-sdd-pipeline`).
 5b. **Antes de reportar a trilha como concluída, confirme contra `origin/<branch>` — não só que `git
    push` retornou sucesso.** Um push bem-sucedido só garante que os commits que existiam localmente
    *naquele momento* foram enviados — não protege contra um commit anterior ter sido perdido por um
