@@ -53,6 +53,19 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    para um agente novo** — caminhos de arquivo/linha explícitos, não referências implícitas a "o
    que você acabou de fazer" — assim, se a retomada falhar (item `b` do passo 2 abaixo), o fallback
    para agente novo não exige reformular o pedido do zero.
+1d. **Se a instrução de correção cita um componente/padrão existente como referência de
+   implementação ("reaproveite X", "mesmo padrão de Y") — rode `grep -i "<nome-do-componente>"
+   docs/LESSONS-LEARNED.md` antes de enviar a instrução.** Copiar um padrão visual/estrutural sem
+   auditar o componente-fonte reproduz qualquer lacuna já documentada nele junto com a solução —
+   quem pede a correção está focado em resolver o achado atual, não em auditar o componente que
+   está citando como referência. Se houver lição aberta citando esse componente, inclua
+   explicitamente na instrução que a lacuna conhecida não deve ser copiada para o novo uso. Já
+   aconteceu de verdade: uma correção de UX pediu para reaproveitar um componente com padrão
+   visual já aprovado, mas esse componente já tinha 2 ocorrências registradas da mesma lição de
+   acessibilidade (foco não gerenciado ao abrir/fechar); a instrução não mencionou a lição aberta,
+   e o fix copiou o padrão visual junto com a lacuna — virando a 3ª ocorrência da mesma lição, só
+   pega na reverificação da revisão seguinte, não por nenhuma instrução (issue #464,
+   `asengardeon/btt-sdd-pipeline`).
 2. Só prefira um agente **novo** (voltando aos passos 1-4 normais) quando: (a) a correção exige
    julgamento/desenho novo, não só aplicar o que já foi apontado; (b) o agente original já não
    está mais endereçável (sessão encerrada, `ListAgents` não o lista mais e uma tentativa de
