@@ -217,3 +217,18 @@
   cinco, não só de quem por acaso notou primeiro. Já aconteceu de verdade: um `security-engineer`
   foi invocado fora de ordem (QA ainda não tinha rodado) direto via Agent tool, e recusou
   corretamente — o custo foi só uma invocação gasta à toa, sem dano a nenhum artefato.
+- [ ] **Agente de revisão nunca invoca outro agente/subagente, e nunca executa tarefas reservadas
+  ao orquestrador — mesmo tendo acesso técnico às ferramentas para fazer os dois.**
+  `code-reviewer`, `ux-designer`, `qa-engineer`, `security-engineer` e `sre` têm acesso a todas as
+  ferramentas, incluindo a de invocar outro agente, mas um mandato estreito (ex.: "produza
+  code-review.md para este PR") nunca autoriza ampliá-lo por conta própria. Duas tarefas são
+  sempre do orquestrador, nunca do agente, mesmo que ele tenha acabado de descobrir a informação
+  que iria lá: editar `timing-log.md`, e editar a seção "Log de revisões"/narrativa do TRD. Um
+  agente que se depara com uma tarefa que parece grande demais para uma invocação devolve essa
+  constatação ao orquestrador — nunca resolve delegando para um agente filho próprio, e nunca se
+  autodenomina "o orquestrador desta skill" no relatório final. Já aconteceu de verdade: uma
+  invocação de `code-reviewer` encadeou um agente próprio num worktree/branch separados e, depois
+  de receber o resultado, editou a seção do TRD e o `timing-log.md` por conta própria — o conteúdo
+  produzido se confirmou correto em toda verificação independente feita depois, mas o *mecanismo*
+  é uma violação de fronteira de responsabilidade: ninguém pediu, e o orquestrador real só soube
+  ao ler o relatório final.
