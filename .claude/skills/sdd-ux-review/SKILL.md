@@ -111,9 +111,14 @@ pulado" em `/sdd-hotfix`), em vez de simplesmente não mencionar a etapa.
    (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia: o CI roda uma vez, não uma vez por
    artefato de revisão"). O agente commitou o artefato e informou a branch e o SHA. Se ele rodou em
    working tree isolado, essa branch é a temporária do worktree: integre e confirme **antes** de
-   remover o worktree.
+   remover o worktree. **Confirme a branch atual antes do merge — nunca assuma** (`docs/
+   GIT-WORKFLOW.md`, seção "Isolamento de working tree", bloco "Confirme sempre o branch atual
+   antes de qualquer `git merge`..."): um agente retomado sem isolamento devolve o workspace via
+   `git checkout <branch base>`, e um `merge --ff-only` sobre a branch errada avança a ponta dela
+   em silêncio em vez de falhar.
 
    ```bash
+   git branch --show-current                              # confirme antes de qualquer merge
    git merge --ff-only <branch-informada-pelo-agente>
    git log -1 --format=%H -- specs/<slug>/ux-review.md   # artefato alcançável na branch da fatia
    git worktree remove <caminho-do-worktree>              # se houver
