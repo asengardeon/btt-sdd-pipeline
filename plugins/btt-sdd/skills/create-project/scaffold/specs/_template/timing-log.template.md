@@ -146,6 +146,27 @@ rebaixada de novo na fatia seguinte.
 | 2026-10-07T11:02:40Z | SRE | sub-tarefa (leitura do timing-log) | F-2 | econômico | 1m12s |
 ```
 
+## Desfecho excepcional: marcador no início da nota, não prosa livre na coluna "Etapa"
+
+Quando a invocação não terminou no resultado normal da etapa (recusou produzir veredito, repetiu
+trabalho de uma rodada anterior) — não só "demorou mais ou menos" —, prefixe a nota da coluna
+`Duração` com um marcador padronizado, em vez de descrever o desfecho em prosa livre dentro da
+coluna `Etapa`. Dois marcadores cobrem os casos observados até agora:
+
+- `[RECUSADO]` — o agente não produziu veredito (pré-condição não satisfeita, ordem errada,
+  artefato de entrada ausente/reprovado). Diga o motivo no resto da nota.
+- `[RETRABALHO]` — a invocação repetiu/corrigiu trabalho de uma rodada anterior da mesma etapa
+  (achado de revisão, correção pontual).
+
+```
+| 2026-10-18T09:12:00Z | Segurança | security-engineer | F-3 | padrão da sessão | 2m14s ([RECUSADO] QA ainda não tinha rodado — invocado fora de ordem pelo orquestrador; nenhum veredito produzido) |
+```
+
+Isso mantém a coluna `Etapa` só com o nome da etapa e torna o desfecho excepcional localizável por
+busca textual (`grep '\[RECUSADO\]'`) em vez de depender de reconhecer prosa livre — baixo custo,
+é a mesma nota parentética que a coluna `Duração` já carrega para outras explicações, só com um
+prefixo padronizado quando o desfecho, não só o tempo, foi anormal.
+
 | Início (UTC)          | Etapa           | Agente               | Fatia | Modelo | Duração |
 |------------------------|-----------------|-----------------------|-------|--------|---------|
 | <AAAA-MM-DDThh:mm:ssZ> | <PRD/TRD/Implementação/Code review/QA/Segurança/SRE> | <nome do agente, ou `orquestrador (sem agente)`> | <F-N ou —> | <padrão da sessão / econômico> | <XmYs> |
