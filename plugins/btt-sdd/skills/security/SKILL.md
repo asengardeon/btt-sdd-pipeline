@@ -153,14 +153,48 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    siga a seção "Retomando para corrigir achados de revisão" de `skills/implement/SKILL.md` (prefira
    retomar o mesmo agente que implementou a fatia via `SendMessage` para correções pequenas e
    objetivas, em vez de invocar um agente novo). Se aprovado (ou aprovado com ressalvas
-   não-bloqueantes), informe que a próxima etapa é `/btt-sdd:sre`. **Destaque isso como um aviso
-   explícito, não só como a última frase de um resumo maior**: "⚠️ Segurança aprovada — o merge
-   deste PR não deveria acontecer ainda; o SRE (última etapa) ainda não rodou." Já aconteceu de
-   verdade (fatia normal com TRD, não só hotfix — a mesma lacuna que motivou esta instrução já tinha
-   reforço equivalente em `/btt-sdd:hotfix`, passo 6b, mas não aqui): um PR foi mergeado logo depois
-   da aprovação de segurança, sem que o SRE tivesse rodado, porque a menção à próxima etapa estava
-   perdida no meio de um resumo maior e fácil de não notar — descoberto só numa auditoria de SRE de
-   uma fatia posterior.
+   não-bloqueantes), **a próxima etapa depende da cadência desta fatia — não é sempre
+   `/btt-sdd:sre`**. Veja o passo 6.
+6. **Decida o que vem depois pela cadência, não pelo hábito** (`docs/SDD-WORKFLOW.md`, seção
+   "Cadência: o que roda por fatia e o que roda ao final da spec"). Leia a tabela "Decomposição de
+   tarefas e dependências" do TRD:
+   - **Alguma tarefa restante desta fatia marca `sre` na coluna `Validação na fatia`, OU esta é a
+     última fatia pendente da spec** (nesse caso o `sre` sempre roda ao final, mesmo sem marcação
+     explícita — e, se a spec tem superfície de UI perceptível, `/btt-sdd:ux-review` já deveria ter
+     rodado antes de você, nessa mesma sequência de fim de spec) → a próxima etapa é `/btt-sdd:sre`,
+     agora. **Destaque isso como um aviso explícito, não só como a última frase de um resumo
+     maior**: "⚠️ Segurança aprovada — o merge deste PR não deveria acontecer ainda; o SRE (última
+     etapa) ainda não rodou." Já aconteceu de verdade (fatia normal com TRD, não só hotfix — a
+     mesma lacuna que motivou esta instrução já tinha reforço equivalente em `/btt-sdd:hotfix`,
+     passo 6b, mas não aqui): um PR foi mergeado logo depois da aprovação de segurança, sem que o
+     SRE tivesse rodado, porque a menção à próxima etapa estava perdida no meio de um resumo maior
+     e fácil de não notar — descoberto só numa auditoria de SRE de uma fatia posterior.
+   - **Nenhum dos dois** (fatia intermediária, segurança antecipada aqui mas `sre` não marcado
+     para nenhuma tarefa restante, e esta não é a última fatia da spec) → **esta é a última etapa
+     desta fatia**: siga para o passo 7 e depois o merge. Não acione `/btt-sdd:sre` "por garantia"
+     — a cadência é deliberada, e rodá-la por fatia é exatamente o custo que ela existe para
+     cortar. Antes desta correção, essa ramificação não existia aqui (diferente de `/btt-sdd:qa`,
+     que já a tem nos passos 6-7) e tinha que ser reconstruída manualmente cruzando
+     `docs/SDD-WORKFLOW.md` e `skills/qa/SKILL.md` (issue #463, `asengardeon/btt-sdd-pipeline`).
+7. **Se esta foi a última etapa desta fatia** (o segundo caso do passo 6), você herda as
+   responsabilidades que o `/btt-sdd:sre` carrega quando é ele quem fecha a fatia — nenhuma delas é
+   sobre infraestrutura, e todas desapareceriam junto com a etapa 7:
+   a0. **Faça o push único da fatia**, agora que todos os artefatos de revisão dela estão
+      commitados e integrados localmente (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia: o
+      CI roda uma vez, não uma vez por artefato de revisão"). Um `git push` só, na branch da
+      fatia. Esse push não precisa do seu próprio run verde de CI: ele só acrescenta Markdown em
+      `specs/`, e `docs/gates/merge.md` aceita o run verde anterior desde que você **prove**, com
+      `git diff --stat <headSha-do-run>..<headRefOid-atual>`, que nada relevante ao workflow mudou
+      entre os dois. Faça essa prova explicitamente no gate de merge, não por presunção.
+   a. **Tire o PR do modo draft**: `gh pr view <PR> --json isDraft`; se `true`, `gh pr ready <PR>`.
+      Sem isso o PR fica bloqueado na UI do GitHub mesmo com `mergeable=MERGEABLE`
+      (`docs/GIT-WORKFLOW.md`, regra 4).
+   b. **Conduza a retrospectiva da fatia**, com o mesmo procedimento da seção "Retrospectiva da
+      fatia" de `skills/sre/SKILL.md` (passo 5c): avalie a execução desta fatia e abra
+      as issues de melhoria/aprendizado em `asengardeon/btt-sdd-pipeline` — sempre esse
+      repositório, qualquer que seja o projeto em que você está — **antes** de informar o
+      resultado ao usuário. "Nenhuma sugestão concreta desta fatia" é conclusão válida da
+      avaliação; pular a avaliação não é (`docs/gates/merge.md`).
 
 ## Quando usar sem o agente
 
