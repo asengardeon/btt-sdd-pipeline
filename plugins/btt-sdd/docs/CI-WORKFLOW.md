@@ -125,3 +125,17 @@ tempo de runner que hoje se gasta por acidente, e produz série temporal em vez 
 - **Sharding da camada cara** — reduz tempo de parede e **multiplica minutos faturáveis** (N jobs
   pagam a subida de ambiente N vezes). Só com os dois eixos medidos, como `docs/gates/sre.md` já
   exige.
+- **E2E completo (cross-arquivo, contra backend real) rodando só na última fatia de uma spec** —
+  padrão comum quando o `architect` espelha, na CI, a cadência de revisão "ao final da spec" deste
+  pipeline (`docs/SDD-WORKFLOW.md`), mas isso concentra todo o risco de integração e de
+  contaminação de estado entre arquivos de teste no momento em que não há mais fatia seguinte para
+  absorver o retrabalho — o pior momento possível para descobrir um problema sistêmico. Já
+  aconteceu de verdade: a primeira execução real de um job assim (64 testes e2e de 5 arquivos, 1
+  worker, um único Postgres compartilhado) teve mais de 150 falhas, dominadas por um seletor sem
+  escopo escrito e aprovado em 3 fatias diferentes — cada uma só o exercitou isoladamente — e
+  revelou 2 bugs reais de produção pré-existentes desde fatias anteriores, que nenhuma rodada de
+  revisão daquelas fatias tinha como pegar sem o conjunto inteiro rodando junto. Se o `architect`
+  decidir essa cadência, registre também no TRD uma variante mais barata que rode pelo menos os
+  arquivos de e2e já existentes a cada fatia nova (não precisa ser o roteiro completo acumulado) —
+  o suficiente para pegar contaminação de estado entre arquivos cedo, em vez de só na última fatia
+  (issue #457, `asengardeon/btt-sdd-pipeline`).
