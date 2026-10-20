@@ -358,21 +358,41 @@ em `origin/<branch-da-fatia>` (sem a preferência pela ref local acima) fez a et
 único" — e abortar sem produzir veredito, descartando uma invocação inteira só para redescobrir
 que os commits existiam, só retidos localmente (issue #453, `asengardeon/btt-sdd-pipeline`).
 
-**Confirme sempre o branch atual depois de qualquer `git checkout` que pode falhar por colisão de
-worktree, antes de rodar qualquer comando seguinte que dependa dele** (`pull`, `merge`, `push` sem
-branch explícito). `git checkout <branch>` que falha com `fatal: '<branch>' is already used by
-worktree at '<caminho>'` não é um erro fatal de shell — a sessão/script continua executando os
-comandos seguintes no branch em que já estava, silenciosamente, a menos que se preste atenção à
-mensagem de erro específica. Já aconteceu de verdade: entre duas etapas de revisão sequenciais da
-mesma fatia, um `git checkout <branch-da-fatia>` falhou por colisão de worktree, mas o `git pull
-origin <branch-da-fatia>` seguinte rodou mesmo assim — sobre `main` (branch em que a sessão já
-estava, não a branch da fatia) — fazendo `main` local avançar vários commits à frente do
-`origin/main` com código de uma fatia ainda não aprovada. Nada foi perdido (resolvido com `git
-reset --hard origin/main` local, nada enviado a `origin/main`), mas um `git push origin main`
-subsequente teria empurrado esse código direto para `main`, violando a regra 1 deste documento.
+**Confirme sempre o branch atual antes de qualquer `git merge`/`commit`/`pull`/`push` sem branch
+explícito que dependa dele — nunca assuma, mesmo quando o passo anterior parece ter terminado
+limpo.** Dois gatilhos distintos produzem o mesmo sintoma (workspace principal numa branch
+diferente da esperada, sem erro visível):
+
+- **`git checkout <branch>` que falha por colisão de worktree.** `fatal: '<branch>' is already
+  used by worktree at '<caminho>'` não é um erro fatal de shell — a sessão/script continua
+  executando os comandos seguintes no branch em que já estava, silenciosamente, a menos que se
+  preste atenção à mensagem de erro específica. Já aconteceu de verdade: entre duas etapas de
+  revisão sequenciais da mesma fatia, um `git checkout <branch-da-fatia>` falhou por colisão de
+  worktree, mas o `git pull origin <branch-da-fatia>` seguinte rodou mesmo assim — sobre `main`
+  (branch em que a sessão já estava, não a branch da fatia) — fazendo `main` local avançar vários
+  commits à frente do `origin/main` com código de uma fatia ainda não aprovada. Nada foi perdido
+  (resolvido com `git reset --hard origin/main` local, nada enviado a `origin/main`), mas um `git
+  push origin main` subsequente teria empurrado esse código direto para `main`, violando a regra 1
+  deste documento.
+- **Agente retomado sem isolamento (`SendMessage`, sem `isolation: "worktree"` porque o worktree
+  original já não existia) devolve o workspace via `git checkout <branch base>` ao final do
+  próprio protocolo de "sem isolamento".** Isso é esperado do agente, mas deixa o workspace
+  principal do orquestrador em `main` (ou a branch base), não na branch da fatia — e um `git merge
+  --ff-only origin/<branch-da-fatia>` rodado em seguida, sem confirmar a branch primeiro, é sempre
+  um fast-forward **válido** (a branch da fatia descende de `main`), só que move a ponta de `main`
+  **local** para a ponta da branch da fatia, em vez de avançar a branch da fatia — sem erro
+  nenhum. Já aconteceu de verdade: um commit de `timing-log.md` feito logo depois foi parar em
+  `main` local; o push para `origin main` foi corretamente recusado pela proteção de branch
+  (nenhum dano ao remoto), mas custou uma rodada de diagnóstico e correção (`git branch -f main
+  origin/main` + `git cherry-pick` do commit perdido) que um `git branch --show-current` antes do
+  merge teria evitado por completo (issue #458, `asengardeon/btt-sdd-pipeline`).
+
 Rode `git branch --show-current` (ou confira com atenção o output do próprio `checkout`) antes de
-prosseguir sempre que houver qualquer dúvida sobre se o checkout anterior teve sucesso — nunca
-assuma sucesso só porque o comando seguinte não deu erro de sintaxe.
+prosseguir sempre que houver qualquer dúvida sobre em que branch o passo anterior deixou o
+workspace — nunca assuma sucesso só porque o comando seguinte não deu erro de sintaxe. Isso vale
+tanto para o workaround de colisão de worktree acima quanto para o passo "Integre o commit do
+agente" de qualquer skill de revisão (`/btt-sdd:code-review`/`/btt-sdd:ux-review`/`/btt-sdd:qa`/
+`/btt-sdd:security`/`/btt-sdd:sre`) e para a retomada sem isolamento de `/btt-sdd:implement`.
 
 **Um agente rodando num worktree isolado nunca deve fazer `git checkout main`/`<branch base>`
 como limpeza final dentro do próprio worktree.** O worktree principal do orquestrador

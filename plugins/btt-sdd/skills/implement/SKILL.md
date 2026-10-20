@@ -163,6 +163,15 @@ assim:
    esperar o agente retomado terminar e confirmar que voltou para a branch base antes de invocar a
    próxima etapa; se precisar mesmo sobrepor (ex.: invocação assíncrona), use `isolation:
    "worktree"` na chamada da Agent tool para a tarefa concorrente.
+4b-bis. **Depois que o agente retomado sem isolamento termina, confirme a branch atual
+   (`git branch --show-current`) antes de rodar qualquer `git merge`/`commit` seguinte — nunca
+   confie só na palavra do relatório dele.** O protocolo de "sem isolamento" desse agente faz `git
+   checkout <branch base>` como limpeza ao final (esperado), mas isso deixa o workspace principal
+   na branch base, não na branch da fatia — e um `git merge --ff-only
+   origin/<branch-da-fatia>` rodado em seguida é sempre um fast-forward válido, só que avança a
+   ponta da branch base em vez da branch da fatia, sem erro nenhum (`docs/GIT-WORKFLOW.md`, seção
+   "Isolamento de working tree", bloco "Confirme sempre o branch atual antes de qualquer `git
+   merge`...").
 
 ## Passos (implementação de uma fatia nova)
 
