@@ -30,6 +30,17 @@ Comandos disponíveis: `/sdd-prd`, `/sdd-trd`, `/sdd-implement`, `/sdd-code-revi
 instalado via plugin). Cada um explica seu próprio papel quando invocado — não precisa memorizar a
 lista aqui.
 
+**As etapas 4-7 e 4b (revisão) sempre passam pela skill própria — nunca invoque `code-reviewer`,
+`ux-designer`, `qa-engineer`, `security-engineer` ou `sre` diretamente via Agent tool fora de
+`/sdd-code-review`/`/sdd-ux-review`/`/sdd-qa`/`/sdd-security`/`/sdd-sre` (ou os equivalentes
+`/btt-sdd:*`) — mesmo numa sessão que já rodou esse pipeline inteiro para uma fatia anterior.** A
+tentação de pular direto para o agente cresce com a familiaridade ("já sei os passos"), mas é a
+skill que carrega o gate de pré-condição de cada etapa (ex.: QA aprovado antes de segurança) —
+pular a skill não pula o gate em si (o agente de revisão recusa corretamente quando a
+pré-condição falha), mas desperdiça uma invocação inteira só para descobrir isso. Isso é
+diferente da etapa 3 (`backend-developer`/`frontend-developer`), onde a invocação direta via
+Agent tool é o padrão correto — `/sdd-implement` não tem um agente intermediário.
+
 ## Próximo passo
 
 Este projeto acabou de ser criado por `/create-project` — ainda não tem stack, código, nem

@@ -200,3 +200,17 @@
   revisado. A única exceção deliberada e documentada é a skill `/repo-issues` (manutenção deste
   próprio repositório sobre si mesmo), que mergeia os PRs que ela mesma abre só depois de aprovação
   explícita do lote pelo usuário — nunca um padrão a copiar para as etapas do pipeline SDD.
+- [ ] **Agente de revisão confirma a pré-condição de entrada da própria etapa antes de produzir
+  qualquer veredito — mesmo invocado diretamente via Agent tool, fora da skill correspondente.**
+  `code-reviewer`, `ux-designer`, `qa-engineer`, `security-engineer` e `sre` recusam produzir
+  veredito (sem alterar nenhum artefato) quando o artefato de entrada da etapa anterior não existe
+  ou não está aprovado. A skill própria (`/btt-sdd:code-review`/`/btt-sdd:ux-review`/
+  `/btt-sdd:qa`/`/btt-sdd:security`/`/btt-sdd:sre`) já checa isso antes de invocar o agente, mas
+  essa checagem só roda quando a skill é de fato acionada — uma sessão que já rodou o pipeline
+  inteiro numa fatia anterior pode pular direto para o Agent tool, confiando na própria memória do
+  processo em vez de reinvocar a skill (proibido explicitamente, ver `CLAUDE.md`). O agente é a
+  última linha de defesa quando isso acontece mesmo assim, e recusar é o comportamento esperado de
+  qualquer um dos cinco, não só de quem por acaso notou primeiro. Já aconteceu de verdade: um
+  `security-engineer` foi invocado fora de ordem (QA ainda não tinha rodado) direto via Agent
+  tool, e recusou corretamente — o custo foi só uma invocação gasta à toa, sem dano a nenhum
+  artefato.
