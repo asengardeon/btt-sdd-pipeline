@@ -580,7 +580,14 @@ repetir o `checkout` — vá direto para a variante que funciona:
 
 ```bash
 git fetch origin <branch>
-git checkout -b <nome-temporário> origin/<branch>   # ou `git checkout --detach origin/<branch>`
+# a branch local <branch> (compartilhada entre worktrees deste repositório) pode estar na frente
+# de origin/<branch> por um commit de revisão retido (push único por fatia) — baseie a temporária
+# em quem estiver mais adiante, nunca assuma que é sempre a remota
+if git merge-base --is-ancestor origin/<branch> <branch> 2>/dev/null; then
+  git checkout -b <nome-temporário> <branch>              # local está em dia ou na frente
+else
+  git checkout -b <nome-temporário> origin/<branch>       # remota está na frente
+fi
 # ... revisão, commit do artefato ...
 git push origin HEAD:<branch>                       # `HEAD` não precisa *ser* <branch> para isso
 ```

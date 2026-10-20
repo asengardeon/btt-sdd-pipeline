@@ -324,15 +324,35 @@ não espere que o `checkout` normal funcione — vá direto para o workaround ab
 diagnosticar o erro (`fatal: '<branch>' is already used by worktree at '<caminho>'` — o mecanismo
 de `isolation: "worktree"` cria um worktree com uma branch própria do agente, não a branch da
 fatia, e um worktree concorrente de uma etapa anterior já tem `<branch-da-fatia>` como `HEAD`).
-Não tente liberar a branch: crie uma branch local temporária rastreando `origin/<branch-da-fatia>`
-(`git checkout -b <nome-temporário> origin/<branch-da-fatia>`), trabalhe nela normalmente (ler
-artefatos, rodar suíte, editar), e ao final use o mesmo `git push origin HEAD:<branch-da-fatia>` da
-sincronização acima — não é preciso que `HEAD` literalmente *seja* `<branch-da-fatia>` para isso
-funcionar. Já aconteceu de 3 agentes de revisão em sequência baterem nesse mesmo erro e cada um
-re-derivar essa mesma solução de forma independente, em vez de tratá-la como o caminho normal já
-documentado — inclusive numa 4ª ocorrência depois desta seção já existir, sinal de que só
-documentar o workaround como "se falhar" não bastou; precisava dizer explicitamente que ele **vai**
-falhar a partir da 2ª etapa, então nem vale a pena tentar o `checkout` normal de novo.
+Não tente liberar a branch: crie uma branch local temporária a partir da referência mais avançada
+entre a branch local `<branch-da-fatia>` (compartilhada entre worktrees do mesmo repositório — é
+literalmente a branch que o worktree concorrente tem como `HEAD`, a mesma causa da colisão) e
+`origin/<branch-da-fatia>`, pelo mesmo motivo da seção "Isolamento de working tree" acima: a regra
+"Push único por fatia" retém commits de revisão só localmente até o final da cadeia, e basear a
+branch temporária sempre em `origin/<branch-da-fatia>` apaga exatamente esses commits retidos.
+
+```bash
+git fetch origin <branch-da-fatia>
+if git merge-base --is-ancestor origin/<branch-da-fatia> <branch-da-fatia> 2>/dev/null; then
+  git checkout -b <nome-temporário> <branch-da-fatia>              # local em dia ou na frente
+else
+  git checkout -b <nome-temporário> origin/<branch-da-fatia>       # remota na frente
+fi
+```
+
+Trabalhe nela normalmente (ler artefatos, rodar suíte, editar), e ao final use o mesmo `git push
+origin HEAD:<branch-da-fatia>` da sincronização acima — não é preciso que `HEAD` literalmente
+*seja* `<branch-da-fatia>` para isso funcionar. Já aconteceu de 3 agentes de revisão em sequência
+baterem nesse mesmo erro de colisão e cada um re-derivar essa mesma solução de forma independente,
+em vez de tratá-la como o caminho normal já documentado — inclusive numa 4ª ocorrência depois
+desta seção já existir, sinal de que só documentar o workaround como "se falhar" não bastou;
+precisava dizer explicitamente que ele **vai** falhar a partir da 2ª etapa, então nem vale a pena
+tentar o `checkout` normal de novo. E, numa ocorrência posterior, basear a branch temporária sempre
+em `origin/<branch-da-fatia>` (sem a preferência pela ref local acima) fez a etapa seguinte
+(segurança) encontrar a branch remota 4 commits atrás — três rodadas de revisão anteriores
+(code review, UX, QA) tinham integrado seus artefatos só localmente, pela própria regra "Push
+único" — e abortar sem produzir veredito, descartando uma invocação inteira só para redescobrir
+que os commits existiam, só retidos localmente (issue #453, `asengardeon/btt-sdd-pipeline`).
 
 **Confirme sempre o branch atual depois de qualquer `git checkout` que pode falhar por colisão de
 worktree, antes de rodar qualquer comando seguinte que dependa dele** (`pull`, `merge`, `push` sem
