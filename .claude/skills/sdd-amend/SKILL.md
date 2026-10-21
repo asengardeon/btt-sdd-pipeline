@@ -22,6 +22,19 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    `args` não deixar claro, pergunte ao usuário (use `/sdd-pending` primeiro se a emenda é para
    resolver um item VALIDAR DEPOIS específico e o usuário não lembrar qual).
 
+1b. **Confirme a branch atual (`git branch --show-current`) antes de editar qualquer artefato —
+   nunca assuma que o workspace já está na branch da fatia em questão.** Entre invocações de
+   agente isolado (`isolation: "worktree"`), é normal o orquestrador alternar o workspace
+   principal para `main` (liberando o nome literal da branch para o próximo worktree) — e uma
+   emenda disparada logo depois, sem essa confirmação, edita o artefato em `main`, não na branch da
+   fatia (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree", bloco "Confirme sempre o
+   branch atual..."). Se não for a branch esperada, `git checkout <branch-da-fatia>` antes de
+   continuar. Já aconteceu de verdade: uma emenda editou 7 seções do TRD em `main` local depois de
+   uma rodada de `ux-review`; o erro só foi percebido porque a reversão de um campo via script não
+   bateu com o esperado — nada tinha sido commitado ainda, então o trabalho foi descartado
+   (`git checkout -- <arquivo>`) e refeito na branch correta sem dano (issue #468,
+   `asengardeon/btt-sdd-pipeline`).
+
 2. Edite o artefato **in-place** com a mudança pedida — nunca gere um novo arquivo nem reescreva o
    documento inteiro do zero. Se a mudança resolve um item da seção "Pendências de validação
    (VALIDAR DEPOIS)", marque o item como "validado" em vez de removê-lo (mantém o histórico de

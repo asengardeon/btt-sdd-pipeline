@@ -359,9 +359,10 @@ em `origin/<branch-da-fatia>` (sem a preferência pela ref local acima) fez a et
 que os commits existiam, só retidos localmente (issue #453, `asengardeon/btt-sdd-pipeline`).
 
 **Confirme sempre o branch atual antes de qualquer `git merge`/`commit`/`pull`/`push` sem branch
-explícito que dependa dele — nunca assuma, mesmo quando o passo anterior parece ter terminado
-limpo.** Dois gatilhos distintos produzem o mesmo sintoma (workspace principal numa branch
-diferente da esperada, sem erro visível):
+explícito que dependa dele, ou antes de editar qualquer artefato de spec (`trd.md`, `prd.md`,
+`code-review.md` etc.) fora do fluxo normal de uma invocação de agente — nunca assuma, mesmo
+quando o passo anterior parece ter terminado limpo.** Três gatilhos distintos produzem o mesmo
+sintoma (workspace principal numa branch diferente da esperada, sem erro visível):
 
 - **`git checkout <branch>` que falha por colisão de worktree.** `fatal: '<branch>' is already
   used by worktree at '<caminho>'` não é um erro fatal de shell — a sessão/script continua
@@ -386,13 +387,29 @@ diferente da esperada, sem erro visível):
   (nenhum dano ao remoto), mas custou uma rodada de diagnóstico e correção (`git branch -f main
   origin/main` + `git cherry-pick` do commit perdido) que um `git branch --show-current` antes do
   merge teria evitado por completo (issue #458, `asengardeon/btt-sdd-pipeline`).
+- **Orquestrador alternando entre `main` e a branch da fatia a cada invocação de agente isolado
+  (`git checkout main` para liberar o nome literal da branch para o próximo worktree, padrão
+  normal com `isolation: "worktree"`).** Entre uma invocação e outra, qualquer edição direta de
+  artefato feita pelo orquestrador — não só comando de Git — herda o `checkout` que a invocação
+  anterior deixou. Já aconteceu de verdade: depois de uma rodada de `ux-review`, o orquestrador fez
+  `git checkout main` (liberando a branch para o próximo worktree), o usuário respondeu a uma
+  pergunta de `AskUserQuestion` sobre uma pendência, e o orquestrador seguiu direto para
+  `/btt-sdd:amend`, editando `trd.md` **sem confirmar `git branch --show-current` antes** — o
+  checkout local ainda estava em `main`, não na branch da fatia. O erro só foi percebido porque a
+  reversão de um campo específico via script não bateu com o valor esperado; nada tinha sido
+  commitado ainda, então `git checkout -- <arquivo>` descartou com segurança e o trabalho foi
+  refeito na branch correta — mas o mesmo padrão, com uma edição já commitada, já custou ~28k
+  tokens numa fatia anterior (worktree criado antes do TRD estar commitado) (issue #468,
+  `asengardeon/btt-sdd-pipeline`).
 
 Rode `git branch --show-current` (ou confira com atenção o output do próprio `checkout`) antes de
 prosseguir sempre que houver qualquer dúvida sobre em que branch o passo anterior deixou o
 workspace — nunca assuma sucesso só porque o comando seguinte não deu erro de sintaxe. Isso vale
 tanto para o workaround de colisão de worktree acima quanto para o passo "Integre o commit do
 agente" de qualquer skill de revisão (`/btt-sdd:code-review`/`/btt-sdd:ux-review`/`/btt-sdd:qa`/
-`/btt-sdd:security`/`/btt-sdd:sre`) e para a retomada sem isolamento de `/btt-sdd:implement`.
+`/btt-sdd:security`/`/btt-sdd:sre`), para a retomada sem isolamento de `/btt-sdd:implement`, e
+para qualquer edição de artefato de spec feita diretamente pelo orquestrador — `/btt-sdd:amend`
+confirma a branch como primeiro passo, antes de editar qualquer artefato in-place.
 
 **Um agente rodando num worktree isolado nunca deve fazer `git checkout main`/`<branch base>`
 como limpeza final dentro do próprio worktree.** O worktree principal do orquestrador
