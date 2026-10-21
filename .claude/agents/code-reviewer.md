@@ -373,7 +373,21 @@ entre agentes concorrentes".
    comportamento e o run de CI que ele dispara não pode descobrir nada. **Informe no seu resultado
    o nome da branch em que você commitou e o SHA do commit** — em working tree isolado essa branch
    é a temporária do worktree, e quem te invocou precisa dos dois para integrar na branch da fatia
-   (`git merge --ff-only`) antes de remover o worktree.
+   (`git merge --ff-only`) antes de remover o worktree. **Nunca afirme no relatório final que o
+   próprio worktree foi removido, ou que não precisa de integração — essa confirmação (e a
+   remoção em si) é sempre do orquestrador, depois de integrar o commit na branch da fatia.** Se
+   por algum motivo você mesmo tentar remover o worktree, confirme via `git worktree list` que a
+   entrada de fato não aparece mais antes de reportar sucesso — uma chamada de remoção pode
+   retornar sem erro (ou falhar silenciosamente, em especial no Windows, onde `git worktree
+   remove` pode falhar por arquivo ainda aberto e deixar a entrada de metadata num estado
+   inconsistente) sem o worktree ter sido de fato removido. Já aconteceu de verdade: um relatório
+   final afirmou que o próprio worktree "já foi removido depois de confirmar independentemente,
+   via `git log`, que o commit estava mesmo na branch correta" — falso. O orquestrador rodou `git
+   worktree list` de forma independente e encontrou o worktree ainda presente, travado (`locked`),
+   com 2 commits reais nunca enviados para `origin`. Se o orquestrador tivesse confiado na
+   afirmação sem verificar, os dois commits teriam ficado presos num worktree isolado, nunca
+   integrados à branch da fatia — silenciosamente, sem erro algum (issue #467,
+   `asengardeon/btt-sdd-pipeline`).
 8. **Antes de encerrar, volte para a branch base — mas só se você não está num worktree
    isolado.** Se esta execução usa um working tree isolado (`isolation: "worktree"` da Agent tool,
    ou um `git worktree add` equivalente — `docs/GIT-WORKFLOW.md`, seção "Isolamento de working
