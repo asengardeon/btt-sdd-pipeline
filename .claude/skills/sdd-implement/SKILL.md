@@ -184,6 +184,24 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    ponta da branch base em vez da branch da fatia, sem erro nenhum (`docs/GIT-WORKFLOW.md`, seção
    "Isolamento de working tree", bloco "Confirme sempre o branch atual antes de qualquer `git
    merge`...").
+4c. **Se esta correção foi dividida em trilhas backend+frontend paralelas e a trilha backend
+   publica/altera um contrato (OpenAPI/GraphQL/protobuf) que a trilha frontend consome via
+   cliente gerado, reconcilie depois que as duas terminarem — antes de considerar a correção
+   pronta para a próxima rodada de revisão.** A orientação correta de não bloquear a trilha
+   frontend enquanto o contrato ainda não existe (ex.: "use a string literal '...', sem bloquear
+   nisso") abre deliberadamente uma janela em que o cliente gerado do frontend pode ficar
+   desatualizado em relação ao contrato publicado depois — nenhuma das duas trilhas, sozinha, tem
+   como notar isso no momento em que termina (o passo "detectar desvio de artefato gerado por
+   contrato" de `backend-developer.md`/`frontend-developer.md` só cobre o desvio dentro da própria
+   trilha, no instante em que ela termina, não depois que a outra trilha publica algo novo). Depois
+   que as duas trilhas terminarem, confirme você mesmo que o cliente gerado do frontend está
+   sincronizado com o contrato publicado (geração explícita + `git diff` vazio contra o arquivo
+   committed, ou equivalente) — mesmo quando nenhuma das duas trilhas sinalizou isso como
+   pendência. Já aconteceu de verdade: o frontend terminou e empurrou seu commit antes do backend
+   publicar o schema; ninguém regenerou o cliente tipado depois, e o desvio só foi pego pela rodada
+   seguinte de code review (passo de CI "detecção de desvio entre tipos gerados e committed"),
+   gerando uma rodada extra de correção mecânica + duas reverificações escopadas (issue #469,
+   `asengardeon/btt-sdd-pipeline`).
 
 ## Passos (implementação de uma fatia nova)
 
