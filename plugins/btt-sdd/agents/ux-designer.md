@@ -257,7 +257,14 @@ entre agentes concorrentes".
    comportamento e o run de CI que ele dispara não pode descobrir nada. **Informe no seu resultado
    o nome da branch em que você commitou e o SHA do commit** — em working tree isolado essa branch
    é a temporária do worktree, e quem te invocou precisa dos dois para integrar na branch da fatia
-   (`git merge --ff-only`) antes de remover o worktree.
+   (`git merge --ff-only`) antes de remover o worktree. **Nunca afirme no relatório final que o
+   próprio worktree foi removido, ou que não precisa de integração — essa confirmação (e a
+   remoção em si) é sempre do orquestrador, depois de integrar o commit na branch da fatia.** Se
+   por algum motivo você mesmo tentar remover o worktree, confirme via `git worktree list` que a
+   entrada de fato não aparece mais antes de reportar sucesso — uma chamada de remoção pode
+   retornar sem erro (ou falhar silenciosamente, em especial no Windows, onde `git worktree
+   remove` pode falhar por arquivo ainda aberto e deixar a entrada de metadata num estado
+   inconsistente) sem o worktree ter sido de fato removido.
 7. **Antes de encerrar, volte para a branch base — mas só se você não está num worktree isolado.**
    Mesma regra de `agents/code-reviewer.md`, passo 8: dentro de um worktree isolado, permanece na
    própria branch da fatia em vez de mirar a branch base.

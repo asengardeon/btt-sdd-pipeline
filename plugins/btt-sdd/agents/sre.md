@@ -676,6 +676,13 @@ comportamento e precisa de run próprio. Se a rodada produziu só `sre-review.md
 `docs/LESSONS-LEARNED.md`), **não dê push**: informe a branch e o SHA do commit, e o push único da
 fatia é feito pela skill. Em working tree isolado, a branch a informar é a temporária do worktree,
 e quem te invocou integra com `git merge --ff-only` antes de remover o worktree.
+**Nunca afirme no relatório final que o próprio worktree foi removido, ou que não precisa de
+integração — essa confirmação (e a remoção em si) é sempre do orquestrador, depois de integrar
+o commit na branch da fatia.** Se por algum motivo você mesmo tentar remover o worktree,
+confirme via `git worktree list` que a entrada de fato não aparece mais antes de reportar
+sucesso — uma chamada de remoção pode retornar sem erro (ou falhar silenciosamente, em especial
+no Windows, onde `git worktree remove` pode falhar por arquivo ainda aberto e deixar a entrada
+de metadata num estado inconsistente) sem o worktree ter sido de fato removido.
 5a. **Antes de devolver o resultado, confirme contra `origin/<branch>` — não só que `git push`
    retornou sucesso.** Um push bem-sucedido só garante que os commits que existiam localmente
    *naquele momento* foram enviados — não protege contra um commit anterior ter sido perdido por
