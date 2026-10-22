@@ -143,6 +143,22 @@ hábito):
 commitado, então é recuperável, e o push fica no máximo uma etapa adiante. É uma janela menor que a
 que o pipeline já aceita entre o primeiro commit da trilha e o push do final dela.
 
+**Numa fatia sinalizada como final ao CI (passo 2b-quater de `/sdd-implement` — mecanismo
+específico de cada projeto que ativa a suíte e2e real completa, registrado em
+`docs/PROJECT-CONVENTIONS.md`), a disciplina de reter commits de artefato de revisão importa
+ainda mais, não menos.** Cada push nessa fatia reexecuta o job e2e real do zero, independente do
+diff — então um push isolado por rodada de revisão/reverificação (`code-review.md`, `ux-review.md`,
+`qa-report.md`, `security-review.md`, `timing-log.md`) multiplica o custo mais caro do pipeline
+por cada achado que gerar uma rodada extra. Só a correção que de fato toca código de produção
+justifica push próprio (precisa de CI real para validar a correção, mesma exceção acima); qualquer
+artefato de revisão puro — mesmo numa reverificação — espera o próximo push que já for necessário
+por outro motivo, nunca dispara o seu. A tentação de pushar a cada integração é a mesma de uma
+fatia intermediária (onde é inofensivo) — só a cadência de ser "a fatia final" muda o custo de
+continuar fazendo isso. Já aconteceu de verdade: numa fatia final com um achado real que precisou
+de correção + duas rodadas de reverificação (code review e UX), sete pushes separados — a maioria
+sobre diffs só de `specs/**/*.md` — reexecutaram o job real de navegador (Playwright, backend
+real) sete vezes (issue #475, `asengardeon/btt-sdd-pipeline`).
+
 ## Revisão retroativa de um PR já mergeado
 
 Cenário distinto de "mudança no próprio pipeline" (seção abaixo) e da regra 2 (branch por fatia):
