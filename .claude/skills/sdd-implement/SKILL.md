@@ -265,6 +265,20 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    antes de iniciar a próxima (passo 2c) — mas o PR da fatia já existia, com code review, QA,
    segurança e SRE todos aprovados e CI verde, só faltando o merge; sem uma checagem manual, o
    trabalho teria sido reimplementado do zero.
+2b-quater. **Se a fatia escolhida no passo 2b é a última pendente da spec, e este projeto
+   documenta em `docs/PROJECT-CONVENTIONS.md` um mecanismo explícito de sinalização para o CI
+   ativar a suíte e2e completa (ex.: label de PR, variável de ambiente), aplique esse sinal assim
+   que o PR desta fatia for aberto — antes de invocar a primeira etapa de revisão.** Não espere
+   uma etapa no meio da cadência de revisão (QA, segurança) notar a ausência: o orquestrador já
+   sabe, neste ponto, que esta é a fatia final — é a informação mais antiga disponível sobre isso,
+   não a mais recente. **Não invente esse mecanismo se o projeto ainda não o documentou** — decidir
+   como sinalizar a fatia final ao CI é do `architect`/`sre` deste projeto, registrado em
+   `docs/PROJECT-CONVENTIONS.md` quando a cadência "e2e completo só na última fatia" for adotada
+   (`docs/CI-WORKFLOW.md`, seção "O que não entra por padrão"). Já aconteceu de verdade, em duas
+   specs diferentes do mesmo projeto: o sinal só foi aplicado durante a rodada de QA (ou mais
+   tarde), depois que code review e UX já tinham aprovado sem a suíte e2e real ter rodado nenhuma
+   vez — a primeira execução real do job encontrou um defeito presente desde a primeira fatia da
+   spec (issue #473, `asengardeon/btt-sdd-pipeline`).
 2c. **Antes de criar a branch desta rodada**, se a fatia não é a primeira, confirme que o PR da
    fatia anterior já foi mergeado em `main` (`docs/GIT-WORKFLOW.md`, regra 3, tem o comando). Se
    não estiver, **pare aqui** e informe o usuário — não invoque os agentes de desenvolvimento
