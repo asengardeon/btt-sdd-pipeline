@@ -142,7 +142,12 @@ das 6 áreas a cada rodada intermediária que só confirma uma correção já ap
    recomendação (não é seu trabalho configurar o `ci.yml` — isso é do `sre`, se decidido). Se
    precisar de dependências instaladas para rodar um scanner e estiver num working tree isolado
    (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes concorrentes"),
-   reaproveite o cache de dependências compartilhado em vez de reinstalar tudo do zero.
+   reaproveite só o cache de *download* do gerenciador de pacotes (`composer`/`npm` `cache-dir`) para
+   uma instalação local (`composer install`/`npm ci`) dentro do próprio worktree — nunca
+   symlink/junction o diretório já instalado (`vendor`/`node_modules`) entre worktrees: frameworks
+   com resolução de ambiente por caminho (ex. Laravel/`.env.*`) podem resolver para o worktree alvo
+   do link em vez do worktree em uso, vazando configuração (porta de banco, segredo) entre execuções
+   isoladas (issue #478, `asengardeon/btt-sdd-pipeline`).
 7. **Campo de controle de acesso/estado perdido em reconstrução de agregado**: se esta fatia (ou
    qualquer fatia anterior) adicionou à entidade de domínio um campo com implicação de segurança
    (ex.: `deletedAt`, flag de bloqueio, papel/permissão embutida no agregado), confirme que **todo**

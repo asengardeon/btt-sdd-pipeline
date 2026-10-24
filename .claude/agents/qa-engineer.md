@@ -180,8 +180,13 @@ entre agentes concorrentes".
    mesmo formato condensado (nunca copiando um relatório HTML bruto), para as etapas seguintes
    também
    reaproveitarem. Se estiver rodando isso num working tree isolado (`docs/GIT-WORKFLOW.md`, seção
-   "Isolamento de working tree entre agentes concorrentes"), reaproveite o cache de dependências
-   compartilhado em vez de reinstalar tudo do zero.
+   "Isolamento de working tree entre agentes concorrentes"), reaproveite só o cache de *download* do
+   gerenciador de pacotes (`composer`/`npm` `cache-dir`) para uma instalação local (`composer
+   install`/`npm ci`) dentro do próprio worktree — nunca symlink/junction o diretório já instalado
+   (`vendor`/`node_modules`) entre worktrees: frameworks com resolução de ambiente por caminho (ex.
+   Laravel/`.env.*`) podem resolver para o worktree alvo do link em vez do worktree em uso, vazando
+   configuração (porta de banco, segredo) entre execuções isoladas (issue #478,
+   `asengardeon/btt-sdd-pipeline`).
 2b. **Se a fatia tem trilha de frontend, ou gera algum outro artefato de build/empacotamento
    distinto do código-fonte, lint + tipo + teste unitário não bastam como "suíte completa"** — o
    comando de build/empacotamento real de produção (o que `docs/STACK.md` documentar como tal)
