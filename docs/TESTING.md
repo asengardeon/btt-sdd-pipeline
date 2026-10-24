@@ -138,6 +138,15 @@ Paralelizar sem isolar não economiza: troca tempo por investigação de falha e
 - **reuso de container entre execuções** quando a stack oferece (ex.: a flag de *reuse* de
   bibliotecas de container de teste), para a rodada local repetida de TDD.
 
+**Ambiente Docker de teste é efêmero por execução — nunca perene.** Reaproveitar enquanto a suíte
+roda (ponto acima) não é o mesmo que deixar no ar depois que ela termina: quem sobe o
+ambiente (`docker compose up`/equivalente) para uma execução completa da suíte de integração o
+**exclui** ao final dela — `docker compose down -v` (ou comando equivalente da stack), removendo
+volumes, não só parando o processo. Ambiente Docker de teste esquecido no ar acumula do mesmo jeito
+que worktree não removido (`docs/GIT-WORKFLOW.md`, seção "Limpe o worktree antes de apagar a branch
+associada") e com o mesmo sintoma final: disco local esgotado em silêncio, descoberto só quando
+outro processo falha por falta de espaço (issue #484, `asengardeon/btt-sdd-pipeline`).
+
 **4. Tokens: a saída da suíte não entra inteira no contexto.** O que decide uma aprovação são os
 números agregados e, no vermelho, **só os testes que falharam**. Então:
 
