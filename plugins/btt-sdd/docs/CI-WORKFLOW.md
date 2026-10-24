@@ -99,6 +99,24 @@ indistinguível de um run completo para quem olha só o `conclusion` — e as et
 Declarado no workflow, apontando para o que `docs/STACK.md` documentar. Reinstalar dependências do
 zero a cada run é custo puro de runner (`docs/TESTING.md`, seção "Custo de execução da suíte").
 
+### 5b. Job de navegador/e2e: binário do navegador fora do caminho crítico
+
+O cache do item 5 cobre o gerenciador de pacotes da stack (`composer`/`npm`/etc.) — não cobre o
+binário do próprio navegador quando a suíte depende de um (Playwright, Selenium e equivalentes). A
+instalação desse binário (ex. `npm exec playwright install --with-deps chromium firefox webkit`)
+baixa pacotes de sistema via `apt-get` de um mirror público, cuja variância de rede não tem relação
+alguma com o código sendo testado. Já aconteceu de verdade: dois runs seguidos do job `navegador`
+travaram 30 minutos cada (timeout) presos nesse passo, sem chegar a rodar um teste — só a 3ª
+tentativa, de minutos, confirmou que o código nunca esteve quebrado (issue #479,
+`asengardeon/btt-sdd-pipeline`).
+
+Cacheie o diretório de instalação dos navegadores (`~/.cache/ms-playwright` ou equivalente da
+ferramenta), chaveado pela versão do pacote (ex. hash do lockfile). Alternativa mais robusta —
+preferível quando a ferramenta publica uma: rodar o job dentro da imagem Docker oficial da
+ferramenta (ex. `mcr.microsoft.com/playwright:v<versão>-noble` como `container:` do job), que já
+vem com os navegadores e dependências de sistema pré-instalados, eliminando o `apt-get` do caminho
+crítico por completo.
+
 ### 6. Amostrador deliberado de instabilidade (`schedule`), junto do item 3
 
 **Não adote o short-circuit sozinho.** As execuções redundantes que ele suprime funcionavam, sem
