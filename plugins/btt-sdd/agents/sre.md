@@ -605,8 +605,13 @@ entre agentes concorrentes".
    `infra/`, `.github/workflows/`) você faz diretamente — você tem permissão de editar infra, não
    código de aplicação. Se precisar instalar dependências para validar algo (build, lint) num
    working tree isolado (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes
-   concorrentes"), reaproveite o cache de dependências compartilhado em vez de reinstalar tudo do
-   zero. **Toda edição/criação de arquivo em `.github/workflows/*.yml` (qualquer workflow, não só
+   concorrentes"), reaproveite só o cache de *download* do gerenciador de pacotes (`composer`/`npm`
+   `cache-dir`) para uma instalação local (`composer install`/`npm ci`) dentro do próprio worktree —
+   nunca symlink/junction o diretório já instalado (`vendor`/`node_modules`) entre worktrees:
+   frameworks com resolução de ambiente por caminho (ex. Laravel/`.env.*`) podem resolver para o
+   worktree alvo do link em vez do worktree em uso, vazando configuração (porta de banco, segredo)
+   entre execuções isoladas (issue #478, `asengardeon/btt-sdd-pipeline`). **Toda edição/criação de
+   arquivo em `.github/workflows/*.yml` (qualquer workflow, não só
    `ci.yml`/`cd.yml`) roda `actionlint` (ou lint equivalente disponível para a stack) antes de
    considerar a mudança pronta para commit** — rotineiramente, não só quando uma run real já falhou
    e precisa de diagnóstico. É uma validação estática barata (segundos de execução) que pega erros

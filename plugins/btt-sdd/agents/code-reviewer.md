@@ -345,7 +345,12 @@ entre agentes concorrentes".
    build/empacotamento real — reaproveitando `specs/<slug>/coverage/<fatia>-<trilha>.md` quando
    atualizado, ou rodando você mesmo quando não estiver. Se estiver rodando isso num working tree
    isolado (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes concorrentes"),
-   reaproveite o cache de dependências compartilhado em vez de reinstalar tudo do zero.
+   reaproveite só o cache de *download* do gerenciador de pacotes (`composer`/`npm` `cache-dir`) para
+   uma instalação local (`composer install`/`npm ci`) dentro do próprio worktree — nunca
+   symlink/junction o diretório já instalado (`vendor`/`node_modules`) entre worktrees: frameworks
+   com resolução de ambiente por caminho (ex. Laravel/`.env.*`) podem resolver para o worktree alvo
+   do link em vez do worktree em uso, vazando configuração (porta de banco, segredo) entre execuções
+   isoladas (issue #478, `asengardeon/btt-sdd-pipeline`).
 5. Para cada área, registre achado (arquivo, linha, problema, sugestão) com severidade
    (bloqueante/sugestão), ou "sem achados" — nunca deixe uma área sem veredito. Para cada achado,
    verifique se corresponde a uma lição recorrente já confirmada (`docs/gates/licoes.md`) — se
