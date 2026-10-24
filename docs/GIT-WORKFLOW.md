@@ -599,6 +599,19 @@ primeiro — `git worktree remove --force <caminho>` (sem erro se ele já não e
 parte padrão do fluxo de merge, sem depender de nenhum agente individual ter lembrado de limpar ao
 terminar sua própria etapa.
 
+**Confirme que a remoção teve sucesso — não assuma pelo código de saída.** Depois de `git worktree
+remove`, rode `git worktree list` e confirme que o caminho não aparece mais. Uma falha por lock
+(`fatal: ... is locked` ou o caminho ainda listado) não é um erro a ignorar e seguir para a próxima
+etapa — é um achado a resolver antes: locks de um processo já encerrado (agente que terminou sem
+destravar) são stale e removíveis sem intervenção manual, com `--force` em dobro (`git worktree
+remove --force --force <caminho>` — é a sintaxe real do Git para sobrepor um worktree travado, não
+erro de digitação). Em sessões longas, com várias fatias/specs consecutivas no mesmo repositório,
+varra periodicamente `git worktree list` por worktrees órfãos (branch já mergeada/squashada, sem
+alteração não commitada) em vez de confiar só na limpeza reativa de cada merge — sem esse hábito, o
+disco local esgota silenciosamente, e o primeiro sintoma costuma ser um agente de revisão
+reportando falha ao subir Docker, não um alerta direto de disco cheio (issue #480,
+`asengardeon/btt-sdd-pipeline`).
+
 ## Aguardando CI antes do merge
 
 **A espera é do orquestrador, não dos agentes de revisão.** Quem conduz o merge é quem espera o
