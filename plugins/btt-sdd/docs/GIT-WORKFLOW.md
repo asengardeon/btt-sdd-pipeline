@@ -26,7 +26,14 @@ dependências entre histórias (fatias verticais de entrega)"), PR obrigatório 
    da spec (`skills/sre/SKILL.md`, passo 5d), `/btt-sdd:qa` nas intermediárias
    (`skills/qa/SKILL.md`, mesmo passo), conforme a cadência de
    `docs/SDD-WORKFLOW.md` — nunca fica como
-   transição manual pendente para o usuário perceber sozinho. "Commita por incremento"
+   transição manual pendente para o usuário perceber sozinho. **No mesmo momento em que o PR da
+   fatia é aberto**, atualize também a seção 14 do TRD ("Controle de versão (GitHub Flow, por
+   fatia)") com o número real do PR e status "em revisão" — simétrico à promoção da coluna Status
+   da seção 13 que já acontece neste ponto (`skills/implement/SKILL.md`, passo 5), mas para a
+   tabela de branch/PR. Sem essa atualização no mesmo commit, a seção 14 fica mostrando "não
+   iniciado" para uma fatia que já tem PR aberto, e a lacuna só costuma ser percebida por uma etapa
+   de revisão posterior, fora do escopo dela (issue #486, `asengardeon/btt-sdd-pipeline`). "Commita
+   por incremento"
    (`backend-developer`/ `frontend-developer`, Fase 2 — TDD red-green-refactor) é sobre **commits
    locais**, não sobre um push por commit — esses agentes já fazem só um push ao final da trilha
    inteira. Fora desse fluxo (o orquestrador, fora de um agente de trilha específico, fazendo duas

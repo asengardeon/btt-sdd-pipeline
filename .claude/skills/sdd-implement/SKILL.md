@@ -410,6 +410,12 @@ fluxo normal de "nova fatia" — pule os passos 1-4 abaixo e trate assim:
    editando a mesma tabela do TRD na última task já causou um conflito mecânico real de merge
    nessa coluna. Fazer essa transição numa única passada do orquestrador, depois de já ter as duas
    trilhas na mesma branch, elimina o conflito por completo.
+   **No mesmo commit em que o PR da fatia é aberto, atualize a seção 14 do TRD** ("Controle de
+   versão (GitHub Flow, por fatia)") com o número real do PR e status "em revisão" — simétrico à
+   promoção da seção 13 acima, mas para a tabela de branch/PR (`docs/GIT-WORKFLOW.md`, regra 4).
+   Sem isso, a seção 14 fica mostrando "não iniciado" para uma fatia que já tem PR aberto até uma
+   etapa de revisão posterior notar e corrigir, fora do escopo natural dela (issue #486,
+   `asengardeon/btt-sdd-pipeline`).
 5a. **Registre a duração desta rodada em `specs/<slug>/timing-log.md`** (crie a partir de
    `specs/_template/timing-log.template.md` se ainda não existir): uma linha por trilha invocada
    nesta rodada (etapa "Implementação", agente "backend-developer" e/ou "frontend-developer", fatia
