@@ -214,6 +214,21 @@ nunca para a suíte automatizada do dia a dia. Se um teste "precisa" de produç�
 forma repetível, isso é sinal de que falta um emulador/container equivalente, não motivo para
 apontar o teste para produção.
 
+### Armadilha conhecida: limite de vida útil de ~1h para sessão de Playwright/Chromium neste sandbox
+
+Um roteiro de e2e via browser automation que precisa esperar relógio real por mais de
+aproximadamente 1h (ex.: uma regra de negócio baseada em tempo sem mecanismo de adiantar o
+relógio do backend disponível no ambiente de teste) tende a crashar o processo do Chromium antes
+do próximo passo começar — o limite de vida útil de uma sessão de Playwright/Chromium neste tipo
+de sandbox é de aproximadamente 1h, independente de o teste estar ativamente ocupado ou só
+esperando. **Estratégia que funciona**: dividir o roteiro em duas (ou mais) invocações separadas
+do Playwright, persistindo em disco o estado necessário entre elas (ex.: IDs/credenciais de
+sessão, URL atual) — em vez de manter uma única sessão de navegador viva pelo tempo inteiro da
+espera. Descobrir esse limite por tentativa e erro (crash a cada rodada, sem mensagem que o
+nomeie) custa rodadas inteiras perdidas antes de chegar na estratégia de duas invocações; sabendo
+do limite de antemão, a primeira tentativa já nasce dividida (issue #529,
+`asengardeon/btt-sdd-pipeline`).
+
 ## Valor medido ao vivo entra no repositório já substituído por equivalente não atribuível
 
 Medir o defeito ao vivo contra o sistema real, com os dados reais de quem opera, é legítimo e às
