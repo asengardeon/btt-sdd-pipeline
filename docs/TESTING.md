@@ -448,6 +448,14 @@ primeiro push.
 - **Quando é obrigatório**: toda fatia cuja trilha inclui frontend, ou qualquer trilha que gera um
   artefato de build/empacotamento distinto do código-fonte (não é o caso de uma trilha
   backend-only sem etapa de build/empacotamento própria além dos testes).
+- **Stack com `next/font/google` (ou qualquer mecanismo de build que busque assets externos em
+  build-time) roda com `dangerouslyDisableSandbox: true` por padrão.** A sandbox padrão do Bash
+  tool bloqueia o acesso de rede que o build precisa para baixar os arquivos de fonte, e o erro
+  resultante (`TypeError: Cannot read properties of null (reading '1')`, de dentro de
+  `@next/font/dist/google/loader.js`) não menciona rede nem sandbox — fácil de ler como um bug
+  real de código antes de investigar. Um erro desse tipo, sem relação aparente com rede, num build
+  que usa `next/font/google`, é o sintoma típico de sandbox ligada, não de regressão de código
+  (issue #502, `asengardeon/btt-sdd-pipeline`).
 - **Quem roda e onde fica registrado**: `backend-developer`/`frontend-developer` rodam esse
   comando junto da suíte completa ao final da trilha (mesmo momento da seção acima) e registram o
   resultado em `specs/<slug>/coverage/<fatia>-<trilha>.md` (campo "Build/empacotamento" do
