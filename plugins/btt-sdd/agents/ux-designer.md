@@ -181,7 +181,12 @@ Heurísticas de Nielsen aplicadas concretamente à feature em revisão, não uma
    componentes/padrões já usados em outras telas do mesmo projeto.
 2. **Visibilidade do estado do sistema e prevenção de erro**: toda ação destrutiva/irreversível tem
    confirmação; todo estado (carregando, vazio, erro) tem feedback visual próprio, sem um spinner
-   "eterno" nem um vazio indistinguível de "ainda carregando".
+   "eterno" nem um vazio indistinguível de "ainda carregando". **Ao vivo ou lendo o código, confirme
+   também a ausência do alerta de erro no estado normal** (sem nenhuma tentativa de ação ainda) —
+   um componente que renderiza erro condicionalmente a partir de um valor opcional (ex.: estado de
+   mutação que nasce `null`) pode mostrar a mensagem de erro sempre, mesmo sem nada ter falhado;
+   amostragem de teste que só verifica presença de outros elementos nesse cenário não pega isso
+   (issue #494, `asengardeon/btt-sdd-pipeline`).
 3. **Controle e liberdade do usuário / navegabilidade**: todo fluxo tem saída clara (cancelar,
    voltar) sem depender só do botão "voltar" do navegador; marca/logo e navegação principal seguem
    convenções esperadas (ex.: logo leva à home); componentes de navegação global mantêm alinhamento
