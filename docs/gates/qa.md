@@ -10,14 +10,20 @@
   ressalvas aceitas pelo usuário) — sem isso, o QA não começa. Quando a 4b roda no fim da spec
   (o padrão, `docs/SDD-WORKFLOW.md`, seção "Cadência"), este item não se aplica à fatia
   intermediária: ali a cadeia é code review → QA → merge.
-- [ ] **Em fatia intermediária, esta é a última etapa da fatia — e carrega o que o `/sdd-sre`
-  carrega na última.** Duas coisas que não são sobre infraestrutura e desapareceriam junto com a
-  etapa 7: (a) o PR sai do modo draft aqui (`gh pr ready`, mesma mecânica do passo 5d de
-  `/sdd-sre`) — sem isso o PR fica bloqueado na UI do GitHub; e (b) a **retrospectiva da fatia** é
-  conduzida aqui, com o mesmo procedimento da seção "Retrospectiva da fatia" de
-  `.claude/skills/sdd-sre/SKILL.md`, antes de informar o resultado ao usuário. "Nenhuma sugestão
-  concreta desta fatia" é conclusão válida; pular a avaliação não é. Na **última** fatia da spec
-  as duas voltam a ser do `sre`, que roda depois.
+- [ ] **Em fatia intermediária sem antecipação declarada, esta é a última etapa da fatia — e
+  carrega o que o `/sdd-sre` carrega na última.** A condição importa: se a coluna `Validação na
+  fatia` da seção 13 do TRD marca `segurança`/`ux`/`sre` para alguma tarefa desta fatia, essas
+  etapas rodam depois do QA, ainda nesta fatia (`.claude/skills/sdd-qa/SKILL.md`, passo 6, primeiro
+  caso) — e aí o QA **não** é a última etapa, as duas coisas abaixo cabem a quem rodar por último
+  de fato, não ao QA. Só quando nenhuma tarefa desta fatia antecipa nada
+  (`.claude/skills/sdd-qa/SKILL.md`, passo 6, terceiro caso) o QA herda: (a) o PR sai do modo
+  draft aqui (`gh pr ready`,
+  mesma mecânica do passo 5d de `/sdd-sre`) — sem isso o PR fica bloqueado na UI do GitHub; e (b) a
+  **retrospectiva da fatia** é conduzida aqui, com o mesmo procedimento da seção "Retrospectiva da
+  fatia" de `.claude/skills/sdd-sre/SKILL.md`, antes de informar o resultado ao usuário. "Nenhuma
+  sugestão concreta desta fatia" é conclusão válida; pular a avaliação não é. Na **última** fatia
+  da spec as duas voltam a ser do `sre`, que roda depois (issue #503,
+  `asengardeon/btt-sdd-pipeline`).
 - [ ] **A aprovação de code review vigente cobre o HEAD atual da branch.** Não basta
   `code-review.md` existir aprovado: `git diff --name-only <sha da rodada que aprovou>..HEAD --
   <diretórios de produção>` tem de ser **vazio**. Se não for, esta etapa não começa — roda-se uma
@@ -73,6 +79,8 @@
   **integrados na branch da fatia** por quem o invocou (`git merge --ff-only` da branch informada,
   artefato confirmado alcançável). **O push não é por etapa**: é um por fatia
   (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia"). **Em fatia intermediária, é esta etapa
-  que faz esse push único** — mais o `gh pr ready` e a retrospectiva, conforme o item acima.
-  Commit e integração continuam obrigatórios: artefato que não chega à branch é o que este item
-  existe para impedir.
+  que faz esse push único só quando o QA é de fato a última etapa de revisão da fatia** — nenhuma
+  tarefa dela antecipou `segurança`/`ux`/`sre` (item acima, e `.claude/skills/sdd-qa/SKILL.md`,
+  passo 6). Se alguma antecipou, quem fizer o push é quem rodar por último de verdade, não o QA
+  só porque rodou primeiro. Commit e integração continuam obrigatórios: artefato que não chega à
+  branch é o que este item existe para impedir.
