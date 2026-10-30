@@ -136,6 +136,20 @@ das 6 áreas a cada rodada intermediária que só confirma uma correção já ap
    verificada em todo caminho relevante, não só na UI/adapter de entrada mais óbvio.
 5. **Validação de entrada**: toda fronteira de confiança (parâmetro de CLI, campo de request,
    payload de evento) valida antes de usar — nunca confia implicitamente em dado externo.
+   **Ao revisar uma correção que introduz um `match`/validação fechada sobre um valor recebido
+   como parâmetro (não um literal), rastreie esse valor até a origem real (requisição HTTP,
+   upload, cabeçalho) antes de considerar a correção completa.** O fail-closed do `match` dá uma
+   falsa sensação de completude ("qualquer coisa fora do esperado já lança") quando o problema real
+   pode ser que o próprio valor de entrada seja forjável por quem envia a requisição — pergunte
+   explicitamente "este valor pode ser forjado, e o que acontece quando ele diverge do que a
+   validação de entrada já esperava?". Simetricamente, toda vez que a correção introduz um novo
+   caminho de exceção (`throw`) sobre uma entrada que pode legitimamente variar, confirme que existe
+   um `catch` real no caminho de chamada antes de aprovar — um `throw` sem `catch` em produção não é
+   fail-closed seguro, é erro não classificado (ADR 0005, quando este projeto tiver um ADR
+   equivalente). Já aconteceu de verdade: a correção usava `getClientMimeType()` (header forjável
+   pelo cliente) em vez de `getMimeType()` (detecção por conteúdo), e a exceção do `match` fechado
+   nunca era capturada em nenhum ponto da cadeia, produzindo um `500` não controlado em vez do `422`
+   esperado (issue #495, `asengardeon/btt-sdd-pipeline`).
 6. **Dependências**: verifique o manifesto de dependências (`pyproject.toml` ou equivalente) por
    pacotes com vulnerabilidade conhecida que você conseguir identificar com as ferramentas
    disponíveis; se não houver scanner automatizado configurado no CI, sinalize isso como
