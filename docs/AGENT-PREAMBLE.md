@@ -48,6 +48,19 @@ projeto **não** desliga um gate crítico de `docs/gates/governanca.md` (ex.: di
 segurança, baixar cobertura mínima sem decisão registrada); se parecer que é o caso, pergunte em
 vez de aplicar.
 
+**Antes de nomear uma convenção deste projeto pelo nome num artefato de revisão ("este projeto usa
+a cadência X"), `grep` a linha exata de `docs/PROJECT-CONVENTIONS.md` que a registra — nunca
+assuma que ela existe porque uma rodada anterior da mesma spec já a nomeou daquele jeito.** Ao
+explicar por que um comportamento observado aconteceu (ex.: um passo caro de CI ficou `skipped`),
+cite o mecanismo real pelo nome do job/step (`gh api .../jobs` ou equivalente) **e**, só se for
+atribuí-lo a uma convenção nomeada do projeto, cite a linha exata que a registra. Já aconteceu de
+verdade: uma convenção nomeada (`ci-antes-do-merge`) nunca existiu em `docs/PROJECT-CONVENTIONS.md`
+— o comportamento observado era real, mas produzido por um mecanismo diferente, já existente antes
+da spec. A primeira rodada da spec descreveu o mecanismo certo em prosa; a partir da rodada
+seguinte, cada artefato citou o nome errado herdado da rodada anterior, sem nenhuma conferir a
+fonte primária, porque "o comportamento observado bate" tornava a citação parecer verificada
+(issue #499, `asengardeon/btt-sdd-pipeline`).
+
 **Ao citar um artefato de investigação como base de uma ressalva, verifique a marcação
 `[medido]`/`[inferido]` da frase que você está usando** (`agents/architect.md`, item 1c). Uma
 ressalva apoiada em `[inferido]` declara isso — e, quando a medição for barata e o ambiente
