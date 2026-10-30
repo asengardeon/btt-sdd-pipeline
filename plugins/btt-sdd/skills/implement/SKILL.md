@@ -117,6 +117,18 @@ assim:
    é por trilha (`docs/TESTING.md`, bullet "O frescor é por trilha, nunca global"). O inverso vale
    igual. A exceção é o caminho **compartilhado** pelas duas trilhas (contrato gerado, pacote
    comum, esquema): ali as duas suítes rodam, porque o código que as duas consomem mudou de fato.
+3a-ter. **Antes de confiar num CI vermelho/verde desta fatia como definitivo, confirme que a
+   branch ainda está sincronizada com `main`** — `git fetch origin main && git merge-base
+   --is-ancestor origin/main <branch-da-fatia>`; se retornar falso, sincronize primeiro (`git
+   merge origin/main`, nunca rebase — `docs/GIT-WORKFLOW.md`, seção "Sincronizar a branch da
+   fatia com `main`") e só então interprete o resultado. As quatro skills de revisão
+   (`/btt-sdd:code-review`/`/btt-sdd:qa`/`/btt-sdd:security`/`/btt-sdd:sre`) já têm esse gate
+   embutido (passo 2b de cada uma), mas correção pontual conduzida diretamente aqui, fora dessas
+   quatro skills, não passa por ele — um hotfix mergeado em `main` durante esta correção fica
+   invisível até a próxima invocação de uma delas. Um CI vermelho pode ter duas causas simultâneas
+   (flakiness real + desincronização real); resolver a primeira não prova que a segunda não existe
+   (`docs/GIT-WORKFLOW.md`, mesma seção, para o caso real que motivou esta regra — issue #525,
+   `asengardeon/btt-sdd-pipeline`).
 3b. **Registre esta invocação em `specs/<slug>/timing-log.md` também**, mesmo sendo uma correção ou
    reverificação pontual fora dos passos numerados 1-5 (etapa "Correção pontual" ou "Reverificação
    pontual", agente, fatia) — mesmo mecanismo do passo 5a abaixo (horário de início antes de
