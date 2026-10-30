@@ -278,6 +278,12 @@ relatório para nenhuma linha**, inclusive as bem-sucedidas.
    como MINOR, pego só na última etapa do pipeline. Se o TRD não declara quebra nesta fatia, marque
    como "não aplicável" — não invente uma quebra que o desenho não previu; mas se você **encontrar**
    no diff uma quebra que o TRD não declarou, isso é um achado por si só.
+13. **Mudança de texto/comportamento observável de uma tela/fluxo que já existia antes desta spec
+   começar**: confirme que o dev fez (ou faça você mesmo) `grep` nos testes e2e de TODAS as specs
+   — não só a atual — por referência àquele texto/seletor antigo. O mecanismo "e2e completo só na
+   última fatia de uma spec" (`docs/CI-WORKFLOW.md`) deixa um e2e de spec anterior quebrado sem
+   nenhum CI notar por várias fatias, até a spec atual chegar na própria última fatia (issue #489,
+   `asengardeon/btt-sdd-pipeline`).
 
 **Controle que repousa sobre premissa nunca validada: conte os consumidores ao propagar.** Quando um
 achado seu **propaga** um controle (guard, marcador, seletor, código de erro) que se apoia numa
