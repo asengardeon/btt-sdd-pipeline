@@ -69,3 +69,42 @@ rtk gain                                       # confirma que está funcionando 
 
 Isso é uma recomendação, não um gate — nenhuma etapa deste pipeline falha ou bloqueia por rtk
 ausente, e nenhum PRD/TRD precisa mencioná-lo. É puramente uma otimização de custo de sessão.
+
+## Ferramentas de análise estática e segurança (economia de token + rigor determinístico)
+
+O `rtk` acima resolve tamanho de *saída*. Esta seção resolve um desperdício diferente: várias
+etapas de revisão (`security-engineer`, `sre`, `code-reviewer`) recalculam "de cabeça" —
+relendo código e tentando lembrar padrões — verificações que uma ferramenta determinística
+resolve em segundos (padrão OWASP conhecido, segredo em texto claro, CVE de dependência, má
+prática de Dockerfile/Terraform, violação estrutural de import). Rodar a ferramenta primeiro
+converte parte da área de revisão em achado já pronto para triar, em vez de análise do zero —
+menos tokens gastos recomputando, e menos risco de o agente alucinar um padrão/CVE que a
+ferramenta já cataloga com precisão. Mesma convenção do `rtk` em todas: **recomendação, nunca
+gate** — nenhuma etapa bloqueia pela ausência do binário, e a verificação manual que a ferramenta
+cobriria continua exigida quando ela não está disponível.
+
+| Ferramenta | Usada por | Área | O que resolve | Diagnóstico |
+|---|---|---|---|---|
+| [gitleaks](https://github.com/gitleaks/gitleaks) | `security-engineer` | Gestão de segredos | Segredo/chave/token em texto claro no diff | `python scripts/check-gitleaks.py` |
+| [semgrep](https://semgrep.dev) | `security-engineer` | OWASP Top 10 | Padrão de vulnerabilidade conhecido (injeção, config insegura etc.) | `python scripts/check-semgrep.py` |
+| [osv-scanner](https://github.com/google/osv-scanner) | `security-engineer` | Dependências | CVE conhecida no manifesto de dependências, via base OSV | `python scripts/check-osv-scanner.py` |
+| [hadolint](https://github.com/hadolint/hadolint) | `sre` | Docker | Má prática de `Dockerfile` (usuário root, camada de build vazando, etc.) | `python scripts/check-hadolint.py` |
+| [checkov](https://github.com/bridgecrewio/checkov) | `sre` | Terraform | Má prática de IaC (segredo em `.tf`, recurso exposto, state local, etc.) | `python scripts/check-checkov.py` |
+| [ast-grep](https://ast-grep.github.io) | `code-reviewer` | Ports & Adapters | Violação estrutural da regra da dependência, mesmo com alias/caminho que `grep` textual perde | `python scripts/check-ast-grep.py` |
+
+Cada script de diagnóstico segue o mesmo formato do `check-rtk.py`: reporta se o binário está no
+PATH e sua versão, sem bloquear nada. Como o `rtk`, nenhum desses scripts é distribuído com o
+plugin nem com projetos criados via `/create-project` — são diagnóstico deste repositório; quem
+usa o pipeline em outro projeto roda `<ferramenta> --version` diretamente para o mesmo fim.
+
+Instalação (uma vez por máquina, não por projeto — como qualquer CLI):
+
+```bash
+brew install gitleaks semgrep osv-scanner hadolint checkov ast-grep   # macOS / Linux
+
+winget install gitleaks.gitleaks                                      # Windows, um por vez
+winget install Hadolint.Hadolint
+pipx install semgrep
+pipx install checkov
+# osv-scanner e ast-grep no Windows: ver instruções em cada projeto (go install / npm install -g)
+```
