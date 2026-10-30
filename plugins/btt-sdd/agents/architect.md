@@ -286,7 +286,17 @@ não se aplica.
    aspas com `'a' \| 'b'` fez o parser contar colunas a mais e ler o Status errado, reportando uma
    fatia já mergeada como pendente). Se precisar mesmo citar um valor com `|` (union type, opções
    separadas por barra), reescreva como prosa (`'a', 'b' ou 'c'`) ou use a entidade HTML `&#124;`
-   quando a barra for genuinamente necessária no texto renderizado. **Para cada
+   quando a barra for genuinamente necessária no texto renderizado. **Toda tarefa que desenha uma
+   porta/adapter de saída nova que fala com um serviço externo e introduz variável(is) de ambiente
+   nova(s) tem, como critério de aceite explícito no texto da tarefa, "variáveis de ambiente novas
+   adicionadas a `.env.example` e ao validador de ambiente desta stack (ou equivalente)" — não só
+   documentar a variável em prosa na seção de infraestrutura.** Documentar a *existência* da
+   variável não garante que ela entre no mecanismo de fail-fast: sem esse critério de aceite
+   explícito, nenhuma das rodadas de revisão que passam pelo mesmo código (code review, QA,
+   segurança) tem motivo para verificar a ausência, porque "a variável está documentada no TRD" já
+   parece suficiente para cada revisor confirmar que a tarefa está completa — até um primeiro
+   deploy real falhar de forma obscura na primeira requisição que precisar da variável ausente, em
+   vez de falhar rápido na release phase (issue #498, `asengardeon/btt-sdd-pipeline`). **Para cada
    tarefa que implementa um critério de aceite já mapeado na seção 6 deste TRD (tabela de
    critérios de aceite/casos de uso)**, referencie o critério diretamente no texto da tarefa (ex.:
    "conforme US-2, seção 6") em vez de reformulá-lo livremente — uma paráfrase resumida cria uma
