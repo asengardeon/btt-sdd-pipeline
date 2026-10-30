@@ -188,6 +188,15 @@ relatório para nenhuma linha**, inclusive as bem-sucedidas.
      seção "Fidelidade do dublê derivado de captura real: página inteira e locator estrito") — um
      seletor inequívoco no dublê pode ser ambíguo no sistema real, e aí a API não estrita clica
      silenciosamente no elemento errado em vez de falhar.
+     **Componente que renderiza uma região de erro/alerta/aviso condicionalmente a partir de um
+     valor opcional** (ex.: `useMutation().error` nasce `null`, um VO opcional, um campo de
+     resposta HTTP ausente): confira se existe pelo menos um teste que afirma a **ausência** desse
+     elemento no estado "sem erro ainda" — não só a presença de outro elemento qualquer nesse
+     mesmo cenário. A amostragem tende a verificar só presença ("o formulário mostra o campo X"),
+     nunca ausência, e um alerta falso-positivo sempre visível (ex.: mensagem de erro renderizada
+     mesmo sem nenhuma tentativa de submissão) só aparece quando alguém testa a ausência
+     explicitamente. Lacuna de cobertura é achado por si só, mesmo que o bug ainda não tenha se
+     manifestado (issue #494, `asengardeon/btt-sdd-pipeline`).
 5. **Consistência com o contrato Frontend↔Backend do TRD**, quando a feature é full-stack: o
    adapter de entrada do backend implementa exatamente o que o TRD prometeu; o client do frontend
    consome exatamente isso, sem campo/rota inventado por qualquer um dos dois lados. **Quando a UI
