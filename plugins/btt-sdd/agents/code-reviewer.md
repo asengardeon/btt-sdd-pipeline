@@ -301,6 +301,14 @@ relatório para nenhuma linha**, inclusive as bem-sucedidas.
    detecção por conteúdo). Confirme também que qualquer `throw` novo introduzido pela correção tem
    um `catch` real no caminho de chamada — sem isso, "fail-closed seguro" é na verdade "erro não
    classificado" em produção (issue #495, `asengardeon/btt-sdd-pipeline`).
+15. **Ao revisar uma correção de condição de corrida com lock (`SELECT ... FOR UPDATE` ou
+   equivalente), `grep` por TODO `UPDATE ... WHERE status = ` (ou equivalente) que escreve na
+   mesma linha protegida pelo lock, e confirme que cada um confere linhas afetadas antes de
+   reportar sucesso — não só o `UPDATE` que motivou a correção original.** Mesmo achado que
+   `security-engineer.md` cobre (área 10) — aqui, segunda linha de defesa: o lado que **perde** a
+   corrida depois do lock tem o próprio risco de devolver sucesso silenciosamente para uma
+   operação sem efeito nenhum. Checar "quantas linhas um `UPDATE` afetou" é, em si, uma checagem
+   de concorrência (issue #496, `asengardeon/btt-sdd-pipeline`).
 
 **Controle que repousa sobre premissa nunca validada: conte os consumidores ao propagar.** Quando um
 achado seu **propaga** um controle (guard, marcador, seletor, código de erro) que se apoia numa

@@ -195,6 +195,16 @@ das 6 áreas a cada rodada intermediária que só confirma uma correção já ap
    arquivo de produção fica intocado; os testes temporários são revertidos antes do push. Registre
    no relatório qual dos dois métodos você usou e por quê — um veredito de isolamento sem medição
    nenhuma nunca é apresentado como equivalente aos dois.
+10. **Ao revisar/corrigir uma condição de corrida com lock (`SELECT ... FOR UPDATE` ou
+   equivalente), `grep` por TODO `UPDATE ... WHERE status = ` (ou equivalente) que escreve na
+   mesma linha protegida pelo lock, e confirme que cada um confere linhas afetadas antes de
+   reportar sucesso — não só o `UPDATE` que motivou a correção original.** O lock resolve o lado
+   que motivou o achado; o lado que **perde** a corrida depois do lock tem o próprio risco:
+   silenciosamente devolver sucesso para uma operação que, na prática, não teve efeito nenhum
+   (a linha já tinha sido alterada pelo concorrente). Checar "quantas linhas um `UPDATE` afetou" é,
+   em si, uma checagem de concorrência — ignorá-la em qualquer lado de uma corrida reintroduz
+   silenciosamente a classe de bug que o lock do outro lado acabou de fechar (issue #496,
+   `asengardeon/btt-sdd-pipeline`).
 
 **Controle que repousa sobre premissa nunca validada: conte os consumidores ao propagar.** Quando um
 achado seu **propaga** um controle (guard, marcador, seletor, código de erro) que se apoia numa
