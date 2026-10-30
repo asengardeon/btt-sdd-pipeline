@@ -61,6 +61,21 @@ seguinte, cada artefato citou o nome errado herdado da rodada anterior, sem nenh
 fonte primária, porque "o comportamento observado bate" tornava a citação parecer verificada
 (issue #499, `asengardeon/btt-sdd-pipeline`).
 
+**Antes de repetir "mecanismo X já existe desde a spec Y, inalterado" para evitar reverificação
+redundante, confirme se alguma migração de stack/framework/linguagem aconteceu desde a spec Y**
+(`grep` em `docs/adr/` por ADRs de migração/reescrita). Citar um mecanismo como "já existente e
+inalterado" é uma economia de tempo/contexto geralmente correta — mas só é segura quando nada
+mudou estruturalmente desde a spec que o introduziu, e uma migração de stack é justamente o tipo
+de evento que invalida essa premissa. Se houver migração desde Y, a citação exige reverificação
+por leitura direta do código atual antes de ser repetida — nunca repetição verbatim da rodada
+anterior. Já aconteceu de verdade: um mecanismo de log estruturado por requisição, implementado
+na stack original, nunca foi portado numa migração de linguagem/framework que não mencionou
+observabilidade em nenhuma linha — e quatro rodadas de SRE consecutivas, em quatro specs
+diferentes já na stack nova, afirmaram que ele "já existia desde a spec original, inalterado",
+cada rodada tornando a descrição mais específica que a anterior sem nenhuma verificar contra o
+código real pós-migração. Só a quinta rodada a citar a afirmação verificou e descobriu que o
+mecanismo nunca existiu na stack nova (issue #527, `asengardeon/btt-sdd-pipeline`).
+
 **Ao citar um artefato de investigação como base de uma ressalva, verifique a marcação
 `[medido]`/`[inferido]` da frase que você está usando** (`agents/architect.md`, item 1c). Uma
 ressalva apoiada em `[inferido]` declara isso — e, quando a medição for barata e o ambiente
