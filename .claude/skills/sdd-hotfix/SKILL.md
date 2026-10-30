@@ -73,6 +73,17 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    implementação" — já aconteceu de a implementação sair correta nos N pontos, mas só alguns
    ganharem teste de integração dedicado ao novo caminho, achado só pelo `code-reviewer` numa
    rodada extra de correção evitável.
+   **Se a correção toca o boot/bootstrap de um serviço, pergunte explicitamente (ou confira você
+   mesmo) se este projeto documenta mais de um manifesto de boot para esse serviço** (ex.:
+   `entrypoint.sh` de Docker local **e** `Procfile`/release phase de Heroku, ou qualquer par
+   local vs. produção real do mesmo serviço — `docs/PROJECT-CONVENTIONS.md`/`Dockerfile` costumam
+   documentar essa relação quando existe). Se sim, inclua explicitamente na instrução: "aplique a
+   correção a **todos** os manifestos de boot, com um teste que force paridade entre eles (ex.:
+   parsing + comparação das duas sequências de comandos)" — a implementação correta contra o
+   ambiente de desenvolvimento local (o único que o agente exercita de verdade ao testar) não
+   garante que o manifesto que só roda em produção real recebeu a mesma correção, porque o
+   ambiente de teste do agente nunca exercita esse segundo caminho (issue #505,
+   `asengardeon/btt-sdd-pipeline`).
    Ainda assim, apresente esse plano mínimo ao usuário via `AskUserQuestion` antes do primeiro
    commit (mesmo gate de aprovação de sempre, só que sobre um escopo bem menor). **Se o plano
    envolve mutação real de infraestrutura/config vars de produção ou geração deliberada de
