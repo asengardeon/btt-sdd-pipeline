@@ -548,6 +548,27 @@ merge* (regra 6), então a história interna da branch vira um commit único de 
 commit de merge trivial tocando artefato de spec não chega a `main`. Rebase aqui não compra
 legibilidade; só paga o risco do força-push.
 
+**O gatilho para checar esta sincronização não é "estou invocando `/btt-sdd:code-review`/
+`/btt-sdd:qa`/`/btt-sdd:security`/`/btt-sdd:sre`" — é "um hotfix pode ter mergeado em `main` desde
+que esta branch nasceu, e estou prestes a confiar num resultado de CI dela".** As quatro skills de
+revisão têm esse gate embutido (passo 2b de cada uma), mas ele só dispara quando uma delas é
+invocada. Quando o orquestrador corrige achados **diretamente** (retomando `backend-developer`/
+`frontend-developer` fora dessas quatro skills — `skills/implement/SKILL.md`, seção "Retomando
+para corrigir achados de revisão"), nenhum gate equivalente existe, e um hotfix mergeado em `main`
+nesse intervalo fica invisível até a próxima invocação de uma das quatro skills — que pode ser
+depois de várias rodadas de correção. Pior: um CI vermelho nesse estado pode ter **duas causas
+simultâneas** (flakiness real + desincronização real) — resolver a primeira (confirmando
+flakiness por rerun) não prova que a segunda não existe, são independentes. Antes de confiar num
+CI vermelho/verde da fatia como definitivo, em qualquer ponto do ciclo de correção — não só nas
+quatro skills —, rode `git fetch origin main && git merge-base --is-ancestor origin/main
+<branch-da-fatia>`; se retornar falso, sincronize primeiro (`git merge origin/main`, nunca
+rebase) e só então interprete o resultado do CI. Já aconteceu de verdade: dois hotfixes mergearam
+em `main` enquanto uma fatia continuava em correções próprias; o job de build mostrou vermelho por
+flakiness real (confirmada por rerun) e o job de e2e mostrou vermelho por 4 falhas deterministas
+não relacionadas ao diff da fatia — quase descartadas como "mais flakiness" pela mesma lógica que
+resolveu o build, até a branch se revelar 2 merges atrás de `main` (issue #525,
+`asengardeon/btt-sdd-pipeline`).
+
 **Antes de rebasear/forçar push manualmente sobre uma branch que múltiplos agentes concorrentes já
 tocaram** (qualquer branch de fatia que já passou por 2+ rodadas de revisão, cada uma em worktree
 separado) — risco maior que o da sincronização de rotina acima, porque aqui é o orquestrador
