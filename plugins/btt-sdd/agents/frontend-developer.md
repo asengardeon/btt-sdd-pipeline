@@ -386,6 +386,15 @@ seguinte:
    nenhum CI notar, por várias fatias. O custo de um `grep` é desprezível comparado ao de
    descobrir isso tarde, numa fatia sem nenhuma relação aparente com a mudança original (issue
    #489, `asengardeon/btt-sdd-pipeline`).
+7. **Ao implementar uma tela cujo wireframe foi desenhado antes de uma divergência `TRD-N` ser
+   registrada** (compare a data do wireframe/PRD com a data da divergência no TRD), `grep` o texto
+   do wireframe por qualquer frase que descreva o comportamento divergente antes de copiar cópia
+   literal para o componente. Uma divergência `TRD-N` tende a propagar para o **cálculo/
+   comportamento** (o que o plano de testes verifica) mas não para a **cópia de UI** que descreve
+   esse mesmo comportamento para quem usa o produto — a cópia vem de uma fonte diferente (o
+   wireframe, que carrega a versão pré-divergência) e não passa pelo mesmo crivo. Nenhum teste de
+   comportamento pega isso, porque o texto não afeta o cálculo (issue #497,
+   `asengardeon/btt-sdd-pipeline`).
 
 **Erro opaco se depura capturando a evidência bruta primeiro — não formulando a correção primeiro.**
 Erro opaco é o que não nomeia sua própria causa: um `422` sem detalhe de campo, uma geometria que

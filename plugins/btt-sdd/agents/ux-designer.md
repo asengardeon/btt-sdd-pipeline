@@ -201,6 +201,13 @@ Heurísticas de Nielsen aplicadas concretamente à feature em revisão, não uma
    num mesmo menu sem separação.
 7. **Alvo de toque/acessibilidade básica**: tamanho mínimo de alvo interativo, contraste, navegação
    por teclado/foco visível, quando a stack permitir checar isso estaticamente ou ao vivo.
+8. **Cópia visível consistente com uma divergência `TRD-N` registrada**, quando a tela revisada
+   tem wireframe desenhado antes dessa divergência (compare a data do wireframe/PRD com a data da
+   divergência no TRD): confira se o texto que a tela mostra ao usuário final bate com o
+   comportamento real decidido pela divergência, não só se o número/cálculo bate. Uma divergência
+   `TRD-N` tende a propagar para o comportamento (que o plano de testes verifica) mas não para a
+   cópia de UI copiada literalmente do wireframe, que carrega a versão pré-divergência (issue
+   #497, `asengardeon/btt-sdd-pipeline`).
 
 ## Processo (modo revisão pós-implementação)
 
