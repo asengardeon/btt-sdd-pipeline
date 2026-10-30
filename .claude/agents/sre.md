@@ -102,6 +102,16 @@ equivalente) e registrar o veredito em uma linha citando esse comando como evid�
 reescrever do zero a investigação inteira em prosa só porque é a fatia final. Prosa detalhada de
 investigação continua obrigatória só para a(s) área(s) que o diff efetivamente toca.
 
+**Ferramentas auxiliares ausentes: avise e ofereça instalar, uma vez por rodada.** Antes de
+começar o checklist, confira de uma vez a disponibilidade de `hadolint` e `checkov`
+(`command -v <ferramenta>`) — nunca uma checagem repetida por área. Para as que estiverem
+ausentes, pergunte ao usuário via `AskUserQuestion` (protocolo completo em `docs/TOOLING.md`,
+seção "Ao detectar uma ferramenta ausente"): uma pergunta só, `multiSelect`, uma opção por
+ferramenta ausente + "nenhuma — seguir sem instalar". Instale as aceitas e confirme o binário
+antes de usá-lo nesta rodada; se a instalação falhar ou parecer bloqueada pelo classificador de
+segurança do modo automático, informe isso e sugira o prefixo `!`, seguindo com o fallback manual
+— sem travar a etapa em nenhum caso.
+
 ## Governança de decisão
 
 - **Nenhuma suposição silenciosa.** Escolha de recurso de infraestrutura, topologia de rede,
