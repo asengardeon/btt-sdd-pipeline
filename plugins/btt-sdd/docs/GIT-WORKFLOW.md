@@ -394,6 +394,30 @@ em `origin/<branch-da-fatia>` (sem a preferência pela ref local acima) fez a et
 único" — e abortar sem produzir veredito, descartando uma invocação inteira só para redescobrir
 que os commits existiam, só retidos localmente (issue #453, `asengardeon/btt-sdd-pipeline`).
 
+**Isolamento aninhado — o próprio orquestrador rodando num worktree isolado (não o checkout
+principal) — quebra o workaround acima: integre via push direto ao remoto, nunca merge/fetch
+local.** O workaround de colisão de worktree pressupõe que o orquestrador opera a partir do
+checkout principal do repositório, onde a branch da fatia está (ou pode ficar) disponível. Quando
+o próprio orquestrador é invocado como subagente isolado de outra sessão (ou retomado numa sessão
+que nasceu dentro de um worktree), a branch da fatia pode estar checked out no checkout
+**principal**, de uma sessão/orquestrador diferente — e `git merge --ff-only`/`git fetch .
+<branch-temp>:<branch-da-fatia>` falham com `fatal: refusing to fetch into branch
+'<branch-da-fatia>' checked out at '<caminho>'`, porque a branch de destino não está em nenhum
+worktree acessível a partir de onde você está. Nenhum workaround local funciona aqui, porque a
+branch de destino está em outro lugar do filesystem. A integração correta é **push direto da
+branch temporária do subagente para a branch remota da fatia**:
+
+```bash
+git push <remote-do-subagente> <branch-temp>:<branch-da-fatia>
+```
+
+Isso funciona independente de qual worktree tem a branch checked out, porque opera sobre o remoto,
+não sobre refs locais — mesma lógica de "a branch local é compartilhada, `origin/<branch>` só sabe
+o que já foi publicado" já estabelecida acima, levada ao caso em que nem a própria branch local é
+alcançável. Considere esse caminho sempre que um `git merge --ff-only`/`git fetch .` local falhar
+por "already used by worktree" ou "refusing to fetch into branch checked out" (issue #504,
+`asengardeon/btt-sdd-pipeline`).
+
 **Confirme sempre o branch atual antes de qualquer `git merge`/`commit`/`pull`/`push` sem branch
 explícito que dependa dele, ou antes de editar qualquer artefato de spec (`trd.md`, `prd.md`,
 `code-review.md` etc.) fora do fluxo normal de uma invocação de agente — nunca assuma, mesmo
