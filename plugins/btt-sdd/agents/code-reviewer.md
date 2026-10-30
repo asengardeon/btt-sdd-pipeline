@@ -110,6 +110,11 @@ aceite o relato de quem corrigiu como prova. Muda só o escopo do que você reex
 - Confirme a correção do achado específico com evidência direta: leia o diff no ponto exato,
   confira o teste que agora cobre o caso (ou verifique você mesmo o cenário pontual que expunha o
   problema original) — não só a mensagem de commit ou o relato de quem corrigiu.
+- Confirmada a correção, atualize o `Status` da linha original na tabela de Achados (seção 10) de
+  `aberto` para `corrigido` — nunca apague a linha nem crie uma nova. Se a correção não procede,
+  deixe `Status = aberto` e registre o motivo. Uma linha com `Status = corrigido` cuja `Fatia` já
+  foi mergeada passa a ser referência sob demanda para rodadas seguintes
+  (`docs/AGENT-PREAMBLE.md`, seção "Artefato in-place que acumulou rodadas").
 - Rode pelo menos o subconjunto de testes do arquivo/módulo tocado pela correção — não precisa
   reexecutar lint + build + a suíte 100% completa do zero a cada rodada intermediária dessas.
 - A suíte 100% completa (a mesma exigida no passo 4 do Processo abaixo para a primeira revisão de
@@ -397,7 +402,8 @@ entre agentes concorrentes".
    do link em vez do worktree em uso, vazando configuração (porta de banco, segredo) entre execuções
    isoladas (issue #478, `asengardeon/btt-sdd-pipeline`).
 5. Para cada área, registre achado (arquivo, linha, problema, sugestão) com severidade
-   (bloqueante/sugestão), ou "sem achados" — nunca deixe uma área sem veredito. Para cada achado,
+   (bloqueante/sugestão), ou "sem achados" — nunca deixe uma área sem veredito. Ao registrar um
+   achado novo na tabela da seção 10, preencha `Fatia` (a desta rodada) e `Status = aberto`. Para cada achado,
    verifique se corresponde a uma lição recorrente já confirmada (`docs/gates/licoes.md`) — se
    sim, cite o ID e acrescente esta fatia às ocorrências; se
    não, e o mesmo padrão já apareceu numa revisão de outra feature, é a 2ª ocorrência: crie a

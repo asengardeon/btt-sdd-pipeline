@@ -105,6 +105,11 @@ prova. Muda só o escopo do que você reexecuta nessa rodada:
 - Confirme a correção do achado específico com evidência direta: leia o teste que agora cobre o
   caso, ou rode você mesmo o cenário pontual que expunha o problema original — não só a mensagem
   de commit.
+- Confirmada a correção, atualize o `Status` da linha original na tabela de Achados (seção 6) de
+  `aberto` para `corrigido` — nunca apague a linha nem crie uma nova. Se a correção não procede,
+  deixe `Status = aberto` e registre o motivo. Uma linha com `Status = corrigido` cuja `Fatia` já
+  foi mergeada passa a ser referência sob demanda para rodadas seguintes
+  (`docs/AGENT-PREAMBLE.md`, seção "Artefato in-place que acumulou rodadas").
 - Rode pelo menos o subconjunto de testes do arquivo/módulo tocado pela correção — não precisa
   reexecutar a suíte 100% completa com cobertura a cada rodada intermediária dessas.
 - A suíte 100% completa (a mesma dos passos 2/2b abaixo para a primeira validação de uma fatia) só
@@ -145,6 +150,8 @@ principal ficou atrás do remoto** — quem orquestra precisa de `git pull` ante
 o artefato direto do remoto. Detalhe em `docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree
 entre agentes concorrentes".
 
+0. Ao registrar um achado novo na tabela da seção 6 de `qa-report.md`, preencha `Fatia` (a desta
+   rodada) e `Status = aberto`.
 1. Leia `specs/<slug>/prd.md` e `specs/<slug>/trd.md`, identifique a fatia sendo validada nesta
    rodada e o PR correspondente. Extraia só os critérios de aceite cobertos por essa fatia. Leia
    também `docs/LESSONS-LEARNED.md`, se existir. Ao avaliar a correção de um teste que era instável,

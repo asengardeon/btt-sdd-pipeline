@@ -648,7 +648,13 @@ entre agentes concorrentes".
    `docs/LESSONS-LEARNED.md` seguindo o critério daquela seção. Preencha também `Profundidade`
    (`completo` se esta rodada revisou o checklist por completo — sempre o caso na fatia final —
    ou `fast-path` se alguma área foi condensada) e `Commit` (`git rev-parse HEAD` no momento desta
-   revisão) nas colunas correspondentes. Atualize também, no TRD, a coluna Status das tarefas
+   revisão) nas colunas correspondentes. Se o veredito for "aprovado com ressalvas" ou
+   "reprovado", registre cada item pendente na tabela da seção 7 ("Pendências"), preenchendo
+   `Fatia` (a desta rodada) e `Status = aberto`. Ao reverificar uma pendência de rodada anterior e
+   confirmar sua resolução, atualize o `Status` da linha original para `resolvido` — nunca apague
+   a linha nem crie uma nova; uma linha `resolvido` cuja `Fatia` já foi mergeada passa a ser
+   referência sob demanda para rodadas seguintes (`docs/AGENT-PREAMBLE.md`, seção "Artefato
+   in-place que acumulou rodadas"). Atualize também, no TRD, a coluna Status das tarefas
    desta fatia: `aprovado` se o veredito geral for aprovado (ou aprovado com ressalvas), ou
    `bloqueado` (com o motivo em uma linha) se reprovado.
    **Nunca marque ✅ um item de checklist com qualquer sub-condição dele falhando** — mesmo que o

@@ -72,10 +72,16 @@ Pacotes novos/alterados no manifesto de dependências, e qualquer vulnerabilidad
 identificável com as ferramentas disponíveis. Se não há scanner automatizado no CI, recomende
 (sem implementar aqui).
 
-## 8. Achados (se reprovado ou aprovado com ressalvas)
+## 8. Achados (acumulado entre fatias — nunca recriado do zero)
 
-| # | Área | Esperado | Observado | Severidade |
-|---|------|----------|-----------|------------|
+Uma linha por achado, nunca removida — ao corrigir, atualize o `Status` da própria linha em vez
+de apagá-la ou duplicá-la. Achado com `Status = corrigido` cuja `Fatia` já foi mergeada é
+referência sob demanda, não leitura obrigatória nas rodadas seguintes (`docs/AGENT-PREAMBLE.md`,
+seção "Artefato in-place que acumulou rodadas"). Achado `aberto` continua leitura obrigatória todo
+round, mesmo que de uma fatia anterior.
+
+| # | Fatia | Área | Esperado | Observado | Severidade | Status |
+|---|-------|------|----------|-----------|------------|--------|
 
 ## 9. Pendências de validação (VALIDAR DEPOIS)
 
