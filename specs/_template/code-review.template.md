@@ -23,9 +23,13 @@ arquivo.
 Uma linha por rodada de revisão (uma por fatia) — nunca sobrescreva o veredito de uma fatia já
 aprovada e mergeada, acrescente uma linha nova.
 
-| Fatia | PR      | Veredito | Data |
-|-------|---------|----------|------|
-| F-1   | `<link>` | `<veredito>` | `<data>` |
+| Fatia | PR      | Veredito | Profundidade | Data |
+|-------|---------|----------|---------------|------|
+| F-1   | `<link>` | `<veredito>` | `<completo\|fast-path>` | `<data>` |
+
+`Profundidade`: `fast-path` se alguma área (6, 8 ou 9) foi condensada por `git diff --stat` nesta
+rodada, `completo` se todas as áreas foram revisadas por completo — as áreas estruturais (2–5, 7)
+nunca entram no fast path, então `fast-path` aqui nunca significa "menos rigor" nelas.
 
 ## 2. Ports & Adapters / regra da dependência
 
