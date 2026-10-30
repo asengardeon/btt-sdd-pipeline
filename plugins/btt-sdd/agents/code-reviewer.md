@@ -293,6 +293,14 @@ relatório para nenhuma linha**, inclusive as bem-sucedidas.
    última fatia de uma spec" (`docs/CI-WORKFLOW.md`) deixa um e2e de spec anterior quebrado sem
    nenhum CI notar por várias fatias, até a spec atual chegar na própria última fatia (issue #489,
    `asengardeon/btt-sdd-pipeline`).
+14. **Correção que introduz `match`/validação fechada sobre um valor recebido como parâmetro (não
+   um literal): rastreie esse valor até a origem real antes de aprovar.** O mesmo achado que
+   `security-engineer.md` cobre (área 5) — aqui, segunda linha de defesa: o fail-closed do `match`
+   (`default => throw` exaustivo) dá uma falsa sensação de completude quando o problema real pode
+   ser a confiabilidade do próprio valor de entrada (ex.: header forjável pelo cliente em vez de
+   detecção por conteúdo). Confirme também que qualquer `throw` novo introduzido pela correção tem
+   um `catch` real no caminho de chamada — sem isso, "fail-closed seguro" é na verdade "erro não
+   classificado" em produção (issue #495, `asengardeon/btt-sdd-pipeline`).
 
 **Controle que repousa sobre premissa nunca validada: conte os consumidores ao propagar.** Quando um
 achado seu **propaga** um controle (guard, marcador, seletor, código de erro) que se apoia numa
