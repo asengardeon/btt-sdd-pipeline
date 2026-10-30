@@ -97,6 +97,24 @@ como prefixo:
 testPathIgnorePatterns: ['[\/]\.next[\/]', '[\/]node_modules[\/]', '[\/]e2e[\/]'],
 ```
 
+### Armadilha conhecida: `npm run lint`/`npx eslint` falso negativo via git-bash no Windows
+
+Em ambiente Windows com `eslint-config-next`/`@rushstack/eslint-patch` (ou qualquer dependência que
+use o mesmo mecanismo de inspecionar o módulo chamador para aplicar um patch), rodar
+`npm run lint`/`npx eslint .` através do shim `npx`/`node` do git-bash pode falhar com:
+
+```
+Error: Failed to patch ESLint because the calling module was not recognized.
+Referenced from: .../@rushstack/eslint-patch/lib-commonjs/_patch-base.js
+```
+
+O mesmo comando, no mesmo diretório, com o mesmo `node_modules` (sem `npm ci` entre as tentativas),
+passa limpo quando invocado via shell nativo do Windows (PowerShell/`cmd`) — o shim do git-bash não
+é reconhecido pelo mecanismo de detecção do patch, mas o processo `node` chamado pelo shell nativo
+é. Antes de investigar `node_modules` corrompido ou assumir que o lint real encontrou um problema,
+repita o comando via PowerShell/`cmd` nativo quando esse erro específico aparecer num ambiente
+Windows com as duas ferramentas de shell disponíveis (issue #490, `asengardeon/btt-sdd-pipeline`).
+
 (sem caminho absoluto literal na entrada, não há o que a normalização interna do Jest
 mal-interprete). Achado real, levou 3 rodadas de QA para diagnosticar numa sessão anterior — ver
 issue de origem para o diagnóstico completo com scripts de reprodução.
