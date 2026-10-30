@@ -302,6 +302,23 @@ não fica esperando alguém perceber a lacuna depois de uma contenção real: o 
 um projeto passa a usar um serviço com estado em testes de integração, no mesmo `/sdd-trd` que
 decide a stack.
 
+**Volume de serviço com estado de longa duração também dessincroniza sem concorrência nenhuma —
+staleness, não corrida.** Distinto do cenário acima (dois worktrees concorrentes corrompendo o
+mesmo banco): um único checkout de longa duração (o principal do orquestrador, não um worktree
+efêmero de agente) rodando o ambiente de testes de integração repetidas vezes ao longo de várias
+sessões pode reaproveitar um volume antigo que nunca recebeu um efeito de inicialização aplicado
+só a volume vazio (ex.: criação de extensão/role via script de init do container) — uma migração
+que depende desse efeito falha por permissão (o papel de aplicação não tem o privilégio que só o
+script de init concede), não por migração ausente, o que engana o diagnóstico. Quando a stack usa
+nome de projeto docker-compose determinístico por worktree (`docs/STACK.md`), o checkout principal
+sempre reutiliza o mesmo nome/volume entre sessões — diferente de um worktree efêmero, que nasce e
+morre a cada invocação isolada. Antes de migrar num checkout de longa duração, prefira derrubar e
+recriar o volume do zero (`docker compose down -v` ou equivalente) em vez de assumir que ele está
+atualizado; um ajuste manual pontual (ex.: aplicar o efeito do init que faltou como superusuário)
+resolve a migração na hora, mas deixa o volume desatualizado para o próximo efeito de init que uma
+migração futura também vai exigir — trate como paliativo, não como correção (issue #491,
+`asengardeon/btt-sdd-pipeline`).
+
 **Isolamento resolve a corrida de Git — não substitui dependência lógica entre etapas.** Com
 isolamento garantido (mecanismo acima), duas tarefas que não dependem do resultado uma da outra
 podem — e devem, por padrão — ser invocadas em paralelo, sem a cautela de serializar tudo "por via
