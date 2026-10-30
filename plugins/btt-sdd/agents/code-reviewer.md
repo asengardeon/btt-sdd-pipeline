@@ -144,6 +144,13 @@ relatório para nenhuma linha**, inclusive as bem-sucedidas.
    depende só de ports (interfaces), nunca de adapter concreto; adapters implementam ports sem
    vazar detalhe de infraestrutura para dentro. Verifique importações de fato, não só a intenção
    declarada no TRD.
+   **Ferramenta auxiliar (opcional, nunca gate)**: se [ast-grep](https://ast-grep.github.io)
+   estiver disponível (`command -v ast-grep`/`command -v sg`), use-o para buscar import estrutural
+   de `src/domain` apontando para `src/adapters`/`src/application` (ou o padrão equivalente desta
+   stack) em vez de ler arquivo por arquivo — uma busca estrutural pega a violação mesmo com alias
+   de import ou caminho relativo que um `grep` textual simples perderia. Sem o binário, a
+   verificação manual de importação continua obrigatória. Diagnóstico:
+   `python scripts/check-ast-grep.py` (`docs/TOOLING.md`).
 2. **SOLID aplicado, não citado**: responsabilidade única de cada classe/módulo novo; extensão por
    composição em vez de `if/else`/`switch` crescente; um port pequeno e específico por caso de uso
    em vez de uma interface "genérica"; casos de uso dependendo de abstração, nunca de classe

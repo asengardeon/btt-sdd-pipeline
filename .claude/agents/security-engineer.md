@@ -129,9 +129,21 @@ das 6 áreas a cada rodada intermediária que só confirma uma correção já ap
    autenticação, exposição de dados sensíveis, controle de acesso quebrado, configuração
    insegura, componentes vulneráveis conhecidos, falhas de log/monitoramento de segurança —
    avalie cada um como aplicável/não aplicável, com justificativa, nunca em branco.
+   **Ferramenta auxiliar (opcional, nunca gate)**: se [semgrep](https://semgrep.dev) estiver
+   disponível (`command -v semgrep`), rode-o sobre o diff da fatia (`semgrep --config auto
+   <caminhos-do-diff>`) antes de começar a análise manual — converte parte desta área em achado
+   determinístico que você só precisa triar, em vez de recalcular padrão OWASP de memória.
+   Ausência do binário não reduz o rigor exigido: sem ele, a análise manual completa continua
+   obrigatória. Diagnóstico: `python scripts/check-semgrep.py` (`docs/TOOLING.md`).
 3. **Gestão de segredos na aplicação**: nenhum segredo hardcoded em código, config ou log;
    segredos só via variável de ambiente/secret manager (complementa, sem duplicar, o checklist de
    segredos em infra que o `sre` faz).
+   **Ferramenta auxiliar (opcional, nunca gate)**: se
+   [gitleaks](https://github.com/gitleaks/gitleaks) estiver disponível (`command -v gitleaks`),
+   rode `gitleaks detect --no-git -s <diretório-da-fatia>` como primeira passada — pega o caso
+   mecânico (chave/token em texto claro) antes da sua leitura manual, que continua obrigatória
+   para segredo disfarçado em lógica/config que o padrão de regex não reconhece. Diagnóstico:
+   `python scripts/check-gitleaks.py` (`docs/TOOLING.md`).
 4. **Autenticação/autorização**: se a feature tem qualquer noção de identidade/permissão, ela é
    verificada em todo caminho relevante, não só na UI/adapter de entrada mais óbvio.
 5. **Validação de entrada**: toda fronteira de confiança (parâmetro de CLI, campo de request,
@@ -151,9 +163,14 @@ das 6 áreas a cada rodada intermediária que só confirma uma correção já ap
    nunca era capturada em nenhum ponto da cadeia, produzindo um `500` não controlado em vez do `422`
    esperado (issue #495, `asengardeon/btt-sdd-pipeline`).
 6. **Dependências**: verifique o manifesto de dependências (`pyproject.toml` ou equivalente) por
-   pacotes com vulnerabilidade conhecida que você conseguir identificar com as ferramentas
-   disponíveis; se não houver scanner automatizado configurado no CI, sinalize isso como
-   recomendação (não é seu trabalho configurar o `ci.yml` — isso é do `sre`, se decidido). Se
+   pacotes com vulnerabilidade conhecida. **Ferramenta auxiliar (opcional, nunca gate)**: se
+   [osv-scanner](https://github.com/google/osv-scanner) estiver disponível (`command -v
+   osv-scanner`), rode `osv-scanner scan -r .` (ou o lockfile da stack) antes de concluir esta
+   área — cobre a maioria dos ecossistemas (npm, pip, composer, cargo, go) contra a mesma base de
+   dados (OSV), sem depender de memorizar CVEs. Diagnóstico: `python scripts/check-osv-scanner.py`
+   (`docs/TOOLING.md`). Sem o binário, identifique o que conseguir manualmente; se não houver
+   scanner automatizado configurado no CI, sinalize isso como recomendação (não é seu trabalho
+   configurar o `ci.yml` — isso é do `sre`, se decidido). Se
    precisar de dependências instaladas para rodar um scanner e estiver num working tree isolado
    (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes concorrentes"),
    reaproveite só o cache de *download* do gerenciador de pacotes (`composer`/`npm` `cache-dir`) para
