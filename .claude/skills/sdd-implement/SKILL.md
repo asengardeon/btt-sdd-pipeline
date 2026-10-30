@@ -516,7 +516,13 @@ provedor de e-mail transacional e um foi escolhido agora) — isso **sempre** ex
 ADR nova registrada pelo `architect` (`docs/adr/`, mesmo que pequena) **antes** do `sre` ou do
 dev implementar a troca. Não é uma decisão que o orquestrador ou o `sre` tomam sozinhos caso a
 caso "se merece" ADR — troca de provedor já desenhado no TRD sempre merece. Acione `architect`
-(ou `/sdd-trd` se a mudança também precisa refletir no corpo do TRD) antes de prosseguir.
+(ou `/sdd-trd` se a mudança também precisa refletir no corpo do TRD) antes de prosseguir. **Se
+`architect` devolver um bloco `## DESPACHO NECESSÁRIO`** (sinal de que ele precisava do parecer
+de outro agente do pipeline e não tinha Agent tool disponível para despachá-lo sozinho, cenário
+comum quando você o aciona ad-hoc em modo assíncrono/isolado — mesmo padrão de
+`.claude/skills/sdd-trd/SKILL.md`, passo 3b-bis): acione o agente indicado nesta mesma rodada,
+passando o contexto fornecido, antes de considerar a ADR pronta para a troca prosseguir (issue
+#542, `asengardeon/btt-sdd-pipeline`).
 
 ## Auto-aprovação nunca é o gate real
 

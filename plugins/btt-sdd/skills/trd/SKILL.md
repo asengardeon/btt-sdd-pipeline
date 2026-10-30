@@ -36,6 +36,14 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    o TRD como pronto para o resumo do passo 4. Não deixe a lacuna só registrada como "VALIDAR
    DEPOIS" pelo próprio agente sem tentar obter a resposta real do usuário nesta mesma rodada
    quando possível.
+3b-bis. **Se `architect` devolver um bloco `## DESPACHO NECESSÁRIO`** (sinal de que ele
+   precisava do parecer de outro agente do pipeline, não de uma decisão do usuário, e não tinha
+   Agent tool disponível para despachá-lo sozinho): acione o agente indicado nesta mesma rodada
+   (Agent tool, mesmo padrão de invocação normal desta skill), passando o contexto que o
+   `architect` forneceu, e repasse o parecer resultante de volta a ele (`SendMessage`, se ainda
+   estiver ativo/endereçável) antes de tratar o TRD como pronto para o resumo do passo 4. Não
+   deixe o trecho do artefato marcado como "pendente" sem de fato acionar o agente indicado nesta
+   mesma rodada quando possível (issue #542, `asengardeon/btt-sdd-pipeline`).
 3c. **Registre a duração desta invocação em `specs/<slug>/timing-log.md`** (crie a partir de
    `specs/_template/timing-log.template.md` se ainda não existir): uma linha com o horário do
    passo 3, o horário atual, e a diferença calculada (etapa "TRD", agente "architect", fatia "—"). **Se você, o orquestrador, conduziu trabalho próprio
