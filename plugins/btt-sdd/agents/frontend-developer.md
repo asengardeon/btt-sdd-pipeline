@@ -377,6 +377,15 @@ seguinte:
    um cookie de dispositivo confiável nunca decriptado). Forje os headers `Origin`/`Referer`
    batendo com o domínio esperado pelo backend antes de assumir que a chamada direta é
    equivalente à navegação real.
+6. **Ao mudar o texto/comportamento observável de uma tela/fluxo que já existia antes desta spec
+   começar (não uma tela nova introduzida por ela), `grep` os testes e2e de TODAS as specs — não
+   só a atual — por referência àquele texto/seletor antes de considerar a tarefa completa.** O
+   mecanismo "e2e completo só na última fatia de uma spec" (`docs/CI-WORKFLOW.md`) cria um ponto
+   cego estrutural: um e2e de uma spec anterior que afirma o texto antigo só é exercitado de
+   verdade quando a spec atual chegar na própria última fatia — podendo ficar quebrado, sem
+   nenhum CI notar, por várias fatias. O custo de um `grep` é desprezível comparado ao de
+   descobrir isso tarde, numa fatia sem nenhuma relação aparente com a mudança original (issue
+   #489, `asengardeon/btt-sdd-pipeline`).
 
 **Erro opaco se depura capturando a evidência bruta primeiro — não formulando a correção primeiro.**
 Erro opaco é o que não nomeia sua própria causa: um `422` sem detalhe de campo, uma geometria que
