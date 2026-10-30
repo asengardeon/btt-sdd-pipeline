@@ -20,6 +20,16 @@ confirmado ainda").
   ocorrência cria uma nova entrada (criando o arquivo se for a primeira entrada de sempre), citando
   as duas ocorrências e uma recomendação objetiva de implementação. Achado isolado (1ª ocorrência)
   nunca vira entrada — fica só no relatório da própria feature.
+  **Registre a ocorrência na tabela nesta mesma rodada, antes de considerar o achado/medição
+  concluído — nunca deixe para uma rodada futura notar a lacuna.** A atenção de quem aplica uma
+  lição já identificada está no resultado da medição/correção em si (a regra sustenta sozinha? o
+  achado se repete?), não na tarefa administrativa de voltar e atualizar uma tabela num arquivo
+  diferente — e por isso essa atualização é a parte mais fácil de esquecer, mesmo citando o ID da
+  entrada corretamente no próprio relatório. Já aconteceu de verdade: a ocorrência de uma rodada
+  ficou registrada só em prosa no `security-review.md` daquela rodada ("mesmo método equivalente
+  aplicado..."), sem nunca chegar à tabela de `docs/LESSONS-LEARNED.md` — só corrigido
+  retroativamente pela rodada seguinte, que precisou notar a lacuna por conta própria (issue #500,
+  `asengardeon/btt-sdd-pipeline`).
 - [ ] **Formato de entrada**: uma seção por área (Backend / Frontend / Segurança / Infra-SRE /
   Testes-QA), com ID no formato `L-<AAAA-MM-DD>-<slug-curto>` (data da criação da entrada + slug
   curto em kebab-case do próprio achado, ex.: `L-2026-08-25-timeout-http-nao-configuravel`) e os
