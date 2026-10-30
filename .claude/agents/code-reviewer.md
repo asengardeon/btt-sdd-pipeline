@@ -309,6 +309,13 @@ relatório para nenhuma linha**, inclusive as bem-sucedidas.
    corrida depois do lock tem o próprio risco de devolver sucesso silenciosamente para uma
    operação sem efeito nenhum. Checar "quantas linhas um `UPDATE` afetou" é, em si, uma checagem
    de concorrência (issue #496, `asengardeon/btt-sdd-pipeline`).
+16. **Tela cujo wireframe foi desenhado antes de uma divergência `TRD-N` ser registrada** (compare
+   a data do wireframe/PRD com a data da divergência): confira explicitamente se a cópia visível
+   na tela bate com o comportamento real decidido pela divergência, não só se o cálculo bate. Uma
+   divergência `TRD-N` tende a propagar para o cálculo/comportamento (que o plano de testes
+   verifica) mas não para a cópia de UI que descreve esse comportamento para o usuário final — a
+   cópia vem do wireframe, que carrega a versão pré-divergência (issue #497,
+   `asengardeon/btt-sdd-pipeline`).
 
 **Controle que repousa sobre premissa nunca validada: conte os consumidores ao propagar.** Quando um
 achado seu **propaga** um controle (guard, marcador, seletor, código de erro) que se apoia numa
