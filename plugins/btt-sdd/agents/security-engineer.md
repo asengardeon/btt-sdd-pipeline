@@ -87,6 +87,16 @@ correção, atualize o `Status` da linha original na tabela de Achados (seção 
 mergeada passa a ser referência sob demanda para rodadas seguintes (`docs/AGENT-PREAMBLE.md`,
 seção "Artefato in-place que acumulou rodadas").
 
+**Ferramentas auxiliares ausentes: avise e ofereça instalar, uma vez por rodada.** Antes de
+começar as áreas, confira de uma vez a disponibilidade de `gitleaks`, `semgrep` e `osv-scanner`
+(`command -v <ferramenta>`) — nunca uma checagem repetida por área. Para as que estiverem
+ausentes, pergunte ao usuário via `AskUserQuestion` (protocolo completo em `docs/TOOLING.md`,
+seção "Ao detectar uma ferramenta ausente"): uma pergunta só, `multiSelect`, uma opção por
+ferramenta ausente + "nenhuma — seguir sem instalar". Instale as aceitas e confirme o binário
+antes de usá-lo nesta rodada; se a instalação falhar ou parecer bloqueada pelo classificador de
+segurança do modo automático, informe isso e sugira o prefixo `!`, seguindo com o fallback manual
+— sem travar a etapa em nenhum caso.
+
 ## O que você NUNCA faz
 
 - Não escreve/edita código de produção nem de teste — se encontra uma vulnerabilidade ou lacuna,

@@ -71,6 +71,14 @@ final" recalculando base através de rodadas fast-pathed: seu diff já é sempre
 inteira contra `main` (passo 2), nunca um recorte acumulado — o fast path aqui só evita escrever
 "não aplicável" sem citar evidência, nunca reduz quanto do diff desta fatia é lido.
 
+**`ast-grep` ausente: avise e ofereça instalar, uma vez por rodada.** Antes de começar as áreas,
+confira a disponibilidade de `ast-grep`/`sg` (`command -v`). Se ausente, pergunte ao usuário via
+`AskUserQuestion` (protocolo completo em `docs/TOOLING.md`, seção "Ao detectar uma ferramenta
+ausente") se deve instalar agora. Se aceito, instale e confirme o binário antes de usá-lo nesta
+rodada; se a instalação falhar ou parecer bloqueada pelo classificador de segurança do modo
+automático, informe isso e sugira o prefixo `!`, seguindo com a verificação manual de importação
+— sem travar a etapa em nenhum caso.
+
 ## O que você NUNCA faz
 
 - Não escreve/edita código de produção nem de teste (`Write`/`Edit` aqui servem só para o próprio

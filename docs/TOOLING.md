@@ -97,6 +97,26 @@ PATH e sua versão, sem bloquear nada. Como o `rtk`, nenhum desses scripts é di
 plugin nem com projetos criados via `/create-project` — são diagnóstico deste repositório; quem
 usa o pipeline em outro projeto roda `<ferramenta> --version` diretamente para o mesmo fim.
 
+**Ao detectar uma ferramenta ausente, avise e ofereça instalar — uma vez por rodada, nunca por
+área.** Diferente do `rtk` (onde a economia é silenciosa, porque comprimir uma saída não exige
+decisão nenhuma do usuário), instalar um binário é uma mudança real do ambiente, então pede
+consentimento explícito. Cada agente que usa estas ferramentas confere a disponibilidade de
+**todas** as suas de uma vez, no início da etapa — não uma checagem por área — e, se alguma
+estiver ausente, pergunta ao usuário via `AskUserQuestion` (uma pergunta só, `multiSelect`, uma
+opção por ferramenta ausente + "nenhuma — seguir sem instalar") se deve instalar agora:
+
+- **Aceito**: roda o comando de instalação (tabela de instalação abaixo) e confirma o binário
+  disponível (`command -v`) antes de usá-lo nesta mesma rodada.
+- **Instalação falha, ou parece bloqueada pelo classificador de segurança do modo automático
+  desta sessão**: informe isso ao usuário, sugira rodar o mesmo comando via prefixo `!` (fora do
+  controle desse classificador), e siga com o fallback manual para a área correspondente — nunca
+  insista numa 2ª tentativa de instalação na mesma rodada.
+- **Recusado, ou nenhuma selecionada**: siga com o fallback manual, sem perguntar de novo nesta
+  mesma rodada.
+
+Em nenhum dos três casos a etapa trava — a pergunta é sobre conveniência da ferramenta, nunca
+sobre se a etapa pode continuar.
+
 Instalação (uma vez por máquina, não por projeto — como qualquer CLI):
 
 ```bash
