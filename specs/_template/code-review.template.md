@@ -70,10 +70,16 @@ Resultado do comando de build/empacotamento real de produção (`docs/STACK.md`)
 "Build/empacotamento real como parte da suíte completa". "Não aplicável" se a fatia é backend-only
 sem etapa de empacotamento própria além dos testes.
 
-## 10. Achados (se reprovado ou aprovado com ressalvas)
+## 10. Achados (acumulado entre fatias — nunca recriado do zero)
 
-| # | Arquivo:linha | Problema | Sugestão | Severidade |
-|---|-----------------|----------|----------|------------|
+Uma linha por achado, nunca removida — ao corrigir, atualize o `Status` da própria linha em vez
+de apagá-la ou duplicá-la. Achado com `Status = corrigido` cuja `Fatia` já foi mergeada é
+referência sob demanda, não leitura obrigatória nas rodadas seguintes (`docs/AGENT-PREAMBLE.md`,
+seção "Artefato in-place que acumulou rodadas"). Achado `aberto` continua leitura obrigatória todo
+round, mesmo que de uma fatia anterior.
+
+| # | Fatia | Arquivo:linha | Problema | Sugestão | Severidade | Status |
+|---|-------|-----------------|----------|----------|------------|--------|
 
 ## 11. Pendências de validação (VALIDAR DEPOIS)
 

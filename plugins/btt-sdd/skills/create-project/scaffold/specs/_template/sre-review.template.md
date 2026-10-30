@@ -89,10 +89,16 @@ Evidência/observações:
 
 Evidência/observações:
 
-## 7. Pendências (se aprovado com ressalvas ou reprovado)
+## 7. Pendências (acumulado entre fatias — nunca recriado do zero)
 
-| # | Item | Responsável | Bloqueia release? |
-|---|------|--------------|---------------------|
+Uma linha por pendência, nunca removida — ao resolver, atualize o `Status` da própria linha em
+vez de apagá-la ou duplicá-la. Pendência com `Status = resolvido` cuja `Fatia` já foi mergeada é
+referência sob demanda, não leitura obrigatória nas rodadas seguintes (`docs/AGENT-PREAMBLE.md`,
+seção "Artefato in-place que acumulou rodadas"). Pendência `aberto` continua leitura obrigatória
+todo round, mesmo que de uma fatia anterior.
+
+| # | Fatia | Item | Responsável | Bloqueia release? | Status |
+|---|-------|------|--------------|---------------------|--------|
 
 ## 8. Pendências de validação (VALIDAR DEPOIS)
 
