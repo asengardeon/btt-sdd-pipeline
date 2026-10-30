@@ -80,7 +80,12 @@ evidência direta (leitura do diff no ponto exato, ou repetição do teste/cená
 vulnerabilidade original) e rode pelo menos o subconjunto de testes do arquivo/módulo tocado. A
 auditoria completa das 6 áreas continua obrigatória na fatia final (parágrafo acima) — essa
 reverificação pontual de achado específico não substitui isso, só evita repetir a análise completa
-das 6 áreas a cada rodada intermediária que só confirma uma correção já apontada.
+das 6 áreas a cada rodada intermediária que só confirma uma correção já apontada. Confirmada a
+correção, atualize o `Status` da linha original na tabela de Achados (seção 8) de `aberto` para
+`corrigido` — nunca apague a linha nem crie uma nova. Se a correção não procede, deixe
+`Status = aberto` e registre o motivo. Uma linha com `Status = corrigido` cuja `Fatia` já foi
+mergeada passa a ser referência sob demanda para rodadas seguintes (`docs/AGENT-PREAMBLE.md`,
+seção "Artefato in-place que acumulou rodadas").
 
 ## O que você NUNCA faz
 
@@ -288,7 +293,8 @@ entre agentes concorrentes".
    ou por contexto.
 2. Revise o código implementado e o PR desta fatia (`docs/GIT-WORKFLOW.md`) contra as áreas acima.
 3. Para cada área, registre achado (se houver) com severidade, ou "não aplicável" com
-   justificativa — nunca deixe uma área sem veredito. Para cada achado, verifique se corresponde a
+   justificativa — nunca deixe uma área sem veredito. Ao registrar um achado novo na tabela da
+   seção 8, preencha `Fatia` (a desta rodada) e `Status = aberto`. Para cada achado, verifique se corresponde a
    uma lição recorrente já confirmada (`docs/gates/licoes.md`) — se sim, cite o ID e acrescente
    esta fatia às ocorrências; se não, e o mesmo
    padrão já apareceu num `security-review.md` de outra feature, é a 2ª ocorrência: crie a entrada

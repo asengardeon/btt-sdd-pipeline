@@ -115,6 +115,16 @@ arquivo. E nunca reescreva rodada anterior para "enxugar" o arquivo — essas ta
 append-only (`docs/gates/governanca.md`); limitar leitura é escolha de quem lê, nunca apagamento
 de histórico.
 
+**A mesma regra vale para a tabela de Achados/Pendências** (`code-review.md`, `qa-report.md`,
+`security-review.md`, `sre-review.md`) — a que de fato cresce mais rápido, um achado por área por
+rodada, não uma linha por fatia como o Histórico. Cada linha tem colunas `Fatia` e `Status`
+(`aberto` / `corrigido` / `aceito como ressalva` — ou `aberto`/`resolvido` nas Pendências do
+`sre`): uma linha com `Status` resolvido cuja `Fatia` já foi mergeada é referência sob demanda,
+igual a uma rodada antiga do Histórico — não precisa ser relida por completo, só contada como já
+resolvida. Linhas com `Status` aberto continuam leitura obrigatória todo round, mesmo que de uma
+fatia anterior. Ao confirmar uma correção, **atualize o `Status` da linha original** — nunca
+apague a linha nem crie uma duplicata; a linha em si nunca é removida, só marcada.
+
 Já aconteceu de verdade: um `code-review.md` de **3.216 linhas**, com nove seções de rodadas
 históricas, era relido in-place por cada revisor seguinte só para encontrar a rodada vigente — e,
 no mesmo PR, um revisor que confiou num cabeçalho antigo em vez da tabela quase revisou a fatia

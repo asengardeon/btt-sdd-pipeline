@@ -63,10 +63,16 @@ sem etapa de empacotamento própria além dos testes.
 Testes de domínio/aplicação rodam isolados de infraestrutura real? Sim/Não — se não, detalhe
 onde a fronteira foi violada.
 
-## 6. Achados (se reprovado)
+## 6. Achados (acumulado entre fatias — nunca recriado do zero)
 
-| # | Arquivo/cenário | Esperado | Observado | Severidade |
-|---|-------------------|----------|-----------|------------|
+Uma linha por achado, nunca removida — ao corrigir, atualize o `Status` da própria linha em vez
+de apagá-la ou duplicá-la. Achado com `Status = corrigido` cuja `Fatia` já foi mergeada é
+referência sob demanda, não leitura obrigatória nas rodadas seguintes (`docs/AGENT-PREAMBLE.md`,
+seção "Artefato in-place que acumulou rodadas"). Achado `aberto` continua leitura obrigatória todo
+round, mesmo que de uma fatia anterior.
+
+| # | Fatia | Arquivo/cenário | Esperado | Observado | Severidade | Status |
+|---|-------|-------------------|----------|-----------|------------|--------|
 
 ## 7. Pendências de validação (VALIDAR DEPOIS)
 
