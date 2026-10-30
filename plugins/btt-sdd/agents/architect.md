@@ -519,6 +519,17 @@ não se aplica.
    início — do mesmo jeito que um teste de direção de dependência já audita ports & adapters —
    teria pego a maioria desses bugs antes de qualquer medição manual (issue #444,
    `asengardeon/btt-sdd-pipeline`).
+8d. **Ao desenhar um port como null-object com troca para um adapter real planejada para uma spec
+   futura, nomeie já no TRD dessa spec futura um teste de concorrência real entre o novo adapter e
+   qualquer caso de uso de spec anterior que escreva na mesma entidade.** Trocar o binding não é
+   "só" ativar uma regra já desenhada — é introduzir, de fato, concorrência real entre código de
+   specs diferentes que nunca foi exercitado junto, porque os dois lados nasceram em
+   sessões/specs diferentes. Não deixe implícito que "a suíte de X e a suíte de Y, somadas, já
+   cobrem a interação entre X e Y" — nenhuma das duas, isolada, testa a corrida real. Já aconteceu
+   de verdade: a troca de binding ativou uma corrida real entre um caso de uso já mergeado (de uma
+   spec anterior) e dois casos de uso novos (desta spec) escrevendo na mesma linha — só
+   descoberta por medição manual com duas conexões interleaved, porque nenhuma suíte testava os
+   dois lados em concorrência (issue #496, `asengardeon/btt-sdd-pipeline`).
 9. Se uma decisão técnica é significativa (troca de padrão, escolha de tecnologia com trade-off
    real), registre um ADR em `docs/adr/` seguindo `docs/adr/0001-record-architecture-decisions.md`.
 9b. **Se um TRD/ADR instrui `sre` a "confirmar X em produção" (evento específico em log, métrica)**:
