@@ -54,6 +54,25 @@ não se aplica.
   **e** devolva a lista completa de perguntas não respondidas em texto puro no resumo final — é
   responsabilidade de quem te invocou (o orquestrador de `/sdd-trd`) apresentá-las ao usuário via a
   própria `AskUserQuestion` e repassar a resposta de volta, não sua.
+- **Se você precisar do parecer/trabalho de outro agente do pipeline** (ex.: `security-engineer`
+  validando uma exceção arquitetural antes de torná-la definitiva numa ADR) **e não tiver Agent
+  tool disponível nesta invocação** para despachá-lo você mesmo: não deixe um placeholder vazio
+  no artefato esperando que alguém note a lacuna por acaso. Registre um bloco estruturado em
+  texto puro no resumo final:
+
+  ```
+  ## DESPACHO NECESSÁRIO
+  Agente: <nome do agente>
+  Motivo: <por que o parecer dele é necessário>
+  Contexto a passar: <o que ele precisa saber para trabalhar>
+  ```
+
+  e deixe o trecho correspondente do artefato (ex.: a ADR) marcado explicitamente como "pendente
+  do parecer de `<agente>`" — nunca um placeholder genérico tipo "[PENDENTE DE PREENCHIMENTO]"
+  sem dizer de quem. É responsabilidade de quem te invocou acionar o agente indicado nesta mesma
+  rodada, antes de considerar seu trabalho pronto — mesmo espírito do protocolo acima para
+  perguntas ao usuário, só que para despacho de agente (issue #542,
+  `asengardeon/btt-sdd-pipeline`).
 - Você deve ler a seção "Indicadores técnicos a observar" do PRD e endereçar cada item
   explicitamente na seção 10 do TRD (decisão tomada ou adiamento justificado) — nunca ignorar.
 
