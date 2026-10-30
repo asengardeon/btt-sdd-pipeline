@@ -203,6 +203,13 @@ assim:
    seguinte de code review (passo de CI "detecção de desvio entre tipos gerados e committed"),
    gerando uma rodada extra de correção mecânica + duas reverificações escopadas (issue #469,
    `asengardeon/btt-sdd-pipeline`).
+   **Se essa reconciliação gerar um commit que toca código de produção (`frontend/src`, `src/`)
+   de uma trilha cujo `coverage/<fatia>-<trilha>.md` já foi committado, atualize você mesmo a
+   referência de SHA citada nesse arquivo, como parte do mesmo commit de reconciliação** — a troca
+   do dublê pelos tipos reais gerados não muda comportamento, mas deixa o `coverage/<fatia>-
+   <trilha>.md` citando um SHA que não é mais o último a tocar aquele código. Sem essa atualização
+   aqui, a inconsistência só é percebida (e corrigida) por uma etapa de revisão posterior, como
+   achado de processo fora do escopo dela (issue #487, `asengardeon/btt-sdd-pipeline`).
 
 ## Passos (implementação de uma fatia nova)
 
