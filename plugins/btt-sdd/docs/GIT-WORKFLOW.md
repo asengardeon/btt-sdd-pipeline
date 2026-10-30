@@ -478,6 +478,16 @@ relevantes liberarem os handles. Já aconteceu de forma repetida numa mesma sess
 (múltiplos agentes: `code-reviewer`, `security-engineer`, `sre`), sempre resolvido apenas
 ignorando o erro depois de confirmar via `git worktree list`.
 
+**Se `git worktree list` ainda mostrar o caminho depois de `remove --force` (ou `remove --force
+--force`) falhar, `git worktree prune -v` é o fallback — não insista numa 3ª tentativa de
+`remove`.** Já aconteceu de verdade, duas vezes, de `remove --force` falhar com "Permission
+denied" **sem** desregistrar o worktree (diferente do caso acima, onde o índice já tinha sido
+desregistrado antes da falha física) — provavelmente por um processo da stack ou antivírus
+escaneando o diretório no momento exato da remoção. `git worktree prune -v` desregistra o worktree
+do ponto de vista do Git mesmo quando o diretório físico não pode ser apagado: `git worktree list`
+para de listá-lo e `merge`/outras operações seguem normalmente, com o diretório órfão ficando só
+como lixo de disco a limpar depois, sem urgência (issue #492, `asengardeon/btt-sdd-pipeline`).
+
 **Sincronizar a branch da fatia com `main`: `merge`, nunca `rebase`.** Operação diferente da
 reconciliação acima, e a confusão entre as duas é o ponto desta regra. Ali você rebaseia **commits
 locais ainda não publicados** sobre a ponta da branch compartilhada — o push seguinte é
