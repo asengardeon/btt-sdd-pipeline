@@ -211,6 +211,19 @@ sobrepor outra tarefa no mesmo repositório, passe `isolation: "worktree"` na ch
 tool — o harness cria um worktree temporário isolado (diretório + branch próprios) para aquele
 agente, eliminando a disputa de `HEAD`/índice com qualquer outra tarefa ativa.
 
+**Dê `git push` antes de invocar, se você (orquestrador) tiver commits locais ainda não enviados
+na branch da fatia.** Já aconteceu de verdade, três vezes na mesma fatia: o orquestrador fez
+commits locais (típico de correção pontual pequena, onde o push só aconteceria ao final da rodada —
+"Push único por fatia" acima) e, ao invocar a etapa seguinte com `isolation: "worktree"`, o worktree
+novo nasceu de `origin/<branch>` sem nenhum desses commits — chegou a nascer de `origin/main`,
+fazendo um arquivo que só existia na branch da fatia (ex.: um componente novo) aparentar não
+existir. Isso não contradiz a premissa de object store compartilhado entre worktrees manuais
+(abaixo) — é uma proteção adicional para o caminho do harness, onde não há garantia observada de
+que o worktree novo prefira o commit local mais recente sobre o estado publicado em `origin`. Um
+push intermediário aqui não quebra a regra de "push único por fatia": aquela regra é sobre não
+fragmentar pushes arbitrariamente, não sobre nunca dar push quando outro agente isolado depende de
+ver aquele commit (issue #488, `asengardeon/btt-sdd-pipeline`).
+
 **Mecanismo equivalente manual** (Agent tool sem essa opção, ou um agente seguindo sua própria
 definição `.md` diretamente fora do harness): crie um worktree próprio antes de começar a
 trabalhar, num diretório separado do worktree principal —
