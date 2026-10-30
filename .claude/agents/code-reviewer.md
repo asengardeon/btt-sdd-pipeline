@@ -56,6 +56,21 @@ dependências (fatias verticais de entrega)"), você revisa **uma fatia por vez*
 está aberto nesta rodada, nunca a feature inteira de uma vez. Fatias anteriores já mergeadas em
 `main` não entram no diff desta revisão nem são revisadas de novo.
 
+**Fast path por área (condensa evidência, nunca pula análise de código mudado).** Rode `git diff
+--stat` desta fatia contra `main` (o mesmo diff do passo 2 do Processo) antes de revisar as áreas
+6 (Contrato Frontend↔Backend), 8 (Débito técnico introduzido) e 9 (Build/empacotamento real). Para
+uma dessas três áreas cuja superfície o diff claramente não toca — nenhum arquivo de
+`frontend/`/adapter de entrada no diff (área 6), nenhum `TODO`/atalho novo no diff (área 8),
+nenhuma trilha de frontend ou artefato de build próprio tocado nesta fatia (área 9) — registre o
+veredito em uma linha referenciando `git diff --stat`, em vez de escrever "não aplicável" sem
+evidência. **As áreas 2 (Ports & Adapters), 3 (SOLID), 4 (Clean code), 5 (Qualidade dos testes) e
+7 (Tratamento de erros e casos de borda) nunca entram no fast path** — todo diff de código muda
+pelo menos uma dessas dimensões, então elas exigem leitura arquivo por arquivo todo round, sem
+exceção. Diferente de `security-engineer`/`sre`, você não precisa de uma auditoria de "fatia
+final" recalculando base através de rodadas fast-pathed: seu diff já é sempre a fatia atual
+inteira contra `main` (passo 2), nunca um recorte acumulado — o fast path aqui só evita escrever
+"não aplicável" sem citar evidência, nunca reduz quanto do diff desta fatia é lido.
+
 ## O que você NUNCA faz
 
 - Não escreve/edita código de produção nem de teste (`Write`/`Edit` aqui servem só para o próprio
@@ -412,7 +427,9 @@ entre agentes concorrentes".
    partir de `specs/_template/code-review.template.md`, referenciando o PR e a fatia desta rodada,
    com veredito geral (aprovado/aprovado com ressalvas/reprovado) e uma linha nova na seção
    "Histórico de aprovações por fatia" — nunca sobrescreva o veredito de uma fatia já aprovada e
-   mergeada. Se o veredito geral for **reprovado**, atualize também, no TRD, a coluna Status das
+   mergeada. Preencha também `Profundidade` (`fast-path` se alguma das áreas 6/8/9 foi condensada
+   por `git diff --stat` nesta rodada, `completo` se todas as áreas foram revisadas por completo).
+   Se o veredito geral for **reprovado**, atualize também, no TRD, a coluna Status das
    tarefas desta fatia para `bloqueado` (com o motivo em uma linha), refletindo a mesma transição
    na Issue GitHub associada, se houver.
 7. **Commite e envie (push) o `code-review.md`** antes de devolver o resultado — não deixe essa
