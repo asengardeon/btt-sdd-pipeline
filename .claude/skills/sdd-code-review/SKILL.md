@@ -51,6 +51,21 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    `code-reviewer` reconfirmar com uma varredura própria (área 9 de
    `.claude/agents/code-reviewer.md`)
    em vez de confiar que "já rodei isso uma vez" continua válido.
+2c. **Antes de invocar `code-reviewer`, reconfirme você mesmo se esta é a última fatia pendente da
+   spec — não confie só na checagem que `/sdd-implement` já fez quando o PR abriu
+   (`.claude/skills/sdd-implement/SKILL.md`, passo 2b-quater).** Leia a tabela de decomposição de
+   tarefas (seção 13 do TRD) agora, no estado atual: se nenhuma outra fatia estiver pendente depois
+   desta, e este projeto documenta em `docs/PROJECT-CONVENTIONS.md` um mecanismo explícito de
+   sinalização para o CI ativar a suíte e2e completa (ex.: label de PR), confirme que o sinal já
+   está aplicado — se não estiver, aplique-o agora, **antes** de invocar `code-reviewer`. A
+   checagem do `/sdd-implement` roda uma vez, no momento em que o PR abre; se uma tarefa for
+   acrescentada à fatia **depois** disso (ex.: um roteiro e2e retroativo que o próprio
+   `code-reviewer` acabaria notando como lacuna), a condição "é a última fatia" pode não ter
+   mudado, mas o sinal pode nunca ter sido verificado de novo. Já aconteceu de verdade: o
+   `code-reviewer` notou a ausência de uma tarefa de e2e de ponta a ponta na própria rodada dele,
+   mas o sinal só foi aplicado depois dessa rodada já ter revisado a fatia inteira sem o job real
+   ter rodado nenhuma vez — a 3ª ocorrência confirmada do mesmo padrão (issue #528,
+   `asengardeon/btt-sdd-pipeline`).
 3. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 3b para
    registrar a duração desta invocação. Invoque o agente `code-reviewer` (Agent tool,
    `subagent_type: "code-reviewer"`) passando o caminho do TRD e o PR/branch da feature, e
