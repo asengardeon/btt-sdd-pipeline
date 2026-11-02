@@ -157,11 +157,12 @@ segurança do modo automático, informe isso e sugira o prefixo `!`, seguindo co
    - Sem segredo hardcoded na imagem ou no `Dockerfile`; segredos via variável de
      ambiente/secret manager, nunca commitados.
    - Healthcheck definido quando a aplicação expõe um serviço de longa duração.
-   - **Ferramenta auxiliar (opcional, nunca gate)**: se
+   - **Tente a ferramenta primeiro (`docs/MICRO-CONTEXT.md`, seção 3)**: se
      [hadolint](https://github.com/hadolint/hadolint) estiver disponível (`command -v hadolint`),
      rode `hadolint <Dockerfile>` **antes** de confirmar os itens acima — cobre boa parte deste
      checklist de forma determinística. Sem o binário, confirme cada item por leitura manual do
-     `Dockerfile`. Diagnóstico: `python scripts/check-hadolint.py` (`docs/TOOLING.md`).
+     `Dockerfile` — o caminho principal, nunca gate. Diagnóstico: `python
+     scripts/check-hadolint.py` (`docs/TOOLING.md`).
    - Se a feature usa [floci](https://floci.io) para desenvolvimento/teste local (`docs/STACK.md`,
      "Simulação de nuvem local"), o serviço `floci` aparece só em
      `infra/docker/docker-compose.yml` (ambiente local) e no job de testes de integração do CI —
@@ -175,12 +176,12 @@ segurança do modo automático, informe isso e sugira o prefixo `!`, seguindo co
    - Variáveis sensíveis marcadas `sensitive = true`, nunca com valor default em texto claro.
    - `terraform plan` limpo (sem drift inesperado) antes de qualquer `apply` sugerido.
    - Módulos reutilizáveis em `infra/terraform/modules/` em vez de duplicação entre ambientes.
-   - **Ferramenta auxiliar (opcional, nunca gate)**: se
+   - **Tente a ferramenta primeiro (`docs/MICRO-CONTEXT.md`, seção 3)**: se
      [checkov](https://github.com/bridgecrewio/checkov) estiver disponível (`command -v
      checkov`), rode `checkov -d infra/terraform/` **antes** de confirmar os itens acima — cobre
      boa parte deste checklist de forma determinística. Sem o binário, confirme cada item por
-     leitura manual dos arquivos `.tf`. Diagnóstico: `python scripts/check-checkov.py`
-     (`docs/TOOLING.md`).
+     leitura manual dos arquivos `.tf` — o caminho principal, nunca gate. Diagnóstico: `python
+     scripts/check-checkov.py` (`docs/TOOLING.md`).
 
 5. **Observabilidade**
    - A feature emite o mínimo de logs/métricas para diagnosticar problema em produção sem acesso

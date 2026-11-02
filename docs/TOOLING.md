@@ -94,7 +94,9 @@ converte parte da área de revisão em achado já pronto para triar, em vez de a
 menos tokens gastos recomputando, e menos risco de o agente alucinar um padrão/CVE que a
 ferramenta já cataloga com precisão. Mesma convenção do `rtk` em todas: **recomendação, nunca
 gate** — nenhuma etapa bloqueia pela ausência do binário, e a verificação manual que a ferramenta
-cobriria continua exigida quando ela não está disponível.
+cobriria continua exigida quando ela não está disponível. Esta é a regra geral de "ferramenta
+conhecida antes de verificação manual" de `docs/MICRO-CONTEXT.md`, seção 3, aplicada às
+ferramentas desta tabela.
 
 | Ferramenta | Usada por | Área | O que resolve | Diagnóstico |
 |---|---|---|---|---|
