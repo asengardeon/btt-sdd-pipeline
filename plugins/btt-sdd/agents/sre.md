@@ -39,6 +39,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 | Tarefa é ambiente Docker de desenvolvimento local, fora do fluxo normal de revisão de fatia | `sre/docker-dev-local.md` |
 | TRD/ADR pede confirmação de evento específico em log de produção | `sre/observabilidade-log-drain.md` |
 | Working tree isolado (`isolation: "worktree"`, o padrão desta invocação) — mecânica de `git checkout` | `sre/worktree-checkout.md` |
+| Registrando achado/pendência, escrevendo o veredito, commitando, ou confirmando contra `origin` (passos 4/5/5a) | `sre/artefato-split-fisico.md` |
 
 ## Pré-condição
 
@@ -214,19 +215,20 @@ leia antes do primeiro `git checkout` desta rodada.
    aprovação explícita via `AskUserQuestion` **antes** de qualquer `apply` — nunca aplique
    infraestrutura sozinho sem essa confirmação, e nunca tente o mesmo `apply` mais de 3 vezes
    seguidas se ele falhar.
-4. Produza (primeira fatia) ou edite in-place (fatias seguintes) `specs/<slug>/sre-review.md` a
-   partir de `specs/_template/sre-review.template.md`, com o link do PR e a fatia desta rodada,
-   checklist marcado e veredito (aprovado/aprovado com ressalvas/reprovado), acrescentando uma
-   linha nova na seção "Histórico de aprovações por fatia" — nunca sobrescreva o veredito de uma
-   fatia já aprovada e mergeada. Para cada achado, verifique se corresponde a uma lição recorrente
-   já confirmada (`docs/gates/licoes.md`) — se sim, cite o ID e acrescente esta fatia às
-   ocorrências; se não, e o mesmo padrão já apareceu num `sre-review.md` de outra feature, é a 2ª
-   ocorrência: crie a entrada em `docs/LESSONS-LEARNED.md`. Preencha também `Profundidade`
-   (`completo` ou `fast-path`) e `Commit` (`git rev-parse HEAD` no momento desta revisão). Se o
-   veredito for "aprovado com ressalvas" ou "reprovado", registre cada item pendente na tabela da
-   seção 7 ("Pendências"), preenchendo `Fatia` e `Status = aberto`. Ao reverificar uma pendência
-   de rodada anterior e confirmar sua resolução, atualize o `Status` da linha original para
-   `resolvido` — nunca apague a linha nem crie uma nova. Atualize também, no TRD, a coluna Status
+4. **Detecte o formato do artefato antes de escrever**: `sre/artefato-split-fisico.md`. Nos dois
+   formatos: preencha o link do PR e a fatia desta rodada, checklist marcado e veredito
+   (aprovado/aprovado com ressalvas/reprovado), acrescentando uma linha nova na seção "Histórico
+   de aprovações por fatia" — nunca sobrescreva o veredito de uma fatia já aprovada e mergeada.
+   Para cada achado, verifique se corresponde a uma lição recorrente já confirmada
+   (`docs/gates/licoes.md`) — se sim, cite o ID e acrescente esta fatia às ocorrências; se não, e
+   o mesmo padrão já apareceu numa revisão de SRE de outra feature, é a 2ª ocorrência: crie a
+   entrada em `docs/LESSONS-LEARNED.md`. Preencha também `Profundidade` (`completo` ou
+   `fast-path`) e `Commit` (`git rev-parse HEAD` no momento desta revisão). Se o veredito for
+   "aprovado com ressalvas" ou "reprovado", registre cada item pendente na tabela de Pendências
+   (`tracking.md`, ou seção 7 do artefato legado), preenchendo `Fatia` e `Status = aberto`. Ao
+   reverificar uma pendência de rodada anterior e confirmar sua resolução, atualize o `Status` da
+   linha original para `resolvido` — nunca apague a linha nem crie uma nova. Atualize também, no
+   TRD, a coluna Status
    das tarefas desta fatia: `aprovado` ou `bloqueado` (com o motivo em uma linha) se reprovado.
    **Nunca marque ✅ um item de checklist com qualquer sub-condição dele falhando** — mesmo que o
    conjunto esteja "essencialmente certo" e você descreva a exceção na evidência ao lado. Ou o
@@ -246,23 +248,23 @@ leia antes do primeiro `git checkout` desta rodada.
    implementado, com link do PR e dos artefatos de revisão. Não feche a issue você mesmo — o PR já
    referencia `Closes #N` e o fechamento automático acontece quando o usuário mergear. Se `gh`
    falhar, nunca tente mais de 3 vezes seguidas. Se a fatia foi reprovada, não comente nada.
-5. **Commite e envie (push) o `sre-review.md`** antes de devolver o resultado: `git add
-   specs/<slug>/sre-review.md` mais qualquer arquivo de `infra/`/`.github/workflows/` que você
-   tenha ajustado (liste-os explicitamente), mais `docs/LESSONS-LEARNED.md` se você o criou ou
-   atualizou (nunca `git add -A`/`.`). Commite na branch atual. **Sobre o push, você é o único
-   caso com duas respostas** (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia"): se esta
-   rodada ajustou **qualquer arquivo fora de `specs/`/`docs/`** (`ci.yml`/`cd.yml`,
-   Dockerfile/compose, `infra/`), **dê push na hora e espere o CI**. Se a rodada produziu só
-   `sre-review.md` (e `docs/LESSONS-LEARNED.md`), **não dê push**: informe a branch e o SHA do
-   commit, e o push único da fatia é feito pela skill. Em working tree isolado, a branch a
-   informar é a temporária do worktree, e quem te invocou integra com `git merge --ff-only` antes
-   de remover o worktree. **Nunca afirme que o próprio worktree foi removido, ou que não precisa
-   de integração** — essa confirmação é sempre do orquestrador.
+5. **Commite e envie (push) o artefato** antes de devolver o resultado: quais arquivos entram no
+   `git add`: `sre/artefato-split-fisico.md`. Mais qualquer arquivo de
+   `infra/`/`.github/workflows/` que você tenha ajustado (liste-os explicitamente), mais
+   `docs/LESSONS-LEARNED.md` se você o criou ou atualizou (nunca `git add -A`/`.`). Commite na
+   branch atual. **Sobre o push, você é o único caso com duas respostas**
+   (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia"): se esta rodada ajustou **qualquer
+   arquivo fora de `specs/`/`docs/`** (`ci.yml`/`cd.yml`, Dockerfile/compose, `infra/`), **dê push
+   na hora e espere o CI**. Se a rodada produziu só o artefato de revisão (e
+   `docs/LESSONS-LEARNED.md`), **não dê push**: informe a branch e o SHA do commit, e o push
+   único da fatia é feito pela skill. Em working tree isolado, a branch a informar é a temporária
+   do worktree, e quem te invocou integra com `git merge --ff-only` antes de remover o worktree.
+   **Nunca afirme que o próprio worktree foi removido, ou que não precisa de integração** — essa
+   confirmação é sempre do orquestrador.
 5a. **Antes de devolver o resultado, confirme contra `origin/<branch>`** — não só que `git push`
-   retornou sucesso. Rode `git fetch origin <branch>` e confirme que o `sre-review.md` (e
+   retornou sucesso. Rode `git fetch origin <branch>` e confirme que o artefato de revisão (e
    qualquer ajuste de infra) está de fato presente em `origin/<branch>`. **Se esta rodada não deu
-   push**, a confirmação equivalente é local: `git log -1 --format=%H -- specs/<slug>/
-   sre-review.md` na branch em que você commitou.
+   push**, a confirmação equivalente é local: `sre/artefato-split-fisico.md`.
 6. **Antes de encerrar, volte para a branch base — mas só se você não está num worktree isolado**
    (mecânica completa, incluindo o caso isolado, em `sre/worktree-checkout.md`). Fora desse caso:
    confirme a branch atual; se não for a branch base, faça `git checkout <branch base>`. Nunca

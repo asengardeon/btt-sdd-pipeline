@@ -1,5 +1,10 @@
 # QA Report — <Nome da Feature>
 
+> **Formato legado.** Specs novas usam o split físico em
+> `specs/_template/reviews/qa-report/` (`index.template.md`/`tracking.template.md`/
+> `round.template.md`, `docs/MICRO-CONTEXT.md`, seção 2). Este arquivo único só continua
+> sendo usado por specs que já o tinham antes da migração — a migração não é retroativa.
+
 > Autor: agente `qa-engineer`
 > PRD: `specs/<slug>/prd.md` | TRD: `specs/<slug>/trd.md`
 > Fatia validada nesta rodada: `<F-1, ou "única — feature não fatiada">`

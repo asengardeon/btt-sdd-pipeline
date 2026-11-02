@@ -64,9 +64,11 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
 3. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 3b para
    registrar a duração desta invocação. Invoque o agente `security-engineer` (Agent tool,
    `subagent_type: "security-engineer"`) passando os caminhos do TRD e do `qa-report.md`, e o PR
-   da feature, com instrução para produzir `specs/<slug>/security-review.md` a partir de
-   `specs/_template/security-review.template.md`. **Sempre passe `isolation: "worktree"` nesta
-   chamada** — nunca deixe dois agentes dividirem o mesmo diretório de trabalho
+   da feature, com instrução para produzir o relatório desta rodada — o próprio agente detecta se
+   esta spec já usa o formato novo (`specs/<slug>/reviews/security-review/`) ou o legado
+   (`specs/<slug>/security-review.md`), conforme
+   `agents/security-engineer/artefato-split-fisico.md`; você não precisa decidir isso por ele.
+   **Sempre passe `isolation: "worktree"` nesta chamada** — nunca deixe dois agentes dividirem o mesmo diretório de trabalho
    (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes concorrentes"). Não é
    uma condição a avaliar caso a caso ("outra tarefa pode estar ativa?") — é o padrão desta
    invocação.
@@ -142,7 +144,8 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    ```bash
    git branch --show-current                              # confirme antes de qualquer merge
    git merge --ff-only <branch-informada-pelo-agente>
-   git log -1 --format=%H -- specs/<slug>/security-review.md   # artefato alcançável na branch da fatia
+   # artefato alcançável na branch da fatia — formato novo são 3 arquivos, legado é 1:
+   git log -1 --format=%H -- specs/<slug>/reviews/security-review/ specs/<slug>/security-review.md
    git worktree remove <caminho-do-worktree>              # se houver
    ```
 

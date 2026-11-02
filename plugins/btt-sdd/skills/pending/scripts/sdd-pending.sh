@@ -143,8 +143,9 @@ if [ -d "$SPECS_DIR" ]; then
 
     for f in "${FILES[@]}"; do
       # Formato novo (docs/MICRO-CONTEXT.md, seção 2): pendências de "<etapa>.md" migrada
-      # vivem em reviews/<etapa>/tracking.md, não no arquivo único legado. "code-review" e
-      # "ux-review" já migraram; as demais caem sempre no legado até migrarem.
+      # vivem em reviews/<etapa>/tracking.md, não no arquivo único legado. As 5 etapas de
+      # revisão (code-review, ux-review, qa-report, security-review, sre-review) já migraram —
+      # specs antigas continuam caindo no legado.
       stage="${f%.md}"
       if [ -f "${dir}reviews/${stage}/INDEX.md" ]; then
         file="${dir}reviews/${stage}/tracking.md"

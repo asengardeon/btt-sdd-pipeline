@@ -64,7 +64,9 @@
 - [ ] Toda fronteira de confiança (CLI, request, evento) valida entrada antes de usar.
 - [ ] Dependências novas/alteradas checadas por vulnerabilidade conhecida, dentro do que as
   ferramentas disponíveis permitem verificar.
-- [ ] `security-review.md` referencia o PR e a fatia desta rodada.
+- [ ] O artefato de segurança existe (`specs/<slug>/reviews/security-review/` no formato novo,
+  `specs/<slug>/security-review.md` no legado — `docs/MICRO-CONTEXT.md`, seção 2), referencia o
+  PR e a fatia desta rodada.
 - [ ] Na fatia final que fecha o spec (nenhuma fatia pendente na decomposição de tarefas do TRD), a
   revisão é sempre completa nas 6 áreas — nunca fast-path — cobrindo o diff acumulado desde a última
   revisão registrada como `completo` na tabela "Histórico de aprovações por fatia", não só o diff
@@ -81,8 +83,10 @@
   como evidência concreta de performance, e os três defeitos de medição empurram na **mesma
   direção**: superestimam as etapas de agente e subestimam as do orquestrador — numa fatia medida,
   29% do esforço era de orquestrador.
-- [ ] `security-review.md` commitado (só esse arquivo, nunca `git add -A`/`.`) na branch do PR
-  pelo próprio `security-engineer` antes de devolver o resultado, e **integrado na branch da
+- [ ] O(s) arquivo(s) do artefato de segurança desta rodada (`F-<N>.md`/`hotfix-<data>.md` +
+  `INDEX.md` + `tracking.md` no formato novo; `security-review.md` no legado — nunca `git add
+  -A`/`.`) commitados na branch do PR pelo próprio `security-engineer` antes de devolver o
+  resultado, e **integrados na branch da
   fatia** por quem o invocou (`git merge --ff-only` da branch informada, com o artefato
   confirmado alcançável) antes de a etapa seguinte começar. **O push não é por etapa**: é um
   por fatia, ao final da cadeia de revisão dela (`docs/GIT-WORKFLOW.md`, seção "Push único por

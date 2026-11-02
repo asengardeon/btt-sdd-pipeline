@@ -73,8 +73,10 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
 3. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 3b para
    registrar a duração desta invocação. Invoque o agente `sre` (Agent tool, `subagent_type:
    "sre"`) passando o caminho do TRD (seção de pilares de engenharia/infra), do `qa-report.md` e do
-   `security-review.md`, e instrução para produzir `specs/<slug>/sre-review.md` a partir de
-   `specs/_template/sre-review.template.md`. **Sempre passe `isolation: "worktree"` nesta chamada**
+   `security-review.md`, e instrução para produzir o relatório desta rodada — o próprio agente
+   detecta se esta spec já usa o formato novo (`specs/<slug>/reviews/sre-review/`) ou o legado
+   (`specs/<slug>/sre-review.md`), conforme `agents/sre/artefato-split-fisico.md`; você não
+   precisa decidir isso por ele. **Sempre passe `isolation: "worktree"` nesta chamada**
    — nunca deixe dois agentes dividirem o mesmo diretório de trabalho (`docs/GIT-WORKFLOW.md`,
    seção "Isolamento de working tree entre agentes concorrentes"). Não é uma condição a avaliar
    caso a caso ("outra tarefa pode estar ativa?") — já aconteceu numa sessão real do agente `sre`
@@ -149,7 +151,8 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    ```bash
    git branch --show-current                              # confirme antes de qualquer merge
    git merge --ff-only <branch-informada-pelo-agente>
-   git log -1 --format=%H -- specs/<slug>/sre-review.md   # artefato alcançável na branch da fatia
+   # artefato alcançável na branch da fatia — formato novo são 3 arquivos, legado é 1:
+   git log -1 --format=%H -- specs/<slug>/reviews/sre-review/ specs/<slug>/sre-review.md
    git worktree remove <caminho-do-worktree>              # se houver
    ```
 
