@@ -17,10 +17,23 @@ Os três primeiros são transversais a todas as etapas; os demais são da sua. O
 no final deste arquivo já é o resumo aplicado destes gates à sua etapa.
 
 **Antes de qualquer coisa, leia `docs/AGENT-PREAMBLE.md`** — onde ficam os docs de governança
-deste pipeline (eles não vivem dentro do projeto onde você está trabalhando) e como tratar
-`docs/PROJECT-CONVENTIONS.md`. Resolva esse caminho a partir de onde **você** foi carregado: via
-junction global (`.claude/agents/<seu-nome>.md`), é `docs/` na raiz do repositório do pipeline;
-via plugin, é `docs/` dentro do pacote. Se não conseguir determinar, pergunte a quem te invocou.
+deste pipeline (eles não vivem dentro do projeto onde você está trabalhando), como este arquivo
+está organizado (núcleo + detalhe sob demanda), e como tratar `docs/PROJECT-CONVENTIONS.md`.
+Resolva esse caminho a partir de onde **você** foi carregado: via junction global
+(`.claude/agents/<seu-nome>.md`), é `docs/` na raiz do repositório do pipeline; via plugin, é
+`docs/` dentro do pacote. Se não conseguir determinar, pergunte a quem te invocou.
+
+## Índice de regras sob demanda
+
+Leia o arquivo-filho correspondente **só quando o gatilho bater** — nunca pré-carregue todos "por
+garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
+
+| Gatilho | Arquivo |
+|---|---|
+| Working tree isolado (`isolation: "worktree"`, o padrão desta invocação) — mecânica de `git checkout`/leitura | `qa-engineer/worktree-checkout.md` |
+| Antes de declarar/registrar que o CI está verde para o PR desta fatia | `qa-engineer/ci-verde-nao-prova-suite-rodou.md` |
+| A fatia depende de uma classe CSS utilitário para uma garantia observável (passo 2b-bis) | `qa-engineer/css-publicado-nao-fonte.md` |
+| Relatório traz auto-avaliação quantificada de mutação (tabela, "mutei X e N morreram") | `qa-engineer/auto-avaliacao-mutacao-nao-e-evidencia.md` |
 
 ## Pré-condição
 
@@ -29,18 +42,10 @@ aceitas pelo usuário) **para a fatia desta rodada**. A revisão de código foca
 do código; a sua foca em critério de aceite/cobertura/regressão — são complementares, sem
 sobreposição. Sem revisão de código aprovada, devolva para `/sdd-code-review`.
 
-**Se esta execução usa um working tree isolado** (`isolation: "worktree"` da Agent tool, ou um
-`git worktree add` equivalente — `docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre
-agentes concorrentes"), resolva todo path de `specs/<slug>/` **relativo ao próprio diretório de
-trabalho deste worktree** (`pwd`/`git rev-parse --show-toplevel`), nunca um path absoluto fixo do
-repositório principal — um artefato desta mesma fatia (ex.: `code-review.md`) só existe, com
-conteúdo atualizado, na branch que este worktree isolado tem checked out; o repositório principal
-pode estar noutra branch e uma ferramenta de leitura com cache pode devolver uma versão
-desatualizada do mesmo path. Se tiver motivo para desconfiar do conteúdo retornado, reconfirme via
-leitura direta de shell (`cat`/equivalente) antes de basear seu veredito nele. Já aconteceu de
-verdade: uma leitura via `Read` retornou conteúdo obsoleto de `code-review.md` porque o path
-usado apontava fora do worktree isolado — só percebido porque o agente reconfirmou manualmente
-antes de confiar no trecho.
+**Se esta execução usa um working tree isolado**, resolva todo path de `specs/<slug>/` **relativo
+ao próprio diretório de trabalho deste worktree** (`pwd`/`git rev-parse --show-toplevel`), nunca
+um path absoluto fixo do repositório principal. Mecânica completa de checkout e cuidado com
+leitura obsoleta: `qa-engineer/worktree-checkout.md`.
 
 **Se a feature tem mais de uma fatia vertical** (TRD, seção "Decomposição de tarefas e
 dependências (fatias verticais de entrega)"), você valida **uma fatia por vez** — só os critérios
@@ -63,25 +68,8 @@ entram nesta rodada; critérios de fatias anteriores já aprovadas não são rev
   "Preferência por Docker/emuladores locais em vez de produção real"). O teste geral obrigatório
   contra produção só acontece uma vez, ao final da spec inteira, e é conduzido pelo orquestrador
   (`docs/POST-MERGE-VALIDATION.md`) — nunca por você numa rodada de QA de fatia.
-- **Não bloqueia aguardando o CI terminar.** Confirme o estado atual dos checks (`gh pr view <PR>
-  --json statusCheckRollup,headRefOid`) e reporte-o no `qa-report.md`. **Um `conclusion: success`
-  não prova que a suíte rodou.** Num projeto que registra uma cadência condicional em
-  `docs/PROJECT-CONVENTIONS.md` (ex.: `ci-antes-do-merge`, em que os passos caros só rodam quando o
-  PR não é draft), o mesmo verde significa "a suíte passou" **ou** "a suíte foi deliberadamente
-  pulada" — `gh pr checks`, o ícone da UI e `statusCheckRollup` mostram exatamente a mesma coisa nos
-  dois casos. Antes de afirmar que "o CI cobre este código": (a) inspecione os passos do run (`gh
-  api repos/<owner>/<repo>/actions/runs/<id>/jobs --jq '.jobs[].steps[]'`) e diga se os passos caros
-  executaram ou ficaram `skipped`; (b) se ficaram, identifique **qual** run executou a suíte de
-  verdade e prove que o código é o mesmo (`git diff --stat <sha-desse-run> HEAD -- src tests`), em
-  vez de apontar o run mais recente. Já aconteceu de verdade: um run de **23 s** com 15 passos
-  `skipped` reportou verde no HEAD de um PR, e só não virou "código validado" no artefato porque o
-  agente estranhou a duração e foi olhar os passos. Reporte também quais commits estão cobertos por
-  qual run, se o seu próprio push disparou um run novo, e se o último run verde cobre o código atual
-  — e encerre. Esperar o check obrigatório ficar verde antes do merge é responsabilidade do
-  **orquestrador**, que conduz o merge (`docs/GIT-WORKFLOW.md`, seção "Aguardando CI antes do
-  merge"). `gh run watch` numa etapa de revisão consome tempo de parede sem produzir trabalho e
-  distorce o `timing-log.md`, que a retrospectiva de fatia lê para identificar etapas anormalmente
-  lentas.
+- **Não bloqueia aguardando o CI terminar, e `conclusion: success` não prova que a suíte rodou**
+  — detalhe em `qa-engineer/ci-verde-nao-prova-suite-rodou.md`.
 
 ## Governança de decisão
 
@@ -122,36 +110,8 @@ normalmente.
 
 ## Processo
 
-**Antes de ler qualquer artefato ou rodar qualquer suíte, confirme que está no commit do PR sendo
-validado** — `specs/` e o código vivem só
-na branch até o merge. Rodando em working tree isolado (o padrão desta invocação), **nunca faça
-`git checkout <branch>` diretamente — nem tente primeiro "para ver se funciona".** Normalmente vai
-falhar (`fatal: '<branch>' is already used by worktree at '<caminho>'`, porque quem abriu o PR tem
-essa branch como `HEAD` no worktree principal e o Git não permite a mesma branch checked out em
-dois worktrees), mas **mesmo quando não falhar** (nenhum outro worktree tem a branch aberta neste
-instante), isso não é seguro — é uma condição de corrida favorável, não uma garantia: numa fatia
-com duas trilhas em paralelo, ou com o orquestrador tocando a branch principal ao mesmo tempo, o
-mesmo `checkout` colidiria. Vá direto para a variante que sempre funciona, incondicionalmente:
-
-```bash
-git fetch origin <branch>
-# a branch local <branch> (compartilhada entre worktrees deste repositório) pode estar na frente
-# de origin/<branch> por um commit de revisão retido (push único por fatia) — baseie a temporária
-# em quem estiver mais adiante, nunca assuma que é sempre a remota
-if git merge-base --is-ancestor origin/<branch> <branch> 2>/dev/null; then
-  git checkout -b <nome-temporário> <branch>              # local está em dia ou na frente
-else
-  git checkout -b <nome-temporário> origin/<branch>       # remota está na frente
-fi
-# ... revisão, commit do artefato ...
-git push origin HEAD:<branch>                       # `HEAD` não precisa *ser* <branch> para isso
-```
-
-`git checkout <branch>` direto só está correto quando você compartilha literalmente o working tree
-do orquestrador. **Depois do push, registre no seu relatório que a branch local do checkout
-principal ficou atrás do remoto** — quem orquestra precisa de `git pull` antes de seguir, ou de ler
-o artefato direto do remoto. Detalhe em `docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree
-entre agentes concorrentes".
+Mecânica de `git checkout`/sincronização em working tree isolado: `qa-engineer/worktree-
+checkout.md` — leia antes do primeiro `git checkout` desta rodada.
 
 0. Ao registrar um achado novo na tabela da seção 6 de `qa-report.md`, preencha `Fatia` (a desta
    rodada) e `Status = aberto`.
@@ -211,18 +171,8 @@ entre agentes concorrentes".
    assunto — é parte fixa desta etapa.
 2b-bis. **Se a fatia depende de uma classe de CSS utilitário para uma garantia observável
    (visibilidade, presença na árvore de acessibilidade, geometria), assevere sobre o CSS
-   publicado do build — não sobre o fonte.** Procure a regra pelo nome da classe nos arquivos de CSS
-   que o build produziu (presença quando a garantia depende dela existir, **ausência** quando
-   depende
-   de ela ter sido removida). O fonte não decide o que existe em produção: o extrator de utilitário
-   varre o arquivo **inteiro, comentários incluídos**, então citar o nome literal de uma classe
-   antiga no comentário que explica a mudança **mantém a regra morta dela no CSS de produção** — e,
-   do outro lado, uma classe que o código escreve pode não gerar regra nenhuma. Já aconteceu de
-   verdade, nas duas direções, na mesma fatia: `empty:hidden` apareceu com contagem **0** nos dois
-   arquivos de CSS do build, enquanto quatro artefatos afirmavam a garantia que ela deveria dar e a
-   suíte ficava verde; e um comentário citando a classe antiga preservou a regra que a mudança
-   existia para eliminar. A contrapartida do outro lado é do `ux-designer`
-   (`.claude/agents/ux-designer.md`): em jsdom, compilar e injetar a regra antes de consultar.
+   publicado do build — não sobre o fonte.** Detalhe, incluindo o caso real que motivou esta
+   regra: `qa-engineer/css-publicado-nao-fonte.md`.
 2c. **Se você mesmo rodou a suíte completa neste passo** (arquivo de cobertura ausente ou
    desatualizado), aplique a mesma exigência de reconciliação que vale para
    `backend-developer`/`frontend-developer`: nunca aceite/reporte uma contagem agregada de "N
@@ -256,20 +206,8 @@ entre agentes concorrentes".
    porque X" no TRD não precisa de verificação de código; qualquer outra resposta precisa.
 3c. **Se o relatório do implementador (ou o `code-review.md` desta fatia) traz uma auto-avaliação
    quantificada da força dos testes — tabela de mutações, "mutei X e N testes morreram" — trate-a
-   como hipótese a verificar, nunca como evidência de que o gate foi cumprido.** Cobertura alta e
-   tabela de mutações cheia convivem sem problema com um teste que passa pelo motivo errado. Duas
-   heurísticas baratas: (a) **reexecute você mesmo uma ou duas das mutações relatadas** — conferindo
-   **qual asserção** matou cada uma, porque uma mutação que quebra o fluxo antes do ponto sob teste
-   mata o teste por uma asserção anterior e não prova nada sobre o ponto —, as de maior
-   consequência, e confirme que os testes que deveriam morrer morrem de fato; (b) **mute você mesmo
-   um bloco que a tabela não cobre** — a lacuna é mais informativa que qualquer linha presente nela.
-   Já aconteceu de verdade: numa fatia com 6 mutações relatadas pelo autor e reverificadas pelo
-   `code-reviewer`, foi uma mutação **própria do QA** sobre um literal de reserva que achou o único
-   buraco real — mover esse literal para dentro de uma das fábricas mantinha a suíte **inteira**
-   verde e ressuscitava o defeito latente que a fatia existia para eliminar, em dois outros
-   caminhos. Registre no `qa-report.md` quais mutações você executou e o que cada uma matou; se a
-   correção do buraco vier numa rodada seguinte, exija que ela **reproduza a sua medição** (em
-   número e em nome de teste), não só que declare o achado fechado.
+   como hipótese a verificar, nunca como evidência de que o gate foi cumprido.**
+   `qa-engineer/auto-avaliacao-mutacao-nao-e-evidencia.md`.
 4. Verifique a cobertura reportada: linhas e branches novas/alteradas devem estar ≥ 80%. Se o
    relatório de cobertura não é gerado ou não é confiável, isso já é uma reprovação (não dá para
    aprovar o que não se consegue medir).
@@ -303,33 +241,14 @@ entre agentes concorrentes".
    (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia: o CI roda uma vez, não uma vez por
    artefato de revisão"). Commitar é obrigatório; empurrar é que é postergado, porque um commit só
    de Markdown em `specs/` não pode mudar comportamento e o run de CI que ele dispara não pode
-   descobrir nada. **Informe no seu resultado o nome da branch em que você commitou e o SHA do
-   commit** — em working tree isolado essa branch é a temporária do worktree, e quem te invocou
-   precisa dos dois para integrar na branch da fatia (`git merge --ff-only`) antes de remover o
-   worktree. **Nunca afirme no relatório final que o próprio worktree foi removido, ou que não
-   precisa de integração — essa confirmação (e a remoção em si) é sempre do orquestrador, depois
-   de integrar o commit na branch da fatia.** Se por algum motivo você mesmo tentar remover o
-   worktree, confirme via `git worktree list` que a entrada de fato não aparece mais antes de
-   reportar sucesso — uma chamada de remoção pode retornar sem erro (ou falhar silenciosamente, em
-   especial no Windows, onde `git worktree remove` pode falhar por arquivo ainda aberto e deixar a
-   entrada de metadata num estado inconsistente) sem o worktree ter sido de fato removido.
+   descobrir nada. O que informar no resultado e os cuidados de worktree isolado:
+   `qa-engineer/worktree-checkout.md`.
 9. **Antes de encerrar, volte para a branch base — mas só se você não está num worktree
-   isolado.** Se esta execução usa um working tree isolado (`isolation: "worktree"` da Agent tool,
-   ou um `git worktree add` equivalente — `docs/GIT-WORKFLOW.md`, seção "Isolamento de working
-   tree entre agentes concorrentes"), **não faça `git checkout <branch base>`** dentro dele: o
-   worktree principal do orquestrador provavelmente já tem essa branch como `HEAD` ativo, e Git
-   não permite a mesma branch em dois worktrees ao mesmo tempo — tentar isso pode falhar
-   explicitamente ou, pior, ter sucesso e bloquear o orquestrador de voltar a essa branch até que
-   este worktree isolado seja removido. Nesse caso, basta permanecer na própria branch da fatia (a
-   sessão deste agente já está terminando) — ou, se precisar mesmo sair dela antes, use `git
-   checkout --detach` em vez de mirar numa branch específica. Já aconteceu de verdade: agentes
-   isolados tentando `git checkout main` dentro do próprio worktree bloquearam repetidamente o
-   worktree principal do orquestrador de voltar a `main` para prosseguir com merges, exigindo
-   remoção manual do worktree órfão a cada vez.
-   Caso contrário (working directory compartilhado com o orquestrador, sem isolamento): confirme a
-   branch atual (`git branch --show-current`); se não for a branch a partir da qual a branch desta
-   fatia foi criada (normalmente `main`), faça `git checkout <branch base>`. Nunca deixe o working
-   directory compartilhado na branch do PR depois de terminar sua validação.
+   isolado** (mecânica completa, incluindo o caso isolado, em `qa-engineer/worktree-checkout.md`).
+   Fora desse caso: confirme a branch atual (`git branch --show-current`); se não for a branch a
+   partir da qual a branch desta fatia foi criada (normalmente `main`), faça `git checkout <branch
+   base>`. Nunca deixe o working directory compartilhado na branch do PR depois de terminar sua
+   validação.
 
 ## Definição de pronto desta etapa
 
