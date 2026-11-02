@@ -34,6 +34,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 | Antes de declarar/registrar que o CI está verde para o PR desta fatia | `qa-engineer/ci-verde-nao-prova-suite-rodou.md` |
 | A fatia depende de uma classe CSS utilitário para uma garantia observável (passo 2b-bis) | `qa-engineer/css-publicado-nao-fonte.md` |
 | Relatório traz auto-avaliação quantificada de mutação (tabela, "mutei X e N morreram") | `qa-engineer/auto-avaliacao-mutacao-nao-e-evidencia.md` |
+| Registrando achado (passo 0), escrevendo o veredito (passo 7), ou commitando (passo 8) | `qa-engineer/artefato-split-fisico.md` |
 
 ## Pré-condição
 
@@ -93,8 +94,9 @@ prova. Muda só o escopo do que você reexecuta nessa rodada:
 - Confirme a correção do achado específico com evidência direta: leia o teste que agora cobre o
   caso, ou rode você mesmo o cenário pontual que expunha o problema original — não só a mensagem
   de commit.
-- Confirmada a correção, atualize o `Status` da linha original na tabela de Achados (seção 6) de
-  `aberto` para `corrigido` — nunca apague a linha nem crie uma nova. Se a correção não procede,
+- Confirmada a correção, atualize o `Status` da linha original na tabela de Achados de
+  `tracking.md` (ou seção 6 do artefato legado) de `aberto` para `corrigido` — nunca apague a
+  linha nem crie uma nova. Se a correção não procede,
   deixe `Status = aberto` e registre o motivo. Uma linha com `Status = corrigido` cuja `Fatia` já
   foi mergeada passa a ser referência sob demanda para rodadas seguintes
   (`docs/AGENT-PREAMBLE.md`, seção "Artefato in-place que acumulou rodadas").
@@ -113,8 +115,8 @@ normalmente.
 Mecânica de `git checkout`/sincronização em working tree isolado: `qa-engineer/worktree-
 checkout.md` — leia antes do primeiro `git checkout` desta rodada.
 
-0. Ao registrar um achado novo na tabela da seção 6 de `qa-report.md`, preencha `Fatia` (a desta
-   rodada) e `Status = aberto`.
+0. Ao registrar um achado novo, preencha `Fatia` (a desta rodada) e `Status = aberto`. Formato
+   novo vs. legado: `qa-engineer/artefato-split-fisico.md`.
 1. Leia `specs/<slug>/prd.md` e `specs/<slug>/trd.md`, identifique a fatia sendo validada nesta
    rodada e o PR correspondente. Extraia só os critérios de aceite cobertos por essa fatia. Leia
    também `docs/LESSONS-LEARNED.md`, se existir. Ao avaliar a correção de um teste que era instável,
@@ -216,25 +218,19 @@ checkout.md` — leia antes do primeiro `git checkout` desta rodada.
 6. Cheque aderência a ports & adapters e SOLID de forma funcional: os testes de domínio/aplicação
    rodam sem tocar infraestrutura real (banco, rede)? Se um teste "unitário" precisa de rede/DB
    de verdade, a fronteira foi violada — reporte como achado, não apenas como estilo.
-7. Produza (primeira fatia) ou edite in-place (fatias seguintes) `specs/<slug>/qa-report.md` a
-   partir de `specs/_template/qa-report.template.md`, com o link do PR e a fatia desta rodada,
-   veredito por critério de aceite (passou/falhou/não testável) e veredito geral
-   (aprovado/reprovado), acrescentando uma linha nova na seção "Histórico de aprovações por
-   fatia" — nunca sobrescreva o veredito de uma fatia já aprovada e mergeada. Se o veredito geral
-   for **reprovado**, atualize também, no TRD, a coluna Status das tarefas desta fatia para
-   `bloqueado` (com o motivo em uma linha), refletindo a mesma transição na Issue GitHub
-   associada, se houver. Para cada critério
+7. **Detecte o formato do artefato antes de escrever**: `qa-engineer/artefato-split-fisico.md`.
+   Nos dois formatos: preencha o link do PR e a fatia desta rodada, veredito por critério de
+   aceite (passou/falhou/não testável) e veredito geral (aprovado/reprovado) — nunca sobrescreva
+   o veredito de uma fatia já aprovada e mergeada. Se o veredito geral for **reprovado**, atualize
+   também, no TRD, a coluna Status das tarefas desta fatia para `bloqueado` (com o motivo em uma
+   linha), refletindo a mesma transição na Issue GitHub associada, se houver. Para cada critério
    que falhou, verifique se corresponde a uma lição recorrente já confirmada
-   (`docs/gates/licoes.md`) — se sim, cite o ID e
-   acrescente esta fatia às ocorrências; se não, e o mesmo padrão já apareceu num `qa-report.md`
-   de outra feature, é a 2ª ocorrência: crie a entrada em `docs/LESSONS-LEARNED.md` seguindo o
-   critério daquela seção.
-8. **Commite e envie (push) o `qa-report.md`** antes de devolver o resultado — não deixe essa
-   parte para quem chamou você: `git add specs/<slug>/qa-report.md` (mais o(s) arquivo(s) de
-   cobertura em `specs/<slug>/coverage/` se você os regravou no passo 2, mais
-   `docs/LESSONS-LEARNED.md` se você o criou ou atualizou no passo 7; nunca `git add -A`/`.` —
-   outra trilha pode ter mudanças não commitadas em paralelo na mesma branch),
-   uma mensagem de commit descritiva com a fatia, o veredito geral e a cobertura medida (você já
+   (`docs/gates/licoes.md`) — se sim, cite o ID e acrescente esta fatia às ocorrências; se não, e
+   o mesmo padrão já apareceu numa revisão de QA de outra feature, é a 2ª ocorrência: crie a
+   entrada em `docs/LESSONS-LEARNED.md` seguindo o critério daquela seção.
+8. **Commite e envie (push) o artefato** antes de devolver o resultado — não deixe essa parte
+   para quem chamou você. Quais arquivos entram no `git add`: `qa-engineer/artefato-split-fisico.md`.
+   Uma mensagem de commit descritiva com a fatia, o veredito geral e a cobertura medida (você já
    tem essa informação da própria rodada, não precisa reformular). Commite na branch atual —
    a mesma branch do PR aberto pela implementação, nunca uma branch nova — e **não dê `git push`**
    — o push é **um por fatia**, feito pela skill da última etapa que rodar nela

@@ -58,9 +58,11 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 3. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 3b para
    registrar a duração desta invocação. Invoque o agente `qa-engineer` (Agent tool,
    `subagent_type: "qa-engineer"`) passando os caminhos do PRD e TRD e o PR/branch da feature
-   (`feature/<slug>`, ver `docs/GIT-WORKFLOW.md`), e instrução para produzir
-   `specs/<slug>/qa-report.md` a partir de `specs/_template/qa-report.template.md`, referenciando
-   o PR. **Sempre passe `isolation: "worktree"` nesta chamada** — nunca deixe dois agentes
+   (`feature/<slug>`, ver `docs/GIT-WORKFLOW.md`), e instrução para produzir o relatório desta
+   rodada referenciando o PR — o próprio agente detecta se esta spec já usa o formato novo
+   (`specs/<slug>/reviews/qa-report/`) ou o legado (`specs/<slug>/qa-report.md`), conforme
+   `agents/qa-engineer/artefato-split-fisico.md`; você não precisa decidir isso por ele. **Sempre
+   passe `isolation: "worktree"` nesta chamada** — nunca deixe dois agentes
    dividirem o mesmo diretório de trabalho (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working
    tree entre agentes concorrentes"). Não é uma condição a avaliar caso a caso ("outra tarefa pode
    estar ativa?") — é o padrão desta invocação.
@@ -136,7 +138,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    ```bash
    git branch --show-current                              # confirme antes de qualquer merge
    git merge --ff-only <branch-informada-pelo-agente>
-   git log -1 --format=%H -- specs/<slug>/qa-report.md   # artefato alcançável na branch da fatia
+   # artefato alcançável na branch da fatia — formato novo são 3 arquivos, legado é 1:
+   git log -1 --format=%H -- specs/<slug>/reviews/qa-report/ specs/<slug>/qa-report.md
    git worktree remove <caminho-do-worktree>              # se houver
    ```
 
