@@ -183,7 +183,10 @@ entre agentes concorrentes".
    relatório de cobertura (comando documentado em `docs/TESTING.md`) você mesmo só se o arquivo não
    existir, ou se o `Commit` estiver desatualizado em relação a esse commit (ex.: houve commit de
    código novo depois da geração) — **e só da trilha cujo `Commit` divergiu**, nunca das duas
-   porque uma delas divergiu. Ao rodar, regrave o arquivo de resumo daquela trilha com o novo
+   porque uma delas divergiu. **Antes de registrar "lint/build está quebrado" como achado a partir
+   de um erro de parse genérico, reexecute vendo a saída real e não-filtrada** (`docs/TOOLING.md`,
+   item 5) — pode ser a camada de condensação de saída, não a ferramenta. Ao rodar, regrave o
+   arquivo de resumo daquela trilha com o novo
    commit, no
    mesmo
    formato condensado (nunca copiando um relatório HTML bruto), para as etapas seguintes também

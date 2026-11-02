@@ -635,7 +635,10 @@ entre agentes concorrentes".
    arquivo em `.github/workflows/*.yml` (qualquer workflow, não só
    `ci.yml`/`cd.yml`) roda `actionlint` (ou lint equivalente disponível para a stack) antes de
    considerar a mudança pronta para commit** — rotineiramente, não só quando uma run real já falhou
-   e precisa de diagnóstico. É uma validação estática barata (segundos de execução) que pega erros
+   e precisa de diagnóstico. **Antes de concluir que esse lint (ou qualquer outro comando de
+   build/teste rodado nesta etapa) "está quebrado" a partir de um erro de parse genérico,
+   reexecute vendo a saída real e não-filtrada** (`docs/TOOLING.md`, item 5) — pode ser a camada de
+   condensação de saída, não a ferramenta. É uma validação estática barata (segundos de execução) que pega erros
    de sintaxe/expressão (`${{ }}` mal-formado, indentação YAML, referência inválida a `steps`/
    `secrets`) antes do primeiro push. Já aconteceu de verdade: uma edição de `release.yml` deixou um
    `${{ }}` vazio dentro de um comentário de PowerShell num bloco `run:`, invalidando o workflow

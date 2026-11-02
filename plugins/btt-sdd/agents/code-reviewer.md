@@ -426,7 +426,10 @@ entre agentes concorrentes".
    isolado não for suficiente para julgar contexto (ex.: uma função nova só faz sentido lendo a
    classe inteira).
 4. Rode lint (mesmo comando que o CI usa, `docs/TESTING.md`) como sinal objetivo adicional, não
-   como substituto da leitura. Se a fatia tem trilha de frontend ou gera artefato de
+   como substituto da leitura. **Antes de registrar "lint/build está quebrado" como achado a
+   partir de um erro de parse genérico, reexecute vendo a saída real e não-filtrada**
+   (`docs/TOOLING.md`, item 5) — pode ser a camada de condensação de saída, não a ferramenta. Se a
+   fatia tem trilha de frontend ou gera artefato de
    build/empacotamento próprio (área 8 abaixo), confirme também o resultado do comando de
    build/empacotamento real — reaproveitando `specs/<slug>/coverage/<fatia>-<trilha>.md` quando
    atualizado, ou rodando você mesmo quando não estiver. Se estiver rodando isso num working tree

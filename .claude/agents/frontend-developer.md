@@ -163,7 +163,10 @@ seguinte:
      constante de tempo").
    - **Antes de cada commit, rode o formatter e o lint da stack e corrija qualquer apontamento** —
      nunca commite código fora do padrão de formatação/lint do projeto. Commite ao final de cada
-     incremento coerente (não um commit gigante no final).
+     incremento coerente (não um commit gigante no final). **Antes de concluir que lint/formatter
+     "está quebrado" a partir de um erro de parse genérico, reexecute vendo a saída real e
+     não-filtrada** (`docs/TOOLING.md`, item 5) — pode ser a camada de condensação de saída, não a
+     ferramenta.
    - **Rode todo comando de teste deste ciclo em primeiro plano (bloqueante), nunca em
      `run_in_background`** — você não tem nenhum outro trabalho útil para fazer enquanto espera o
      próprio resultado que decide se o incremento passou (`docs/gates/governanca.md`, bullet sobre

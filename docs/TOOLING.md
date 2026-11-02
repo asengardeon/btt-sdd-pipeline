@@ -49,6 +49,19 @@ hook vive na configuração do Claude Code, não na sessão ou no agente individ
    distribuído com o plugin nem com projetos criados via `/create-project` (não é código de
    produção de nenhum deles) — qualquer projeto pode usar os comandos que o próprio rtk já expõe
    para o mesmo diagnóstico: `rtk --version` e `rtk gain`.
+5. **Antes de registrar que uma ferramenta de build/lint/teste "está quebrada" como achado,
+   confirme reexecutando de um jeito que garanta ver a saída real e não-filtrada.** Uma mensagem
+   de erro genérica de parse (ex.: `JSON parse failed: EOF while parsing a value`), sem detalhe do
+   comando em si, é sinal de alerta de que a camada de condensação de saída (rtk ou qualquer outro
+   resumo do harness) — não a ferramenta — pode ser a origem real, especialmente quando o comando
+   "deveria" ter tido sucesso silencioso (lint limpo não imprime nada, e uma camada que tenta
+   interpretar saída vazia como JSON falha de forma confusa). Redirecionar a saída para um arquivo
+   e ler o arquivo (ou `rtk proxy <comando>`, que força saída não condensada) é o mecanismo
+   equivalente a "saída crua" quando o resumo automático está no caminho. Já aconteceu de verdade:
+   dois agentes independentes concluíram, cada um por conta própria, que `npm run lint` estava
+   quebrado em toda a codebase — o lint na verdade passava limpo, e o achado falso se propagou por
+   5-6 artefatos antes de ser refutado por quem rodou `npm ci` + `npm run lint` no próprio worktree
+   isolado e mediu a saída direta.
 
 ## Orientação para projetos que usam este pipeline
 
