@@ -46,10 +46,11 @@ diff/tarefa, sem precisar abrir nada primeiro.
 ## 2. Split físico por rodada (artefatos gerados em projetos consumidores)
 
 Um artefato de revisão editado in-place (`code-review.md`, `qa-report.md`, `security-review.md`,
-`sre-review.md`) deixa de ser um único arquivo que cresce a cada fatia/rodada. Vira um diretório:
+`sre-review.md`, `ux-review.md`) deixa de ser um único arquivo que cresce a cada fatia/rodada.
+Vira um diretório:
 
 ```
-specs/<slug>/reviews/<área>/
+specs/<slug>/reviews/<stage>/
   INDEX.md         — tabela "Histórico de aprovações por fatia" (uma linha por rodada) + próximo
                       passo. Sempre pequeno — é o índice, nunca o conteúdo.
   tracking.md       — achados (coluna Fatia/Status), pendências "VALIDAR DEPOIS", log de revisões:
@@ -58,7 +59,12 @@ specs/<slug>/reviews/<área>/
                       detalhado). Um arquivo por rodada; `hotfix-<data>.md` para correção pontual.
 ```
 
-`<área>` é o tipo de revisão (`code-review`, `qa`, `seguranca`, `sre`). Leitura, numa rodada nova:
+`<stage>` é o nome literal do artefato legado sem a extensão (`code-review`, `qa-report`,
+`security-review`, `sre-review`, `ux-review`) — nunca um nome curto inventado (ex.: "qa" em vez
+de "qa-report"). Isso não é estético: os scripts `sdd-status`/`sdd-pending` já resolvem o
+diretório a partir do próprio nome do stage (`reviews/<stage>/INDEX.md`) sem precisar de uma
+tabela de mapeamento stage→diretório — inventar um nome curto por área forçaria esse mapeamento
+a existir só para desfazer uma abreviação sem ganho real. Leitura, numa rodada nova:
 sempre `INDEX.md` inteiro (é curto) + `tracking.md` (ao menos as linhas abertas) + `F-<N>.md` da
 rodada vigente + da penúltima. Rodadas mais antigas são `Read` só sob demanda — quando o índice de
 `INDEX.md`, um achado específico, ou uma flag de revalidação apontar para elas — nunca abertas "por
@@ -67,10 +73,10 @@ cada rodada antiga nem chega a ser lida em bytes, porque é um `Read` de arquivo
 scroll dentro de um arquivo gigante.
 
 **Formato legado continua suportado para leitura.** Uma spec já em andamento num projeto
-consumidor, criada antes desta convenção existir, continua com `specs/<slug>/<área>.md` único — a
-migração não é retroativa. Toda skill/agente que lê esses artefatos detecta qual formato está em
-uso (o diretório `specs/<slug>/reviews/<área>/` existe → novo; só o arquivo único existe → legado)
-antes de decidir como ler ou escrever.
+consumidor, criada antes desta convenção existir, continua com `specs/<slug>/<stage>.md` único —
+a migração não é retroativa. Toda skill/agente que lê esses artefatos detecta qual formato está
+em uso (o diretório `specs/<slug>/reviews/<stage>/` existe → novo; só o arquivo único existe →
+legado) antes de decidir como ler ou escrever.
 
 ## 3. Ferramenta conhecida antes de verificação manual
 
