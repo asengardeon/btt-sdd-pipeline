@@ -5,7 +5,8 @@ produção real, algo que não dá para validar só com testes automatizados —
 provisionado, um DNS propagado, um e-mail transacional realmente entregue, uma variável de
 ambiente aplicada no deploy. Isso não é uma etapa nova do pipeline SDD (`docs/SDD-WORKFLOW.md`
 continua com as mesmas 7 etapas + 1 condicional) — é o procedimento a seguir sempre que uma fatia
-`infra`/`ambos (validação)` (`.claude/skills/sdd-implement/SKILL.md`, passo 2b-bis) ou um item
+`infra`/`ambos (validação)` (`.claude/skills/sdd-implement/_rules/fatia-sem-trabalho-pendente.md`)
+ou um item
 "VALIDAR DEPOIS" pede confirmação contra o mundo real depois do merge.
 
 ## Teste geral obrigatório ao finalizar uma spec
@@ -22,9 +23,9 @@ mudou.
   `docs/TESTING.md`, seção "Preferência por Docker/emuladores locais em vez de produção real") — é
   a confirmação final de que o que já passou em ambiente controlado também funciona no ambiente
   real de produção, com os dados/integrações reais que só existem lá.
-- **Não é opcional nem fica implícito**: o orquestrador (`.claude/skills/sdd-implement/SKILL.md`,
-  seção "Validação manual pós-merge contra produção real") é responsável por conduzir esse teste
-  assim que confirmar que a última fatia da spec foi mergeada.
+- **Não é opcional nem fica implícito**: o orquestrador
+  (`.claude/skills/sdd-implement/_rules/validacao-pos-merge-pendencias.md`) é responsável por
+  conduzir esse teste assim que confirmar que a última fatia da spec foi mergeada.
 - Depois do teste, siga "Depois de validar" abaixo (fechar itens VALIDAR DEPOIS relacionados,
   limpar dados de teste criados durante a validação).
 
@@ -55,8 +56,9 @@ mudou.
 
 - **Feche o ciclo do "VALIDAR DEPOIS"**: se a validação confirma um item que estava marcado como
   pendente em `qa-report.md`/`trd.md`/outro artefato, rode `/sdd-amend` para marcar esse item como
-  "validado" — nunca deixe isso implícito (`.claude/skills/sdd-implement/SKILL.md`, seção
-  "Validação manual pós-merge contra produção real"). Sem esse passo, `/sdd-pending` continua
+  "validado" — nunca deixe isso implícito
+  (`.claude/skills/sdd-implement/_rules/validacao-pos-merge-pendencias.md`). Sem esse passo,
+  `/sdd-pending` continua
   listando o item como pendente mesmo depois de confirmado de verdade.
 - Se a validação revelar um problema real (não só uma dúvida esclarecida), trate como um achado
   normal: registre e volte à etapa do pipeline responsável por corrigi-lo — não corrija

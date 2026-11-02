@@ -59,7 +59,8 @@ dependências entre histórias (fatias verticais de entrega)"), PR obrigatório 
    correto e ninguém relê issues fechadas. As consequências não são cosméticas — a spec parece ter
    tarefas pendentes que já estão em produção, `/sdd-status` e `/sdd-pending` reportam trabalho
    pendente que não existe, e o gate de "toda tarefa precisa de issue associada"
-   (`.claude/skills/sdd-implement/SKILL.md`, passo 2c-ter) pode levar uma fatia futura a
+   (`.claude/skills/sdd-implement/_rules/fatia-sem-trabalho-pendente.md`) pode levar uma fatia
+   futura a
    **reimplementar** trabalho já mergeado. Já aconteceu de verdade: um PR com `Closes #117, #118,
    #119, #120, #121` fechou só a primeira, e as outras quatro precisaram ser fechadas à mão — só
    percebido porque o orquestrador conferiu em vez de assumir que o `Closes` tinha funcionado.
@@ -140,7 +141,7 @@ hábito):
 - **Ela mudou algo fora de `specs/`/`docs/`** — tipicamente o `sre` ajustando `ci.yml`, `Dockerfile`
   ou `infra/`. Isso muda comportamento, então precisa de run próprio: push na hora e espere o CI.
 - **Rodada de correção de achado**: quem corrige toca código, empurra, e o CI roda — é o run que
-  substitui o gate local (`.claude/skills/sdd-implement/SKILL.md`, passo 3a).
+  substitui o gate local (`.claude/skills/sdd-implement/_rules/dosagem-validacao-correcao.md`).
 - **A sessão vai escalar ao usuário** e ele vai ler o artefato no GitHub, ou o trabalho precisa
   atravessar para outra máquina/sessão.
 - **O CI falhou** no push final: isso vira rodada de correção normal, com o push dela. Um segundo
@@ -583,8 +584,8 @@ legibilidade; só paga o risco do força-push.
 nasceu, e estou prestes a confiar num resultado de CI dela".** As quatro skills de revisão têm
 esse gate embutido (passo 2b de cada uma), mas ele só dispara quando uma delas é invocada. Quando
 o orquestrador corrige achados **diretamente** (retomando `backend-developer`/`frontend-developer`
-fora dessas quatro skills — `.claude/skills/sdd-implement/SKILL.md`, seção "Retomando para
-corrigir achados de revisão"), nenhum gate equivalente existe, e um hotfix mergeado em `main`
+fora dessas quatro skills — `.claude/skills/sdd-implement/_rules/retomada-nuances-e-riscos.md`),
+nenhum gate equivalente existe, e um hotfix mergeado em `main`
 nesse intervalo fica invisível até a próxima invocação de uma das quatro skills — que pode ser
 depois de várias rodadas de correção. Pior: um CI vermelho nesse estado pode ter **duas causas
 simultâneas** (flakiness real + desincronização real) — resolver a primeira (confirmando
