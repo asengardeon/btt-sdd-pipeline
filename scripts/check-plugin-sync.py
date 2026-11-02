@@ -115,6 +115,18 @@ DELIBERADAS: dict[str, dict] = {
             ),
         ],
     },
+    ".claude/skills/sdd-migrate/SKILL.md": {
+        # `specs/_template/oneshot.template.md` existe só neste repositório (ver SEM_EQUIVALENTE) —
+        # a lista de artefatos "sem regra registrada" não pode citá-lo do lado do plugin.
+        "trocas": [
+            (
+                "Artefatos sem regra registrada (`prd`, `trd`, `coverage-summary`, `timing-log`, "
+                "`oneshot`) nunca",
+                "Artefatos sem regra registrada (`prd`, `trd`, `coverage-summary`, `timing-log`) "
+                "nunca",
+            ),
+        ],
+    },
     "docs/ARCHITECTURE.md": {
         "trocas": [
             (

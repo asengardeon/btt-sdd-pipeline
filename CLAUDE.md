@@ -99,6 +99,7 @@ Cada agente vive em `.claude/agents/<nome>.md` e é acionado por uma skill em
 | `/sdd-amend`        | (nenhum, utilitário)                             | emenda um artefato já aprovado sem reiniciar o pipeline |
 | `/sdd-pending`      | (nenhum, utilitário)                             | lista itens "VALIDAR DEPOIS" em aberto |
 | `/sdd-gap-report`   | (nenhum, utilitário)                             | compara casos de uso do TRD (seção 6) com o código real |
+| `/sdd-migrate`      | (nenhum, utilitário)                             | converte um artefato de uma spec da versão de formato antiga para a atual |
 | `/sdd-project-conventions` | codebase-archaeologist                    | `docs/PROJECT-CONVENTIONS.md` (condicional) — particularidades do projeto vs. padrão do pipeline (git workflow, estrutura etc.) |
 | `/sdd-docs`         | tech-writer (utilitário, sem etapa fixa; também acionado automaticamente por `/sdd-sre` ao aprovar a última fatia pendente de uma spec) | README, docs/, ADRs, ou exemplos de código documentados |
 
@@ -145,7 +146,11 @@ manter as duas cópias em sincronia. Isso vale para **agentes, skills, os docs d
 gates para quem usa o plugin em vez de só desatualizar uma explicação. Antes de commitar qualquer
 mudança que toque um desses arquivos, rode `python scripts/check-plugin-sync.py`: ele compara as
 duas árvores normalizando as adaptações legítimas e falha apontando o que ficou para trás.
-Instalação testada e confirmada de verdade neste computador:
+Se a mudança aumentou `<!-- sdd-format-version: N -->` de algum template, rode também `python
+scripts/check-migration-coverage.py`: ele confirma que a regra de migração correspondente em
+`.claude/skills/sdd-migrate/migrations/` existe — toda versão nova que quebra a estrutura do
+arquivo exige essa regra no mesmo commit (`docs/MICRO-CONTEXT.md`, seção 3). Instalação testada
+e confirmada de verdade neste computador:
 
 ```
 claude plugin marketplace add C:\repositorios\projeto-base-ia

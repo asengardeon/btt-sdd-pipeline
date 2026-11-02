@@ -1,3 +1,4 @@
+<!-- sdd-format-version: 1 -->
 # Oneshot — <Nome da tarefa>
 
 > Uso: mudanças pequenas e de baixo risco (bugfix simples, ajuste pontual, tarefa técnica óbvia)

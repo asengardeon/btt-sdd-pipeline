@@ -1,3 +1,4 @@
+<!-- sdd-format-version: 2 -->
 # SRE Review — <Nome da Feature> — <F-N ou hotfix-<data>>
 
 > PR desta fatia: <link do Pull Request>

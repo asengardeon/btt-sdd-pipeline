@@ -1,3 +1,4 @@
+<!-- sdd-format-version: 2 -->
 # UX Review — <Nome da Feature> — Índice
 
 > Autor: agente `ux-designer`

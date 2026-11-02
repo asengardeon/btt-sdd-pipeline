@@ -1,3 +1,4 @@
+<!-- sdd-format-version: 2 -->
 # SRE Review — <Nome da Feature> — Índice
 
 > Autor: agente `sre`

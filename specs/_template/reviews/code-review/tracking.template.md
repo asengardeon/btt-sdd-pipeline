@@ -1,3 +1,4 @@
+<!-- sdd-format-version: 2 -->
 # Code Review — <Nome da Feature> — Achados, Pendências e Log
 
 Três tabelas compactas, append-only — nunca uma linha apagada, só marcada

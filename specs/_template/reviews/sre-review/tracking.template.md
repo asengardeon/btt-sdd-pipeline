@@ -1,3 +1,4 @@
+<!-- sdd-format-version: 2 -->
 # SRE Review — <Nome da Feature> — Pendências, VALIDAR DEPOIS e Log
 
 Três tabelas compactas, append-only — nunca uma linha apagada, só marcada

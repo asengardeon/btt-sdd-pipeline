@@ -1,3 +1,4 @@
+<!-- sdd-format-version: 2 -->
 # QA Report — <Nome da Feature> — Índice
 
 > Autor: agente `qa-engineer`

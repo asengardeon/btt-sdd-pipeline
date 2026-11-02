@@ -1,3 +1,4 @@
+<!-- sdd-format-version: 1 -->
 # TRD — <Nome da Feature>
 
 > Status: rascunho | em revisão | aprovado
