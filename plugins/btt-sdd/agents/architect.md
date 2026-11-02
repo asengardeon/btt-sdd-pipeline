@@ -16,10 +16,24 @@ lista os outros — carregá-los é custo sem retorno. A "Definição de pronto"
 já é o resumo aplicado destes gates à sua etapa.
 
 **Antes de qualquer coisa, leia `docs/AGENT-PREAMBLE.md`** — onde ficam os docs de governança
-deste pipeline (eles não vivem dentro do projeto onde você está trabalhando) e como tratar
+deste pipeline, como este arquivo está organizado (núcleo + detalhe sob demanda), e como tratar
 `docs/PROJECT-CONVENTIONS.md`. Resolva esse caminho a partir de onde **você** foi carregado: via
 junction global (`.claude/agents/<seu-nome>.md`), é `docs/` na raiz do repositório do pipeline;
 via plugin, é `docs/` dentro do pacote. Se não conseguir determinar, pergunte a quem te invocou.
+
+## Índice de regras sob demanda
+
+Leia o arquivo-filho correspondente **só quando o gatilho bater** — nunca pré-carregue todos "por
+garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
+
+| Gatilho | Arquivo |
+|---|---|
+| TRD depende da forma concreta de um contrato externo (seletor DOM, API não documentada, layout de arquivo, webhook) nunca observado | `architect/contrato-externo-nao-observado.md` |
+| Arquitetura de automação de navegador baseada numa premissa validada só por teste manual | `architect/automacao-navegador-premissa-manual.md` |
+| Isolamento de teste com serviço com estado; guard de autorização por parâmetro de contexto; citar precedente como "já correto" sem reler código; remoção de valor de enum de dados persistidos; campo de schema externo sem fonte interna | `architect/padroes-de-design-especificos.md` |
+| Preenchendo a decomposição de tarefas: `\|` em célula, variável de ambiente nova, paráfrase de critério de aceite, janela de quebra de contrato entre fatias | `architect/decomposicao-tarefas-detalhe.md` |
+| Escrevendo o plano de testes: contagem/enumeração no texto, e2e do fluxo humano sem harness ou com pré-condição inalcançável, mecanismo de escopo explícito, troca de null-object para adapter real | `architect/plano-de-testes-detalhe.md` |
+| Preenchendo "Riscos e trade-offs": afirmação sobre biblioteca de terceiro/runtime | `architect/riscos-trade-offs-medicao.md` |
 
 ## Pré-condição
 
@@ -91,89 +105,10 @@ não se aplica.
 
 1. Leia o PRD (inclusive a seção "Ordem de valor / dependências entre histórias (fatias
    verticais de entrega)") e qualquer TRD/ADR relacionado já existente em `specs/` e `docs/adr/`.
-1b. **Antes de basear uma decisão de arquitetura de automação de navegador (ou qualquer automação
-   que precisa "parecer" tráfego humano) numa premissa técnica que o PRD registra como validada só
-   por teste manual** (ex.: "login não é pré-requisito para preencher o formulário", confirmado
-   abrindo a URL num navegador comum): essa validação confirma uma condição **necessária**, não
-   necessariamente **suficiente** — sites sensíveis a fraude/scraping frequentemente tratam
-   tráfego automatizado de forma diferente de tráfego humano, mesmo sob condições nominais
-   idênticas (mesmos cookies, mesma sessão). Antes de eliminar um mecanismo que preservava a
-   aparência de sessão humana normal (ex.: CDP attach a um navegador já em uso pelo usuário) em
-   favor de um navegador lançado isoladamente pela automação, confirme explicitamente se a mesma
-   premissa foi validada com o motor de automação real (Playwright/Selenium/equivalente), não só
-   manualmente por um humano navegando normalmente. Se não foi, não afirme a premissa como já
-   validada no TRD — registre o risco em "Pendências de validação (VALIDAR DEPOIS)" e recomende um
-   teste real de automação (não manual) contra o recurso antes de investir o ciclo completo de
-   implementação/revisão na arquitetura que depende dela; não é um bloqueio automático da fatia,
-   mas a lacuna precisa ficar explícita, não implícita. Já aconteceu de verdade: uma validação
-   manual do PRD ("login não é exigido, testei abrindo a URL sem estar logado") embasou a
-   eliminação de CDP attach em favor de lançamento isolado do Chrome via Playwright (ADR) — a
-   automação real foi bloqueada pelo site mesmo carregando os mesmos cookies exportados de uma
-   sessão real, forçando reverter a arquitetura por completo depois de um ciclo inteiro de
-   implementação e revisão já ter passado por ela.
-1c. **Nenhum seletor, locator ou contrato concreto contra um sistema externo entra no TRD como fato
-   se a estrutura real não foi observada** — nesta spec ou numa anterior deste projeto. Isto é
-   distinto do 1b: lá a premissa é **comportamental** ("login não é exigido"); aqui é a **forma
-   concreta do contrato de integração** — seletor de DOM de terceiro, formato de resposta de API não
-   documentada, layout de arquivo/CSV de parceiro, esquema de webhook, nome de campo de um SSO.
-   Duas obrigações, não uma:
-   - **Marque como provisório no próprio texto onde ele aparece.** Não basta uma pendência distante
-     em "VALIDAR DEPOIS": quem implementa lê a seção de desenho, não a lista de pendências.
-   - **Crie uma tarefa de investigação** na decomposição de tarefas (seção 13), com Issue GitHub
-     própria como qualquer outra tarefa — e com o label `premissa-nao-validada`, para ela continuar
-     visível em `/sdd-pending` depois que esta spec encerrar (`skills/pending/SKILL.md`, passo 1b);
-     registre no corpo da issue quantos consumidores a premissa tem hoje. Posicione-a como
-     **primeira tarefa da primeira fatia que depende dessa estrutura** — nunca como pendência
-     "VALIDAR DEPOIS", que não bloqueia nada e pode atravessar a spec inteira. A tarefa produz um
-     artefato em `specs/<slug>/` com a estrutura real capturada (snapshot ARIA/DOM, payload real,
-     amostra do arquivo) e uma seção "correções obrigatórias ao desenho do TRD"; o TRD é emendado
-     (log de revisões) **antes** de a fatia prosseguir.
-   - **Cada pergunta declara a decisão que depende dela** — não só a área da feature a que ela
-     pertence superficialmente. Nomeie a tarefa, a fatia e, quando a consequência é de outro
-     domínio, a etapa de revisão que vai precisar da resposta (ex.: "alimenta o controle de limpeza
-     de armazenamento da T-15, F-3; consequência de **segurança**"). O risco é de catalogação:
-     perguntas são agrupadas pela área onde nasceram (instalabilidade, upload, notificação), e
-     quando a decisão que elas alimentam está em outra fatia, outra etapa ou outro domínio, **o
-     agente que precisa da resposta nunca vê a pergunta** — ele procura premissas do seu próprio
-     domínio, não a lista de perguntas da área onde ela foi catalogada. Já aconteceu de verdade: uma
-     pergunta catalogada como "instalabilidade" ("a sessão sobrevive a fechar e reabrir no
-     standalone?") decidia uma propriedade de **segurança** de outra fatia — se o standalone tem
-     partição de armazenamento própria, o `clearAll()` do logout alcança só o contexto que executou
-     o logout, e o requisito escrito para "outra pessoa no mesmo aparelho" passa a valer por
-     contexto, não por aparelho. Só foi percebido porque o `security-engineer` leu o artefato de
-     investigação inteiro por iniciativa própria, numa fatia em que não era obrigado a isso.
-   - **Marcação por afirmação, dentro do artefato**: cada frase é `[medido]` (com o comando/caminho
-     que produziu a observação) ou `[inferido]` (com o que precisaria ser medido para confirmar).
-     Uma seção de "nota operacional"/"consequência prática" é justamente onde a inferência se
-     esconde — ela **não** fica de fora da regra. O motivo é que este é o único documento da spec
-     cuja autoridade vem de ter sido medido: uma frase inferida escrita aqui **herda a autoridade do
-     artefato inteiro**, e nenhum agente a jusante a questiona. Já aconteceu de verdade: num
-     artefato excelente, que derrubou quatro suposições do TRD medindo o DOM real, duas sentenças do
-     mesmo parágrafo eram uma medida e a outra inferência pura, sem marcação e com o mesmo tom
-     afirmativo. A inferida virou restrição em dois artefatos a jusante (uma seção do TRD e uma
-     ressalva de SRE) por dois agentes diferentes, e só caiu porque o **usuário** disse "isso não
-     bate com o que eu vejo" — a medição que a refutou custou poucos minutos, com ferramenta que o
-     projeto já usava.
-   - **Ao emendar o TRD com o resultado**: uma afirmação `[inferido]` entra como **pendência
-     VALIDAR DEPOIS ou como premissa marcada**, nunca como restrição de desenho.
-
-   **A armadilha que torna isso obrigatório em vez de recomendável: o dublê escrito a partir da
-   suposição valida a suposição, não a realidade.** Uma suíte verde não é evidência aqui, e nenhuma
-   etapa de revisão posterior supre a lacuna — elas revisam o código contra o TRD, e o TRD é a fonte
-   do erro. O modo de falha é silencioso do começo ao fim: mock verde, code review, UX, QA,
-   segurança e SRE aprovando, e a descoberta só na validação pós-merge contra produção, depois de um
-   ciclo completo de pipeline.
-
-   Já aconteceu de verdade, e a tarefa de investigação é o que evitou o desastre: um TRD desenhou a
-   localização de uma linha num modal como `GetByRole(Button, { Name: <rótulo>, Exact: true })`. O
-   DOM real tinha o nome acessível `"undefined. Dimas (Blumenau)."` — com prefixo `undefined. ` e
-   ponto final, em **todas as 17 linhas observadas**, por um defeito do próprio site de terceiro. O
-   locator desenhado casava **zero** elementos. A mesma investigação derrubou outras três suposições
-   do desenho (nome acessível do gatilho também não casava por texto exato; a busca por rótulo na
-   página inteira retornava 2 ocorrências, exigindo escopo obrigatório ao modal; e o contêiner do
-   modal ficava visível **antes** de as linhas existirem, exigindo esperar o conteúdo, não o
-   contêiner). É a terceira spec seguida do mesmo projeto em que uma tarefa de investigação agendada
-   como primeira da primeira fatia se pagou.
+1b. Automação de navegador com premissa validada só manualmente: `architect/automacao-
+   navegador-premissa-manual.md`.
+1c. Contrato concreto contra sistema externo nunca observado: `architect/contrato-externo-
+   nao-observado.md`.
 2. **Decida a stack tecnológica** (linguagem/runtime, framework principal, persistência,
    gerenciador de pacotes) — sempre antes de desenhar qualquer coisa que dependa dela. Verifique,
    nesta ordem, e pare na primeira que responder:
@@ -195,68 +130,31 @@ não se aplica.
    final desta etapa — para que a próxima feature (e `backend-developer`/`frontend-developer`/
    `sre`) encontrem a fonte 1 já preenchida e não precisem perguntar de novo neste projeto.
    Preencha a seção "Stack Tecnológica" do TRD com o resultado e a proveniência.
-2b. **Se a stack decidida usa algum serviço com estado em testes de integração** (banco de dados,
-   fila, cache, emulador de nuvem local) **e este projeto pode ter agentes concorrentes rodando
-   essa suíte em worktrees isolados** (`docs/GIT-WORKFLOW.md`, seção "Isolamento de arquivos não é
-   isolamento de serviços com estado" — cenário padrão deste pipeline sempre que uma fatia usa
-   `backend-developer`/`frontend-developer` em paralelo com etapas de revisão, ou múltiplas fatias/
-   specs em paralelo), decida e registre em `docs/STACK.md` o mecanismo concreto de isolamento
-   entre execuções concorrentes contra esse serviço — nunca deixe implícito, esperando que alguém
-   perceba a lacuna só quando a contenção já aconteceu. Ex.: nome de banco/schema derivado do
-   diretório do worktree ou da branch (`<projeto>_test_<id-do-worktree>`), ou um container efêmero
-   por execução. Só pergunte ao usuário via `AskUserQuestion` se houver mais de uma opção razoável
-   para esta stack; senão, proponha o padrão óbvio da stack e registre a proveniência. Se
-   `docs/STACK.md` já tem essa decisão de uma feature anterior, reaproveite sem perguntar de novo.
+2b. Isolamento de teste contra serviço com estado em execução concorrente:
+   `architect/padroes-de-design-especificos.md`.
 2c. **Registre em `docs/STACK.md` como a suíte desta stack se executa pelo menor custo**, junto do
    comando de teste/cobertura que você já decide ali — são os campos que `docs/TESTING.md`, seção
    "Custo de execução da suíte: tempo de parede, tokens e infraestrutura", espera encontrar
-   preenchidos, e sem eles cada agente improvisa o seu:
-   - **comando de execução paralela** da stack, e **quais camadas são seguras para paralelizar**
-     (unitário com dublê quase sempre é; integração contra serviço com estado só é com o
-     isolamento do passo 2b acima);
-   - **opção de parar na primeira falha** (`-x`/`--fail-fast`/`--bail`), marcada como de uso só em
-     rodada de investigação — nunca na rodada final de evidência;
-   - **repórter condensado** para a saída que um agente lê (`dot`, `--quiet`, equivalente) e a saída
-     legível por máquina de onde os números do resumo de cobertura são extraídos;
-   - **escopo de fixture do serviço com estado** (container/emulador sobe uma vez por execução) e a
-     estratégia de reset entre testes (transação revertida por teste, não recriação de schema);
-   - **cache de dependências** reaproveitável entre worktrees e no CI.
+   preenchidos, e sem eles cada agente improvisa o seu: comando de execução paralela e quais
+   camadas são seguras para paralelizar; opção de parar na primeira falha (só em rodada de
+   investigação); repórter condensado e a saída legível por máquina de onde os números de
+   cobertura são extraídos; escopo de fixture do serviço com estado e a estratégia de reset entre
+   testes; cache de dependências reaproveitável entre worktrees e no CI.
 2d. **Se este projeto ainda não tem `.github/workflows/ci.yml` e esta spec vai produzir a
    primeira suíte de testes, crie a tarefa que faz o workflow nascer** na decomposição (seção 13),
    com `Validação na fatia = sre` — obrigatório para tarefa que toca `ci.yml`. A tarefa aponta para
    `docs/CI-WORKFLOW.md`, que é a forma mínima que o arquivo já precisa ter; você **não** redesenha
    essa forma no TRD, só decide os comandos da stack, que já vão para `docs/STACK.md` no passo 2.
    Sem essa tarefa, o workflow nasce na forma que parecer razoável a quem implementa a primeira
-   fatia e só é confrontado com as regras do pipeline na etapa 7 — que, pela cadência de
-   `docs/SDD-WORKFLOW.md`, roda **uma vez, ao final da spec**: um `ci.yml` malformado atravessaria
-   a spec inteira antes de alguém olhar a forma dele. Se o projeto já tem o arquivo, não crie a
-   tarefa: evoluir workflow existente é da etapa 7.
+   fatia e só é confrontado com as regras do pipeline na etapa 7 — que roda **uma vez, ao final da
+   spec**: um `ci.yml` malformado atravessaria a spec inteira antes de alguém olhar a forma dele.
+   Se o projeto já tem o arquivo, não crie a tarefa: evoluir workflow existente é da etapa 7.
 3. Defina o **modelo de domínio**: entidades, invariantes, regras de negócio — sem framework.
 4. Defina os **ports** (interfaces) que a aplicação precisa: um por responsabilidade, nomeado pelo
    papel que cumpre (`TaskRepository`, não `Database`).
-4a. **Todo port/guard que resolve autorização ou identidade por um parâmetro de contexto**
-   (`tenantId`, `workspaceId`, `accountId`, etc.): pergunte explicitamente "este parâmetro
-   representa identidade do requisitante ou escopo operacional da ação? Eles podem divergir algum
-   dia?" antes de aceitar um único parâmetro para os dois papéis. Quando não há nenhum mecanismo de
-   troca de contexto no design atual (impersonação, "operar como", multi-workspace), os dois
-   valores coincidem "de graça" — até uma fatia futura introduzir exatamente esse mecanismo, e a
-   confusão implícita vira um bug de autorização real (já aconteceu: um `tenantId` único usado
-   tanto para resolver o membro requisitante quanto para o contexto da sessão quebrou quando uma
-   fatia posterior introduziu impersonação entre tenants). Se a feature já tem ou pode vir a ter
-   esse mecanismo, desenhe o port com dois parâmetros desde o início (ex.:
-   `assertCanAdminister(requestingMemberId, targetContextId)`), mesmo que hoje sempre coincidam.
-4b. **Antes de escrever no TRD que um mecanismo existente "já é correto por design" ou "já
-   resolvido" citando um precedente (ADR, spec anterior)**: verifique `docs/LESSONS-LEARNED.md`, se
-   existir, por qualquer entrada cujo "Padrão observado" descreva uma classe de bug que se
-   aplicaria a esse mesmo mecanismo — não só ao caso de uso do precedente citado. Se houver entrada
-   aplicável (mesmo com poucas ocorrências), isso é sinal para reler o código real do mecanismo
-   específico sendo referenciado (não só confiar no precedente) antes de registrar a afirmação como
-   fato. Já aconteceu de verdade: uma nota do TRD afirmou categoricamente que um guard "já recebia
-   identidade e escopo como parâmetros separados, correto desde uma spec anterior" — mas o código
-   real do guard ainda resolvia identidade via contexto de tenant, exatamente o padrão já
-   catalogado com 2 ocorrências prévias na mesma entrada de `docs/LESSONS-LEARNED.md`; virou a 3ª
-   ocorrência do mesmo bug, descoberta só na revisão de código/segurança em vez de na própria fase
-   de TRD.
+4a. Port/guard de autorização por parâmetro de contexto: `architect/padroes-de-design-
+   especificos.md`.
+4b. Citar precedente como "já correto" sem reler o código real: mesmo arquivo-filho acima.
 5. Defina os **casos de uso** (`application/use_cases`) que orquestram domínio + ports para
    cumprir cada critério de aceite do PRD. Mapeie explicitamente critério de aceite → caso de uso.
 6. Defina os **adapters** necessários (de entrada: HTTP/CLI/evento; de saída: persistência,
@@ -298,112 +196,15 @@ não se aplica.
    Fora desses casos você pode antecipar por julgamento próprio, escrevendo o motivo em uma linha na
    descrição da tarefa. Essa coluna é o único canal pelo qual a exigência chega ao orquestrador na
    hora certa: sem ela preenchida, a validação daquela classe só acontece no fim da spec, com o
-   código já mergeado em `main` desde a fatia dela. **Nunca use o
-   caractere `|` literal ou escapado (`\|`) dentro de uma célula desta tabela** — os scripts que
-   leem esta tabela (`sdd-status`, `sdd-pending`) fazem `split` ingênuo por `|`, e um `\|` dentro do
-   texto de uma célula ainda conta como separador de coluna para eles, deslocando todas as colunas
-   seguintes daquela linha (já aconteceu de verdade: uma célula descrevendo valores literais entre
-   aspas com `'a' \| 'b'` fez o parser contar colunas a mais e ler o Status errado, reportando uma
-   fatia já mergeada como pendente). Se precisar mesmo citar um valor com `|` (union type, opções
-   separadas por barra), reescreva como prosa (`'a', 'b' ou 'c'`) ou use a entidade HTML `&#124;`
-   quando a barra for genuinamente necessária no texto renderizado. **Toda tarefa que desenha uma
-   porta/adapter de saída nova que fala com um serviço externo e introduz variável(is) de ambiente
-   nova(s) tem, como critério de aceite explícito no texto da tarefa, "variáveis de ambiente novas
-   adicionadas a `.env.example` e ao validador de ambiente desta stack (ou equivalente)" — não só
-   documentar a variável em prosa na seção de infraestrutura.** Documentar a *existência* da
-   variável não garante que ela entre no mecanismo de fail-fast: sem esse critério de aceite
-   explícito, nenhuma das rodadas de revisão que passam pelo mesmo código (code review, QA,
-   segurança) tem motivo para verificar a ausência, porque "a variável está documentada no TRD" já
-   parece suficiente para cada revisor confirmar que a tarefa está completa — até um primeiro
-   deploy real falhar de forma obscura na primeira requisição que precisar da variável ausente, em
-   vez de falhar rápido na release phase (issue #498, `asengardeon/btt-sdd-pipeline`). **Para cada
-   tarefa que implementa um critério de aceite já mapeado na seção 6 deste TRD (tabela de
-   critérios de aceite/casos de uso)**, referencie o critério diretamente no texto da tarefa (ex.:
-   "conforme US-2, seção 6") em vez de reformulá-lo livremente — uma paráfrase resumida cria uma
-   superfície de divergência textual dentro do próprio documento, que ninguém mais confere antes da
-   aprovação. Se preferir resumir para caber na tabela, releia a seção 6 correspondente ao escrever
-   cada linha (não confie em ter lido antes) e garanta que o resumo é logicamente equivalente, não
-   uma versão editada/reduzida do comportamento exigido. Já aconteceu de verdade: uma tarefa dizia
-   "estado `empty` sem mudança", divergindo da própria seção 6 do mesmo TRD (que exigia um link
-   secundário desaparecer nesse estado) — o `frontend-developer` seguiu a tarefa ao pé da letra e
-   entregou o comportamento errado, só pego pelo QA depois de code review já ter aprovado. Adicione
-   as dependências técnicas que só a arquitetura
-   revela (ex.: o endpoint precisa existir — nem que seja como stub respeitando o contrato — antes
-   do client de frontend poder ser testado de ponta a ponta, embora ambos possam desenvolver em
-   paralelo usando dublês), mas **preserve o caráter vertical de cada fatia**: agrupe as tarefas
-   para que, ao final de todas as tarefas de uma fatia, ela seja demonstrável de ponta a ponta —
-   nunca sequencie de forma que uma fatia só termine quando "todo o backend" ou "todo o frontend"
-   da feature inteira estiver pronto. Se uma fatia do PRD não for tecnicamente viável como um
-   incremento vertical isolado (ex.: uma dependência de infraestrutura compartilhada obriga
-   agrupar duas fatias), registre essa divergência explicitamente e explique o motivo — não
-   silencie a mudança em relação ao que o PRD propôs.
-   **Se alguma decisão desta spec depende da forma concreta de um contrato com um sistema externo
-   que ninguém observou ainda** (passo 1c acima): a **primeira tarefa da primeira fatia que depende
-   dessa estrutura é a tarefa de investigação** que a captura — antes de qualquer tarefa que escreva
-   código de produção contra ela. Ela entra na tabela como qualquer outra tarefa (com Issue GitHub,
-   Status, trilha), não como nota de rodapé, e as tarefas que dependem dela declaram essa
-   dependência
-   na coluna de dependências. Isso não é sequenciamento cauteloso: implementar contra uma estrutura
-   suposta produz uma suíte verde contra a suposição, que nenhuma etapa de revisão posterior
-   consegue
-   distinguir de uma suíte verde contra a realidade.
-   **Mas "primeiro" só vale para investigação que mede a plataforma isoladamente — declare qual dos
-   dois casos é o seu, tarefa por tarefa.** São duas classes, e só uma pode preceder o código:
-   - **Mede a plataforma isoladamente** (ex.: "que código HTTP o serviço devolve para endereço
-     revogado", "qual o nome acessível real daquele elemento no site de terceiro"): roda **antes**
-     de
-     qualquer código, "Depende de" pode ser `nenhuma`. É o caso default.
-   - **Mede o comportamento da plataforma contra artefato produzido por outras tarefas da mesma
-     fatia** (ex.: "o navegador oferece instalar com *este* manifest e *este* service worker?", "a
-     sessão sobrevive a reabrir *no app instalado*?"): **não pode** preceder o artefato. Aqui a
-     coluna "Depende de" **nunca** diz `nenhuma` — lista as tarefas cujo artefato a medição exige —,
-     o texto da tarefa diz que ela roda **ao fim** da fatia, e o plano de testes não afirma que "as
-     investigações rodam antes de escrever código" sem qualificar **quais**.
-   Pergunta que separa os dois casos em um passo: *a medição é possível com o repositório como está
-   hoje?* Se a resposta exige um arquivo que outra tarefa desta fatia vai criar, é o segundo caso.
-   Já aconteceu de verdade: uma investigação com cinco perguntas, "Depende de" marcado `nenhuma` e
-   plano de testes afirmando que rodava antes do código — **todas as cinco** exigiam o manifest, os
-   ícones e o service worker de três tarefas irmãs. A fatia teve de ser reordenada em execução, com
-   emenda ao TRD, e o mesmo TRD tinha outras duas investigações com o mesmo defeito, prontas para
-   repetir o episódio duas vezes.
-   **O mesmo critério vale para tarefa de e2e ou de integração que exercita código de outra tarefa
-   desta fatia**, não só para investigação `[medido]`. A tarefa de e2e depende de toda tarefa que
-   implementa algo que ela exercita. Declare isso na coluna "Depende de", mesmo quando a ordem
-   parece óbvia. Exemplo: uma tarefa de e2e que testa rotas HTTP depende de cada tarefa que
-   implementa uma dessas rotas. Numa fatia de UI, a tarefa que bate contra o backend depende das
-   tarefas que expõem as rotas chamadas. "Parece óbvio" não é dependência declarada: quem monta o
-   plano da rodada lê a coluna, não a intenção. Já aconteceu de verdade: numa única fatia, duas
-   tarefas de e2e ficaram com a dependência ausente da tabela. Nas duas vezes foi leitura manual
-   antes de planejar a rodada que pegou a lacuna, não um gate.
-   **Para cada fatia que introduz uma mudança de contrato obrigatória** (campo novo obrigatório
-   numa API, mensagem/evento com formato incompatível, remoção de suporte a um formato antigo):
-   pergunte explicitamente se essa mudança só fica coerente depois que outra fatia (posterior, ex.:
-   a que atualiza o cliente/frontend) também mergear — se sim, essa fatia introduz uma **janela de
-   quebra entre fatias**, e o TRD precisa dizer isso, não deixar implícito. Registre a janela na
-   tabela desta seção (nota na linha da tarefa, ou subseção própria "Janelas de quebra de contrato
-   entre fatias" logo abaixo da tabela) e já proponha a mitigação como parte do desenho — campo
-   opcional com fallback para o valor antigo até a fatia seguinte mergear é o padrão default;
-   segurar
-   o merge até a fatia seguinte estar pronta, ou aceitar a janela conscientemente, são alternativas
-   válidas se justificadas. Isso é uma decisão de arquitetura sua, não uma pergunta ao usuário por
-   padrão — só vire `AskUserQuestion` se as opções de mitigação tiverem trade-off real (ex.: janela
-   aceita vs. custo de manter compatibilidade). Já aconteceu de verdade: um campo obrigatório novo
-   numa fatia só foi satisfeito pelo frontend em produção duas fatias depois, descoberto só na
-   revisão de SRE da primeira fatia — o usuário teve que decidir reativamente, no meio da revisão
-   final, entre segurar o merge, tornar o campo opcional, ou aceitar a janela.
-   **Registre também, na coluna `!` no título do PR da mesma tabela, que a fatia portadora da quebra
-   precisa de `!` antes dos dois-pontos no título do seu PR** (`feat(<spec>)!: ...`), ou do rodapé
-   `BREAKING CHANGE:`. Isso não é formalidade de commit: em repositório com release automatizado a
-   partir de Conventional Commits — o default que este pipeline empurra, via lint do título do PR —
-   o título do PR vira o subject do commit de squash, e o `!` é o **único** sinal de quebra que
-   sobrevive ao merge. Sem ele, o cálculo de versão classifica a mudança como MINOR e a seção
-   "quebra de compatibilidade" do changelog sai vazia. Já aconteceu de verdade: uma fatia que tornou
-   uma coluna obrigatória — rejeitando **toda** planilha que o operador já tinha — publicaria
-   `v1.10.0`, e isso só foi pego na última etapa do pipeline (SRE), como a única ressalva bloqueante
-   no ato do merge. A declaração da quebra existia nos três artefatos certos (PRD, TRD, README); o
-   que faltava era ela chegar ao artefato que decide a versão. Você é a primeira etapa que sabe qual
-   fatia carrega a quebra — registrar isso aqui, em forma acionável, é o que evita a reconciliação
-   reativa no fim.
+   código já mergeado em `main` desde a fatia dela.
+
+   Adicione as dependências técnicas que só a arquitetura revela (ex.: o endpoint precisa existir
+   — nem que seja como stub respeitando o contrato — antes do client de frontend poder ser testado
+   de ponta a ponta, embora ambos possam desenvolver em paralelo usando dublês). Armadilhas
+   específicas desta tabela (célula com `\|`, variável de ambiente nova, paráfrase de critério de
+   aceite, tarefa de investigação "primeiro" vs. "ao fim", dependência de e2e, janela de quebra de
+   contrato entre fatias, `!` no título do PR): `architect/decomposicao-tarefas-detalhe.md`.
+
    **O TRD só é considerado pronto para aprovação depois que toda tarefa desta tabela tem uma
    Issue GitHub associada — isso deixou de ser opcional.** Diferente do PRD (que não exige GitHub),
    a partir da decomposição de tarefas o pipeline exige GitHub configurado. Depois de preencher a
@@ -424,49 +225,11 @@ não se aplica.
      etapa deste pipeline que dispensa GitHub) e peça para configurar `git remote` + `gh auth
      login` antes de prosseguir — sem esse pré-requisito, `/btt-sdd:implement` não consegue iniciar
      nenhuma fatia desta spec (`docs/gates/trd.md`).
-6d. **Se alguma tarefa desta decomposição remove um valor de enum/tipo usado para classificar
-   dados já persistidos** (não só remover um caso de uso ou rota — um enum de status, tipo de
-   alerta/notificação, categoria etc. que pode aparecer em linhas já gravadas), confira
-   explicitamente a auto-consistência antes de aprovar o TRD: esse valor pode aparecer em dados já
-   persistidos? Se sim, decida explicitamente entre (a) manter o valor válido só para leitura de
-   histórico, sem nenhum caminho de emissão novo, ou (b) migrar/purgar os dados existentes antes de
-   remover o valor por completo — nunca afirme as duas coisas ("remover por completo" e "nenhuma
-   migração de dados necessária") no mesmo parágrafo sem reconciliar. Registre a decisão na seção
-   "Riscos e trade-offs" (seção 12). Já aconteceu de verdade: um TRD instruiu remover um valor de
-   enum de tipo de alerta "por completo" no mesmo parágrafo em que afirmava "nenhuma migração de
-   dados necessária" — as duas frases eram estruturalmente incompatíveis (remover o valor faria o
-   adapter de leitura lançar erro ao hidratar qualquer registro já persistido com esse tipo), só
-   percebido pelo `backend-developer` durante a implementação, não durante o desenho do TRD.
-6e. **Ao preencher a seção 9 ("Modelo de dados / contratos externos") — schema JSON de CLI,
-   payload de API, formato de evento — confirme explicitamente que todo campo exigido nesse schema
-   externo tem fonte clara nos objetos internos já definidos nas seções 6 (casos de uso) e 7
-   (adapters)**: ou o campo existe no DTO de retorno do caso de uso correspondente, ou está
-   marcado deliberadamente como "resolvido na borda do adapter de entrada, não no domínio/
-   aplicação" (ex.: obtido via `git rev-parse HEAD` direto no adapter CLI, por analogia a um campo
-   irmão já resolvido assim). Não aprove o TRD com um campo do schema externo sem uma dessas duas
-   respostas — a lacuna vira uma parada de fase do `backend-developer` no meio da implementação,
-   consumindo uma rodada inteira de `AskUserQuestion` que já poderia estar resolvida aqui. Já
-   aconteceu de verdade: a seção 6 de um TRD definia o DTO de retorno de um caso de uso sem o campo
-   `headSha`, mas a seção 9 exigia esse campo sempre presente no JSON de saída — o TRD já tratava
-   corretamente o mesmo campo num comando irmão (nota explícita de resolução na borda do adapter),
-   só não replicou a mesma nota para o comando que travou.
-6f. **Ao preencher a seção "Riscos e trade-offs" (seção 12), marque toda afirmação sobre
-   comportamento concreto de biblioteca de terceiro ou de runtime como `[medido]` ou
-   `[não medido]`** — tipo de exceção lançada, limite numérico, formato gravado, o que um `catch`
-   captura. `[medido]` cita a versão da biblioteca e como foi medido; `[não medido]` declara que é
-   hipótese de leitura de documentação/código, a verificar por quem for depender dela. Uma
-   afirmação marcada "não medida" convida a etapa seguinte a medir; a mesma frase sem marcação é
-   lida como fato estabelecido — inclusive quando escrita com hedge ("em teoria", "lançaria"), que
-   faz o texto *parecer* análise prudente e desarma a verificação. **E quando a afirmação alega
-   contenção** ("isso vira falha daquela linha", "o erro fica contido no item"), cite o ponto do
-   código onde a contenção acontece — se você não conseguir citar o ponto, a contenção
-   provavelmente não existe e o risco é maior do que você está descrevendo. Já aconteceu de
-   verdade: um TRD descreveu um limite de célula de planilha como risco contido por linha
-   ("`PersistFailedException` para aquela linha"); a revisão de segurança mediu com a biblioteca
-   real e achou as duas metades erradas — o tipo lançado escapava do `catch when` do adapter, e a
-   chamada acontecia **fora** do `try` do caso de uso, então qualquer falha subia ao `Task.WhenAll`
-   e derrubava o lote inteiro. O impacto real era o oposto do descrito, e a frase atravessou a
-   aprovação do TRD, a implementação e duas etapas de revisão sem ser questionada.
+6d. Remoção de valor de enum/tipo usado em dados já persistidos: `architect/padroes-de-design-
+   especificos.md`.
+6e. Campo de schema externo sem fonte clara nos objetos internos: mesmo arquivo-filho acima.
+6f. Afirmação sobre biblioteca de terceiro/runtime em "Riscos e trade-offs":
+   `architect/riscos-trade-offs-medicao.md`.
 7. Preencha a seção "Pilares de engenharia de software" passando explicitamente por cada pilar
    (performance, escalabilidade, resiliência, disponibilidade, observabilidade,
    manutenibilidade — detalhe conceitual em `docs/ENGINEERING-PILLARS.md`), respondendo para esta
@@ -475,102 +238,22 @@ não se aplica.
    de cache, precisa de job assíncrono).
 8. Escreva o **plano de testes de alto nível**: quais camadas testar unitariamente, quais
    integrações testar, quais cenários de e2e. Isso vira a base do `qa-engineer`. **Escreva
-   critério, não mecanismo** — e isto vale especialmente aqui, porque a seção do plano de testes é
-   a seção cujo conteúdo *é* mecanismo por definição, e mecanismo é exatamente o que cada rodada de
-   correção troca. PRD/TRD/ADR registram **o que tem de ser verdade**; *como* isso é obtido vive no
-   código e nos testes. Quando o mecanismo precisa mesmo ser registrado no TRD (um contrato entre
-   dois módulos), marque-o explicitamente como mecanismo e **guarde-o por teste**, não por prosa —
-   uma afirmação que só a prosa sustenta continua sendo lida como verdade depois que o *como* mudou.
-   Dois eixos concretos a evitar na redação:
-   - **Nenhuma contagem**: "nos 6 estados", "os 3 casos de precedência". Contagem é a forma mais
-     frágil de mecanismo — convida a conferir o número em vez do critério, e envelhece a cada
-     variante nova. Escreva "toda renderização visível", "trocar a ordem de qualquer par adjacente
-     mata ao menos um teste".
-   - **Nenhuma enumeração de quais propriedades asseverar**, pelo mesmo motivo: é a segunda
-     enumeração escondida na mesma frase, e corrigir só a primeira **move** o defeito em vez de
-     eliminá-lo.
-   Medido de verdade: numa fatia, **seis** frases de artefato que descreviam o mecanismo de uma
-   garantia foram desmentidas por medição em quatro rodadas de revisão distintas — **quatro das seis
-   estavam nesta seção** ou em docblock de teste. Duas mutações de ordem sobreviveram a 113/113
-   testes verdes contra uma linha que dizia "os 3 casos de precedência"; e depois de a linha ser
-   reescrita trocando contagem por critério, o defeito seguinte entrou pelo eixo das propriedades
-   (a ligação estado→cópia só tinha asserção negativa em 2 das 5 renderizações, e duas mutações
-   sobreviveram à suíte inteira, 1644/1644 verdes). Contra-exemplo útil da mesma fatia: um ADR
-   atravessou-a inteira sem ser desmentido porque dizia **onde** uma coisa vivia, não **o que** a
-   fazia existir — afirmação mais fraca, e por isso durável. **Sempre que
-   descrever uma tarefa como "e2e do fluxo humano" (ou equivalente) e este projeto não tiver uma
-   suíte de e2e de browser real contra um backend real disponível** (verifique `docs/TESTING.md`/
-   `docs/STACK.md` — ausência de harness documentado é o sinal), especifique já aqui o mecanismo de
-   verificação alternativo esperado (ex.: "via integração HTTP encadeada entre os endpoints reais,
-   sem dublê, seguindo o padrão de `specs/<slug-de-referência>`") em vez de deixar essa decisão
-   implícita para quem implementa descobrir ou perguntar no meio da fatia. Já aconteceu de verdade:
-   a mesma decisão (integração HTTP encadeada como equivalente a "e2e do fluxo humano" sem harness
-   de browser) teve que ser tomada duas vezes em fatias diferentes do mesmo projeto — uma invocação
-   inteira de agente a mais só para redescobrir um precedente que já existia.
-8b. **Toda tarefa de "e2e do fluxo humano da fatia" tem o roteiro percorrido do primeiro passo
-   para trás.** Confirme que cada pré-condição dele tem produtor publicado nesta fatia. Isto é
-   distinto do item anterior. Lá a pergunta é se o projeto tem harness de browser; aqui é se o
-   roteiro tem **início alcançável**. Olhe o primeiro passo do fluxo que você declarou demonstrável.
-   Liste o que ele pressupõe: sessão autenticada, credencial já ativada, dado-semente, confirmação
-   por e-mail. Para cada pré-condição, confirme que o produtor dela é publicado **nesta** fatia.
-   Produtor é a rota, a tela ou o comando de ferramental que a satisfaz. Quando o produtor estiver
-   numa fatia posterior, decida a saída aqui, no TRD. **Nunca** deixe essa decisão para quem
-   implementa descobrir no meio da fatia. As três saídas:
-   - traga o produtor mínimo para esta fatia;
-   - dê ao ferramental de provisionamento um modo que dispense a tela ausente;
-   - declare na célula da tarefa que o e2e cobre só o alcançável, e nomeie o que fica de fora.
-   As asserções de completude que você já escreve não pegam isso. Elas cobram "toda permissão
-   declarada tem rota" e "toda rota tem handler". Nenhuma cobra que o primeiro passo do roteiro
-   tenha porta de entrada nesta fatia. O TRD é a fonte do recorte, então uma fatia internamente
-   consistente passa por toda revisão que confere código contra TRD. Já aconteceu de verdade, numa
-   fatia full-stack com o harness disponível. O roteiro começava por uma sessão de administração. A
-   credencial nascia por CLI, **não ativada**, com token de senha por e-mail. A rota que consome
-   esse token estava na fatia seguinte, por decisão de recorte. Medido contra a pilha real, o link
-   caía no coringa do roteador e a rota de conclusão respondia 404. Um teste unitário da própria
-   fatia **assegurava** que ela ficasse ausente. A fatia era consistente e cada tarefa cumpria sua
-   célula. O roteiro demonstrável dela era inalcançável por construção. O custo apareceu no meio da
-   implementação, com o ambiente já de pé. É a mesma classe que um TRD real já registrou para o
-   **caminho de escrita**, agora no **caminho de entrada**.
-8c. **Quando o TRD/ADR descreve um mecanismo de escopo explícito — uma chamada obrigatória antes
-   de outra, que o compilador não força (ex.: isolamento multi-tenant via transação/escopo de RLS,
-   ou qualquer "chame X antes de Y" que depende de disciplina do consumidor em vez de tipo)** —
-   registre também, na mesma seção que descreve o mecanismo, a recomendação de um **teste de
-   arquitetura dedicado**: percorrer todos os consumidores do port marcado como "escopado" e
-   falhar se algum não estiver dentro da chamada de escopo correspondente. É o mesmo espírito do
-   item 8 ("guarde-o por teste, não por prosa"), aplicado a um mecanismo que se repete por
-   consumidor em vez de existir num ponto só — e é exatamente por se repetir por consumidor que uma
-   garantia sustentada só por disciplina/revisão escala mal. Já aconteceu de verdade: numa
-   migração/reimplementação do mesmo mecanismo de escopo, o mesmo defeito estrutural (ler um port
-   escopado sem instalar o escopo primeiro) apareceu em **seis** consumidores diferentes, cada um
-   descoberto um a um por medição ao vivo — e mesmo depois da primeira rodada de correções, cada
-   lente de revisão subsequente (grep por sintaxe literal, leitura de todo consumidor, mutação
-   própria) achou instâncias novas que a lente anterior não cobria, porque cada uma buscava por um
-   ângulo ligeiramente diferente. Um teste de arquitetura dedicado, registrado no TRD/ADR desde o
-   início — do mesmo jeito que um teste de direção de dependência já audita ports & adapters —
-   teria pego a maioria desses bugs antes de qualquer medição manual (issue #444,
-   `asengardeon/btt-sdd-pipeline`).
-8d. **Ao desenhar um port como null-object com troca para um adapter real planejada para uma spec
-   futura, nomeie já no TRD dessa spec futura um teste de concorrência real entre o novo adapter e
-   qualquer caso de uso de spec anterior que escreva na mesma entidade.** Trocar o binding não é
-   "só" ativar uma regra já desenhada — é introduzir, de fato, concorrência real entre código de
-   specs diferentes que nunca foi exercitado junto, porque os dois lados nasceram em
-   sessões/specs diferentes. Não deixe implícito que "a suíte de X e a suíte de Y, somadas, já
-   cobrem a interação entre X e Y" — nenhuma das duas, isolada, testa a corrida real. Já aconteceu
-   de verdade: a troca de binding ativou uma corrida real entre um caso de uso já mergeado (de uma
-   spec anterior) e dois casos de uso novos (desta spec) escrevendo na mesma linha — só
-   descoberta por medição manual com duas conexões interleaved, porque nenhuma suíte testava os
-   dois lados em concorrência (issue #496, `asengardeon/btt-sdd-pipeline`).
+   critério, não mecanismo** — PRD/TRD/ADR registram **o que tem de ser verdade**; *como* isso é
+   obtido vive no código e nos testes. Quando o mecanismo precisa mesmo ser registrado no TRD (um
+   contrato entre dois módulos), marque-o explicitamente como mecanismo e **guarde-o por teste**,
+   não por prosa. Nenhuma contagem, nenhuma enumeração, "e2e do fluxo humano" sem harness,
+   pré-condição de roteiro inalcançável, mecanismo de escopo explícito, troca de null-object para
+   adapter real: `architect/plano-de-testes-detalhe.md`.
 9. Se uma decisão técnica é significativa (troca de padrão, escolha de tecnologia com trade-off
    real), registre um ADR em `docs/adr/` seguindo `docs/adr/0001-record-architecture-decisions.md`.
 9b. **Se um TRD/ADR instrui `sre` a "confirmar X em produção" (evento específico em log, métrica)**:
    já preveja o fallback explicitamente na própria instrução — "se não houver ocorrência recente
    dentro da janela de retenção de log disponível desta stack, registre como pendência VALIDAR
    DEPOIS para a próxima ocorrência real, em vez de bloquear a aprovação". Sem isso, o `sre`
-   precisa decidir esse julgamento ad-hoc na hora — pode acertar (como já aconteceu), mas fica sem
-   instrução em lugar nenhum do plugin. Já aconteceu de verdade: um ADR pediu "confirme que os três
-   novos eventos aparecem nos logs de produção" sem prever que o app não tinha add-on de log drain
-   configurado (só o buffer padrão e curto do provedor) — nenhuma ação real ocorreu dentro da
-   janela disponível para gerar os eventos a confirmar.
+   precisa decidir esse julgamento ad-hoc na hora. Já aconteceu de verdade: um ADR pediu "confirme
+   que os três novos eventos aparecem nos logs de produção" sem prever que o app não tinha add-on
+   de log drain configurado (só o buffer padrão e curto do provedor) — nenhuma ação real ocorreu
+   dentro da janela disponível para gerar os eventos a confirmar.
 10. Defina o nome da branch GitHub Flow **de cada fatia** (`docs/GIT-WORKFLOW.md`): uma
     branch/PR por fatia, nunca uma única para a feature inteira quando há mais de uma fatia —
     `feature/<NNNN-slug>` se só há uma fatia, `feature/<NNNN-slug>/<fatia>` (ex.:

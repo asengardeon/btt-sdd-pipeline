@@ -33,7 +33,7 @@
   valida a suposição, e a suíte fica verde contra ela — code review, UX, QA, segurança e SRE revisam
   o código contra o TRD, e aqui o TRD é a fonte do erro. Já aconteceu de um locator desenhado casar
   zero elementos no DOM real por um defeito do próprio site de terceiro, pego só porque a tarefa de
-  investigação existia (`agents/architect.md`, passo 1c).
+  investigação existia (`agents/architect/contrato-externo-nao-observado.md`).
 - [ ] **Na seção "Riscos e trade-offs", toda afirmação sobre comportamento concreto de biblioteca de
   terceiro ou de runtime está marcada `[medido]` (com versão e como) ou `[não medido]`**, e toda
   alegação de contenção ("vira falha daquela linha") cita o ponto do código onde a contenção
@@ -54,7 +54,8 @@
 - [ ] **Toda tarefa de "e2e do fluxo humano da fatia" tem ponto de entrada dentro da própria
   fatia.** Percorra o roteiro do primeiro passo para trás. As pré-condições típicas são sessão
   autenticada, credencial ativada, dado-semente e confirmação por e-mail. Cada uma tem produtor
-  publicado **nesta** fatia, não numa posterior (`.claude/agents/architect.md`, passo 8b). Quando
+  publicado **nesta** fatia, não numa posterior (`agents/architect/plano-de-testes-detalhe.md`).
+  Quando
   não tem, o TRD traz a saída já decidida. São três: trazer o produtor mínimo para a fatia; dar ao
   ferramental um modo que dispense a tela ausente; declarar que o e2e cobre só o alcançável.
   Nenhuma outra

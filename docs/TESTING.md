@@ -93,8 +93,9 @@ testes").
 **"E2E do fluxo humano" sem harness de browser real contra backend real.** Se este projeto não tem
 uma suíte de e2e de browser disponível contra um backend real (nenhum harness documentado aqui ou
 em `docs/STACK.md`), uma tarefa de TRD descrita como "e2e do fluxo humano" não pode presumir
-implicitamente esse tipo de suíte — o `architect` (`.claude/agents/architect.md`, seção "Plano de
-testes de alto nível") já especifica o mecanismo de verificação alternativo esperado (ex.: um
+implicitamente esse tipo de suíte — o `architect`
+(`.claude/agents/architect/plano-de-testes-detalhe.md`) já especifica o mecanismo de verificação
+alternativo esperado (ex.: um
 teste de integração HTTP encadeando os endpoints reais envolvidos, sem dublê, como prova do
 fluxo) diretamente na tarefa, em vez de deixar para quem implementa decidir ou perguntar no meio
 da fatia.

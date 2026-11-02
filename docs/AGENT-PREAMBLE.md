@@ -88,7 +88,8 @@ código real pós-migração. Só a quinta rodada a citar a afirmação verifico
 mecanismo nunca existiu na stack nova (issue #527, `asengardeon/btt-sdd-pipeline`).
 
 **Ao citar um artefato de investigação como base de uma ressalva, verifique a marcação
-`[medido]`/`[inferido]` da frase que você está usando** (`agents/architect.md`, item 1c). Uma
+`[medido]`/`[inferido]` da frase que você está usando** (`agents/architect/contrato-externo-nao-
+observado.md`). Uma
 ressalva apoiada em `[inferido]` declara isso — e, quando a medição for barata e o ambiente
 estiver à mão, propor medi-la sai mais barato que carregar a ressalva por três fatias.
 
