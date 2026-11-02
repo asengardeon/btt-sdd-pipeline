@@ -105,9 +105,12 @@ DEPOIS" como opção quando cabível.
   `docs/MICRO-CONTEXT.md`, seção 2 — antes de terminar); qualquer alteração real de
   infraestrutura passa por um plano aprovado antes de executar.
 - **`tech-writer.md`** — agente **utilitário** de documentação técnica (README, `docs/*.md`, ADRs,
-  exemplos de código documentados), sem posição fixa nas 7 etapas — convocável a qualquer momento,
-  no mesmo espírito do `codebase-archaeologist`. Nunca escreve/corrige código de produção, só
-  documenta o que existe de fato.
+  exemplos de código documentados, `docs/DOCS-MAP.md` — mapa de navegação apontando para cada
+  artefato na versão/formato certo, legado ou split físico — e `docs/FEATURES.md` — catálogo de
+  comportamento/features reais da aplicação, derivado de PRD/TRD e conferido contra o código),
+  sem posição fixa nas 7 etapas — convocável a qualquer momento, no mesmo espírito do
+  `codebase-archaeologist`. Nunca escreve/corrige código de produção, só documenta o que existe
+  de fato.
 
 ## `.claude/skills/` — os comandos que acionam o pipeline
 
@@ -243,6 +246,19 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
   com dois nomes, ou um nome para dois conceitos) em artefatos da mesma spec. Qualquer agente
   acrescenta entrada; o `tech-writer` consolida. Registra o termo escolhido, o que ele significa e
   os nomes rejeitados — é pelo nome rejeitado que a próxima busca encontra o termo certo.
+- **`DOCS-MAP.md`** — **gerado/atualizado pelo `tech-writer`** quando invocado com escopo amplo
+  ("documentar tudo") ou automaticamente por `/sdd-sre` ao fim de uma spec
+  (`.claude/agents/tech-writer/mapa-de-documentacao.md`). Mapa de navegação: para cada spec,
+  aponta o caminho de entrada exato de cada artefato de revisão — `reviews/<stage>/INDEX.md` se
+  já migrado, `<stage>.md` se ainda legado (`docs/MICRO-CONTEXT.md`, seção 2) — e lista os docs
+  condicionais e ADRs existentes. Nunca editado manualmente; a próxima regeneração sobrescreve
+  edição manual sem aviso.
+- **`FEATURES.md`** — **gerado/atualizado pelo `tech-writer`** quando o usuário pede documentação
+  do comportamento/features reais da aplicação
+  (`.claude/agents/tech-writer/catalogo-de-features.md`). Catálogo em linguagem de produto (não
+  de processo do pipeline), derivado das histórias de usuário do PRD e dos casos de uso do TRD de
+  cada spec, **conferido contra o código real** antes de qualquer linha (reaproveita
+  `/sdd-gap-report` como primeira fonte) — nunca copiado do PRD/TRD sem verificação.
 - **`TOOLING.md`** — ferramentas recomendadas para economia de tokens: hoje só
   [rtk](https://github.com/rtk-ai/rtk), que comprime a saída de comandos de shell antes de chegar
   ao contexto do agente. Explica como ele se integra (hook global, transparente), a convenção de

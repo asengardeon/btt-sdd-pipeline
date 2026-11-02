@@ -1,6 +1,6 @@
 ---
 name: sdd-docs
-description: Utilitário do pipeline SDD, sem posição fixa numa etapa numerada. Use quando o usuário pedir para escrever ou atualizar documentação técnica — README, um doc de docs/, um ADR, ou transformar código real em exemplo documentado (ex.: antes de remover código do repositório). Aciona o agente tech-writer.
+description: Utilitário do pipeline SDD, sem posição fixa numa etapa numerada. Use quando o usuário pedir para escrever ou atualizar documentação técnica — README, um doc de docs/, um ADR, transformar código real em exemplo documentado (ex.: antes de remover código do repositório), atualizar o mapa de navegação dos artefatos (docs/DOCS-MAP.md), ou catalogar o comportamento/features reais da aplicação (docs/FEATURES.md). Aciona o agente tech-writer.
 ---
 
 # /sdd-docs
@@ -18,8 +18,10 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 ## Passos
 
 1. Determine o escopo do pedido a partir de `args`/da conversa: um arquivo específico (`README.md`,
-   um doc de `docs/`, um ADR novo), ou "documentar tudo" (inventário completo das mecânicas do
-   pipeline).
+   um doc de `docs/`, um ADR novo), "documentar tudo" (inventário completo das mecânicas do
+   pipeline, inclui atualizar `docs/DOCS-MAP.md`), ou documentar o comportamento/features reais
+   da aplicação (`docs/FEATURES.md` — escopo distinto: sobre o que a aplicação faz, não sobre o
+   pipeline que a construiu).
 2. Se o pedido envolve transformar código real em exemplo documentado (ex.: o código vai ser
    removido do repositório mas o valor ilustrativo deve sobreviver), informe isso explicitamente ao
    agente na invocação, incluindo onde o exemplo documentado deve ficar.

@@ -101,6 +101,14 @@ por rodada, seção 2 acima). Artefatos sem par registrado (`prd`, `trd`, `cover
 "nada para migrar" para eles, não um erro; é a infraestrutura pronta para quando (e se) uma
 mudança de formato futura precisar de um par novo, sem reescrever o comando em si.
 
+**A mesma convenção vale para artefato de `docs/` gerado por um agente sem template em
+`specs/_template/`** (a estrutura exata vive inline no próprio arquivo-filho do agente, ex.
+`agents/tech-writer/mapa-de-documentacao.md` para `docs/DOCS-MAP.md` e
+`agents/tech-writer/catalogo-de-features.md` para `docs/FEATURES.md`) — o marcador é a primeira
+linha do bloco ```markdown` que descreve a "Estrutura exata do arquivo", e
+`check-migration-coverage.py` descobre esses dois num registro próprio (não via `Glob` em
+`specs/_template/`, que não se aplica a eles) para que também apareçam no total verificado.
+
 **Artefato sem marcador (escrito antes desta convenção existir) é tratado como a versão mais
 antiga conhecida daquele artefato** — detectado estruturalmente (a mesma técnica que a seção 2
 já descreve: diretório vs. arquivo único), nunca pelo marcador ausente. É uma lacuna transitória

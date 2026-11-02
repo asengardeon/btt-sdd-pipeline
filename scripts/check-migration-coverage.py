@@ -16,6 +16,16 @@ existe um arquivo `.claude/skills/sdd-migrate/migrations/<artefato>-v<origem>-to
 cobrindo cada salto de versão — hoje sempre `v1 → v2` para os 5 artefatos de revisão, mas o
 script generaliza para qualquer `N → N+1` se uma terceira versão nascer no futuro.
 
+Além dessas duas camadas, existe um terceiro tipo de artefato: docs de `docs/` gerados por um
+agente sem template em `specs/_template/` (a estrutura exata vive inline no arquivo-filho do
+próprio agente). Esses entram num registro próprio (`DOCS_LEVEL_ARTIFACTS`) em vez de `Glob`,
+já que não há como descobri-los por convenção de caminho — hoje são `docs-map`
+(`.claude/agents/tech-writer/mapa-de-documentacao.md`) e `features`
+(`.claude/agents/tech-writer/catalogo-de-features.md`), ambos só em `v1` ainda (sem segunda
+camada, logo sem salto a cobrir) — contam para o total verificado, mas um bump futuro de
+qualquer um dos dois precisa primeiro de uma entrada nova neste script antes de poder ser
+verificado mecanicamente (não há uma segunda camada física automática como o split por rodada).
+
 Uso:
     python scripts/check-migration-coverage.py
 
@@ -34,6 +44,14 @@ ROOT = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = ROOT / "specs" / "_template"
 REVIEWS_DIR = TEMPLATES_DIR / "reviews"
 MIGRATIONS_DIR = ROOT / ".claude" / "skills" / "sdd-migrate" / "migrations"
+
+# Artefatos de docs/ gerados por um agente sem template em specs/_template/ — a estrutura exata
+# vive inline no arquivo-filho do agente, dentro de um bloco ```markdown. Registro manual porque
+# não há convenção de caminho para descobri-los por Glob (docs/MICRO-CONTEXT.md, seção 3).
+DOCS_LEVEL_ARTIFACTS = {
+    "docs-map": ROOT / ".claude" / "agents" / "tech-writer" / "mapa-de-documentacao.md",
+    "features": ROOT / ".claude" / "agents" / "tech-writer" / "catalogo-de-features.md",
+}
 
 VERSION_RE = re.compile(r"<!--\s*sdd-format-version:\s*(\d+)\s*-->")
 
@@ -79,8 +97,39 @@ def collect_split_versions() -> dict[str, int]:
     return versions
 
 
+def read_version_from_code_block(path: Path) -> int | None:
+    """Lê a versão na primeira linha dentro do bloco ```markdown (artefato de docs/ sem template)."""
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except FileNotFoundError:
+        return None
+    in_block = False
+    for line in lines:
+        stripped = line.strip()
+        if not in_block:
+            if stripped == "```markdown":
+                in_block = True
+            continue
+        if not stripped:
+            continue
+        m = VERSION_RE.match(stripped)
+        return int(m.group(1)) if m else None
+    return None
+
+
+def collect_docs_level_versions() -> dict[str, int]:
+    """Artefato -> versão, a partir do registro DOCS_LEVEL_ARTIFACTS."""
+    versions = {}
+    for artefato, path in DOCS_LEVEL_ARTIFACTS.items():
+        v = read_version_from_code_block(path)
+        if v is not None:
+            versions[artefato] = v
+    return versions
+
+
 def main() -> int:
     single = collect_single_file_versions()
+    single.update(collect_docs_level_versions())
     split = collect_split_versions()
 
     artefatos = sorted(set(single) | set(split))

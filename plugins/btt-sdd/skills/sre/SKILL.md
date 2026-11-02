@@ -166,7 +166,10 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    implementada/mergeada depois desta), a spec está completa ponta a ponta pelo pipeline. Antes de
    informar o usuário sobre o merge (passo 6 abaixo), invoque o agente `tech-writer` (Agent tool,
    `subagent_type: "tech-writer"`, ou `/btt-sdd:docs`) para atualizar a documentação do repositório
-   (README, `docs/`, ADRs) refletindo o que esta feature introduziu de fato. **Passe explicitamente,
+   (README, `docs/`, ADRs) refletindo o que esta feature introduziu de fato — este é também o
+   gatilho de `docs/DOCS-MAP.md` (`agents/tech-writer/mapa-de-documentacao.md`), já que uma spec
+   recém-concluída é o momento natural de refletir no índice qualquer artefato que mudou de
+   formato. **Passe explicitamente,
    na invocação, a lista de itens VALIDAR DEPOIS de tipo "documentação" abertos nesta spec e nas
    anteriores** (condições do tipo "aceitar o risco + documentar", `agents/security-engineer.md`,
    item 3b): esta é a única etapa do pipeline com dono natural para texto de README, e ela **não

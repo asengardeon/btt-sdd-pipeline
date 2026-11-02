@@ -32,7 +32,8 @@ foi carregado via junction global (`.claude/agents/<seu-nome>.md` apontando para
 `CLAUDE.md`, seção "Distribuição global"), esses docs estão em `docs/` na raiz **deste mesmo
 repositório** — não necessariamente no projeto onde você está trabalhando agora. Se o projeto
 atual também tiver um `docs/<nome>.md` próprio (`STACK.md`, `DESIGN-SYSTEM.md`, `BASELINE.md`,
-`LESSONS-LEARNED.md`, `GLOSSARY.md`, `adr/`), esse é conteúdo do projeto, não deste pipeline — não
+`LESSONS-LEARNED.md`, `GLOSSARY.md`, `DOCS-MAP.md`, `FEATURES.md`, `adr/`), esse é conteúdo do
+projeto, não deste pipeline — não
 confunda os dois. Se não conseguir determinar de onde você foi carregado, pergunte a quem te
 invocou.
 
