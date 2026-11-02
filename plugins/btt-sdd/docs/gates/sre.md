@@ -87,13 +87,15 @@
   como evidência concreta de performance, e os três defeitos de medição empurram na **mesma
   direção**: superestimam as etapas de agente e subestimam as do orquestrador — numa fatia medida,
   29% do esforço era de orquestrador.
-- [ ] `sre-review.md` (e qualquer ajuste de `infra/`/`.github/workflows/` desta rodada) commitados
-   (arquivos explícitos, nunca `git add -A`/`.`) na branch do PR pelo próprio `sre` antes
-  de devolver o resultado. **Ajuste fora de `specs/`/`docs/`** (`ci.yml`/`cd.yml`,
-  `Dockerfile`/compose, `infra/`) **é push na hora, com o CI esperado** — muda comportamento e
-  precisa de run próprio. Rodada que só produziu `sre-review.md` não dá push na etapa: entra no
-  **push único da fatia**, que nesta (a última da spec) é feito por `/btt-sdd:sre`
-  (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia").
+- [ ] O(s) arquivo(s) do artefato de SRE desta rodada (`F-<N>.md`/`hotfix-<data>.md` + `INDEX.md`
+  + `tracking.md` no formato novo; `sre-review.md` no legado — `docs/MICRO-CONTEXT.md`, seção 2)
+  e qualquer ajuste de `infra/`/`.github/workflows/` desta rodada commitados (arquivos explícitos,
+  nunca `git add -A`/`.`) na branch do PR pelo próprio `sre` antes de devolver o resultado.
+  **Ajuste fora de `specs/`/`docs/`** (`ci.yml`/`cd.yml`, `Dockerfile`/compose, `infra/`) **é push
+  na hora, com o CI esperado** — muda comportamento e precisa de run próprio. Rodada que só
+  produziu o artefato de revisão não dá push na etapa: entra no **push único da fatia**, que
+  nesta (a última da spec) é feito por `/btt-sdd:sre` (`docs/GIT-WORKFLOW.md`, seção "Push único
+  por fatia").
 - [ ] Se a fatia foi aprovada e tem issues do GitHub associadas a tarefas cobertas por ela, `sre`
   documentou a resolução em cada uma (`gh issue comment`, resumo + link do PR e dos artefatos de
   revisão) antes de finalizar — a issue fecha sozinha quando a fatia mergear, via `Closes #N` já
