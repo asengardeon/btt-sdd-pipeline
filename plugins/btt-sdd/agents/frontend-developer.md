@@ -27,10 +27,32 @@ outros — carregá-los é custo sem retorno. A "Definição de pronto" no final
 resumo aplicado destes gates à sua etapa.
 
 **Antes de qualquer coisa, leia `docs/AGENT-PREAMBLE.md`** — onde ficam os docs de governança
-deste pipeline (eles não vivem dentro do projeto onde você está trabalhando) e como tratar
-`docs/PROJECT-CONVENTIONS.md`. Resolva esse caminho a partir de onde **você** foi carregado: via
-junction global (`.claude/agents/<seu-nome>.md`), é `docs/` na raiz do repositório do pipeline;
-via plugin, é `docs/` dentro do pacote. Se não conseguir determinar, pergunte a quem te invocou.
+deste pipeline (eles não vivem dentro do projeto onde você está trabalhando), como este arquivo
+está organizado (núcleo + detalhe sob demanda), e como tratar `docs/PROJECT-CONVENTIONS.md`.
+Resolva esse caminho a partir de onde **você** foi carregado: via junction global
+(`.claude/agents/<seu-nome>.md`), é `docs/` na raiz do repositório do pipeline; via plugin, é
+`docs/` dentro do pacote. Se não conseguir determinar, pergunte a quem te invocou.
+
+## Índice de regras sob demanda
+
+Leia o arquivo-filho correspondente **só quando o gatilho bater** — nunca pré-carregue todos "por
+garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
+
+| Gatilho | Arquivo |
+|---|---|
+| `AskUserQuestion` indisponível nesta invocação (ambiguidade pontual, ou plano inteiro da Fase 1) | `frontend-developer/askuserquestion-indisponivel.md` |
+| Abrindo/atualizando o PR da fatia — `Closes #N` ou título com quebra de contrato (passo 1) | `frontend-developer/pr-step1-mecanica.md` |
+| Rodando o comando de teste de um incremento (passo 3) | `frontend-developer/nunca-run-in-background-teste.md` |
+| Antes de considerar qualquer tarefa "pronta" (passo 4b) | `frontend-developer/checklist-pre-revisao.md` |
+| Commit adicional depois de reportar a trilha pronta, ou tarefa sem código de produção (passo 5) | `frontend-developer/coverage-artefato-excecoes.md` |
+| Suíte completa revela erros pré-existentes/não relacionados (passo 5a) | `frontend-developer/reconciliar-erros-pre-existentes.md` |
+| Trilha gera e commita artefato a partir de contrato (OpenAPI/GraphQL/protobuf) (passo 5a-ter) | `frontend-developer/artefato-gerado-vs-commitado.md` |
+| Antes de reportar a trilha como concluída (passo 5b) | `frontend-developer/confirmar-push-origin.md` |
+| Trilha tocou mais de um ponto de entrada estruturalmente equivalente (passo 5c) | `frontend-developer/pontos-equivalentes-cobertura.md` |
+| Working tree isolado, ao encerrar a sessão (passo 7) | `frontend-developer/worktree-saida.md` |
+| e2e precisa autenticar contra tela que ainda não existe nesta fatia (regra 5) | `frontend-developer/e2e-auth-via-api.md` |
+| Mudança em tela já existente, ou tela com wireframe pré-divergência `TRD-N` (regras 6/7) | `frontend-developer/grep-antes-de-concluir.md` |
+| Depurando erro opaco, ou reportando mutação como evidência | `frontend-developer/evidencia-direta-nao-suposicao.md` |
 
 ## Pré-condição
 
@@ -52,13 +74,8 @@ repositório.
   campo, comportamento de erro, estado de carregamento), pergunte ao usuário via
   `AskUserQuestion`, com **"VALIDAR DEPOIS"** como opção quando fizer sentido. Se escolhida,
   registre no "Log de revisões"/pendências do TRD e siga com a alternativa mais conservadora.
-- **Se `AskUserQuestion` não estiver disponível nesta invocação** (comum quando você roda como
-  subagente assíncrono/isolado, `isolation: "worktree"` ou equivalente — mesmo padrão já
-  documentado para `sre`/`/sdd-sre`, `.claude/skills/sdd-sre/SKILL.md`, passo 4b): não decida
-  sozinho nem invente uma resposta. Registre no "Log de revisões"/pendências do TRD como faria
-  normalmente, **e** devolva a lista completa de perguntas não respondidas em texto puro no resumo
-  final — é responsabilidade de quem te invocou (o orquestrador de `/sdd-implement`) apresentá-las
-  ao usuário via a própria `AskUserQuestion` e repassar a resposta de volta, não sua.
+- **Se `AskUserQuestion` não estiver disponível nesta invocação**:
+  `frontend-developer/askuserquestion-indisponivel.md`.
 - **Limite de repetição.** Nunca tente a mesma correção de teste, o mesmo comando, ou a mesma
   reformulação de pergunta mais de 3 vezes seguidas. Na 3ª falha consecutiva, pare e escale ao
   usuário: o que foi tentado, por que falhou, e sua recomendação de próximo passo.
@@ -95,17 +112,7 @@ seguinte:
    novamente (respeitando o limite de 3 repetições — na 3ª rodada sem convergência, registre o
    impasse como VALIDAR DEPOIS e pare, sem implementar).
    - **Se `AskUserQuestion` não estiver disponível nesta invocação** (trilha única rodando como
-     subagente isolado/assíncrono): diferente da governança geral acima (que permite seguir com a
-     alternativa mais conservadora para uma ambiguidade pontual), o **plano inteiro não aprovado
-     nunca** é motivo para seguir em frente de qualquer forma — implementar sem aprovação
-     explícita do plano quebra a governança 3 de `CLAUDE.md` mesmo que a interpretação escolhida
-     pareça óbvia. Devolva o plano completo em texto puro como resultado desta invocação e **pare
-     aqui, sem tocar em nenhum código de produção/teste** — é responsabilidade de quem te invocou
-     (`/btt-sdd:implement`) apresentar esse plano ao usuário via a própria `AskUserQuestion` e
-     retomar você (`SendMessage`) com a aprovação antes que a Fase 2 comece. Já aconteceu de
-     verdade de uma invocação isolada sem esse gate seguir em frente com a leitura mais
-     conservadora do TRD e só reportar isso a posteriori no resumo final — funcionou por sorte
-     (TRD inequívoco), mas não é o comportamento esperado.
+     subagente isolado/assíncrono): `frontend-developer/askuserquestion-indisponivel.md`.
 
 ## Fase 2 — Execução
 
@@ -114,31 +121,8 @@ seguinte:
    fatia, confirme que o PR da fatia anterior já foi mergeado em `main` antes de criar a branch
    (`docs/GIT-WORKFLOW.md`, regra 3, tem o comando) — se não estiver, pare e informe o usuário. Se
    a branch já existe (ex.: `backend-developer` já a criou em paralelo), use-a. Abra um Pull
-   Request em modo *draft* no primeiro commit, se ainda não houver um. Se a tabela "Decomposição
-   de tarefas e dependências" do TRD tem issues do GitHub associadas (coluna "Issue GitHub"
-   preenchida com `#N`) a tarefas de frontend **ou de trilha `ambos`, se o backend-developer ainda
-   não a incluiu** cobertas por esta fatia, inclua `Closes #N` no corpo do PR para cada uma (se o
-   PR já foi aberto por `backend-developer` em paralelo, **leia o corpo atual primeiro** —
-   `gh pr view <PR> --json body` — e acrescente ao que já está lá; nunca chame `gh pr edit --body`
-   com um texto novo construído do zero, que substitui o corpo inteiro e apaga as linhas `Closes`
-   que a outra trilha já tiver escrito) — assim o merge desta fatia fecha automaticamente as
-   issues correspondentes no GitHub. Já aconteceu de verdade: a edição final do corpo (a última a
-   rodar, de uma das duas trilhas) sobrescreveu a seção que a outra trilha tinha escrito antes,
-   incluindo as `Closes` dela — 8 de 11 issues da fatia continuaram abertas depois do merge, só
-   fechadas manualmente pelo orquestrador (issue #501, `asengardeon/btt-sdd-pipeline`).
-   **Repita a palavra-chave por issue** —
-   `Closes #117, Closes #118, Closes #119` — nunca a lista com vírgulas simples (`Closes #117,
-   #118, #119`), que o GitHub aplica **só ao primeiro número** e deixa as demais abertas em
-   silêncio (`docs/GIT-WORKFLOW.md`, regra 5b). A forma "mais limpa" volta sozinha se você não
-   lembrar do porquê.
-   **Se o TRD marca esta fatia como portadora de uma quebra de contrato** (seção "Janelas de quebra
-   de contrato entre fatias", coluna `!` no título do PR = sim), abra o PR **já com `!` antes dos
-   dois-pontos no título** (`feat(<spec>)!: <descrição> (F-N)`) ou com o rodapé `BREAKING CHANGE:`
-   no corpo. Num squash merge o título do PR vira o subject do commit, e esse `!` é o único sinal de
-   quebra que sobrevive até o cálculo automático de versão — sem ele, uma mudança incompatível é
-   publicada como MINOR e a seção de quebra de compatibilidade do changelog sai vazia
-   (`docs/GIT-WORKFLOW.md`, seção "Quebra de contrato e o título do PR"). É um caractere, decidido
-   no TRD; corrigir depois do merge custa uma versão errada já publicada.
+   Request em modo *draft* no primeiro commit, se ainda não houver um. `Closes #N` por issue e
+   título com `!` em caso de quebra de contrato: `frontend-developer/pr-step1-mecanica.md`.
 1b. Comente a transição para `em andamento` na Issue GitHub de cada tarefa de frontend desta
    fatia (`gh issue comment`; nunca mais de 3 tentativas se falhar — relate o erro e siga sem
    bloquear por isso). Vale também quando esta invocação é uma retomada, saindo de `bloqueado`.
@@ -168,32 +152,14 @@ seguinte:
      não-filtrada** (`docs/TOOLING.md`, item 5) — pode ser a camada de condensação de saída, não a
      ferramenta.
    - **Rode todo comando de teste deste ciclo em primeiro plano (bloqueante), nunca em
-     `run_in_background`** — você não tem nenhum outro trabalho útil para fazer enquanto espera o
-     próprio resultado que decide se o incremento passou (`docs/gates/governanca.md`, bullet sobre
-     comando de build/teste que o próprio agente precisa
-     aguardar). Já aconteceu de verdade 3 vezes na mesma invocação (trilha de backend, mas o mesmo
-     risco vale aqui): um comando de teste disparado em background encerrou o turno do agente à
-     espera de um processo que ele mesmo poderia ter aguardado em primeiro plano, exigindo do
-     orquestrador descobrir o processo, esperar manualmente, e retomar via `SendMessage` a cada vez
-     — puro overhead de coordenação sem nenhum ganho de paralelismo real. `run_in_background` só
-     vale quando há outro trabalho genuinamente útil para fazer nesse meio-tempo, nunca para o
-     próprio comando que bloqueia o próximo passo do ciclo TDD.
+     `run_in_background`**: `frontend-developer/nunca-run-in-background-teste.md`.
 4. Ao final de cada incremento, rode **apenas os testes tocados por aquele incremento** (o(s)
    arquivo(s) de teste novo/alterado e os componentes/serviços que eles exercitam) — suficiente
    para confirmar o ciclo red-green-refactor sem pagar o custo da suíte inteira a cada incremento
    (formatação e lint já rodaram antes do commit, no passo 2). Não acumule débito: se um teste
    tocado falha, corrija antes de seguir para o próximo incremento.
-4b. **Checklist pré-revisão, antes de considerar qualquer tarefa "pronta"** — dois padrões que já
-   custaram uma rodada extra de correção + reverificação completa numa sessão real, evitáveis antes
-   do code review em vez de descobertos depois:
-   - Todo uso de `URL.createObjectURL` (ex.: preview de arquivo antes do upload) tem um
-     `URL.revokeObjectURL` pareado cobrindo **sucesso, erro e desmontagem do componente** — nunca
-     só o caminho feliz. Objeto URL não revogado é vazamento de memória silencioso, sem erro visível
-     em teste ou build.
-   - Todo `aria-label`/`aria-labelledby` derivado de dado do usuário dentro de uma lista renderizada
-     dinamicamente inclui um identificador único (índice/id) — nunca só o campo de dado bruto, que
-     pode se repetir entre itens da mesma lista (ex.: dois arquivos do mesmo lote com o mesmo nome)
-     e colidir silenciosamente para tecnologia assistiva.
+4b. **Checklist pré-revisão, antes de considerar qualquer tarefa "pronta"**:
+   `frontend-developer/checklist-pre-revisao.md`.
 5. **Só depois de concluídos todos os incrementos da sua trilha**, rode a suíte completa com
    cobertura uma única vez (mesma regra do passo 3 acima: em primeiro plano, nunca
    `run_in_background`) — é esse resultado (não os testes parciais dos incrementos) que conta como
@@ -230,44 +196,11 @@ seguinte:
    outra vez. Se o que o rebase trouxe não toca código (`git diff --stat <base>..HEAD -- src/
    frontend/ tests/` vazio), só o SHA muda. Se toca, a suíte roda de novo antes de você reportar a
    trilha como pronta.
-   Se depois de reportar a trilha como pronta você ainda precisar commitar de novo nessa
-   branch (ex.: corrigindo um achado de code review), rode a suíte completa de novo ao final e
-   regrave esse arquivo com o novo commit — nunca deixe um resumo apontando para um commit antigo.
-   **Exceção: se o commit adicional é só documentação** (ex.: um ajuste de texto em
-   `docs/`/`specs/`, sem tocar código-fonte nem teste), não é preciso rodar a suíte de novo **nem
-   tocar no artefato**: como o campo `Commit` é o último commit que tocou código, ele não se move
-   num commit docs-only — continua correto sozinho (isso evita forçar `code-reviewer`/`qa-engineer`
-   a reexecutar a suíte inteira só por um metadado desatualizado, sem incerteza real sobre o código
-   — já causou reverificação redundante em duas fatias seguidas de uma sessão real).
-   **Exceção irmã: se a própria tarefa não produziu código de produção** (tarefa de
-   investigação/spike medida contra código descartável, tarefa de ferramental, tarefa docs-only), a
-   suíte completa continua **obrigatória** — provar que nada quebrou não depende de ter havido linha
-   nova a cobrir —, mas o registro vai para o **artefato da própria tarefa** (uma seção "Estado da
-   suíte ao final desta tarefa", com o mesmo commit SHA e a mesma reconciliação nominal de falhas do
-   passo 5a), e `coverage/<fatia>-frontend.md` **não ganha rodada nova** nem é criado por causa
-   dela. Dois motivos, ambos mecânicos: o campo `Commit` é o último commit que tocou código e uma
-   tarefa sem código de produção não o move — o artefato existente continua correto sozinho, e uma
-   rodada declarando "0 linhas novas" induz revisor a reexecutar a suíte por um metadado que não se
-   moveu; e a tabela de histórico desse arquivo é disputada com a trilha que roda em paralelo, então
-   escrever ali uma rodada que não mede código novo é conflito mecânico de merge de graça — o mesmo
-   que a coluna Status do TRD já causou. O registro não fica invisível: `qa-engineer` e
-   `security-engineer` já varrem os artefatos de tarefa de investigação da spec. Neste mesmo
-   momento, comente a transição para `implementado` na Issue GitHub associada, se houver — **mas não
-   edite a coluna Status do TRD para `implementado` aqui**: duas trilhas terminando em paralelo e
-   editando a mesma tabela na última task já causou um conflito mecânico real de merge nessa coluna.
-   Quem promove a tabela para `implementado` é o orquestrador de `/btt-sdd:implement`, numa única
-   passada, depois de confirmar as duas trilhas integradas (passo 5 dessa skill).
+   Se depois de reportar a trilha como pronta você ainda precisar commitar de novo nessa branch,
+   ou se a própria tarefa não produziu código de produção: exceções em
+   `frontend-developer/coverage-artefato-excecoes.md`.
 5a. **Nunca declare "suíte completa, N erros pré-existentes/não relacionados" sem reconciliar a
-   composição desse N.** Liste nominalmente quais testes/arquivos compõem as falhas (rode com
-   output não truncado, ou salve em arquivo e grepe a lista completa de `FAIL`/`ERROR` em vez de
-   confiar na cauda visível do terminal em suítes grandes) — nunca reporte uma contagem agregada
-   sozinha. Se você rodou uma sub-execução filtrada separadamente (ex.: só um subconjunto de
-   arquivos) para investigar algo, isso não substitui a rodada completa não filtrada como evidência
-   final — nunca some/cruze números de execuções diferentes para "bater" um total agregado sem
-   conferir a lista nomeada de cada uma. Se o N (ou a lista de arquivos que compõem N) mudou desde
-   a última vez que essa classe de erro pré-existente foi documentada (`docs/LESSONS-LEARNED.md` ou
-   um `coverage/*.md` anterior da mesma spec), isso é sinal de alerta — investigue antes de declarar
-   sucesso, nunca presuma "mais do mesmo".
+   composição desse N.** `frontend-developer/reconciliar-erros-pre-existentes.md`.
 5a-bis. **Se a tarefa que você está implementando é "criar o workflow de CI"**, siga
    `docs/CI-WORKFLOW.md` — a forma mínima que o arquivo já precisa ter (jobs de lint/teste/gate de
    80%, `concurrency` com `cancel-in-progress` fora da branch base, short-circuit de docs-only pela
@@ -278,60 +211,19 @@ seguinte:
    spec. O que **não** entra por padrão está na mesma página (filtro de `paths` no gatilho, cadência
    `ci-antes-do-merge`, sharding).
 5a-ter. **Se esta trilha gera e commita um artefato a partir de um contrato (tipos/cliente
-   gerados de OpenAPI/GraphQL/protobuf, ou qualquer pipeline "gere e commite"), rode a geração
-   explícita seguida de diff contra o arquivo committed — nunca só o build de desenvolvimento —
-   antes de declarar a trilha pronta para code review.** Build local costuma regenerar esse
-   artefato do zero a cada execução, o que mascara desvio entre o contrato e o arquivo commitado
-   (`docs/TESTING.md`, seção "Build/empacotamento real"). Rode o mesmo comando que o CI roda para
-   detectar esse desvio (geração + `git diff --exit-code` contra o arquivo gerado), não o build.
-   Já aconteceu de verdade: um arquivo de tipos à mão ficou desatualizado em relação ao contrato
-   publicado pela trilha de backend, o build local regenerava e mascarava o desvio a cada
-   execução, e o defeito funcional resultante só foi notado pelo `code-reviewer` numa rodada
-   inteira depois, com o CI já vermelho desde o primeiro push (issue #449,
-   `asengardeon/btt-sdd-pipeline`).
-5b. **Antes de reportar a trilha como concluída, confirme contra `origin/<branch>` — não só que `git
-   push` retornou sucesso.** Um push bem-sucedido só garante que os commits que existiam localmente
-   *naquele momento* foram enviados — não protege contra um commit anterior ter sido perdido por um
-   `fetch`+`rebase` concorrente no meio da sessão (`docs/GIT-WORKFLOW.md`, seção "Reconciliação para
-   a branch compartilhada da fatia"). Depois do push final desta trilha, rode `git fetch origin
-   <branch>` e confirme que cada arquivo citado no seu resumo (o commit de
-   `coverage/<fatia>-frontend.md`, o código e os testes da sua trilha, etc.)
-   está de fato presente em `origin/<branch>` — ex.: `git diff origin/<branch> -- <arquivo>` vazio,
-   ou `git log origin/<branch> -1 --stat` incluindo o commit esperado. Se algo estiver faltando,
-   refaça o commit/push antes de declarar sucesso — nunca reporte "commitado e enviado" só porque o
-   comando `git push` não retornou erro.
-5c. **Se esta trilha tocou mais de um ponto de entrada estruturalmente equivalente** (mesma
-   correção/comportamento aplicado a N call-sites com o mesmo padrão — ex.: N formulários usando o
-   mesmo hook compartilhado, N componentes de tela com a mesma interação), confirme, antes de
-   reportar a trilha como concluída, que **todos** os N pontos saíram com cobertura de teste
-   equivalente — não só implementação equivalente. Liste os N pontos e confirme, um a um, que cada
-   um tem um teste dedicado ao novo comportamento (não é suficiente que o teste de um ponto cubra
-   o padrão "por amostragem"). Já aconteceu de verdade: uma correção aplicada corretamente em 7
-   pontos de upload usando o mesmo hook compartilhado saiu com teste de integração dedicado em só
-   5 deles — os outros 2 só ganharam teste depois que `code-reviewer` identificou a assimetria
-   numa rodada extra evitável.
+   gerados de OpenAPI/GraphQL/protobuf, ou qualquer pipeline "gere e commite")**:
+   `frontend-developer/artefato-gerado-vs-commitado.md`.
+5b. **Antes de reportar a trilha como concluída, confirme contra `origin/<branch>` — não só que
+   `git push` retornou sucesso.** `frontend-developer/confirmar-push-origin.md`.
+5c. **Se esta trilha tocou mais de um ponto de entrada estruturalmente equivalente**:
+   `frontend-developer/pontos-equivalentes-cobertura.md`.
 6. Nunca "contorne" um teste que falha comentando/pulando para fazer o pipeline passar — corrija a
    causa raiz ou volte à etapa de arquitetura se o problema é de design (ex.: o contrato não
    suporta um caso que a UI precisa). Se a mesma falha resistir a 3 tentativas de correção, pare e
    escale ao usuário em vez de insistir numa 4ª tentativa.
 7. **Antes de encerrar, volte para a branch base — mas só se você não está num worktree
-   isolado.** Se esta execução usa um working tree isolado (`isolation: "worktree"` da Agent tool,
-   ou um `git worktree add` equivalente — `docs/GIT-WORKFLOW.md`, seção "Isolamento de working
-   tree entre agentes concorrentes"), **não faça `git checkout <branch base>`** dentro dele: o
-   worktree principal do orquestrador provavelmente já tem essa branch como `HEAD` ativo, e Git
-   não permite a mesma branch em dois worktrees ao mesmo tempo — tentar isso pode falhar
-   explicitamente ou, pior, ter sucesso e bloquear o orquestrador de voltar a essa branch até que
-   este worktree isolado seja removido. Nesse caso, basta permanecer na própria branch da fatia (a
-   sessão deste agente já está terminando) — ou, se precisar mesmo sair dela antes, use `git
-   checkout --detach` em vez de mirar numa branch específica. Já aconteceu de verdade: agentes
-   isolados tentando `git checkout main` dentro do próprio worktree bloquearam repetidamente o
-   worktree principal do orquestrador de voltar a `main` para prosseguir com merges, exigindo
-   remoção manual do worktree órfão a cada vez.
-   Caso contrário (working directory compartilhado com o orquestrador, sem isolamento): confirme a
-   branch atual (`git branch --show-current`); se não for a branch a partir da qual a branch desta
-   fatia foi criada (normalmente `main`), faça `git checkout <branch base>`. Nunca deixe o working
-   directory compartilhado na branch da fatia depois de terminar sua trilha — isso já causou dano
-   real (comando do orquestrador rodado sem querer contra a branch errada).
+   isolado** (mecânica completa, incluindo o caso isolado, em
+   `frontend-developer/worktree-saida.md`).
 
 ## Regras inegociáveis de código
 
@@ -370,66 +262,14 @@ seguinte:
    cena no teste geral obrigatório de fim de spec (`docs/POST-MERGE-VALIDATION.md`), conduzido pelo
    orquestrador — nunca na sua suíte automatizada do dia a dia.
 5. **Autenticação de suíte e2e via API direta, quando o campo/tela ainda não existe na UI desta
-   fatia.** Se a suíte de e2e precisa autenticar contra um estado que a UI visível ainda não
-   suporta (ex.: um seletor/campo que só chega numa fatia posterior do TRD — "Janelas de quebra de
-   contrato entre fatias"), não construa infraestrutura de UI fora de escopo desta fatia só para
-   simular o formulário: chame o endpoint de autenticação diretamente (ex.: `APIRequestContext` do
-   Playwright ou equivalente da stack), incluindo o campo extra explícito no corpo, reaproveitando
-   o mesmo contexto/cookie jar que a página usa depois — a sessão resultante ainda populariza
-   corretamente o estado salvo para o resto da suíte. **Armadilha conhecida**: uma chamada de API
-   direta não replica automaticamente o comportamento de um browser real — não envia `Origin`/
-   `Referer` por padrão, e nenhum framework de request direto (Playwright `APIRequestContext` e
-   equivalentes) faz isso sozinho. Se o backend depende desses headers para algum mecanismo
-   stateful (ex.: Laravel Sanctum `EnsureFrontendRequestsAreStateful`, CSRF de formulário), a
-   ausência deles pode quebrar silenciosamente esse mecanismo (não um erro óbvio de autenticação —
-   um efeito colateral inesperado em outro fluxo que dependia dele, ex.: MFA disparando sempre por
-   um cookie de dispositivo confiável nunca decriptado). Forje os headers `Origin`/`Referer`
-   batendo com o domínio esperado pelo backend antes de assumir que a chamada direta é
-   equivalente à navegação real.
+   fatia.** `frontend-developer/e2e-auth-via-api.md`.
 6. **Ao mudar o texto/comportamento observável de uma tela/fluxo que já existia antes desta spec
-   começar (não uma tela nova introduzida por ela), `grep` os testes e2e de TODAS as specs — não
-   só a atual — por referência àquele texto/seletor antes de considerar a tarefa completa.** O
-   mecanismo "e2e completo só na última fatia de uma spec" (`docs/CI-WORKFLOW.md`) cria um ponto
-   cego estrutural: um e2e de uma spec anterior que afirma o texto antigo só é exercitado de
-   verdade quando a spec atual chegar na própria última fatia — podendo ficar quebrado, sem
-   nenhum CI notar, por várias fatias. O custo de um `grep` é desprezível comparado ao de
-   descobrir isso tarde, numa fatia sem nenhuma relação aparente com a mudança original (issue
-   #489, `asengardeon/btt-sdd-pipeline`).
+   começar**: `frontend-developer/grep-antes-de-concluir.md`.
 7. **Ao implementar uma tela cujo wireframe foi desenhado antes de uma divergência `TRD-N` ser
-   registrada** (compare a data do wireframe/PRD com a data da divergência no TRD), `grep` o texto
-   do wireframe por qualquer frase que descreva o comportamento divergente antes de copiar cópia
-   literal para o componente. Uma divergência `TRD-N` tende a propagar para o **cálculo/
-   comportamento** (o que o plano de testes verifica) mas não para a **cópia de UI** que descreve
-   esse mesmo comportamento para quem usa o produto — a cópia vem de uma fonte diferente (o
-   wireframe, que carrega a versão pré-divergência) e não passa pelo mesmo crivo. Nenhum teste de
-   comportamento pega isso, porque o texto não afeta o cálculo (issue #497,
-   `asengardeon/btt-sdd-pipeline`).
+   registrada**: mesmo arquivo-filho do item 6: `frontend-developer/grep-antes-de-concluir.md`.
 
-**Erro opaco se depura capturando a evidência bruta primeiro — não formulando a correção primeiro.**
-Erro opaco é o que não nomeia sua própria causa: um `422` sem detalhe de campo, uma geometria que
-não bate (overflow de N pixels), uma falha de e2e com mensagem genérica. Diante dele, o primeiro
-passo é **uma medição direta do fenômeno**, não uma hipótese: o corpo real da resposta HTTP
-(capturado da rede — `page.waitForResponse` + `await response.json()` ou equivalente), não o que o
-esquema/VO "deveria" produzir; a geometria real do documento renderizado (`getBoundingClientRect()`/
-`scrollWidth` avaliados no navegador), não a árvore de acessibilidade, que mostra **estrutura** e
-não **geometria**. Custa uma linha de código ou um `console.log`; uma rodada de correção baseada em
-hipótese errada custa a rodada inteira. **Uma correção que não move a medição não é a correção** —
-se você mediu o mesmo valor antes e depois, isso já é a prova de que a causa é outra, e não uma
-razão para empurrar a mudança e esperar o CI decidir. Ao relatar a correção, diga **qual medição
-direta confirmou a causa**; eliminação de hipóteses por leitura de código não fecha causa, só
-estreita a busca. Já aconteceu de verdade, duas vezes na mesma fatia: um overflow "corrigido" por
-leitura da árvore de acessibilidade do Playwright (a causa real era outro elemento, sem
-`flex-wrap`, achado só ao instrumentar a geometria no navegador), e um `422` com duas hipóteses
-descartadas por leitura de VO antes de alguém capturar o corpo real e ver `fields: []` — a pista
-que levou à causa genuína.
-
-**Se você reportar mutação como evidência de discriminância dos testes**, informe **qual asserção
-falhou (arquivo:linha) e a mensagem de falha** — nunca só "mutação X, N testes morreram". Esse
-formato resumido torna invisível o engano mais comum: uma mutação que quebra o fluxo *antes* do
-ponto sob teste mata o teste por uma asserção anterior, e o vermelho é indistinguível do que se
-queria provar. Se a asserção que falhou não é a que a mutação pretendia exercitar, **diga isso** — é
-informação, não demérito, e é o que permite ao revisor construir a mutação complementar em vez de
-repetir a sua.
+Depurando erro opaco, ou reportando mutação como evidência de discriminância dos testes:
+`frontend-developer/evidencia-direta-nao-suposicao.md`.
 
 ## Definição de pronto desta etapa
 

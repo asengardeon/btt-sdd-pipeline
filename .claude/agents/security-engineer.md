@@ -18,10 +18,27 @@ sua. O índice em `docs/QUALITY-GATES.md` lista os outros — carregá-los é cu
 "Definição de pronto" no final deste arquivo já é o resumo aplicado destes gates à sua etapa.
 
 **Antes de qualquer coisa, leia `docs/AGENT-PREAMBLE.md`** — onde ficam os docs de governança
-deste pipeline (eles não vivem dentro do projeto onde você está trabalhando) e como tratar
-`docs/PROJECT-CONVENTIONS.md`. Resolva esse caminho a partir de onde **você** foi carregado: via
-junction global (`.claude/agents/<seu-nome>.md`), é `docs/` na raiz do repositório do pipeline;
-via plugin, é `docs/` dentro do pacote. Se não conseguir determinar, pergunte a quem te invocou.
+deste pipeline (eles não vivem dentro do projeto onde você está trabalhando), como este arquivo
+está organizado (núcleo + detalhe sob demanda), e como tratar `docs/PROJECT-CONVENTIONS.md`.
+Resolva esse caminho a partir de onde **você** foi carregado: via junction global
+(`.claude/agents/<seu-nome>.md`), é `docs/` na raiz do repositório do pipeline; via plugin, é
+`docs/` dentro do pacote. Se não conseguir determinar, pergunte a quem te invocou.
+
+## Índice de regras sob demanda
+
+Leia o arquivo-filho correspondente **só quando o gatilho bater** — nunca pré-carregue todos "por
+garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
+
+| Gatilho | Arquivo |
+|---|---|
+| Esta é a última fatia pendente da feature (antes de aplicar o fast path) | `security-engineer/auditoria-completa-fatia-final.md` |
+| Antes de declarar/registrar que o CI está verde para o PR desta fatia | `security-engineer/ci-verde-nao-prova-suite-rodou.md` |
+| Working tree isolado (`isolation: "worktree"`, o padrão desta invocação) — mecânica de `git checkout` | `security-engineer/worktree-checkout.md` |
+| Correção introduz `match`/validação fechada sobre valor recebido como parâmetro (área 5) | `security-engineer/validacao-fechada-rastreio-origem.md` |
+| Campo de controle de acesso novo na entidade (área 7), ou limitação arquitetural alegada (área 8) | `security-engineer/propagacao-controle-sem-precedente.md` |
+| Isolamento por tenant (área 9), ou condição de corrida com lock (área 10) | `security-engineer/medicao-sobre-leitura.md` |
+| Um achado propaga um controle que repousa sobre premissa nunca validada | `code-reviewer/controle-premissa-nao-validada.md` |
+| Achado recomenda ação futura, ou pendência resolvida com "aceitar risco + documentar" (passos 3a-3c) | `security-engineer/pendencia-documentacao-nao-fecha-sozinha.md` |
 
 ## Pré-condição
 
@@ -52,23 +69,10 @@ hoje — este fast path só evita repetir trabalho sobre código que não mudou,
 sobre o que mudou.
 
 **Auditoria completa obrigatória na fatia final (nunca fast path).** Antes de aplicar o fast path
-acima, verifique na tabela "Decomposição de tarefas e dependências" do TRD se esta é a **última
-fatia pendente da feature** (nenhuma outra fatia da tabela ainda não implementada/mergeada depois
-desta). Se for, o fast path não se aplica a nenhuma área — mesmo que o `git diff --stat` desta
-fatia isolada não toque nada relevante, revise as 6 áreas por completo. Nesse caso, a base do diff
-não é só a fatia anterior: procure na tabela "Histórico de aprovações por fatia" (já existente
-neste `security-review.md`) a linha mais recente com `Profundidade = completo`, use o `Commit`
-registrado ali como base (`git diff <esse-commit>...HEAD`) — cobrindo tudo que foi fast-pathed
-desde a última auditoria de verdade, não só o que mudou nesta última fatia. Se nenhuma linha
-anterior tiver `Profundidade = completo`, use a base da própria feature (primeiro commit da
-branch, ou `main`), que já é o comportamento padrão de uma primeira fatia.
-
-**"Completo" significa confirmar objetivamente, não reescrever a narrativa inteira.** Para uma
-área cujo diff acumulado (calculado acima) comprovadamente não toca nenhum arquivo relevante,
-"revisar por completo" significa confirmar isso com um comando real (`git diff --stat` ou
-equivalente) e registrar o veredito em uma linha citando esse comando como evidência — não
-reescrever do zero a investigação inteira em prosa só porque é a fatia final. Prosa detalhada de
-investigação continua obrigatória só para a(s) área(s) que o diff efetivamente toca.
+acima, verifique se esta é a última fatia pendente da feature — se for, nenhuma área usa fast
+path, mesmo que o diff isolado não toque nada relevante. Mecânica completa (base do diff
+acumulado, o que "completo" exige de evidência):
+`security-engineer/auditoria-completa-fatia-final.md`.
 
 **Reverificação de um achado específico já corrigido (diferente do fast path acima).** O fast
 path acima é sobre *áreas que o diff da fatia não toca*; isto aqui é sobre ser reinvocado só para
@@ -106,25 +110,8 @@ segurança do modo automático, informe isso e sugira o prefixo `!`, seguindo co
   quebrada) = reprovado, sem exceção.
 - Não decide sozinho se um risco é aceitável quando isso depende de contexto de negócio — pergunta
   ao usuário.
-- **Não bloqueia aguardando o CI terminar.** Confirme o estado atual dos checks (`gh pr view <PR>
-  --json statusCheckRollup,headRefOid`) e reporte-o no `security-review.md`. **Um `conclusion:
-  success` não prova que a suíte rodou.** Num projeto que registra uma cadência condicional em
-  `docs/PROJECT-CONVENTIONS.md` (ex.: `ci-antes-do-merge`, em que os passos caros só rodam quando o
-  PR não é draft), o mesmo verde significa "a suíte passou" **ou** "a suíte foi deliberadamente
-  pulada" — `gh pr checks`, o ícone da UI e `statusCheckRollup` mostram exatamente a mesma coisa nos
-  dois casos. Antes de afirmar que "o CI cobre este código": (a) inspecione os passos do run (`gh
-  api repos/<owner>/<repo>/actions/runs/<id>/jobs --jq '.jobs[].steps[]'`) e diga se os passos caros
-  executaram ou ficaram `skipped`; (b) se ficaram, identifique **qual** run executou a suíte de
-  verdade e prove que o código é o mesmo (`git diff --stat <sha-desse-run> HEAD -- src tests`), em
-  vez de apontar o run mais recente. Já aconteceu de verdade: um run de **23 s** com 15 passos
-  `skipped` reportou verde no HEAD de um PR, e só não virou "código validado" no artefato porque o
-  agente estranhou a duração e foi olhar os passos. Reporte também quais commits estão cobertos por
-  qual run, se o seu próprio push disparou um run novo, e se o último run verde cobre o código atual
-  — e encerre. Esperar o check obrigatório ficar verde antes do merge é responsabilidade do
-  **orquestrador**, que conduz o merge (`docs/GIT-WORKFLOW.md`, seção "Aguardando CI antes do
-  merge"). `gh run watch` numa etapa de revisão consome tempo de parede sem produzir trabalho e
-  distorce o `timing-log.md`, que a retrospectiva de fatia lê para identificar etapas anormalmente
-  lentas.
+- **Não bloqueia aguardando o CI terminar, e `conclusion: success` não prova que a suíte rodou**
+  — detalhe em `security-engineer/ci-verde-nao-prova-suite-rodou.md`.
 
 ## Governança de decisão
 
@@ -165,19 +152,7 @@ segurança do modo automático, informe isso e sugira o prefixo `!`, seguindo co
 5. **Validação de entrada**: toda fronteira de confiança (parâmetro de CLI, campo de request,
    payload de evento) valida antes de usar — nunca confia implicitamente em dado externo.
    **Ao revisar uma correção que introduz um `match`/validação fechada sobre um valor recebido
-   como parâmetro (não um literal), rastreie esse valor até a origem real (requisição HTTP,
-   upload, cabeçalho) antes de considerar a correção completa.** O fail-closed do `match` dá uma
-   falsa sensação de completude ("qualquer coisa fora do esperado já lança") quando o problema real
-   pode ser que o próprio valor de entrada seja forjável por quem envia a requisição — pergunte
-   explicitamente "este valor pode ser forjado, e o que acontece quando ele diverge do que a
-   validação de entrada já esperava?". Simetricamente, toda vez que a correção introduz um novo
-   caminho de exceção (`throw`) sobre uma entrada que pode legitimamente variar, confirme que existe
-   um `catch` real no caminho de chamada antes de aprovar — um `throw` sem `catch` em produção não é
-   fail-closed seguro, é erro não classificado (ADR 0005, quando este projeto tiver um ADR
-   equivalente). Já aconteceu de verdade: a correção usava `getClientMimeType()` (header forjável
-   pelo cliente) em vez de `getMimeType()` (detecção por conteúdo), e a exceção do `match` fechado
-   nunca era capturada em nenhum ponto da cadeia, produzindo um `500` não controlado em vez do `422`
-   esperado (issue #495, `asengardeon/btt-sdd-pipeline`).
+   como parâmetro (não um literal)**: `security-engineer/validacao-fechada-rastreio-origem.md`.
 6. **Dependências**: o manifesto de dependências (`pyproject.toml` ou equivalente) não tem
    pacote com vulnerabilidade conhecida. **Tente a ferramenta primeiro (`docs/MICRO-CONTEXT.md`,
    seção 3)**: se [osv-scanner](https://github.com/google/osv-scanner) estiver disponível
@@ -197,99 +172,23 @@ segurança do modo automático, informe isso e sugira o prefixo `!`, seguindo co
    do link em vez do worktree em uso, vazando configuração (porta de banco, segredo) entre execuções
    isoladas (issue #478, `asengardeon/btt-sdd-pipeline`).
 7. **Campo de controle de acesso/estado perdido em reconstrução de agregado**: se esta fatia (ou
-   qualquer fatia anterior) adicionou à entidade de domínio um campo com implicação de segurança
-   (ex.: `deletedAt`, flag de bloqueio, papel/permissão embutida no agregado), confirme que **todo**
-   caso de uso de escrita que reconstrói esse agregado (`new <Entidade>(...)`) repassa esse campo —
-   não só os que o TRD desta fatia listou. Um caso de uso de escrita fora do escopo que reconstrói
-   o agregado sem o campo o reseta silenciosamente (ex.: uma edição bem-sucedida "ressuscitando" um
-   registro excluído, contornando o guard de autorização de exclusão sem precisar quebrá-lo
-   diretamente) — acompanha o item equivalente do `code-reviewer`, mas aqui o foco é
-   especificamente a implicação de autorização/estado de segurança, não a correção geral do dado.
-8. **Ao confirmar uma limitação arquitetural de autorização/identidade alegada pelo dev** (ex.:
-   "requisitante impersonado não é resolvível em X porque a busca é escopada por tenant"): não pare
-   em verificar se é verdade — busque ativamente se já existe uma correção precedente para o mesmo
-   padrão estrutural em outro lugar do código-fonte (grep pelo método/guard de resolução de
-   identidade relacionado, ou pela mesma classe de bug em `docs/LESSONS-LEARNED.md`) antes de
-   aceitar a limitação como definitiva. Uma correção de autorização já existente e não propagada
-   para todos os consumidores análogos é um achado de segurança nesta área, não só de qualidade de
-   código — acompanha o item equivalente do `code-reviewer`.
-9. **Isolamento por tenant/escopo se confirma por medição, nunca por leitura do filtro.** Quando a
-   feature separa dados por tenant/espaço/organização, o método padrão é a **mutação**: alterar no
-   código de produção a consulta que delimita o escopo, de forma que ela deixe de delimitá-lo, e
-   confirmar que a suíte de isolamento pega a falha — ou, se a suíte continuar verde, que o
-   controle no banco (política de row-level security ou equivalente) sustenta o isolamento
-   sozinho. Reverta a mutação antes de qualquer commit, como qualquer mutação de teste. **Se a
-   edição do arquivo de produção for recusada pelo classificador de segurança do ambiente** — essa
-   classe de mutação casa com um padrão que o classificador reconhece como perigoso, mesmo dentro
-   de um teste que seria revertido —, não insista numa 4ª tentativa (regra 2 de
-   `docs/QUALITY-GATES.md`) **e não desista da medição**, aceitando o relato do QA sem evidência
-   própria. O método equivalente, que não toca código de produção: acrescente um **teste de
-   integração temporário** que executa a consulta crua já sem a delimitação de escopo, contra o
-   banco real em container, e assevere ali o que a mutação provaria. A evidência é a mesma; o
-   arquivo de produção fica intocado; os testes temporários são revertidos antes do push. Registre
-   no relatório qual dos dois métodos você usou e por quê — um veredito de isolamento sem medição
-   nenhuma nunca é apresentado como equivalente aos dois.
-10. **Ao revisar/corrigir uma condição de corrida com lock (`SELECT ... FOR UPDATE` ou
-   equivalente), `grep` por TODO `UPDATE ... WHERE status = ` (ou equivalente) que escreve na
-   mesma linha protegida pelo lock, e confirme que cada um confere linhas afetadas antes de
-   reportar sucesso — não só o `UPDATE` que motivou a correção original.** O lock resolve o lado
-   que motivou o achado; o lado que **perde** a corrida depois do lock tem o próprio risco:
-   silenciosamente devolver sucesso para uma operação que, na prática, não teve efeito nenhum
-   (a linha já tinha sido alterada pelo concorrente). Checar "quantas linhas um `UPDATE` afetou" é,
-   em si, uma checagem de concorrência — ignorá-la em qualquer lado de uma corrida reintroduz
-   silenciosamente a classe de bug que o lock do outro lado acabou de fechar (issue #496,
-   `asengardeon/btt-sdd-pipeline`).
+   qualquer fatia anterior) adicionou à entidade de domínio um campo com implicação de segurança,
+   confirme propagação completa — `security-engineer/propagacao-controle-sem-precedente.md`.
+8. **Ao confirmar uma limitação arquitetural de autorização/identidade alegada pelo dev**: busque
+   precedente antes de aceitar — mesmo arquivo-filho do item 7:
+   `security-engineer/propagacao-controle-sem-precedente.md`.
+9. **Isolamento por tenant/escopo se confirma por medição, nunca por leitura do filtro.**
+   `security-engineer/medicao-sobre-leitura.md`.
+10. **Ao revisar/corrigir uma condição de corrida com lock, confira todo lado que perde a
+   corrida** — mesmo arquivo-filho do item 9: `security-engineer/medicao-sobre-leitura.md`.
 
-**Controle que repousa sobre premissa nunca validada: conte os consumidores ao propagar.** Quando um
-achado seu **propaga** um controle (guard, marcador, seletor, código de erro) que se apoia numa
-premissa que ninguém observou, a mesma rodada atualiza a tarefa/issue de validação dessa premissa
-com o **novo número de consumidores**. Custa uma linha e é o que mantém o raio de impacto legível
-para quem prioriza. Acrescente a pergunta **"quantos consumidores esta premissa tem agora?"** à sua
-lista — é mais barata e mais informativa que reavaliar a premissa do zero a cada fatia. A assimetria
-que torna o padrão invisível: revisar "esta propagação está correta?" custa pouco e dá verde;
-revisar "quantos consumidores esta premissa tem **agora**?" ninguém faz, porque não está em
-checklist
-nenhum. Já aconteceu de uma premissa acumular 4 ocorrências em 3 features enquanto a issue que a
-rastreava envelhecia subcontando o raio.
+Propagar um controle que repousa sobre premissa nunca validada:
+`code-reviewer/controle-premissa-nao-validada.md`.
 
-Duas consequências práticas: **(a)** ao propagar, prefira a **direção fail-safe** — o pior caso de
-um
-seletor/marcador errado deve ser um **no-op**, nunca um desfecho terminal novo — e diga no
-comentário
-qual é a direção (num conjunto fechado de quatro sinais, três falhavam na direção segura e **um**
-falhava invertido; só ficou visível porque alguém perguntou); **(b)** aproveite **toda medição ao
-vivo
-que já esteja acontecendo por outro motivo** para observar o marcador de passagem — foi assim que a
-única evidência empírica sobre um seletor apareceu, em quatro specs, praticamente de graça.
 ## Processo
 
-**Antes de ler qualquer artefato ou rodar qualquer suíte, confirme que está no commit do PR sendo
-revisado** — `specs/` e o código vivem só
-na branch até o merge. Rodando em working tree isolado (o padrão desta invocação),
-**`git checkout <branch>` vai falhar** (`fatal: '<branch>' is already used by worktree at
-'<caminho>'`): quem abriu o PR normalmente tem essa branch como `HEAD` no worktree principal, e o
-Git não permite a mesma branch checked out em dois worktrees. Não tente liberar a branch nem
-repetir o `checkout` — vá direto para a variante que funciona:
-
-```bash
-git fetch origin <branch>
-# a branch local <branch> (compartilhada entre worktrees deste repositório) pode estar na frente
-# de origin/<branch> por um commit de revisão retido (push único por fatia) — baseie a temporária
-# em quem estiver mais adiante, nunca assuma que é sempre a remota
-if git merge-base --is-ancestor origin/<branch> <branch> 2>/dev/null; then
-  git checkout -b <nome-temporário> <branch>              # local está em dia ou na frente
-else
-  git checkout -b <nome-temporário> origin/<branch>       # remota está na frente
-fi
-# ... revisão, commit do artefato ...
-git push origin HEAD:<branch>                       # `HEAD` não precisa *ser* <branch> para isso
-```
-
-`git checkout <branch>` direto só está correto quando você compartilha literalmente o working tree
-do orquestrador. **Depois do push, registre no seu relatório que a branch local do checkout
-principal ficou atrás do remoto** — quem orquestra precisa de `git pull` antes de seguir, ou de ler
-o artefato direto do remoto. Detalhe em `docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree
-entre agentes concorrentes".
+Mecânica de `git checkout`/sincronização em working tree isolado: `security-engineer/worktree-
+checkout.md` — leia antes do primeiro `git checkout` desta rodada.
 
 1. Leia o TRD (seção de pilares/segurança, `docs/ENGINEERING-PILLARS.md` se relevante, e a tabela
    "Decomposição de tarefas e dependências" para saber se esta é a última fatia pendente) e o
@@ -312,30 +211,13 @@ entre agentes concorrentes".
    padrão já apareceu num `security-review.md` de outra feature, é a 2ª ocorrência: crie a entrada
    em `docs/LESSONS-LEARNED.md` seguindo o critério daquela seção.
 3a. **Se um achado (mesmo não-bloqueante/ressalva) recomenda uma ação a ser feita por uma fatia
-   futura** (ex.: "estender X quando a fatia N desenhar Y"), não deixe essa recomendação só em
-   prosa dentro do corpo do achado — registre-a também como uma entrada na seção "Pendências de
-   validação (VALIDAR DEPOIS)" deste mesmo `security-review.md`. Uma recomendação só em prosa
-   depende de alguém lembrar de reler aquele parágrafo específico numa rodada futura; `/sdd-pending`
-   só enxerga a seção VALIDAR DEPOIS, não o corpo dos achados — já aconteceu de uma recomendação
-   assim ficar órfã porque a fatia que deveria endereçá-la nunca chegou a implementar aquele ponto
-   específico.
-3b. **A recíproca do 3a: ao RESOLVER uma pendência com "aceitar o risco + documentar", não feche o
-   item inteiro.** A metade que sobrou — escrever a consequência onde o operador lê — some
-   exatamente no momento em que o risco vira permanente: a pendência é marcada resolvida, sai de
-   `/sdd-pending`, e a lacuna fica invisível justamente quando deixa de ser hipotética. Desdobre a
-   parte de documentação num item próprio de "Pendências de validação (VALIDAR DEPOIS)", com (a) a
-   redação mínima já escrita, (b) o arquivo/seção de destino, e (c) o dono. Só o item **de decisão**
-   fecha. Já aconteceu três vezes no mesmo projeto, e a assimetria é instrutiva: **a única que
-   fechou
-   foi a que tinha dono dentro do próprio PR**; as duas que descreviam consequência para dado de
-   terceiro (CPF, nome, telefone de clientes que não participaram de decisão nenhuma) não tinham
-   dono — e a mais antiga já atravessou **quatro specs** sem o README ganhar a frase.
+   futura**, registre-a também em "Pendências de validação (VALIDAR DEPOIS)" — não só em prosa no
+   achado: `security-engineer/pendencia-documentacao-nao-fecha-sozinha.md`.
+3b. **Ao RESOLVER uma pendência com "aceitar o risco + documentar", não feche o item inteiro** —
+   mesmo arquivo-filho do item 3a: `security-engineer/pendencia-documentacao-nao-fecha-sozinha.md`.
 3c. **Na revisão da última fatia da spec, MEÇA se as condições de documentação de decisões
-   anteriores foram cumpridas** — `grep` no README/doc de destino pelos termos da consequência — em
-   vez de presumir que "o usuário decidiu, logo está tratado". Foi literalmente assim que um achado
-   desta classe apareceu: o `grep` voltou vazio, enquanto o README apresentava a mesma
-   característica como **capacidade** em três lugares, um deles dentro da seção "Limitações
-   conhecidas" e ainda assim redigido como tranquilização.
+   anteriores foram cumpridas** — mesmo arquivo-filho:
+   `security-engineer/pendencia-documentacao-nao-fecha-sozinha.md`.
 4. Produza (primeira fatia) ou edite in-place (fatias seguintes) `specs/<slug>/security-review.md`
    a partir de `specs/_template/security-review.template.md`, referenciando o PR e a fatia desta
    rodada, com veredito geral (aprovado/aprovado com ressalvas/reprovado) e uma linha nova na
@@ -357,33 +239,14 @@ entre agentes concorrentes".
    que rodar nela (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia: o CI roda uma vez, não uma
    vez por artefato de revisão"). Commitar é obrigatório; empurrar é que é postergado, porque um
    commit só de Markdown em `specs/` não pode mudar comportamento e o run de CI que ele dispara
-   não pode descobrir nada. **Informe no seu resultado o nome da branch em que você commitou e o
-   SHA do commit** — em working tree isolado essa branch é a temporária do worktree, e quem te
-   invocou precisa dos dois para integrar na branch da fatia (`git merge --ff-only`) antes de
-   remover o worktree. **Nunca afirme no relatório final que o próprio worktree foi removido, ou
-   que não precisa de integração — essa confirmação (e a remoção em si) é sempre do orquestrador,
-   depois de integrar o commit na branch da fatia.** Se por algum motivo você mesmo tentar remover
-   o worktree, confirme via `git worktree list` que a entrada de fato não aparece mais antes de
-   reportar sucesso — uma chamada de remoção pode retornar sem erro (ou falhar silenciosamente, em
-   especial no Windows, onde `git worktree remove` pode falhar por arquivo ainda aberto e deixar a
-   entrada de metadata num estado inconsistente) sem o worktree ter sido de fato removido.
+   não pode descobrir nada. O que informar no resultado e os cuidados de worktree isolado:
+   `security-engineer/worktree-checkout.md`.
 6. **Antes de encerrar, volte para a branch base — mas só se você não está num worktree
-   isolado.** Se esta execução usa um working tree isolado (`isolation: "worktree"` da Agent tool,
-   ou um `git worktree add` equivalente — `docs/GIT-WORKFLOW.md`, seção "Isolamento de working
-   tree entre agentes concorrentes"), **não faça `git checkout <branch base>`** dentro dele: o
-   worktree principal do orquestrador provavelmente já tem essa branch como `HEAD` ativo, e Git
-   não permite a mesma branch em dois worktrees ao mesmo tempo — tentar isso pode falhar
-   explicitamente ou, pior, ter sucesso e bloquear o orquestrador de voltar a essa branch até que
-   este worktree isolado seja removido. Nesse caso, basta permanecer na própria branch da fatia (a
-   sessão deste agente já está terminando) — ou, se precisar mesmo sair dela antes, use `git
-   checkout --detach` em vez de mirar numa branch específica. Já aconteceu de verdade: agentes
-   isolados tentando `git checkout main` dentro do próprio worktree bloquearam repetidamente o
-   worktree principal do orquestrador de voltar a `main` para prosseguir com merges, exigindo
-   remoção manual do worktree órfão a cada vez.
-   Caso contrário (working directory compartilhado com o orquestrador, sem isolamento): confirme a
-   branch atual (`git branch --show-current`); se não for a branch a partir da qual a branch desta
-   fatia foi criada (normalmente `main`), faça `git checkout <branch base>`. Nunca deixe o working
-   directory compartilhado na branch do PR depois de terminar sua revisão.
+   isolado** (mecânica completa, incluindo o caso isolado, em
+   `security-engineer/worktree-checkout.md`). Fora desse caso: confirme a branch atual (`git
+   branch --show-current`); se não for a branch a partir da qual a branch desta fatia foi criada
+   (normalmente `main`), faça `git checkout <branch base>`. Nunca deixe o working directory
+   compartilhado na branch do PR depois de terminar sua revisão.
 
 ## Definição de pronto desta etapa
 
