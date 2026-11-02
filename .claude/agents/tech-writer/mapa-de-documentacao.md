@@ -20,6 +20,7 @@ adivinhar ou testar os dois formatos.
 ## Estrutura exata do arquivo
 
 ```markdown
+<!-- sdd-format-version: 1 -->
 # Mapa de documentação — <nome do projeto>
 
 Índice de onde cada artefato deste pipeline vive — gerado/atualizado por `tech-writer`

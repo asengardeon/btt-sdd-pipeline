@@ -17,6 +17,7 @@ copie a tabela de critérios verbatim.
 ## Estrutura exata do arquivo
 
 ```markdown
+<!-- sdd-format-version: 1 -->
 # Features e comportamentos — <nome do projeto>
 
 Catálogo do que a aplicação faz de verdade, derivado das histórias de usuário de cada PRD e dos
