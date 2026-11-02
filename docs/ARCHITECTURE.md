@@ -62,6 +62,49 @@ framework/SQL/HTTP client aparecem.
 - **Foco de revisão**: bugs de regra de negócio ficam isolados em `domain`/`application`; bugs de
   integração ficam isolados em `adapters`.
 
+## Contenção de falha em mecanismos que reagem a falha (observabilidade/alerta)
+
+Um mecanismo de "alerte quando algo der errado" (log, alerta de erro crítico, notificação de
+incidente) tem uma propriedade estrutural fácil de esquecer: sua própria dependência (cache,
+banco, fila, API externa) frequentemente está degradada **exatamente no mesmo incidente** que o
+erro original que ele deveria reportar — banco fora do ar é causa comum tanto do erro de aplicação
+quanto da falha do mecanismo de throttle/alerta que também depende do banco. Não é um edge case
+raro; é o cenário correlacionado mais provável de ativar o próprio mecanismo.
+
+Daí a necessidade de **duas camadas ortogonais de contenção**, não um `try/catch` superficial no
+ponto de entrada:
+
+1. **No ponto de entrada do mecanismo** (ex.: o handler de exceção que primeiro recebe o erro
+   original) — qualquer falha do mecanismo de alerta em si nunca pode impedir o tratamento normal
+   do erro original.
+2. **Em cada adapter de saída que o mecanismo usa** (ex.: o throttle, o sender de e-mail) — cada
+   um precisa conter sua própria falha e devolver um resultado seguro (nunca lançar), porque o
+   próprio mecanismo pode ser chamado de múltiplos pontos de entrada no futuro.
+
+A própria ação de "logar que a contenção aconteceu" (para auditoria de "por que o alerta não
+disparou?") também precisa estar protegida — não é decorativo: se o logger em si falhar (ex.:
+canal de log indisponível), isso também não pode escapar.
+
+**Contra-exemplo** (sem contenção, o caminho que falha na raiz): um `CriticalErrorReporter` recebe
+a exceção original e chama `NotifyCriticalError`, que consulta um throttle baseado em cache antes
+de enviar o e-mail. Se o cache estiver indisponível — o cenário mais correlacionado com "há um
+erro crítico real acontecendo" —, a exceção *nova* do throttle escapa do pipeline de tratamento,
+mascarando a exceção *original* por completo: nem log, nem alerta saem para o erro real.
+
+**Exemplo corrigido** (dupla camada): o handler que primeiro recebe a exceção original envolve a
+chamada inteira ao mecanismo de alerta num `try/catch` que nunca propaga — na pior falha, o erro
+original ainda segue o tratamento normal. Dentro do mecanismo, o adapter de throttle contém a
+própria falha de cache e devolve um resultado seguro (ex.: "não suprimir", preferindo alerta
+duplicado a alerta perdido) em vez de lançar; e o log de auditoria da própria contenção está
+dentro do mesmo `try/catch` que não propaga.
+
+Qualquer projeto que implemente observabilidade/alerta tem essa mesma armadilha estrutural — não é
+específica de uma stack. `architect` desenha com essa dupla camada desde o TRD sempre que a tarefa
+envolver um mecanismo que reage a falha; `backend-developer`/`frontend-developer` escrevem o teste
+de contenção (storage indisponível, dependência externa lançando) como parte obrigatória do TDD,
+não como extra — ver `.claude/agents/backend-developer.md`, regra inegociável sobre adapters de
+observabilidade/alerta.
+
 ## Frontend (quando a feature inclui UI)
 
 Quando uma feature tem frontend, `frontend/` é um diretório irmão de `src/`, com sua própria
