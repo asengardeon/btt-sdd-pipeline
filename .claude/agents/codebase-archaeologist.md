@@ -114,7 +114,8 @@ identidade inicial do projeto), ou de forma oportunista sempre que já está rod
    **Git workflow** (o que diverge do `docs/GIT-WORKFLOW.md` genérico), **Estrutura do projeto** (o
    que diverge do `docs/FILE-GUIDE.md` genérico), **Cadência de CI** (só se divergir do padrão —
    ex.: `ci-antes-do-merge`, a suíte completa rodando só quando o PR sai do draft, imediatamente
-   antes do merge, em vez de a cada push; `agents/sre.md`, área "CI", tem a receita e o trade-off),
+   antes do merge, em vez de a cada push; `.claude/agents/sre/ci-cadencia-e-custo.md` tem a
+   receita e o trade-off),
    **Outras particularidades** (nomenclatura, testes etc., só se houver), **Pendências de validação
    (VALIDAR DEPOIS)** e **Log de revisões**. Se o arquivo já existe, edite in-place e registre a
    mudança no log — nunca recrie do zero.

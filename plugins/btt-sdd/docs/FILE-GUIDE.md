@@ -59,6 +59,15 @@ atualizado sozinho.
   auxiliar isolada pode usar tier econômico. Traz o teste das cinco condições, os limites rígidos e
   o laço de avaliação via coluna `Modelo` do `timing-log.md`. Gate transversal correspondente em
   `docs/gates/governanca.md`.
+- **`MICRO-CONTEXT.md`** — como manter cada arquivo pequeno e carregar só o contexto necessário.
+  Três convenções: núcleo pequeno + arquivo-filho lido sob demanda para agentes/skills
+  (`agents/<nome>/<topico>.md`, `skills/<nome>/_rules/<topico>.md`, referenciados por um "Índice
+  de regras sob demanda" com gatilho objetivo); split físico por rodada para artefatos de revisão
+  gerados em projetos consumidores (`specs/<slug>/reviews/<área>/` com
+  `INDEX.md`/`tracking.md`/`F-<N>.md`, em migração artefato por artefato — formato legado de
+  arquivo único ainda vale para o que não migrou); e prioridade de ferramenta conhecida
+  (`docs/TOOLING.md`) antes de verificação manual, sem criar gate novo. Migração em andamento, não
+  retroativa a specs já existentes.
 - **`GIT-WORKFLOW.md`** — GitHub Flow aplicado ao pipeline.
 - **`CI-WORKFLOW.md`** — a forma mínima que `.github/workflows/ci.yml` deste projeto já precisa ter
   **quando nasce**: jobs e gate de cobertura, `concurrency`, short-circuit de docs-only pela

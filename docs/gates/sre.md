@@ -26,14 +26,14 @@
   reporta sucesso em segundos enquanto o PR é draft — com o gate nos **passos**, nunca no job nem no
   gatilho, senão o *required status check* nunca reporta e o PR fica bloqueado para sempre (mesma
   armadilha do `paths-ignore`). O `sre` nunca adota essa cadência por conta própria: ela é opt-in do
-  projeto (`agents/sre.md`, área "CI").
+  projeto (`agents/sre/ci-cadencia-e-custo.md`).
 - [ ] `ci.yml` pula lint/testes/build numa mudança só de documentação **comparando `HEAD` com o
   último run verde desta branch** — nunca por `paths`/`paths-ignore` no gatilho, que deixa um PR só
   de documentação bloqueado para sempre quando o job é *required status check* (o workflow não
   dispara, o GitHub nunca reporta status), nem por diff contra o tip de `main`, que num PR de código
   sempre acusa `src/` e por isso nunca dispara o short-circuit. Receita completa e a medição que a
-  justifica em `.claude/agents/sre.md`, área "CI". Falha em qualquer etapa da checagem → roda a
-  suíte (direção de falha segura).
+  justifica em `.claude/agents/sre/ci-cadencia-e-custo.md`. Falha em qualquer etapa da checagem →
+  roda a suíte (direção de falha segura).
 - [ ] **`ci.yml` declara `concurrency` com `cancel-in-progress` fora da branch base** (grupo por
   workflow + ref). Sem isso, cada um dos vários pushes que o pipeline faz na mesma branch da fatia
   (código → rebase → artefato de cada etapa de revisão) deixa um run antigo rodando até o fim para
@@ -54,13 +54,13 @@
 - [ ] **Se o diff desta fatia renomeia ou remove um `name:` de job em `ci.yml`/`cd.yml`,
   `required_status_checks.contexts` da proteção de `main` foi conferido e reconciliado** (com
   confirmação do usuário, nunca correção silenciosa) **antes** do veredito — não só ao notar
-  `mergeStateStatus: BLOCKED` no fim. Receita completa em `.claude/agents/sre.md`, área "CI".
+  `mergeStateStatus: BLOCKED` no fim. Receita completa em `.claude/agents/sre/ci-guard-rails.md`.
 - [ ] Deploy só roda após CI verde.
 - [ ] Se a fatia torna obrigatório um campo antes opcional/ausente numa rota já ativa consumida
   por um cliente já implantado que ainda não foi atualizado para enviá-lo, e os gates de deploy
   automático relevantes já estão ligados: bloqueante até haver um default retrocompatível nesta
   fatia, ou confirmação explícita do usuário aceitando a janela de quebra em produção — nunca uma
-  nota não-bloqueante de coordenação de deploy (`.claude/agents/sre.md`, área "CD e GitHub Flow").
+  nota não-bloqueante de coordenação de deploy (`.claude/agents/sre/cd-riscos-operacionais.md`).
 - [ ] Nenhuma alteração de infraestrutura real (`terraform apply`) roda sem plano revisado
   (`terraform plan`) e aprovação explícita do usuário.
 - [ ] Docker: build multi-stage, imagem mínima, usuário não-root, sem segredo hardcoded.
