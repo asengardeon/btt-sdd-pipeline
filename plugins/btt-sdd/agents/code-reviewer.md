@@ -179,6 +179,19 @@ relatório para nenhuma linha**, inclusive as bem-sucedidas.
    de import ou caminho relativo que um `grep` textual simples perderia. Sem o binário, a
    verificação manual de importação continua obrigatória. Diagnóstico:
    `python scripts/check-ast-grep.py` (`docs/TOOLING.md`).
+   **Binding de interface genérica reaproveitado**: sempre que o diff registrar/resolver um
+   binding de uma interface **genérica** já existente (`*Interface`/`*Contract`, reconhecível por
+   `grep` tipo `needs\(['"].*Interface['"]`/`app\(['"].*Interface['"]\)` ou o equivalente de
+   injeção de dependência desta stack) em vez de criar uma interface nova e específica do caso de
+   uso, pergunte explicitamente: **o próprio framework (ou outra parte já existente da aplicação)
+   também depende deste mesmo binding para algum comportamento padrão/fallback?** Se sim, exija um
+   teste de integração que dispare esse comportamento padrão (não só o novo) e confirme que os dois
+   convivem sem um mascarar o outro (`docs/TESTING.md`, seção "Peças isoladas passando não provam
+   que o comportamento de ponta a ponta é o esperado") — acusar achado bloqueante se esse teste não
+   existir. Já aconteceu de verdade: um binding de `LoggerInterface` reaproveitado para um alerta
+   de erro crítico colidiu com o fallback de log de exceção que o próprio framework já usava, e
+   quatro revisões (incluindo esta) aprovaram a fatia sem pegar isso, porque nenhuma perguntou se
+   o binding reaproveitado tinha outro consumidor.
 2. **SOLID aplicado, não citado**: responsabilidade única de cada classe/módulo novo; extensão por
    composição em vez de `if/else`/`switch` crescente; um port pequeno e específico por caso de uso
    em vez de uma interface "genérica"; casos de uso dependendo de abstração, nunca de classe
