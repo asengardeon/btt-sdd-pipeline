@@ -1,5 +1,9 @@
 # QA Report — Gestão simples de tarefas (exemplo do pipeline SDD)
 
+> **Migrado para o formato novo em 2026-11-02.** Ver
+> `specs/0001-example-task-management/reviews/qa-report/`. Este arquivo é mantido como
+> referência histórica — não edite; toda rodada nova usa o formato novo.
+
 > Autor: agente `qa-engineer`
 > PRD: `specs/0001-example-task-management/prd.md` | TRD: `specs/0001-example-task-management/trd.md`
 > PR: não aplicável — feature commitada diretamente em `main` no commit inicial, antes da política
