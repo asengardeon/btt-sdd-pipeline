@@ -437,6 +437,22 @@ seguinte:
    (`docs/STACK.md`/ADR do projeto) — nunca a forma larga "por conveniência", mesmo que pareça
    inofensiva no momento em que é escrita.
 
+9. **Teste de migração de privilégio prova o escopo exato via consulta de catálogo, nunca só o
+   comportamento.** Um teste que só confirma "a operação de negócio volta a funcionar" (ex.: um
+   `INSERT` na tabela filha passa a funcionar depois do `GRANT`) não distingue um `GRANT` largo
+   (tabela inteira) de um `GRANT` escopado (uma coluna) — os dois fazem a operação passar
+   igualmente. Só uma asserção direta contra o catálogo do banco (`has_column_privilege()`/
+   `has_table_privilege()` no Postgres, ou equivalente) prova o escopo **mínimo**, não só
+   **suficiente**. A mesma lacuna vale para o `down()`: um teste de comportamento não detecta que
+   um `REVOKE` sem lista de colunas também apagou `GRANT`s de coluna pré-existentes de outras
+   migrações — só fica claro rodando o rollback de fato e consultando o catálogo depois. Toda
+   migração que faz `GRANT`/`REVOKE` de privilégio (tabela ou coluna, regra 8 acima) inclui, no
+   mínimo, uma asserção de catálogo cobrindo o `up()` e uma cobrindo o `down()`. Já aconteceu de
+   verdade: a primeira versão de uma migração (`grant update on <tabela> to <role>`, sem lista de
+   colunas) tinha teste de integração provando o comportamento certo, e ainda assim foi reprovada
+   numa rodada de revisão, por medição própria e independente do revisor — nem o `up()` nem o
+   `down()` tinham o teste de catálogo que provaria o escopo.
+
 **Erro opaco se depura capturando a evidência bruta primeiro — não formulando a correção primeiro.**
 Erro opaco é o que não nomeia sua própria causa: um `422` sem detalhe de campo, uma geometria que
 não bate (overflow de N pixels), uma falha de e2e com mensagem genérica. Diante dele, o primeiro
