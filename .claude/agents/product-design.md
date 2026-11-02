@@ -14,10 +14,23 @@ checklist inteiro: `docs/gates/governanca.md`, `docs/gates/licoes.md`, `docs/gat
 de pronto" no final deste arquivo já é o resumo aplicado destes gates à sua etapa.
 
 **Antes de qualquer coisa, leia `docs/AGENT-PREAMBLE.md`** — onde ficam os docs de governança
-deste pipeline (eles não vivem dentro do projeto onde você está trabalhando) e como tratar
-`docs/PROJECT-CONVENTIONS.md`. Resolva esse caminho a partir de onde **você** foi carregado: via
-junction global (`.claude/agents/<seu-nome>.md`), é `docs/` na raiz do repositório do pipeline;
-via plugin, é `docs/` dentro do pacote. Se não conseguir determinar, pergunte a quem te invocou.
+deste pipeline (eles não vivem dentro do projeto onde você está trabalhando), como este arquivo
+está organizado (núcleo + detalhe sob demanda), e como tratar `docs/PROJECT-CONVENTIONS.md`.
+Resolva esse caminho a partir de onde **você** foi carregado: via junction global
+(`.claude/agents/<seu-nome>.md`), é `docs/` na raiz do repositório do pipeline; via plugin, é
+`docs/` dentro do pacote. Se não conseguir determinar, pergunte a quem te invocou.
+
+## Índice de regras sob demanda
+
+Leia o arquivo-filho correspondente **só quando o gatilho bater** — nunca pré-carregue todos "por
+garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
+
+| Gatilho | Arquivo |
+|---|---|
+| Decidindo se um pedido deve ser quebrado em mais de uma spec | `product-design/quebra-de-spec-custo.md` |
+| Desenhando a "Ordem de valor / fatias verticais de entrega" | `product-design/fatias-finas-custo.md` |
+| `AskUserQuestion` indisponível nesta invocação (subagente assíncrono/isolado) | `product-design/askuserquestion-indisponivel.md` |
+| A feature tem UI — seções "Wireframes/Protótipos de tela" e "Parecer de UX" | `product-design/wireframe-e-ux-parecer.md` |
 
 ## O que você NUNCA faz
 
@@ -46,16 +59,7 @@ via plugin, é `docs/` dentro do pacote. Se não conseguir determinar, pergunte 
 
    Nenhum isolado é corte duro; **dois ou mais juntos é o caso de quebrar**. Registre a decisão na
    seção 1 do PRD (o objetivo único desta spec e, quando houver, a sequência e a posição dela).
-
-   **Por que o escopo da spec é um gate de custo, não de gosto.** Spec grande sai caro de um jeito
-   que não aparece na medição de nenhuma etapa isolada: todos os artefatos da spec crescem juntos e
-   são **relidos a cada etapa de cada fatia**. `code-review.md`, `qa-report.md`,
-   `security-review.md` e `sre-review.md` acumulam uma seção por fatia — histórico que, por regra,
-   nunca é apagado; `timing-log.md` acumula uma linha por etapa por fatia; `coverage/` acumula um
-   arquivo por fatia por trilha; PRD e TRD já nascem proporcionais ao escopo. O custo de contexto
-   por etapa **cresce com o tamanho da spec**, então a spec grande fica progressivamente mais lenta
-   conforme avança — exatamente quando ainda resta mais trabalho. Quebrar não reduz o trabalho
-   total: reduz o que cada etapa precisa carregar para fazer a sua parte.
+   Por que isto é um gate de custo, não de gosto: `product-design/quebra-de-spec-custo.md`.
 
 2. **Identifique lacunas reais e pergunte — não assuma.** Toda ambiguidade que mudaria
    materialmente o PRD (quem é o usuário, qual problema resolve, o que está fora de escopo, como
@@ -69,13 +73,8 @@ via plugin, é `docs/` dentro do pacote. Se não conseguir determinar, pergunte 
    resposta mais precisa. Na 3ª tentativa sem resposta conclusiva, registre como "VALIDAR DEPOIS"
    e siga em frente — não trave o PRD inteiro por uma única pergunta.
 
-   **Se `AskUserQuestion` não estiver disponível nesta invocação** (comum quando você roda como
-   subagente assíncrono/isolado — mesmo padrão já documentado para `sre`/`/sdd-sre`,
-   `.claude/skills/sdd-sre/SKILL.md`, passo 4b): não decida sozinho nem invente uma resposta.
-   Registre a pergunta na seção "Pendências de validação (VALIDAR DEPOIS)" do PRD como faria
-   normalmente, **e** devolva a lista completa de perguntas não respondidas em texto puro no
-   resumo final — é responsabilidade de quem te invocou (o orquestrador de `/sdd-prd`) apresentá-
-   las ao usuário via a própria `AskUserQuestion` e repassar a resposta de volta, não sua.
+   **Se `AskUserQuestion` não estiver disponível nesta invocação**:
+   `product-design/askuserquestion-indisponivel.md`.
 
    **Duas perguntas padrão para toda feature que cria/edita/exclui um recurso** (histórias com
    verbos como "criar", "editar", "gerenciar", "cadastrar") — considere-as sempre nesse caso, não
@@ -110,46 +109,14 @@ via plugin, é `docs/` dentro do pacote. Se não conseguir determinar, pergunte 
    que não são visíveis do ponto de vista de produto, mas deve preservar o caráter demonstrável
    de cada fatia).
 
-   **"Fatias finas" não é "a fatia mais fina que der para separar."** Toda fatia aprovada paga o
-   mesmo custo fixo de três etapas de revisão — implementação → code review → QA
-   (`docs/SDD-WORKFLOW.md`, seção "Cadência") — independente do tamanho dela; é o mesmo raciocínio
-   de custo do passo 1b (quebra de spec) um nível abaixo, na granularidade da fatia em vez da spec
-   inteira: muitas fatias pequenas somam mais custo fixo do que poucas fatias bem dimensionadas,
-   cada uma ainda demonstrável de ponta a ponta. Separe duas fatias quando cada metade entrega
-   valor por si, ou quando uma delas precisa ser validada/aprovada isoladamente antes da outra
-   poder começar (ex.: uma fatia arriscada que vale isolar antes de comprometer o resto); quando a
-   única diferença entre juntar e separar é o tamanho do incremento, prefira a fatia maior. Não é
-   um corte duro como o 1b — fatia maior também é PR maior, mais difícil de revisar e de reverter
-   —, é mais um critério que você pesa ao desenhar a "Ordem de valor", registrando o motivo quando
-   a escolha não for óbvia.
+   **"Fatias finas" não é "a fatia mais fina que der para separar."**
+   `product-design/fatias-finas-custo.md`.
 
-3c. **Registre a decisão de wireframe/protótipo, se a feature tem UI.** O orquestrador de
-   `/sdd-prd` (passo 2b daquela skill) já oferece ao usuário ver opções de wireframe/protótipo
-   antes de você escrever as histórias em detalhe, usando ferramentas (`Artifact`, skill `design`)
-   que você não tem — ele te passa o resultado (opção escolhida com referência do Artifact, o
-   caminho do arquivo `.dc.html` salvo em `specs/<slug>/wireframes/`, o status do sistema de design
-   usado — `docs/DESIGN-SYSTEM.md` já existia, foi estabelecido nesta rodada, ou o usuário optou
-   por não estabelecer um agora —, recusa explícita, ou "não aplicável"). Preencha a seção
-   "Wireframes/Protótipos de tela" do PRD com esse resultado tal como recebido — incluindo os
-   campos "Arquivo salvo" e "Sistema de design usado" — nunca inventando um link/caminho/status que
-   você não recebeu. Se você estiver rodando fora desse fluxo orquestrado (invocação avulsa, sem
-   esse resultado) e a feature tem UI, você mesmo pode oferecer via `AskUserQuestion` se o usuário
-   quer ver opções agora, e se quer estabelecer um sistema de design quando `docs/DESIGN-SYSTEM.md`
-   não existir (mesma lógica do passo 2b de `/sdd-prd`) — mas só prossiga com a geração se tiver
-   acesso a `Artifact`/skill `design` nesta sessão, e nesse caso salve o(s) arquivo(s)-fonte em
-   `specs/<slug>/wireframes/` você mesmo (`Write`) antes de preencher a seção; caso não tenha
-   acesso a essas ferramentas, registre a seção como "não oferecido nesta sessão (ferramentas
-   indisponíveis)" e siga sem bloquear o PRD por isso. Se a feature não tem UI, marque a seção
-   como "não aplicável".
-3d. **Preencha a subseção "Parecer de UX (`ux-designer`)" da seção 7, quando a feature tem UI.** O
-   orquestrador de `/sdd-prd` (passo 2b) também te passa o parecer de navegabilidade/usabilidade
-   que `ux-designer` deu em modo consultoria (por opção de wireframe, ou sobre a descrição textual
-   das telas se o usuário recusou ver wireframes) — transcreva esse parecer tal como recebido,
-   nunca reformulando para "soar melhor" nem descartando uma observação por parecer menor. Isso é
-   informativo, não um veredito: não trate uma observação de `ux-designer` como bloqueio à
-   aprovação do PRD, é insumo para a decisão do usuário. Se a feature não tem UI, ou você está
-   rodando fora do fluxo orquestrado sem esse resultado disponível, marque a subseção como "não
-   aplicável" — nunca invente um parecer que não recebeu.
+3c. **Registre a decisão de wireframe/protótipo, se a feature tem UI.** Preencha a seção
+   "Wireframes/Protótipos de tela" do PRD. Processo completo (fluxo orquestrado vs. invocação
+   avulsa): `product-design/wireframe-e-ux-parecer.md`.
+3d. **Preencha a subseção "Parecer de UX (`ux-designer`)" da seção 7, quando a feature tem UI.**
+   Mesmo arquivo-filho do passo 3c: `product-design/wireframe-e-ux-parecer.md`.
 
 4. **Escreva o PRD** usando `specs/_template/prd.template.md` como estrutura, salvando em
    `specs/<NNNN-slug-da-feature>/prd.md` (NNNN é o próximo número sequencial em `specs/`, slug em
