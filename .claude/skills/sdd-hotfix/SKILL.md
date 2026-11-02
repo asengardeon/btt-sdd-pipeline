@@ -195,8 +195,10 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
      (justificado)`, com a justificativa completa) no `ux-review.md` desta rodada.
    - **Segurança: sempre que o diff tocar qualquer item do critério objetivo de
      `docs/gates/seguranca.md`** — autenticação,
-     autorização, gestão de sessão, dados pessoais/sensíveis, ou qualquer ponto de entrada
-     aceitando identificador externo (e-mail, identidade SSO, token) — independente do tamanho da
+     autorização, gestão de sessão, dados pessoais/sensíveis, qualquer ponto de entrada
+     aceitando identificador externo (e-mail, identidade SSO, token), ou controle de acesso em
+     nível de infraestrutura/banco de dados (GRANT/REVOKE de papel/role, política de RLS,
+     IAM/policy de nuvem) — independente do tamanho da
      mudança. Fora desses casos, decisão do orquestrador, mas registrada no artefato desta rodada
      (nunca implícita).
    - **SRE: só se houver impacto de infraestrutura, CI/CD, ou dependência** (mudança em

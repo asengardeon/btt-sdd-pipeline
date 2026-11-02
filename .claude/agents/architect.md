@@ -287,8 +287,9 @@ não se aplica.
    daquela tarefa, em vez de rodar sobre o diff acumulado no fim da spec (`docs/SDD-WORKFLOW.md`,
    seção "Cadência: o que roda por fatia e o que roda ao final da spec"). `—` é o caso normal. A
    marcação **não é julgamento seu** — é obrigatória — quando a tarefa toca:
-   - autenticação, autorização, gestão de sessão, dado pessoal/sensível, ou ponto de entrada que
-     aceita identificador externo → `segurança`;
+   - autenticação, autorização, gestão de sessão, dado pessoal/sensível, ponto de entrada que
+     aceita identificador externo, ou controle de acesso em nível de infraestrutura/banco de dados
+     (GRANT/REVOKE de papel/role, política de RLS, IAM/policy de nuvem) → `segurança`;
    - `ci.yml`/`cd.yml`, `Dockerfile`/compose, `infra/terraform`, segredo ou variável de ambiente de
      deploy, ou campo que passa a ser obrigatório numa rota ativa já consumida por cliente
      implantado → `sre`;

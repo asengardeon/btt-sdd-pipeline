@@ -24,6 +24,10 @@
     tratamento especial em `security-review.md` de outra feature).
   - Qualquer ponto de entrada que aceita um identificador externo (e-mail, identidade de SSO,
     token, ID de usuário de terceiro) vindo de fora do sistema.
+  - Controle de acesso em nível de infraestrutura/banco de dados (GRANT/REVOKE de papel/role,
+    política de RLS, IAM/policy de nuvem) — mesmo quando não há mudança em autenticação,
+    autorização de aplicação ou sessão. Um `GRANT`/`REVOKE` de privilégio de banco é controle de
+    acesso ainda que resolvido em nível de SQL, não de código de aplicação.
   Fora desses casos, a decisão de acionar segurança numa correção pontual pequena continua a
   critério do orquestrador (mas registrada, nunca implícita).
 - [ ] **A aprovação de code review vigente cobre o HEAD atual da branch.** Não basta
