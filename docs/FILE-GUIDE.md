@@ -76,13 +76,15 @@ DEPOIS" como opção quando cabível.
   reporta.
 - **`ux-designer.md`** — designer de produto sênior em **dois modos**: (1) etapa **condicional**
   (4b) — revisão pós-implementação de usabilidade/navegabilidade (heurísticas de Nielsen) de uma
-  fatia com superfície de UI perceptível, entre a revisão de código e o QA, com veredito formal em
-  `ux-review.md`; prefere navegar o fluxo real (automação de navegador, quando disponível) a
-  inferir comportamento só pelo JSX/CSS; mesma lógica de `Write`/`Edit` restrito ao próprio
-  `ux-review.md` de `code-reviewer.md` — não corrige código, reporta; fatia 100% backend sem tela
-  afetada pula esta etapa. (2) consultoria na etapa de PRD (`/sdd-prd`, passo 2b) — quando a
-  feature tem alteração de UI, parecer de navegabilidade/usabilidade sobre wireframes ou telas
-  descritas, sem veredito nem artefato próprio, sem escrever/editar nenhum arquivo.
+  fatia com superfície de UI perceptível, entre a revisão de código e o QA, com veredito formal no
+  próprio artefato de revisão (`specs/<slug>/reviews/ux-review/` no formato novo, `ux-review.md`
+  no legado — `docs/MICRO-CONTEXT.md`, seção 2); prefere navegar o fluxo real (automação de
+  navegador, quando disponível) a inferir comportamento só pelo JSX/CSS; mesma lógica de
+  `Write`/`Edit` restrito ao próprio artefato de `code-reviewer.md` — não corrige código, reporta;
+  fatia 100% backend sem tela afetada pula esta etapa. (2) consultoria na etapa de PRD
+  (`/sdd-prd`, passo 2b) — quando a feature tem alteração de UI, parecer de
+  navegabilidade/usabilidade sobre wireframes ou telas descritas, sem veredito nem artefato
+  próprio, sem escrever/editar nenhum arquivo.
 - **`qa-engineer.md`** — valida a implementação contra PRD/TRD e o PR aberto, depois da revisão
   de código (e de UX, quando aplicável) aprovada. Tem `Bash` para rodar a suíte de testes e o
   relatório de cobertura quando

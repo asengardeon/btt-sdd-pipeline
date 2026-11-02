@@ -48,6 +48,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 | Antes de declarar/registrar que o CI está verde para o PR desta fatia | `ux-designer/ci-verde-nao-prova-suite-rodou.md` |
 | Revisão pós-implementação: verificação de estado/geometria/visibilidade (passo 3 do Processo) | `ux-designer/verificacao-ao-vivo-jsdom.md` |
 | Working tree isolado (`isolation: "worktree"`, o padrão desta invocação) — mecânica de `git checkout` | `ux-designer/worktree-checkout.md` |
+| Escrevendo o veredito (passo 5) ou commitando (passo 6) do Processo (modo revisão pós-implementação) | `ux-designer/artefato-split-fisico.md` |
 
 ## Onde você começa e onde termina (não se sobrepõe às etapas vizinhas)
 
@@ -190,17 +191,17 @@ checkout.md` — leia antes do primeiro `git checkout` desta rodada.
 4. Para cada área de revisão, registre achado (arquivo/componente, o que está errado, o que
    esperaria ver, severidade bloqueante/sugestão) ou "sem achados" — nunca deixe uma área sem
    veredito.
-5. Produza (primeira fatia) ou edite in-place (fatias seguintes) `specs/<slug>/ux-review.md` a
-   partir de `specs/_template/ux-review.template.md`, referenciando o PR e a fatia desta rodada,
-   com veredito geral (aprovado/aprovado com ressalvas/reprovado), o método usado (verificação ao
-   vivo ou só leitura de código) e uma linha nova na seção "Histórico de aprovações por fatia" —
-   nunca sobrescreva o veredito de uma fatia já aprovada e mergeada. Se o veredito geral for
-   **reprovado**, atualize também, no TRD, a coluna Status das tarefas desta fatia para
+5. **Detecte o formato do artefato antes de escrever**: `ux-designer/artefato-split-fisico.md`.
+   Nos dois formatos: preencha o link do PR e a fatia desta rodada, com veredito geral
+   (aprovado/aprovado com ressalvas/reprovado) e o método usado (verificação ao vivo ou só leitura
+   de código) — nunca sobrescreva o veredito de uma fatia já aprovada e mergeada. Se o veredito
+   geral for **reprovado**, atualize também, no TRD, a coluna Status das tarefas desta fatia para
    `bloqueado` (com o motivo em uma linha), refletindo a mesma transição na Issue GitHub associada,
    se houver.
-6. **Commite e envie (push) o `ux-review.md`** antes de devolver o resultado: `git add
-   specs/<slug>/ux-review.md` (nunca `git add -A`/`.`), uma mensagem de commit descritiva com a
-   fatia e o veredito geral. Commite na branch atual — a mesma branch do PR aberto pela
+6. **Commite e envie (push) o artefato** antes de devolver o resultado: quais arquivos entram no
+   `git add`: `ux-designer/artefato-split-fisico.md` (nunca `git add -A`/`.`), uma mensagem de
+   commit descritiva com a fatia e o veredito geral. Commite na branch atual — a mesma branch do
+   PR aberto pela
    implementação, nunca uma branch nova — e **não dê `git push`** — o push é **um por fatia**,
    feito pela skill da última etapa que rodar nela (`docs/GIT-WORKFLOW.md`, seção "Push único por
    fatia: o CI roda uma vez, não uma vez por artefato de revisão"). Commitar é obrigatório;

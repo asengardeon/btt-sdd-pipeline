@@ -65,10 +65,11 @@ pulado" em `/sdd-hotfix`), em vez de simplesmente não mencionar a etapa.
 4. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 4b para
    registrar a duração desta invocação. Invoque o agente `ux-designer` (Agent tool,
    `subagent_type: "ux-designer"`) passando o caminho do PRD/TRD e o PR/branch da feature, e
-   instrução para produzir `specs/<slug>/ux-review.md` a partir de
-   `specs/_template/ux-review.template.md`, referenciando o PR. **Sempre passe `isolation:
-   "worktree"` nesta chamada** (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre
-   agentes concorrentes").
+   instrução para produzir o relatório desta rodada — o próprio agente detecta se esta spec já
+   usa o formato novo (`specs/<slug>/reviews/ux-review/`) ou o legado
+   (`specs/<slug>/ux-review.md`), conforme `.claude/agents/ux-designer/artefato-split-fisico.md`;
+   você não precisa decidir isso por ele. **Sempre passe `isolation: "worktree"` nesta chamada**
+   (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes concorrentes").
 4b. **Registre a duração desta invocação em `specs/<slug>/timing-log.md`** (crie a partir de
    `specs/_template/timing-log.template.md` se ainda não existir): uma linha com o horário do
    passo 4, o horário atual, e a diferença calculada (etapa "UX review", agente "ux-designer",
@@ -121,7 +122,8 @@ pulado" em `/sdd-hotfix`), em vez de simplesmente não mencionar a etapa.
    ```bash
    git branch --show-current                              # confirme antes de qualquer merge
    git merge --ff-only <branch-informada-pelo-agente>
-   git log -1 --format=%H -- specs/<slug>/ux-review.md   # artefato alcançável na branch da fatia
+   # artefato alcançável na branch da fatia — formato novo são 3 arquivos, legado é 1:
+   git log -1 --format=%H -- specs/<slug>/reviews/ux-review/ specs/<slug>/ux-review.md
    git worktree remove <caminho-do-worktree>              # se houver
    ```
 
