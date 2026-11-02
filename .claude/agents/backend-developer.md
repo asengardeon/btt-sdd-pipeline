@@ -421,6 +421,22 @@ seguinte:
    pipeline de tratamento, mascarando a exceção original por completo (nem log, nem alerta saíam
    para o erro real). Só foi pego na revisão de código, como achado bloqueante.
 
+8. **Migração que faz `GRANT`/`REVOKE` de privilégio no Postgres sempre escopa à(s) coluna(s)
+   exatas, nunca à tabela inteira.** `grant update on <tabela> to <papel>` (sem lista de colunas)
+   concede `UPDATE` em **todas** as colunas da tabela de uma vez — mesmo que a intenção seja só
+   satisfazer uma exigência pontual (ex.: o lock `SELECT ... FOR KEY SHARE` que toda constraint de
+   chave estrangeira dispara ao inserir numa tabela que a referencia) — e reabre qualquer coluna
+   que uma migração anterior tenha bloqueado deliberadamente como defesa em profundidade além de
+   RLS. O efeito é simétrico e mais perigoso no `down()`: `revoke update on <tabela> from <papel>`
+   (sem lista de colunas) remove **todos** os `GRANT`s de `UPDATE` do papel na tabela — inclusive
+   os concedidos por migrações **anteriores**, não relacionadas; um rollback real quebraria
+   funcionalidade de produção sem nada a ver com a migração atual. A forma correta é sempre
+   `grant update (coluna) on <tabela> to <papel>` / `revoke update (coluna) on <tabela> from
+   <papel>`, de modo que tanto o `up()` quanto o `down()` tocam só o que a própria migração
+   concedeu. Vale sempre que o projeto usa RLS + privilégio de coluna como defesa em profundidade
+   (`docs/STACK.md`/ADR do projeto) — nunca a forma larga "por conveniência", mesmo que pareça
+   inofensiva no momento em que é escrita.
+
 **Erro opaco se depura capturando a evidência bruta primeiro — não formulando a correção primeiro.**
 Erro opaco é o que não nomeia sua própria causa: um `422` sem detalhe de campo, uma geometria que
 não bate (overflow de N pixels), uma falha de e2e com mensagem genérica. Diante dele, o primeiro
