@@ -69,8 +69,10 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 3. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 3b para
    registrar a duração desta invocação. Invoque o agente `code-reviewer` (Agent tool,
    `subagent_type: "code-reviewer"`) passando o caminho do TRD e o PR/branch da feature, e
-   instrução para produzir `specs/<slug>/code-review.md` a partir de
-   `specs/_template/code-review.template.md`, referenciando o PR. **Sempre passe `isolation:
+   instrução para produzir o artefato de revisão referenciando o PR — o próprio agente detecta
+   se esta spec já usa o formato novo (`specs/<slug>/reviews/code-review/`) ou o legado
+   (`specs/<slug>/code-review.md`), conforme `agents/code-reviewer.md`, passo 6 do Processo; você
+   não precisa decidir isso por ele. **Sempre passe `isolation:
    "worktree"` nesta chamada** — nunca deixe dois agentes dividirem o mesmo diretório de trabalho
    (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes concorrentes"). Não é
    uma condição a avaliar caso a caso ("outra tarefa pode estar ativa?", ex.: uma correção retomada
@@ -147,7 +149,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    ```bash
    git branch --show-current                              # confirme antes de qualquer merge
    git merge --ff-only <branch-informada-pelo-agente>
-   git log -1 --format=%H -- specs/<slug>/code-review.md   # artefato alcançável na branch da fatia
+   # artefato alcançável na branch da fatia — formato novo são 3 arquivos, legado é 1:
+   git log -1 --format=%H -- specs/<slug>/reviews/code-review/ specs/<slug>/code-review.md
    git worktree remove <caminho-do-worktree>              # se houver
    ```
 

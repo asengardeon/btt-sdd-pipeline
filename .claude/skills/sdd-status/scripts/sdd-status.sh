@@ -157,6 +157,31 @@ has_fatia_pendente() {
 
 STAGES=(prd trd code-review ux-review qa-report security-review sre-review)
 
+# Resolve o arquivo "primário" de uma etapa (onde fica o veredito/Histórico de aprovações):
+# formato novo usa INDEX.md dentro de reviews/<etapa>/, legado usa <etapa>.md direto
+# (docs/MICRO-CONTEXT.md, seção 2). Hoje só "code-review" tem formato novo migrado; as demais
+# etapas caem sempre no legado até migrarem.
+stage_primary_file() {
+  local dir="$1" stage="$2"
+  if [ -f "${dir}reviews/${stage}/INDEX.md" ]; then
+    echo "${dir}reviews/${stage}/INDEX.md"
+    return
+  fi
+  echo "${dir}${stage}.md"
+}
+
+# Resolve o arquivo de "tracking" de uma etapa (achados/pendências VALIDAR DEPOIS/log de
+# revisões): formato novo usa tracking.md dentro de reviews/<etapa>/; legado usa o mesmo arquivo
+# do veredito, porque lá tudo vive junto.
+stage_tracking_file() {
+  local dir="$1" stage="$2"
+  if [ -f "${dir}reviews/${stage}/INDEX.md" ]; then
+    echo "${dir}reviews/${stage}/tracking.md"
+    return
+  fi
+  echo "${dir}${stage}.md"
+}
+
 label() {
   case "$1" in
     prd) echo "PRD" ;;
@@ -260,8 +285,9 @@ for dir in "$SPECS_DIR"/*/; do
   fatia_pendente="$(has_fatia_pendente "${dir}trd.md")"
 
   for stage in "${STAGES[@]}"; do
-    file="${dir}${stage}.md"
+    file="$(stage_primary_file "$dir" "$stage")"
     [ -f "$file" ] || continue
+    track_file="$(stage_tracking_file "$dir" "$stage")"
 
     if [ "$stage" = "prd" ] || [ "$stage" = "trd" ]; then
       if grep -qE '^[[:space:]]*-[[:space:]]*\[x\][[:space:]]*Aprovado por' "$file" 2>/dev/null; then
@@ -316,7 +342,7 @@ for dir in "$SPECS_DIR"/*/; do
       esac
     fi
 
-    if grep -qi 'requer revalida' "$file" 2>/dev/null; then
+    if grep -qi 'requer revalida' "$track_file" 2>/dev/null; then
       # Uma flag "requer revalidação" registrada no log pode já ter sido resolvida de duas
       # formas: (a) uma (re)aprovação formal posterior do artefato-alvo — só PRD e TRD têm o
       # checkbox "Aprovado por"; (b) uma linha de log posterior no próprio artefato-alvo
@@ -328,7 +354,8 @@ for dir in "$SPECS_DIR"/*/; do
         # sem artefato colado na frase não sai alvo nenhum: é menção, ou a negação que o
         # template induz ("nenhuma etapa a jusante requer revalidação")
         for target_stage in $(revalidation_target "$flagline"); do
-          target_file="${dir}${target_stage}.md"
+          target_file="$(stage_primary_file "$dir" "$target_stage")"
+          target_track_file="$(stage_tracking_file "$dir" "$target_stage")"
           if [ -z "$flag_date" ] || [ ! -f "$target_file" ]; then
             add_revalidate "$target_stage"
             continue
@@ -339,15 +366,15 @@ for dir in "$SPECS_DIR"/*/; do
             continue
           fi
           agent="$(stage_agent "$target_stage")"
-          if [ -n "$agent" ] && [ "$(revalidated_in_log "$target_file" "$flag_date" "$agent")" = "1" ]; then
+          if [ -n "$agent" ] && [ "$(revalidated_in_log "$target_track_file" "$flag_date" "$agent")" = "1" ]; then
             continue
           fi
           add_revalidate "$target_stage"
         done
-      done < <(grep -iE '^\|[[:space:]]*[0-9]{4}-[0-9]{2}-[0-9]{2}[[:space:]]*\|.*requer revalida' "$file" 2>/dev/null)
+      done < <(grep -iE '^\|[[:space:]]*[0-9]{4}-[0-9]{2}-[0-9]{2}[[:space:]]*\|.*requer revalida' "$track_file" 2>/dev/null)
     fi
 
-    p="$(count_validar_depois_pendentes "$file")"
+    p="$(count_validar_depois_pendentes "$track_file")"
     pending=$((pending + ${p:-0}))
   done
 

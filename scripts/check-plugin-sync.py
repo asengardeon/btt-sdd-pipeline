@@ -205,7 +205,7 @@ def canonizar(texto: str) -> str:
     # Docs do pipeline: `docs/TESTING.md` (raiz/projeto) e `TESTING.md` (dentro do scaffold).
     t = re.sub(r"(?:docs/)?(GIT-WORKFLOW|QUALITY-GATES|TESTING|ENGINEERING-PILLARS|ARCHITECTURE"
                r"|SDD-WORKFLOW|FILE-GUIDE|POST-MERGE-VALIDATION|AGENT-PREAMBLE|SKILL-PREAMBLE"
-               r"|MODEL-TIERING|WRITING-STYLE|TOOLING)\.md", r"«doc:\1»", t)
+               r"|MODEL-TIERING|WRITING-STYLE|TOOLING|MICRO-CONTEXT)\.md", r"«doc:\1»", t)
     # Gates por etapa (#328): `docs/gates/<n>.md` (raiz/projeto) e `gates/<n>.md` (scaffold).
     t = re.sub(r"(?:docs/)?gates/([a-z-]+)\.md", r"«gate:\1»", t)
     # Nome da skill no frontmatter: `name: sdd-<n>` (raiz) e `name: <n>` (plugin).
@@ -271,8 +271,13 @@ def pares() -> list[tuple[str, Path, Path, str]]:
             p.append(("skills", arquivo, PLUGIN / "skills" / alvo_nome / rel,
                       f".claude/skills/{nome}/{rel}"))
     scaffold = PLUGIN / "skills" / "create-project" / "scaffold" / "specs" / "_template"
-    for tpl in sorted((RAIZ / "specs" / "_template").glob("*.md")):
-        p.append(("templates", tpl, scaffold / tpl.name, f"specs/_template/{tpl.name}"))
+    template_dir = RAIZ / "specs" / "_template"
+    # rglob, não glob: um artefato gerado pode ter split físico por rodada em
+    # `specs/_template/reviews/<área>/<nome>.template.md` (`docs/MICRO-CONTEXT.md`, seção 2) — um
+    # pareamento não-recursivo deixaria de cobrir exatamente os templates novos.
+    for tpl in sorted(template_dir.rglob("*.md")):
+        rel = tpl.relative_to(template_dir).as_posix()
+        p.append(("templates", tpl, scaffold / rel, f"specs/_template/{rel}"))
     return p
 
 

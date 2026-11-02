@@ -143,8 +143,10 @@ seguem com o `sre`, junto do acionamento do `tech-writer`.
 - **Agente**: `agents/code-reviewer.md`
 - **Skill**: `/btt-sdd:code-review`
 - **Entrada**: PR aberto pela etapa de implementação desta fatia + TRD.
-- **Saída**: `specs/<slug>/code-review.md` — veredito sobre ports & adapters/regra da dependência,
-  SOLID, clean code, qualidade dos próprios testes (não cobertura numérica), consistência com o
+- **Saída**: `specs/<slug>/reviews/code-review/` (formato novo) ou `specs/<slug>/code-review.md`
+  (legado — `MICRO-CONTEXT.md` do pipeline, seção 2) — veredito sobre ports & adapters/regra da
+  dependência, SOLID, clean code, qualidade dos próprios testes (não cobertura numérica),
+  consistência com o
   contrato Frontend↔Backend quando full-stack, tratamento de erros/casos de borda no código, e
   débito técnico introduzido. Foca em **qualidade e design do código**; não julga critério de aceite
   (isso é o QA na etapa seguinte) nem segurança (isso é o `security-engineer`).
