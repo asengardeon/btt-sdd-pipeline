@@ -1,5 +1,10 @@
 # Security Review — <Nome da Feature>
 
+> **Formato legado.** Specs novas usam o split físico em
+> `specs/_template/reviews/security-review/` (`index.template.md`/`tracking.template.md`/
+> `round.template.md`, `MICRO-CONTEXT.md` do pipeline, seção 2). Este arquivo único só continua
+> sendo usado por specs que já o tinham antes da migração — a migração não é retroativa.
+
 > Autor: agente `security-engineer`
 > QA report: `specs/<slug>/qa-report.md`
 > Fatia revisada nesta rodada: `<F-1, ou "única — feature não fatiada">`

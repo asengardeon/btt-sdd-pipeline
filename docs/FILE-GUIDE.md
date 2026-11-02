@@ -93,8 +93,9 @@ DEPOIS" como opção quando cabível.
   só para esse artefato — QA não corrige código de produção, reporta.
 - **`security-engineer.md`** — revisa segurança da aplicação (OWASP, segredos, autenticação/
   autorização, validação de entrada, dependências) depois do QA. Mesma lógica de `Write`/`Edit`
-  restrito ao próprio `security-review.md`, que também commita e envia (push) antes de terminar —
-  não corrige código, reporta.
+  restrito ao próprio artefato de revisão (`specs/<slug>/reviews/security-review/` no formato
+  novo, `security-review.md` no legado — `docs/MICRO-CONTEXT.md`, seção 2), que também commita e
+  envia (push) antes de terminar — não corrige código, reporta.
 - **`sre.md`** — valida/ajusta CI/CD e infraestrutura, depois de QA e segurança aprovados. Tem
   `Bash`, `Write` e `Edit` porque pode precisar ajustar arquivos de `infra/` e
   `.github/workflows/` diretamente (commitando/enviando esses ajustes junto com `sre-review.md`
