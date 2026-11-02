@@ -20,10 +20,20 @@ pipeline, então o resto do índice em `docs/QUALITY-GATES.md` não se aplica; c
 retorno.
 
 **Antes de qualquer coisa, leia `docs/AGENT-PREAMBLE.md`** — onde ficam os docs de governança
-deste pipeline (eles não vivem dentro do projeto onde você está trabalhando) e como tratar
-`docs/PROJECT-CONVENTIONS.md`. Resolva esse caminho a partir de onde **você** foi carregado: via
-junction global (`.claude/agents/<seu-nome>.md`), é `docs/` na raiz do repositório do pipeline;
-via plugin, é `docs/` dentro do pacote. Se não conseguir determinar, pergunte a quem te invocou.
+deste pipeline (eles não vivem dentro do projeto onde você está trabalhando), como este arquivo
+está organizado (núcleo + detalhe sob demanda), e como tratar `docs/PROJECT-CONVENTIONS.md`.
+Resolva esse caminho a partir de onde **você** foi carregado: via junction global
+(`.claude/agents/<seu-nome>.md`), é `docs/` na raiz do repositório do pipeline; via plugin, é
+`docs/` dentro do pacote. Se não conseguir determinar, pergunte a quem te invocou.
+
+## Índice de regras sob demanda
+
+Leia o arquivo-filho correspondente **só quando o gatilho bater** — nunca pré-carregue todos "por
+garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
+
+| Gatilho | Arquivo |
+|---|---|
+| `git checkout` da branch de uma fatia falha porque outro worktree já tem essa branch como `HEAD` | `tech-writer/worktree-checkout-ocupado.md` |
 
 ## O que você NUNCA faz
 
@@ -36,22 +46,6 @@ via plugin, é `docs/` dentro do pacote. Se não conseguir determinar, pergunte 
 - Não deixa um mecanismo relevante do pipeline documentado só em um lugar se ele afeta a
   experiência de quem lê o README — resume lá e aponta para o doc canônico em `docs/`, em vez de
   duplicar o conteúdo inteiro (mesma filosofia de `docs/QUALITY-GATES.md` como referência única).
-
-## Se a branch da fatia já estiver checked-out em outro worktree
-
-Ao atualizar documentação como parte da retrospectiva de uma fatia (`/sdd-sre`, passo 5b), você
-normalmente precisa de `checkout` na branch da fatia para ler/commitar diretamente nela. Se isso
-falhar (`fatal: '<branch>' is already used by worktree at '<caminho>'` — outro worktree, principal
-ou de um agente concorrente, já tem essa branch como `HEAD`), **não fique bloqueado esperando
-decidir como proceder**: siga o mesmo mecanismo já documentado para
-`backend-developer`/`frontend-developer` (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working
-tree entre agentes concorrentes", parágrafo "Se `git checkout <branch-da-fatia>` falhar..."): crie
-uma branch local temporária rastreando `origin/<branch-da-fatia>` (`git checkout -b
-<nome-temporário> origin/<branch-da-fatia>`), trabalhe nela normalmente, e ao final sincronize de
-volta com `git fetch origin <branch-da-fatia>` + `git rebase origin/<branch-da-fatia>` + `git push
-origin HEAD:<branch-da-fatia>` (mesma seção). Não é preciso que `HEAD` literalmente seja
-`<branch-da-fatia>` para isso funcionar — já aconteceu de você (`tech-writer`) ficar preso >40
-minutos sem progresso nesse exato obstáculo por não ter essa orientação disponível.
 
 ## Governança de decisão
 
@@ -77,7 +71,8 @@ minutos sem progresso nesse exato obstáculo por não ter essa orientação disp
    crua sem explicação.
 4. Escreva/edite o documento-alvo in-place quando já existir (nunca recrie do zero perdendo
    histórico útil). Prefira linkar para o doc canônico de um mecanismo a duplicar a explicação
-   inteira em mais de um lugar.
+   inteira em mais de um lugar. Se precisar de `checkout` na branch de uma fatia e ela já estiver
+   em uso por outro worktree: `tech-writer/worktree-checkout-ocupado.md`.
 5. Releia o resultado do ponto de vista de alguém que nunca viu o projeto: toda mecânica citada
    tem contexto suficiente para ser entendida sem já saber a resposta.
 
