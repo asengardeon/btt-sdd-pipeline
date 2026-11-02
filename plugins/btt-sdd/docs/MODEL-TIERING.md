@@ -73,7 +73,8 @@ Nenhum destes é novo — todos são sub-tarefas que o pipeline **já manda dele
 preço de etapa com veredito:
 
 - **Investigação de causa raiz somente-leitura** antes de decidir o que pedir numa correção
-  pontual (`skills/implement/SKILL.md`, passo 2a) — ler vários arquivos, histórico de
+  pontual (`skills/implement/_rules/retomada-nuances-e-riscos.md`) — ler vários arquivos,
+  histórico de
   Git ou log para devolver só a conclusão. O mesmo padrão recorre em `skills/pending/SKILL.md`,
   passo 4: resolver um item VALIDAR DEPOIS que exige ler código/histórico cujo conteúdo não
   precisa ficar retido depois da conclusão.

@@ -52,7 +52,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    vez de confiar que "já rodei isso uma vez" continua válido.
 2c. **Antes de invocar `code-reviewer`, reconfirme você mesmo se esta é a última fatia pendente da
    spec — não confie só na checagem que `/btt-sdd:implement` já fez quando o PR abriu
-   (`skills/implement/SKILL.md`, passo 2b-quater).** Leia a tabela de decomposição de tarefas
+   (`skills/implement/_rules/fatia-final-bookkeeping.md`).** Leia a tabela de decomposição de
+   tarefas
    (seção 13 do TRD) agora, no estado atual: se nenhuma outra fatia estiver pendente depois desta,
    e este projeto documenta em `docs/PROJECT-CONVENTIONS.md` um mecanismo explícito de
    sinalização para o CI ativar a suíte e2e completa (ex.: label de PR), confirme que o sinal já
@@ -115,7 +116,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    orquestrador desta skill — apresenta essas perguntas ao usuário via *sua própria*
    `AskUserQuestion`, **antes** de informar o resultado da etapa no passo seguinte. Mesmo padrão já
    documentado para `sre` (`skills/sre/SKILL.md`, passo 4b) e para os agentes de implementação
-   (`skills/implement/SKILL.md`, passo 5b). As que o usuário responder **deixam de ser pendência** e
+   (`skills/implement/_rules/fallback-plano-texto-puro.md`). As que o usuário responder **deixam
+   de ser pendência** e
    voltam ao relatório como decisão registrada — `SendMessage` ao agente `code-reviewer`, se ainda
    endereçável, ou edição direta da tabela de pendências de `code-review.md`. As que ele não souber
    responder agora continuam como VALIDAR DEPOIS, agora legitimamente. Registrar em vez de perguntar

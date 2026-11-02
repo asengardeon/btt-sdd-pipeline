@@ -89,7 +89,8 @@ pulado" em `/sdd-hotfix`), em vez de simplesmente não mencionar a etapa.
    orquestrador desta skill — apresenta essas perguntas ao usuário via *sua própria*
    `AskUserQuestion`, **antes** de informar o resultado da etapa no passo seguinte. Mesmo padrão já
    documentado para `sre` (`.claude/skills/sdd-sre/SKILL.md`, passo 4b) e para os agentes de
-   implementação (`.claude/skills/sdd-implement/SKILL.md`, passo 5b). As que o usuário responder
+   implementação (`.claude/skills/sdd-implement/_rules/fallback-plano-texto-puro.md`). As que o
+   usuário responder
    **deixam de ser pendência** e voltam ao relatório como decisão registrada — `SendMessage` ao
    agente `ux-designer`, se ainda endereçável, ou edição direta da tabela de pendências de
    `ux-review.md`. As que ele não souber responder agora continuam como VALIDAR DEPOIS, agora

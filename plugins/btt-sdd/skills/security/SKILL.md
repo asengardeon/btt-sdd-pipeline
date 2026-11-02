@@ -111,7 +111,8 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    orquestrador desta skill — apresenta essas perguntas ao usuário via *sua própria*
    `AskUserQuestion`, **antes** de informar o resultado da etapa no passo seguinte. Mesmo padrão já
    documentado para `sre` (`skills/sre/SKILL.md`, passo 4b) e para os agentes de implementação
-   (`skills/implement/SKILL.md`, passo 5b). As que o usuário responder **deixam de ser pendência** e
+   (`skills/implement/_rules/fallback-plano-texto-puro.md`). As que o usuário responder **deixam
+   de ser pendência** e
    voltam ao relatório como decisão registrada — `SendMessage` ao agente `security-engineer`, se
    ainda endereçável, ou edição direta da tabela de pendências de `security-review.md`. As que ele
    não souber responder agora continuam como VALIDAR DEPOIS, agora legitimamente. Registrar em vez
