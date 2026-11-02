@@ -26,7 +26,7 @@ Comandos disponíveis: `/sdd-prd`, `/sdd-trd`, `/sdd-implement`, `/sdd-code-revi
 `/sdd-ux-review` (condicional — ao final da spec, se ela tem superfície de UI perceptível),
 `/sdd-qa`,
 `/sdd-security`, `/sdd-sre`, `/sdd-baseline`, `/sdd-project-conventions`, `/sdd-hotfix`,
-`/sdd-status`, `/sdd-amend`, `/sdd-pending`, `/sdd-gap-report`, `/sdd-migrate-reviews` (ou os
+`/sdd-status`, `/sdd-amend`, `/sdd-pending`, `/sdd-gap-report`, `/sdd-migrate` (ou os
 equivalentes `/btt-sdd:*` se instalado via plugin). Cada um explica seu próprio papel quando
 invocado — não precisa memorizar a
 lista aqui.

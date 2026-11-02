@@ -1,3 +1,4 @@
+<!-- sdd-format-version: 2 -->
 # Code Review — <Nome da Feature> — Índice
 
 > Autor: agente `code-reviewer`

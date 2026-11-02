@@ -1,10 +1,11 @@
+<!-- sdd-format-version: 1 -->
 # UX Review — <Nome da Feature>
 
 > **Formato legado.** Specs novas usam o split físico em
 > `specs/_template/reviews/ux-review/` (`index.template.md`/`tracking.template.md`/
 > `round.template.md`, `docs/MICRO-CONTEXT.md`, seção 2). Este arquivo único só continua
 > sendo usado por specs que já o tinham antes da migração — a migração não é automática.
-> Para converter uma spec antiga para o formato novo, rode `/sdd-migrate-reviews <slug> ux-review`.
+> Para converter uma spec antiga para o formato novo, rode `/sdd-migrate <slug> ux-review`.
 
 > Autor: agente `ux-designer`
 > PRD: `specs/<slug>/prd.md` | TRD: `specs/<slug>/trd.md`

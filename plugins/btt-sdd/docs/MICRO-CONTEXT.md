@@ -7,9 +7,10 @@ quando a tarefa do momento só toca uma fração do que ele sabe fazer. Um artef
 in-place (`code-review.md`, `qa-report.md`) cresce a cada rodada e, sem estrutura, vira um arquivo
 que ninguém lê por completo mas que todo mundo paga para abrir.
 
-Este doc define três convenções relacionadas — para arquivo-fonte do plugin, para arquivo gerado
-em projeto consumidor, e para uso de ferramenta — cada uma resolvendo a mesma pergunta: **o que
-precisa estar sempre carregado, e o que pode ser buscado só quando a tarefa realmente pedir.**
+Este doc define quatro convenções relacionadas — para arquivo-fonte do plugin, para arquivo
+gerado em projeto consumidor (duas: split físico e versionamento/migração), e para uso de
+ferramenta — cada uma resolvendo a mesma pergunta: **o que precisa estar sempre carregado, e o
+que pode ser buscado só quando a tarefa realmente pedir.**
 
 ## 1. Núcleo + detalhe sob demanda (agentes e skills)
 
@@ -78,15 +79,36 @@ a migração **não é automática**. Toda skill/agente que lê esses artefatos 
 está em uso (o diretório `specs/<slug>/reviews/<stage>/` existe → novo; só o arquivo único existe
 → legado) antes de decidir como ler ou escrever.
 
-**Migração retroativa, por pedido explícito.** `/btt-sdd:migrate-reviews <slug> <stage>` converte
-um artefato de uma spec existente do formato legado para o novo — nunca automaticamente, sempre
-um artefato de uma spec por vez. As tabelas (Histórico, achados/pendências, VALIDAR DEPOIS, log)
-são append-only desde o formato legado e migram sem perda; o conteúdo de área de rodadas
-anteriores à vigente não é recuperável, porque o próprio formato legado já o sobrescrevia a cada
-rodada — só a rodada vigente no momento da migração ganha um `F-<N>.md` real, as anteriores ficam
-com `Arquivo = —` na tabela de histórico.
+## 3. Marcador de versão de formato + migração genérica (qualquer artefato gerado em projeto consumidor)
 
-## 3. Ferramenta conhecida antes de verificação manual
+Todo template em `specs/_template/` (inclusive cada arquivo dentro de
+`specs/_template/reviews/<stage>/`) declara sua própria versão de formato numa linha HTML comment
+logo após o título: `<!-- sdd-format-version: N -->`. Todo artefato que um agente gera "a partir
+de" esse template herda essa linha verbatim — é assim que a instância real em `specs/<slug>/...`
+carrega a mesma informação. A numeração é **por artefato**, nunca global: `qa-report` pode estar
+em `v2` enquanto `prd` continua em `v1` desde que o pipeline existe — um não bloqueia o outro.
+
+`/btt-sdd:migrate <slug> <artefato>` é o comando genérico que lê a versão gravada na instância
+real (`specs/<slug>/...`), compara com a versão atual do template correspondente, e aplica a
+transformação registrada se houver uma — nunca automaticamente, sempre por pedido explícito, um
+artefato de uma spec por vez. O registro de migrações vive em `skills/migrate/migrations/`: um
+arquivo por par `<artefato>-v<origem>-to-v<destino>`, cada um descrevendo a própria detecção e
+transformação — nenhum comando genérico centraliza a lógica de todo artefato, só sabe onde
+procurar o par certo. Hoje só existe um par registrado por artefato — `code-review`, `qa-report`,
+`security-review`, `sre-review` e `ux-review`, todos `v1` (arquivo único) `→` `v2` (split físico
+por rodada, seção 2 acima). Artefatos sem par registrado (`prd`, `trd`, `coverage-summary`,
+`timing-log`, `oneshot`) nunca mudaram de formato desde que o pipeline existe — o comando responde
+"nada para migrar" para eles, não um erro; é a infraestrutura pronta para quando (e se) uma
+mudança de formato futura precisar de um par novo, sem reescrever o comando em si.
+
+**Artefato sem marcador (escrito antes desta convenção existir) é tratado como a versão mais
+antiga conhecida daquele artefato** — detectado estruturalmente (a mesma técnica que a seção 2
+já descreve: diretório vs. arquivo único), nunca pelo marcador ausente. É uma lacuna transitória
+inevitável: não existe como gravar retroativamente um marcador num arquivo escrito antes dele ser
+inventado — ela se fecha sozinha conforme specs antigas são migradas ou specs novas nascem já com
+o marcador.
+
+## 4. Ferramenta conhecida antes de verificação manual
 
 `docs/TOOLING.md` já cataloga ferramentas determinísticas por área (rtk para saída de shell,
 ast-grep para Ports & Adapters, gitleaks/semgrep/osv-scanner para segurança, hadolint/checkov para

@@ -1,3 +1,4 @@
+<!-- sdd-format-version: 1 -->
 # PRD — <Nome da Feature>
 
 > Status: rascunho | em revisão | aprovado

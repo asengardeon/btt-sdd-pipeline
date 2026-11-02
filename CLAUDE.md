@@ -99,7 +99,7 @@ Cada agente vive em `.claude/agents/<nome>.md` e é acionado por uma skill em
 | `/sdd-amend`        | (nenhum, utilitário)                             | emenda um artefato já aprovado sem reiniciar o pipeline |
 | `/sdd-pending`      | (nenhum, utilitário)                             | lista itens "VALIDAR DEPOIS" em aberto |
 | `/sdd-gap-report`   | (nenhum, utilitário)                             | compara casos de uso do TRD (seção 6) com o código real |
-| `/sdd-migrate-reviews` | (nenhum, utilitário)                          | converte um artefato de revisão legado de uma spec para o split físico por rodada |
+| `/sdd-migrate`      | (nenhum, utilitário)                             | converte um artefato de uma spec da versão de formato antiga para a atual |
 | `/sdd-project-conventions` | codebase-archaeologist                    | `docs/PROJECT-CONVENTIONS.md` (condicional) — particularidades do projeto vs. padrão do pipeline (git workflow, estrutura etc.) |
 | `/sdd-docs`         | tech-writer (utilitário, sem etapa fixa; também acionado automaticamente por `/sdd-sre` ao aprovar a última fatia pendente de uma spec) | README, docs/, ADRs, ou exemplos de código documentados |
 

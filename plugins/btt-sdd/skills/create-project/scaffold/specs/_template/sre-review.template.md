@@ -1,10 +1,11 @@
+<!-- sdd-format-version: 1 -->
 # SRE Review — <Nome da Feature>
 
 > **Formato legado.** Specs novas usam o split físico em
 > `specs/_template/reviews/sre-review/` (`index.template.md`/`tracking.template.md`/
 > `round.template.md`, `MICRO-CONTEXT.md` do pipeline, seção 2). Este arquivo único só continua
 > sendo usado por specs que já o tinham antes da migração — a migração não é automática.
-> Para converter uma spec antiga para o formato novo, rode `/btt-sdd:migrate-reviews <slug> sre-review`.
+> Para converter uma spec antiga para o formato novo, rode `/btt-sdd:migrate <slug> sre-review`.
 
 > Autor: agente `sre`
 > QA report: `specs/<slug>/qa-report.md`

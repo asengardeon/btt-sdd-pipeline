@@ -1,3 +1,4 @@
+<!-- sdd-format-version: 2 -->
 # Security Review — <Nome da Feature> — Índice
 
 > Autor: agente `security-engineer`

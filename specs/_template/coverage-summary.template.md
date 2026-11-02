@@ -1,3 +1,4 @@
+<!-- sdd-format-version: 1 -->
 # Resumo de cobertura — <slug> / <fatia> / <trilha>
 
 > Gerado por: `<backend-developer|frontend-developer|qa-engineer>`

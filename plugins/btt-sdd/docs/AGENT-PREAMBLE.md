@@ -97,16 +97,19 @@ estiver à mão, propor medi-la sai mais barato que carregar a ressalva por trê
 
 Os artefatos de revisão (`code-review.md`, `ux-review.md`, `qa-report.md`, `security-review.md`,
 `sre-review.md`) acumulam uma rodada por fatia, e numa spec com muitas rodadas o volume total deixa
-de caber confortavelmente no seu contexto. Dois formatos coexistem enquanto a migração de
-`docs/MICRO-CONTEXT.md`, seção 2, avança artefato por artefato:
+de caber confortavelmente no seu contexto. Os 5 já suportam o split físico
+(`docs/MICRO-CONTEXT.md`, seção 2), mas dois formatos coexistem na prática: specs criadas antes de
+cada migração continuam no formato antigo até alguém converter (`/btt-sdd:migrate`,
+`docs/MICRO-CONTEXT.md`, seção 3) ou até a próxima rodada real nascer direto no formato novo —
+nunca retroativo por conta própria de uma leitura.
 
 - **Formato novo (split físico)**: `specs/<slug>/reviews/<área>/` existe como diretório, com
   `INDEX.md`, `tracking.md` e um `F-<N>.md`/`hotfix-<data>.md` por rodada. Detalhe completo do
   layout em `docs/MICRO-CONTEXT.md`, seção 2.
 - **Formato legado (arquivo único)**: só `specs/<slug>/<área>.md` existe, editado **in-place** a
-  cada rodada, nunca recriado — ainda o caso de `ux-review.md`, `qa-report.md`,
-  `security-review.md` e `sre-review.md` até cada um ser migrado. **O arquivo continua inteiro: o
-  que muda é quanto dele você lê.**
+  cada rodada, nunca recriado — o caso de qualquer spec criada antes da migração de um artefato
+  específico, para qualquer um dos 5. **O arquivo continua inteiro: o que muda é quanto dele você
+  lê.**
 
 **Verifique qual formato está em uso antes de ler ou escrever** (o diretório `reviews/<área>/`
 existe → novo; só o arquivo único existe → legado) — nunca assuma um ou outro. A regra de leitura

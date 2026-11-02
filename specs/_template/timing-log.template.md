@@ -1,3 +1,4 @@
+<!-- sdd-format-version: 1 -->
 # Log de tempo de execução — <slug>
 
 Registro append-only do tempo que cada etapa desta spec levou — invocação de agente **e** trabalho

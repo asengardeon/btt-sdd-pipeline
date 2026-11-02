@@ -1,3 +1,4 @@
+<!-- sdd-format-version: 2 -->
 # Security Review — <Nome da Feature> — Achados, Pendências e Log
 
 Três tabelas compactas, append-only — nunca uma linha apagada, só marcada (`MICRO-CONTEXT.md` do

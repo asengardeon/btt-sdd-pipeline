@@ -144,11 +144,14 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
 - **`sdd-gap-report/`** → `/sdd-gap-report <slug> [caminho-busca ...]` — utilitário de leitura,
   não aciona nenhum agente; compara os casos de uso da seção 6 do TRD com o código real em `src/`
   (e `frontend/`, quando existir), reportando implementado sim/não por caso de uso.
-- **`sdd-migrate-reviews/`** → `/sdd-migrate-reviews <slug> <stage>` — utilitário de edição, não
-  aciona nenhum agente; converte retroativamente **um** artefato de revisão de **uma** spec
-  (`code-review`, `qa-report`, `security-review`, `sre-review` ou `ux-review`) do formato legado
-  de arquivo único para o split físico por rodada (`docs/MICRO-CONTEXT.md`, seção 2) — nunca
-  automático, sempre por pedido explícito e um artefato por vez.
+- **`sdd-migrate/`** → `/sdd-migrate <slug> <artefato>` — utilitário de edição, não aciona
+  nenhum agente; converte **um** artefato de **uma** spec da versão de formato gravada no
+  marcador `<!-- sdd-format-version: N -->` para a versão atual do template correspondente
+  (`docs/MICRO-CONTEXT.md`, seção 3) — nunca automático, sempre por pedido explícito e um
+  artefato por vez. Núcleo genérico (detecta versão, procura a regra certa) + um arquivo de
+  regra por par de versões em `sdd-migrate/migrations/` (hoje: `code-review`, `qa-report`,
+  `security-review`, `sre-review` e `ux-review`, todos `v1` arquivo único → `v2` split físico
+  por rodada) — artefato sem regra registrada responde "nada para migrar", não erro.
 - **`sdd-docs/`** → `/sdd-docs` — aciona `tech-writer` (utilitário, sem posição fixa numa etapa);
   escreve/atualiza README, um doc de `docs/`, um ADR, ou transforma código real em exemplo
   documentado.
