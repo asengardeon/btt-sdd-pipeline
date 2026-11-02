@@ -98,9 +98,10 @@ DEPOIS" como opção quando cabível.
   envia (push) antes de terminar — não corrige código, reporta.
 - **`sre.md`** — valida/ajusta CI/CD e infraestrutura, depois de QA e segurança aprovados. Tem
   `Bash`, `Write` e `Edit` porque pode precisar ajustar arquivos de `infra/` e
-  `.github/workflows/` diretamente (commitando/enviando esses ajustes junto com `sre-review.md`
-  antes de terminar); qualquer alteração real de infraestrutura passa por um plano aprovado antes
-  de executar.
+  `.github/workflows/` diretamente (commitando/enviando esses ajustes junto com o próprio artefato
+  de revisão — `specs/<slug>/reviews/sre-review/` no formato novo, `sre-review.md` no legado —
+  `docs/MICRO-CONTEXT.md`, seção 2 — antes de terminar); qualquer alteração real de
+  infraestrutura passa por um plano aprovado antes de executar.
 - **`tech-writer.md`** — agente **utilitário** de documentação técnica (README, `docs/*.md`, ADRs,
   exemplos de código documentados), sem posição fixa nas 7 etapas — convocável a qualquer momento,
   no mesmo espírito do `codebase-archaeologist`. Nunca escreve/corrige código de produção, só

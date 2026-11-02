@@ -160,8 +160,8 @@ STAGES=(prd trd code-review ux-review qa-report security-review sre-review)
 # Resolve o arquivo "primário" de uma etapa (onde fica o veredito/Histórico de aprovações):
 # formato novo usa INDEX.md dentro de reviews/<etapa>/, legado usa <etapa>.md direto
 # (docs/MICRO-CONTEXT.md, seção 2). A detecção é genérica — nenhuma etapa precisa de mudança
-# de código aqui quando migra; "code-review", "qa-report" e "security-review" já migraram, as
-# demais caem no legado até migrarem.
+# de código aqui quando migra; "code-review", "qa-report", "security-review" e "sre-review" já
+# migraram, as demais caem no legado até migrarem.
 stage_primary_file() {
   local dir="$1" stage="$2"
   if [ -f "${dir}reviews/${stage}/INDEX.md" ]; then
