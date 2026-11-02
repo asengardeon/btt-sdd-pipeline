@@ -124,11 +124,14 @@ normalmente.
 
 **Antes de ler qualquer artefato ou rodar qualquer suíte, confirme que está no commit do PR sendo
 validado** — `specs/` e o código vivem só
-na branch até o merge. Rodando em working tree isolado (o padrão desta invocação),
-**`git checkout <branch>` vai falhar** (`fatal: '<branch>' is already used by worktree at
-'<caminho>'`): quem abriu o PR normalmente tem essa branch como `HEAD` no worktree principal, e o
-Git não permite a mesma branch checked out em dois worktrees. Não tente liberar a branch nem
-repetir o `checkout` — vá direto para a variante que funciona:
+na branch até o merge. Rodando em working tree isolado (o padrão desta invocação), **nunca faça
+`git checkout <branch>` diretamente — nem tente primeiro "para ver se funciona".** Normalmente vai
+falhar (`fatal: '<branch>' is already used by worktree at '<caminho>'`, porque quem abriu o PR tem
+essa branch como `HEAD` no worktree principal e o Git não permite a mesma branch checked out em
+dois worktrees), mas **mesmo quando não falhar** (nenhum outro worktree tem a branch aberta neste
+instante), isso não é seguro — é uma condição de corrida favorável, não uma garantia: numa fatia
+com duas trilhas em paralelo, ou com o orquestrador tocando a branch principal ao mesmo tempo, o
+mesmo `checkout` colidiria. Vá direto para a variante que sempre funciona, incondicionalmente:
 
 ```bash
 git fetch origin <branch>

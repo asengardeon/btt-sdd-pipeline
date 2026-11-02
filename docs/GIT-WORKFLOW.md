@@ -407,6 +407,23 @@ em `origin/<branch-da-fatia>` (sem a preferência pela ref local acima) fez a et
 único" — e abortar sem produzir veredito, descartando uma invocação inteira só para redescobrir
 que os commits existiam, só retidos localmente (issue #453, `asengardeon/btt-sdd-pipeline`).
 
+**O `checkout` direto "funcionar" (nenhum worktree concorrente tem a branch aberta neste
+instante) não torna correto usá-lo — vá para a branch temporária de qualquer forma.** O parágrafo
+acima descreve o caso em que o `checkout` falha; mas em working tree isolado, mesmo quando a
+branch real **parece** disponível (1ª etapa de revisão de uma fatia nova, ou uma janela sem
+contenção), fazer `checkout` dela e trabalhar/commitar ali é uma condição de corrida favorável, não
+uma garantia — numa fatia com duas trilhas em paralelo, ou com o orquestrador tocando a branch
+principal ao mesmo tempo, o mesmo `checkout` teria colidido. A regra não é "tente o `checkout`
+normal e use o workaround se falhar": é **sempre** criar a branch temporária a partir da referência
+mais avançada (mesmo bloco de código acima), incondicionalmente, em todo working tree isolado —
+independente de haver colisão aparente ou não. Já aconteceu de verdade: três agentes de revisão em
+sequência (`code-reviewer`, `qa-engineer`, `sre`), cada um isolado, conseguiram `checkout` direto da
+branch real da fatia porque nenhum outro worktree a tinha aberta naquele instante — funcionou sem
+dano nas três vezes, mas custou ao orquestrador descobrir a branch presa (`fatal: ... already used
+by worktree`), liberá-la (`git checkout --detach HEAD` dentro do worktree isolado), remover o
+worktree e só então fazer `checkout` real no diretório principal — trabalho evitável se cada agente
+tivesse ido direto para a branch temporária, como já faz quando o `checkout` falha.
+
 **Isolamento aninhado — o próprio orquestrador rodando num worktree isolado (não o checkout
 principal) — quebra o workaround acima: integre via push direto ao remoto, nunca merge/fetch
 local.** O workaround de colisão de worktree pressupõe que o orquestrador opera a partir do
