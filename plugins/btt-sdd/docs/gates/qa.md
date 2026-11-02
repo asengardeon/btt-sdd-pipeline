@@ -59,7 +59,9 @@
   desta fatia — reaproveitando o resumo de cobertura já gravado pela implementação
   (`specs/<slug>/coverage/`) quando o commit bate com o HEAD atual; re-executada e regravada só se o
   arquivo estiver ausente ou desatualizado (`docs/TESTING.md`).
-- [ ] `qa-report.md` referencia o PR e a fatia desta rodada.
+- [ ] O artefato de QA existe (`specs/<slug>/reviews/qa-report/` no formato novo,
+  `specs/<slug>/qa-report.md` no legado — `docs/MICRO-CONTEXT.md`, seção 2), referencia o PR e a
+  fatia desta rodada.
 - [ ] **A linha desta rodada existe em `specs/<slug>/timing-log.md` e nomeia uma única etapa.**
    Etapa
   cujo trabalho de orquestrador foi zero registra `0m` com justificativa — nunca nenhuma linha; e
@@ -72,8 +74,10 @@
   como evidência concreta de performance, e os três defeitos de medição empurram na **mesma
   direção**: superestimam as etapas de agente e subestimam as do orquestrador — numa fatia medida,
   29% do esforço era de orquestrador.
-- [ ] `qa-report.md` (e o arquivo de cobertura, se regravado) commitados (só esses arquivos, nunca
-  `git add -A`/`.`) na branch do PR pelo próprio `qa-engineer` antes de devolver o resultado, e
+- [ ] O(s) arquivo(s) do artefato de QA desta rodada (`F-<N>.md`/`hotfix-<data>.md` + `INDEX.md` +
+  `tracking.md` no formato novo; `qa-report.md` no legado) e o arquivo de cobertura, se regravado,
+  commitados (só esses arquivos, nunca `git add -A`/`.`) na branch do PR pelo próprio
+  `qa-engineer` antes de devolver o resultado, e
   **integrados na branch da fatia** por quem o invocou (`git merge --ff-only` da branch informada,
   artefato confirmado alcançável). **O push não é por etapa**: é um por fatia
   (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia"). **Em fatia intermediária, é esta etapa
