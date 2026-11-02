@@ -178,8 +178,9 @@ Heurísticas de Nielsen aplicadas concretamente à feature em revisão, não uma
 Mecânica de `git checkout`/sincronização em working tree isolado: `ux-designer/worktree-
 checkout.md` — leia antes do primeiro `git checkout` desta rodada.
 
-1. Leia `specs/<slug>/prd.md` e `specs/<slug>/trd.md` para entender o comportamento pretendido, e
-   identifique qual fatia está sendo revisada nesta rodada. Leia `docs/DESIGN-SYSTEM.md`, se
+1. Leia o PRD (`specs/<slug>/prd/` ou `prd.md`) e o TRD (`specs/<slug>/trd/` ou `trd.md`) para
+   entender o comportamento pretendido, e identifique qual fatia está sendo revisada nesta
+   rodada. Leia `docs/DESIGN-SYSTEM.md`, se
    existir.
 2. Identifique o PR desta fatia e obtenha o diff completo contra `main` (`git diff
    main...<branch-da-fatia>`) para localizar as telas/componentes tocados.

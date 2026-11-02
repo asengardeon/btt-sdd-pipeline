@@ -79,14 +79,65 @@ a migração **não é automática**. Toda skill/agente que lê esses artefatos 
 está em uso (o diretório `specs/<slug>/reviews/<stage>/` existe → novo; só o arquivo único existe
 → legado) antes de decidir como ler ou escrever.
 
+## 2b. Split por tópico (PRD, TRD)
+
+PRD e TRD não têm "rodada" — nascem de uma única invocação do agente de origem
+(`product-design`/`architect`) e depois só são emendados via `/sdd-amend`, nunca reescritos por
+fatia como os 5 artefatos da seção 2. Por isso o split deles segue o princípio da seção 1 (núcleo
+pequeno + arquivo-filho sob demanda), aplicado a um artefato gerado em projeto consumidor em vez
+de a um agente/skill, e não o split por rodada da seção 2.
+
+Em vez de um único arquivo que cresce com cada história de usuário, cada fatia e cada pendência,
+vira um diretório com um núcleo pequeno (`INDEX.md`) e um arquivo por tópico — **cada um mantendo
+a numeração de seção original do artefato de arquivo único, nunca renumerado**. É isso que
+permite toda referência já escrita em qualquer agente/skill/doc deste pipeline ("seção 6 do PRD",
+"seção 13 do TRD") continuar significando exatamente a mesma seção de sempre — só muda **onde**
+procurá-la, nunca o número:
+
+```
+specs/<slug>/prd/
+  INDEX.md         — núcleo: seções 1-5, 8, 9, 13 (visão geral, problema, personas, objetivos,
+                      fora de escopo, métricas de sucesso, indicadores técnicos, aprovação) +
+                      tabela de navegação para os arquivos abaixo.
+  user-stories.md  — seções 6-7 (histórias de usuário e critérios de aceite; wireframes/protótipos
+                      de tela, quando aplicável).
+  value-order.md   — seção 10 (ordem de valor / dependências entre histórias — fatias verticais).
+  tracking.md      — seções 11-12 (pendências VALIDAR DEPOIS; log de revisões), append-only, mesmo
+                      critério da seção 2.
+
+specs/<slug>/trd/
+  INDEX.md         — núcleo: seções 1, 2, 14, 17 (contexto, stack tecnológica, controle de versão
+                      por fatia, aprovação) + tabela de navegação para os arquivos abaixo.
+  architecture.md  — seções 3, 4, 5, 7, 9 (visão de arquitetura, modelo de domínio, ports,
+                      adapters, modelo de dados/contratos externos).
+  contract.md      — seção 8 (contrato Frontend↔Backend) — lido isoladamente por
+                      `backend-developer`/`frontend-developer` sem precisar reler o TRD inteiro.
+  use-cases.md     — seção 6 (casos de uso — critério de aceite do PRD → caso de uso → ports).
+  quality.md       — seções 10, 12 (pilares de engenharia de software; riscos e trade-offs).
+  test-plan.md     — seção 11 (plano de testes, alto nível).
+  tasks.md         — seção 13 (decomposição de tarefas e dependências — fatias verticais —,
+                      incluindo a subseção "Janelas de quebra de contrato entre fatias").
+  tracking.md      — seções 15-16 (pendências VALIDAR DEPOIS; log de revisões), append-only.
+```
+
+Toda referência numerada a seção de PRD/TRD em qualquer agente/skill/doc deste pipeline continua
+válida como está — resolva pela tabela acima quando a spec já usa o formato novo
+(`specs/<slug>/prd/` ou `specs/<slug>/trd/` existe) ou pelo arquivo único de sempre quando não
+(`specs/<slug>/prd.md`/`trd.md`), mesmo critério de detecção estrutural da seção 2 (diretório
+existe → novo; só arquivo único existe → legado). **Formato legado continua suportado para
+leitura**, mesma regra da seção 2 — a migração para o split por tópico também não é automática
+(`/sdd-migrate <slug> prd`/`trd`, seção 3 abaixo).
+
 ## 3. Marcador de versão de formato + migração genérica (qualquer artefato gerado em projeto consumidor)
 
 Todo template em `specs/_template/` (inclusive cada arquivo dentro de
-`specs/_template/reviews/<stage>/`) declara sua própria versão de formato numa linha HTML comment
-logo após o título: `<!-- sdd-format-version: N -->`. Todo artefato que um agente gera "a partir
-de" esse template herda essa linha verbatim — é assim que a instância real em `specs/<slug>/...`
-carrega a mesma informação. A numeração é **por artefato**, nunca global: `qa-report` pode estar
-em `v2` enquanto `prd` continua em `v1` desde que o pipeline existe — um não bloqueia o outro.
+`specs/_template/reviews/<stage>/` e, para PRD/TRD, dentro de `specs/_template/prd/` e
+`specs/_template/trd/`) declara sua própria versão de formato numa linha HTML comment logo após o
+título: `<!-- sdd-format-version: N -->`. Todo artefato que um agente gera "a partir de" esse
+template herda essa linha verbatim — é assim que a instância real em `specs/<slug>/...` carrega a
+mesma informação. A numeração é **por artefato**, nunca global: `qa-report` pode estar em `v2`
+enquanto `coverage-summary` continua em `v1` desde que o pipeline existe — um não bloqueia o
+outro.
 
 `/sdd-migrate <slug> <artefato>` é o comando genérico que lê a versão gravada na instância real
 (`specs/<slug>/...`), compara com a versão atual do template correspondente, e aplica a
@@ -94,13 +145,13 @@ transformação registrada se houver uma — nunca automaticamente, sempre por p
 artefato de uma spec por vez. O registro de migrações vive em
 `.claude/skills/sdd-migrate/migrations/`: um arquivo por par `<artefato>-v<origem>-to-v<destino>`,
 cada um descrevendo a própria detecção e transformação — nenhum comando genérico centraliza a
-lógica de todo artefato, só sabe onde procurar o par certo. Hoje só existe um par registrado por
-artefato — `code-review`, `qa-report`, `security-review`, `sre-review` e `ux-review`, todos
-`v1` (arquivo único) `→` `v2` (split físico por rodada, seção 2 acima). Artefatos sem par
-registrado (`prd`, `trd`, `coverage-summary`, `timing-log`, `oneshot`) nunca mudaram de formato
-desde que o pipeline existe — o comando responde "nada para migrar" para eles, não um erro; é a
-infraestrutura pronta para quando (e se) uma mudança de formato futura precisar de um par novo,
-sem reescrever o comando em si.
+lógica de todo artefato, só sabe onde procurar o par certo. Hoje existe um par `v1 → v2`
+registrado para sete artefatos — `code-review`, `qa-report`, `security-review`, `sre-review` e
+`ux-review` (`v2` = split físico por rodada, seção 2 acima) e `prd` e `trd` (`v2` = split por
+tópico, seção 2b acima). Artefatos sem par registrado (`coverage-summary`, `timing-log`,
+`oneshot`) nunca mudaram de formato desde que o pipeline existe — o comando responde "nada para
+migrar" para eles, não um erro; é a infraestrutura pronta para quando (e se) uma mudança de
+formato futura precisar de um par novo, sem reescrever o comando em si.
 
 **A mesma convenção vale para artefato de `docs/` gerado por um agente sem template em
 `specs/_template/`** (a estrutura exata vive inline no próprio arquivo-filho do agente, ex.

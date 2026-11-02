@@ -175,26 +175,46 @@ function Test-FatiaPendente {
 $SpecsDir = "specs"
 $Stages = @("prd", "trd", "code-review", "ux-review", "qa-report", "security-review", "sre-review")
 
-# Resolve o arquivo "primario" de uma etapa (onde fica o veredito/Historico de aprovacoes):
-# formato novo usa INDEX.md dentro de reviews/<etapa>/, legado usa <etapa>.md direto
-# (docs/MICRO-CONTEXT.md, secao 2). A deteccao e generica — nenhuma etapa precisa de mudanca
-# de codigo aqui quando migra; as 5 etapas de revisao (code-review, ux-review, qa-report,
-# security-review, sre-review) ja migraram — specs antigas continuam caindo no legado.
+# Resolve o arquivo "primario" de uma etapa (onde fica o veredito/Historico de aprovacoes, ou -
+# para prd/trd - a secao "Aprovacao"): duas camadas de split existem (docs/MICRO-CONTEXT.md,
+# secoes 2 e 2b). prd/trd (split por topico, sem rodada) usam INDEX.md direto em
+# specs/<slug>/<etapa>/; os 5 artefatos de revisao (split por rodada) usam INDEX.md dentro de
+# specs/<slug>/reviews/<etapa>/. Legado (nenhum diretorio existe) cai em <etapa>.md direto.
 function Get-StagePrimaryFile {
   param([string]$DirPath, [string]$Stage)
+  if ($Stage -eq "prd" -or $Stage -eq "trd") {
+    $novoTopico = Join-Path $DirPath "$Stage\INDEX.md"
+    if (Test-Path $novoTopico) { return $novoTopico }
+    return (Join-Path $DirPath "$Stage.md")
+  }
   $novo = Join-Path $DirPath "reviews\$Stage\INDEX.md"
   if (Test-Path $novo) { return $novo }
   return (Join-Path $DirPath "$Stage.md")
 }
 
 # Resolve o arquivo de "tracking" de uma etapa (achados/pendencias VALIDAR DEPOIS/log de
-# revisoes): formato novo usa tracking.md dentro de reviews/<etapa>/; legado usa o mesmo
-# arquivo do veredito, porque la tudo vive junto.
+# revisoes): formato novo usa tracking.md dentro de specs/<slug>/<etapa>/ (prd/trd) ou
+# specs/<slug>/reviews/<etapa>/ (os 5 artefatos de revisao); legado usa o mesmo arquivo do
+# veredito, porque la tudo vive junto.
 function Get-StageTrackingFile {
   param([string]$DirPath, [string]$Stage)
+  if ($Stage -eq "prd" -or $Stage -eq "trd") {
+    $novoTopico = Join-Path $DirPath "$Stage\INDEX.md"
+    if (Test-Path $novoTopico) { return (Join-Path $DirPath "$Stage\tracking.md") }
+    return (Join-Path $DirPath "$Stage.md")
+  }
   $novo = Join-Path $DirPath "reviews\$Stage\INDEX.md"
   if (Test-Path $novo) { return (Join-Path $DirPath "reviews\$Stage\tracking.md") }
   return (Join-Path $DirPath "$Stage.md")
+}
+
+# Resolve o arquivo onde vive a tabela "Decomposicao de tarefas e dependencias" (secao 13 do
+# TRD): formato novo usa trd/tasks.md; legado usa o trd.md unico.
+function Get-TrdTasksFile {
+  param([string]$DirPath)
+  $novo = Join-Path $DirPath "trd\INDEX.md"
+  if (Test-Path $novo) { return (Join-Path $DirPath "trd\tasks.md") }
+  return (Join-Path $DirPath "trd.md")
 }
 
 $Labels = @{
@@ -297,7 +317,7 @@ foreach ($d in $dirs) {
   # acumula os alvos em vez de sobrescrever (issue #332): a coluna guardava uma string so e a
   # ultima etapa iterada vencia, entao uma flag legitima de outra etapa sumia da saida
   $revalAlvos = [ordered]@{}
-  $fatiaPendente = Test-FatiaPendente (Join-Path $d.FullName "trd.md")
+  $fatiaPendente = Test-FatiaPendente (Get-TrdTasksFile $d.FullName)
 
   foreach ($stage in $Stages) {
     $file = Get-StagePrimaryFile $d.FullName $stage

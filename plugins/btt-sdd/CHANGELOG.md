@@ -17,6 +17,41 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.53.0 — 2026-11-02
+
+- PRD e TRD ganham formato v2: split por tópico (núcleo `INDEX.md` + arquivos-filho lidos sob
+  demanda — `docs/MICRO-CONTEXT.md`, seção 2b nova), simétrico ao split por rodada que os 5
+  artefatos de revisão já tinham, mas sem rodada (PRD/TRD nascem de uma invocação só e são
+  emendados via `/sdd-amend`, nunca reescritos por fatia). Cada seção mantém o número que tinha
+  no arquivo único — nenhuma referência existente a "seção N do PRD/TRD" precisou mudar de
+  número, só de arquivo.
+- Novos templates: `specs/_template/prd/{index,user-stories,value-order,tracking}.template.md` e
+  `specs/_template/trd/{index,architecture,contract,use-cases,quality,test-plan,tasks,
+  tracking}.template.md`.
+- Novas regras de migração `prd-v1-to-v2.md`/`trd-v1-to-v2.md` em `skills/migrate/migrations/` —
+  `/sdd-migrate <slug> prd` e `/sdd-migrate <slug> trd` agora convertem de verdade (antes
+  respondiam "nada para migrar" porque não existia formato v2 registrado para esses dois
+  artefatos).
+- `check-migration-coverage.py` generalizado para detectar split por tópico (`specs/_template/
+  <artefato>/index.template.md`) além do split por rodada já suportado
+  (`specs/_template/reviews/<artefato>/index.template.md`).
+- Todo consumidor do pipeline atualizado para ler/escrever o formato novo, detectando legado vs.
+  split (mesmo critério já usado pelos 5 artefatos de revisão): `product-design`/`sdd-prd` e
+  `architect`/`sdd-trd` passam a escrever specs novas direto no formato v2; `sdd-amend`,
+  `sdd-status`, `sdd-pending`, `sdd-gap-report` (scripts `.sh`/`.ps1` inclusos) e `sdd-implement`
+  passam a resolver o arquivo certo em qualquer formato; `backend-developer`,
+  `frontend-developer`, `code-reviewer`, `qa-engineer`, `security-engineer`, `ux-designer`, `sre`
+  (+ arquivos-filho), `tech-writer` (+ arquivos-filho), `create-project` e as skills
+  `sdd-code-review`/`sdd-qa`/`sdd-security`/`sdd-sre` atualizados para a mesma detecção.
+- Demo de migração real: `specs/0001-example-task-management/prd.md`/`trd.md` migrados para
+  `prd/`/`trd/` (mesmo espírito da demo de `qa-report` em `1.52.x`), com banner de "migrado"
+  preservado nos arquivos legados.
+- Pedido direto do usuário durante uma sessão de `/sdd-implement`: PRD/TRD de specs reais
+  cresciam sem a mesma estrutura enxuta já aplicada aos artefatos de revisão, e `/sdd-migrate`
+  não fazia nada por falta de formato v2 registrado (issue #596).
+- Bump de versão do plugin: `1.52.13` -> `1.53.0` (capacidade nova, não só ajuste — split
+  por tópico de PRD/TRD toca praticamente todo o conteúdo empacotado).
+
 ## 1.52.13 — 2026-11-02
 
 - Este arquivo deixa de ser só histórico e volta a ser mantido: reescreve o cabeçalho para

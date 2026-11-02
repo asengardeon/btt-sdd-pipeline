@@ -45,7 +45,9 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 ## Processo
 
 1. **Entenda o pedido.** Leia o que o usuário descreveu. Se o repositório já tem specs
-   relacionadas (`specs/*/prd.md`), leia-as para não contradizer decisões de produto já tomadas.
+   relacionadas, leia-as para não contradizer decisões de produto já tomadas — `specs/*/prd/
+   INDEX.md` + `user-stories.md` (formato novo, split por tópico) ou `specs/*/prd.md` (formato
+   legado), conforme qual existir (`docs/MICRO-CONTEXT.md`, seção 2b).
 1b. **Decida o escopo da spec antes de escrever qualquer coisa: uma spec é uma feature de
    usuário.** Se o pedido reúne mais de uma, quebre numa **sequência numerada de specs** e confirme
    a ordem com o usuário (`AskUserQuestion`) em vez de produzir um PRD único grande. Sinais
@@ -117,22 +119,29 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 3d. **Preencha a subseção "Parecer de UX (`ux-designer`)" da seção 7, quando a feature tem UI.**
    Mesmo arquivo-filho do passo 3c: `product-design/wireframe-e-ux-parecer.md`.
 
-4. **Escreva o PRD** usando `specs/_template/prd.template.md` como estrutura, salvando em
-   `specs/<NNNN-slug-da-feature>/prd.md` (NNNN é o próximo número sequencial em `specs/`, slug em
-   kebab-case). Critérios de aceite devem ser verificáveis — prefira o formato Gherkin
-   (Given/When/Then) porque o QA vai usá-los literalmente como checklist depois.
+4. **Escreva o PRD no formato split por tópico** (`docs/MICRO-CONTEXT.md`, seção 2b — toda spec
+   nova nasce direto nesse formato, nunca no arquivo único legado): crie o diretório
+   `specs/<NNNN-slug-da-feature>/prd/` (NNNN é o próximo número sequencial em `specs/`, slug em
+   kebab-case) com `INDEX.md` a partir de `specs/_template/prd/index.template.md`,
+   `user-stories.md` a partir de `specs/_template/prd/user-stories.template.md`, `value-order.md`
+   a partir de `specs/_template/prd/value-order.template.md`, e `tracking.md` a partir de
+   `specs/_template/prd/tracking.template.md`. Critérios de aceite devem ser verificáveis —
+   prefira o formato Gherkin (Given/When/Then) porque o QA vai usá-los literalmente como checklist
+   depois.
 
 5. **Apresente um resumo curto** ao usuário (não repita o PRD inteiro no chat) e peça aprovação
-   explícita antes de considerar a etapa concluída. Se o usuário pedir mudanças, edite o PRD
-   in-place (não crie um segundo arquivo, não recrie do zero) e registre a mudança na seção "Log
-   de revisões" quando o PRD já estava aprovado antes.
+   explícita antes de considerar a etapa concluída. Se o usuário pedir mudanças, edite o arquivo
+   certo in-place (`INDEX.md`, `user-stories.md`, `value-order.md` ou `tracking.md`, conforme a
+   seção — não crie um segundo arquivo, não recrie do zero) e registre a mudança em
+   `tracking.md`, seção "Log de revisões", quando o PRD já estava aprovado antes.
 
 ## Definição de pronto (Definition of Done) desta etapa
 
 Ver `docs/gates/prd.md` para a lista completa. Resumo:
 
-- `specs/<slug>/prd.md` existe, segue o template, e todo critério de aceite é testável por um
-  terceiro sem contexto adicional.
+- `specs/<slug>/prd/INDEX.md` existe (com `user-stories.md`, `value-order.md` e `tracking.md` no
+  mesmo diretório), segue os templates, e todo critério de aceite é testável por um terceiro sem
+  contexto adicional.
 - Seções "Fora de escopo", "Indicadores técnicos a observar" e "Ordem de valor / dependências
   entre histórias (fatias verticais de entrega)" preenchidas explicitamente — cada fatia com seu
   entregável demonstrável descrito, nunca em branco.

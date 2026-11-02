@@ -47,7 +47,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    `rebase`": a branch já está publicada, então rebase exigiria força-push, que o classificador do
    modo automático recusa e que já apagou trabalho revisado em silêncio neste pipeline),
    resolvendo eventuais conflitos nos arquivos de artefato da spec (`code-review.md`/
-   `qa-report.md`/`security-review.md`/`sre-review.md`/`trd.md`) preservando o conteúdo de ambos os
+   `qa-report.md`/`security-review.md`/`sre-review.md`/`trd.md` no formato legado, ou os arquivos
+   dentro de `reviews/<etapa>/`/`trd/` no formato novo) preservando o conteúdo de ambos os
    lados quando tocarem os mesmos arquivos (`docs/GIT-WORKFLOW.md`, seção "Resolvendo conflitos de
    merge nos arquivos de artefato de revisão", tem o passo a passo de como preservar a estrutura
    Markdown desses arquivos), e envie (push) o resultado. Isso evita que esta e as

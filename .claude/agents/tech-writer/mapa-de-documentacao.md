@@ -33,11 +33,12 @@ Atualizado em: <AAAA-MM-DD>
 
 | Slug | PRD | TRD | Code review | UX review | QA | Segurança | SRE |
 |------|-----|-----|--------------|-----------|----|-----------|-----|
-| <slug> | `prd.md` | `trd.md` | `reviews/code-review/INDEX.md` (novo) | `ux-review.md` (legado) | — | — | — |
+| <slug> | `prd/INDEX.md` (novo) | `trd.md` (legado) | `reviews/code-review/INDEX.md` (novo) | `ux-review.md` (legado) | — | — | — |
 
-Cada célula de artefato de revisão é um dos três valores: o caminho de entrada com `(novo)` —
-`reviews/<stage>/INDEX.md` —, o caminho com `(legado)` — `<stage>.md` —, ou `—` se o artefato
-ainda não existe para aquela spec/fatia.
+Cada célula de artefato é um dos três valores: o caminho de entrada com `(novo)` — `prd/INDEX.md`/
+`trd/INDEX.md` para PRD/TRD (split por tópico), `reviews/<stage>/INDEX.md` para os 5 artefatos de
+revisão (split por rodada) —, o caminho com `(legado)` — `prd.md`/`trd.md`/`<stage>.md` —, ou `—`
+se o artefato ainda não existe para aquela spec/fatia.
 
 ## Docs do projeto (`docs/`)
 
@@ -64,8 +65,10 @@ ainda não existe para aquela spec/fatia.
    artefatos de revisão (`code-review`, `ux-review`, `qa-report`, `security-review`,
    `sre-review`), teste `specs/<slug>/reviews/<stage>/INDEX.md` primeiro; se não existir, teste
    `specs/<slug>/<stage>.md`; se nenhum existir, a célula é `—` (mesma lógica de detecção já
-   usada por `sdd-status.sh`/`sdd-pending.sh`, `docs/MICRO-CONTEXT.md`, seção 2). PRD e TRD não
-   têm dual-format — só confira se `prd.md`/`trd.md` existem.
+   usada por `sdd-status.sh`/`sdd-pending.sh`, `docs/MICRO-CONTEXT.md`, seção 2). **PRD e TRD
+   também têm dual-format** (split por tópico em vez de por rodada, `docs/MICRO-CONTEXT.md`,
+   seção 2b): teste `specs/<slug>/prd/INDEX.md`/`specs/<slug>/trd/INDEX.md` primeiro; se não
+   existir, teste `specs/<slug>/prd.md`/`trd.md`.
 2. **Docs do projeto**: teste a existência de cada arquivo condicional listado na tabela. Para o
    resumo de 1 linha, leia só o suficiente do arquivo para extrair a essência (ex.: a primeira
    frase de `docs/STACK.md`, ou o título da decisão mais recente) — nunca abra o arquivo inteiro

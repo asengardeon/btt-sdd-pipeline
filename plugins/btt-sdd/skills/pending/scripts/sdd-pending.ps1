@@ -136,16 +136,25 @@ if (Test-Path $SpecsDir) {
 
   foreach ($d in $dirs) {
     foreach ($f in $Files) {
-      # Formato novo (docs/MICRO-CONTEXT.md, secao 2): pendencias de "<etapa>.md" migrada
-      # vivem em reviews/<etapa>/tracking.md, nao no arquivo unico legado. As 5 etapas de
-      # revisao (code-review, ux-review, qa-report, security-review, sre-review) ja migraram —
-      # specs antigas continuam caindo no legado.
+      # Duas camadas de split existem (docs/MICRO-CONTEXT.md, secoes 2 e 2b): prd/trd (split
+      # por topico) usam tracking.md direto em "<etapa>\"; os 5 artefatos de revisao (split por
+      # rodada) usam tracking.md dentro de "reviews\<etapa>\". Formato legado (nenhum diretorio
+      # existe) cai no arquivo unico.
       $stage = $f -replace '\.md$', ''
-      $novo = Join-Path $d.FullName "reviews\$stage\INDEX.md"
-      if (Test-Path $novo) {
-        $file = Join-Path $d.FullName "reviews\$stage\tracking.md"
+      if ($stage -eq "prd" -or $stage -eq "trd") {
+        $novoTopico = Join-Path $d.FullName "$stage\INDEX.md"
+        if (Test-Path $novoTopico) {
+          $file = Join-Path $d.FullName "$stage\tracking.md"
+        } else {
+          $file = Join-Path $d.FullName $f
+        }
       } else {
-        $file = Join-Path $d.FullName $f
+        $novo = Join-Path $d.FullName "reviews\$stage\INDEX.md"
+        if (Test-Path $novo) {
+          $file = Join-Path $d.FullName "reviews\$stage\tracking.md"
+        } else {
+          $file = Join-Path $d.FullName $f
+        }
       }
       if (-not (Test-Path $file)) { continue }
       $content = Get-Content $file -Raw -Encoding UTF8
@@ -154,14 +163,20 @@ if (Test-Path $SpecsDir) {
       }
     }
 
-    $trdFile = Join-Path $d.FullName "trd.md"
+    $trdSplit = Join-Path $d.FullName "trd\INDEX.md"
+    if (Test-Path $trdSplit) {
+      $trdFile = Join-Path $d.FullName "trd\tasks.md"
+    } else {
+      $trdFile = Join-Path $d.FullName "trd.md"
+    }
     $prdFile = Join-Path $d.FullName "prd.md"
+    $prdSplit = Join-Path $d.FullName "prd\INDEX.md"
     if (Test-Path $trdFile) {
       $content = Get-Content $trdFile -Raw -Encoding UTF8
       foreach ($row in (Get-OpenTaskRows -Content $content -SourcePath $trdFile)) {
         $allTaskRows += [PSCustomObject]@{ Feature = $d.Name; Id = $row.Id; Tarefa = $row.Tarefa; Trilha = $row.Trilha; Status = $row.Status; Issue = $row.Issue }
       }
-    } elseif (Test-Path $prdFile) {
+    } elseif ((Test-Path $prdFile) -or (Test-Path $prdSplit)) {
       $specsSemTrd += $d.Name
     }
   }

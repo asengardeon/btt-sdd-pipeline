@@ -1,6 +1,6 @@
 ---
 name: sdd-trd
-description: Etapa 2 do pipeline SDD. Use depois que um PRD existe e foi aprovado, para gerar o desenho técnico. Aciona o agente architect para produzir specs/<slug>/trd.md a partir de specs/<slug>/prd.md.
+description: Etapa 2 do pipeline SDD. Use depois que um PRD existe e foi aprovado, para gerar o desenho técnico. Aciona o agente architect para produzir specs/<slug>/trd/ (split por tópico) a partir de specs/<slug>/prd/.
 ---
 
 # /sdd-trd
@@ -16,17 +16,19 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 ## Passos
 
 1. Identifique o PRD de entrada: se `args` é um caminho de arquivo existente, use-o diretamente
-   como PRD (mesmo fora da convenção `specs/<slug>/prd.md` — você não depende dessa convenção
+   como PRD (mesmo fora da convenção `specs/<slug>/prd/` — você não depende dessa convenção
    para funcionar em qualquer projeto). Senão, identifique o slug (se `args` traz um slug ou
-   número, use-o; senão, se só existe uma spec com `prd.md` sem `trd.md` ainda, use essa; senão,
-   pergunte ao usuário qual feature) e confirme que `specs/<slug>/prd.md` existe.
+   número, use-o; senão, se só existe uma spec com PRD sem TRD ainda, use essa; senão,
+   pergunte ao usuário qual feature) e confirme que `specs/<slug>/prd/INDEX.md` (formato novo) ou
+   `specs/<slug>/prd.md` (formato legado) existe.
 2. Se nenhum PRD foi encontrado nem indicado, informe o usuário e sugira rodar `/sdd-prd`
    primeiro — não prossiga sem PRD.
 3. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 3c para
    registrar a duração desta invocação. Invoque o agente `architect` (Agent tool,
-   `subagent_type: "architect"`) passando o caminho do PRD e instrução para salvar o TRD em
-   `specs/<slug>/trd.md` usando `specs/_template/trd.template.md`, registrando ADRs em `docs/adr/`
-   quando relevante.
+   `subagent_type: "architect"`) passando o caminho do PRD e instrução para salvar o TRD no
+   formato split por tópico em `specs/<slug>/trd/` (`docs/MICRO-CONTEXT.md`, seção 2b, a partir
+   dos templates em `specs/_template/trd/` — nunca o arquivo único legado `trd.md` para uma spec
+   nova), registrando ADRs em `docs/adr/` quando relevante.
 3b. **Se `architect` estiver rodando como subagente assíncrono/em background e devolver uma
    pergunta/lista de perguntas em texto puro** (sinal de que `AskUserQuestion` não estava
    disponível para ele nesse modo — mesmo padrão já documentado para `sre`/`/sdd-sre`,

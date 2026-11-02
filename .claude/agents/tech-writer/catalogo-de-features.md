@@ -46,9 +46,10 @@ tarefa" + "rejeitar título vazio" + "rejeitar título duplicado") formam um com
 
 ## Processo de geração
 
-1. **Para cada spec em `specs/*/`** (exclua `_template`) que tenha `prd.md` aprovado: leia a
-   seção 6 do PRD ("Histórias de usuário e critérios de aceite") e a seção 6 do TRD ("Casos de
-   uso"), se o TRD já existir.
+1. **Para cada spec em `specs/*/`** (exclua `_template`) que tenha PRD aprovado (`prd/INDEX.md`
+   formato novo, `prd.md` legado): leia a seção 6 do PRD ("Histórias de usuário e critérios de
+   aceite" — `prd/user-stories.md` no formato novo) e a seção 6 do TRD ("Casos de uso" —
+   `trd/use-cases.md` no formato novo), se o TRD já existir.
 2. **Confirme implementação real antes de escrever qualquer linha** — nunca assuma que um
    critério de aceite aprovado em QA ainda reflete o código atual. **Tente a ferramenta primeiro**
    (`docs/MICRO-CONTEXT.md`, seção 4): se `/sdd-gap-report` (ou os scripts em

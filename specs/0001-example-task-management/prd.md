@@ -1,5 +1,9 @@
 # PRD — Gestão simples de tarefas (exemplo do pipeline SDD)
 
+> **Migrado para o formato novo em 2026-11-02.** Ver
+> `specs/0001-example-task-management/prd/`. Este arquivo é mantido como referência histórica —
+> não edite; toda mudança nova usa o formato novo.
+
 > Status: aprovado
 > Autor: agente `product-design`
 > Relacionado: nenhum (primeira feature do repositório)

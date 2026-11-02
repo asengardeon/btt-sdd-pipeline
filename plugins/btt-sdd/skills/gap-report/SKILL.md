@@ -23,8 +23,10 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    manualmente** (economiza tokens e tool calls): rode
    `${CLAUDE_SKILL_DIR}/scripts/sdd-gap-report.sh <slug> [caminho-busca ...]` (bash) ou
    `${CLAUDE_SKILL_DIR}/scripts/sdd-gap-report.ps1 -Slug <slug> [-SearchPaths <caminho1>,<caminho2>,...]`
-   (PowerShell) — o script roda a partir de onde estiver instalado, mas lê `specs/<slug>/trd.md` e
-   o código relativos ao diretório de trabalho atual, que deve ser a raiz do projeto.
+   (PowerShell) — o script roda a partir de onde estiver instalado, mas lê o TRD (`specs/<slug>/
+   trd/use-cases.md` no formato novo, `specs/<slug>/trd.md` no legado — `docs/MICRO-CONTEXT.md`,
+   seção 2b, detectado automaticamente) e o código relativos ao diretório de trabalho atual, que
+   deve ser a raiz do projeto.
 2. `<slug>` é obrigatório — sem TRD para comparar não há gap a reportar; se o usuário não deu um
    slug, rode `/btt-sdd:status` primeiro para descobrir qual feature ele quer, ou pergunte.
 3. Por padrão o script busca em `src/` e, se existir, `frontend/`. **Se o projeto usa outra
@@ -48,8 +50,9 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 
 ### Fallback sem o script (comportamento anterior)
 
-1. Leia `specs/<slug>/trd.md`, seção 6 ("Casos de uso") — tabela "Critério de aceite (PRD) | Caso
-   de uso | Ports usados".
+1. Leia o TRD, seção 6 ("Casos de uso") — `specs/<slug>/trd/use-cases.md` no formato novo,
+   `specs/<slug>/trd.md` no legado — tabela "Critério de aceite (PRD) | Caso de uso | Ports
+   usados".
 2. Para cada linha, grep pelo nome de classe do caso de uso em `src/` (e `frontend/`, se
    existir e a feature tiver UI) para confirmar se existe implementação.
 3. Apresente uma tabela: caso de uso | critério de aceite (US) | implementado (sim/não) | arquivo

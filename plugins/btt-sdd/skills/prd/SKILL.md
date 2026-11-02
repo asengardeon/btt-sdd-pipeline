@@ -1,6 +1,6 @@
 ---
 name: prd
-description: Etapa 1 do pipeline SDD. Use quando o usuário descrever uma nova feature, um problema a resolver, ou pedir explicitamente um PRD. Aciona o agente product-design para produzir specs/<slug>/prd.md.
+description: Etapa 1 do pipeline SDD. Use quando o usuário descrever uma nova feature, um problema a resolver, ou pedir explicitamente um PRD. Aciona o agente product-design para produzir specs/<slug>/prd/ (split por tópico, docs/MICRO-CONTEXT.md seção 2b).
 ---
 
 # /btt-sdd:prd
@@ -94,8 +94,10 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    resultado do passo 2b (opção de wireframe escolhida com a referência do Artifact, o caminho do
    arquivo salvo em `specs/<NNNN-slug>/wireframes/`, o status do sistema de design usado, recusa
    explícita do usuário, o parecer de `ux-designer` coletado no passo 2b, ou "não aplicável" se a
-   feature não tem UI), e instrução explícita para salvar o PRD em `specs/<NNNN-slug>/prd.md`
-   usando `specs/_template/prd.template.md` como estrutura — incluindo a seção
+   feature não tem UI), e instrução explícita para salvar o PRD no formato split por tópico em
+   `specs/<NNNN-slug>/prd/` (`INDEX.md`, `user-stories.md`, `value-order.md`, `tracking.md`, a
+   partir dos templates em `specs/_template/prd/` — `docs/MICRO-CONTEXT.md`, seção 2b; nunca o
+   arquivo único legado `prd.md` para uma spec nova) — incluindo, em `user-stories.md`, a seção
    "Wireframes/Protótipos de tela" e sua subseção "Parecer de UX (ux-designer)".
 3b. **Se `product-design` estiver rodando como subagente assíncrono/em background e devolver uma
    pergunta/lista de perguntas em texto puro** (sinal de que `AskUserQuestion` não estava

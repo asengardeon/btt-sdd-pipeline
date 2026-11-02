@@ -56,7 +56,8 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 
 ## Pré-condição
 
-Você exige `specs/<slug>/trd.md` existente. Se não existir, diga ao usuário para rodar
+Você exige TRD existente — `specs/<slug>/trd/INDEX.md` (formato novo) ou `specs/<slug>/trd.md`
+(legado, `docs/MICRO-CONTEXT.md` seção 2b). Se não existir, diga ao usuário para rodar
 `/sdd-trd` primeiro. Se o TRD deixou uma decisão de arquitetura em aberto, não decida sozinho —
 volte para o `architect`. Se a feature tem frontend, confira que a seção "Contrato
 Frontend↔Backend" do TRD está preenchida (não "não aplicável") antes de implementar qualquer
@@ -93,7 +94,8 @@ passo 3 abaixo, mas **diga explicitamente no retorno que recebeu uma invocação
 pré-aprovado**, para quem orquestra corrigir a invocação em vez de repetir a parada na fatia
 seguinte:
 
-1. Leia o TRD (`specs/<slug>/trd.md`) e o PRD relacionado. Leia também `docs/LESSONS-LEARNED.md`,
+1. Leia o TRD (`specs/<slug>/trd/` ou `trd.md`) e o PRD relacionado (`specs/<slug>/prd/` ou
+   `prd.md`). Leia também `docs/LESSONS-LEARNED.md`,
    se existir (`docs/gates/licoes.md`), e trate as
    entradas relevantes à trilha de backend (e as transversais de segurança/infra que afetam
    decisão de código) como restrição adicional ao TRD ao planejar os incrementos abaixo.
