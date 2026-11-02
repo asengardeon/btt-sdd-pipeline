@@ -57,6 +57,31 @@ provedor de nuvem de verdade; a troca é só a implementação injetada (Liskov,
 - **E2E** (`tests/e2e/`): testam o fluxo completo através de um adapter de entrada real (CLI,
   HTTP), exercitando o caminho ponta a ponta que o usuário realmente percorre.
 
+### Peças isoladas passando não provam que o comportamento de ponta a ponta é o esperado
+
+Uma feature que reaproveita um binding/adapter genérico de um sistema com "fallback sensato"
+(DI container com resolução automática por interface, roteamento de framework, middleware padrão)
+pode ter cada peça isolada testada e verde — o canal configurado funciona quando testado
+diretamente, o alerta dispara, o conteúdo não vazou dado sensível — e ainda assim produzir um
+resultado de ponta a ponta diferente do esperado, porque o **caminho padrão que o framework já
+tinha** (e que a feature nova não substituiu explicitamente) continua ativo e colide com o
+binding novo sem gerar erro nenhum: não há exceção não tratada, não há teste que falhe, só o
+comportamento errado silenciosamente. Testar a peça nova em isolamento não exercita essa colisão,
+porque o teste isolado não aciona o caminho padrão do framework — só o caminho que a feature
+desenhou.
+
+Sempre que uma tarefa reaproveitar um binding/adapter genérico já existente (uma interface do
+tipo `*Interface`/`*Contract` que outra parte do sistema, incluindo o próprio framework, também
+pode resolver), o teste de integração correspondente precisa disparar o comportamento **padrão**
+do framework/sistema (não só o novo) e medir a **saída real** (formato do log, canal que recebeu,
+corpo da resposta) — nunca só confirmar que a peça nova, chamada diretamente, funciona. Já
+aconteceu de verdade: um binding de `LoggerInterface` reaproveitado para um alerta de erro crítico
+colidiu com o fallback de log de exceção que o próprio framework já usava, fazendo toda exceção em
+produção logar em formato errado (texto simples em vez de JSON) — quatro revisões independentes
+(code review, QA, segurança, SRE) aprovaram a fatia sem pegar isso, porque cada uma testou uma
+peça isolada, e só a primeira exceção real passando pelo pipeline completo (validação manual
+pós-merge) revelou a divergência.
+
 ## Frontend (quando aplicável)
 
 Mesmo TDD, mesma pirâmide, mapeados em `frontend/tests/` — componentes/serviços testados com um
