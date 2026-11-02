@@ -101,7 +101,7 @@ Cada agente vive em `.claude/agents/<nome>.md` e é acionado por uma skill em
 | `/sdd-gap-report`   | (nenhum, utilitário)                             | compara casos de uso do TRD (seção 6) com o código real |
 | `/sdd-migrate`      | (nenhum, utilitário)                             | converte um artefato de uma spec da versão de formato antiga para a atual |
 | `/sdd-project-conventions` | codebase-archaeologist                    | `docs/PROJECT-CONVENTIONS.md` (condicional) — particularidades do projeto vs. padrão do pipeline (git workflow, estrutura etc.) |
-| `/sdd-docs`         | tech-writer (utilitário, sem etapa fixa; também acionado automaticamente por `/sdd-sre` ao aprovar a última fatia pendente de uma spec) | README, docs/, ADRs, ou exemplos de código documentados |
+| `/sdd-docs`         | tech-writer (utilitário, sem etapa fixa; também acionado automaticamente por `/sdd-sre` ao aprovar a última fatia pendente de uma spec) | README, docs/, ADRs, exemplos de código documentados, `docs/DOCS-MAP.md` (mapa de navegação) ou `docs/FEATURES.md` (catálogo de comportamento/features) |
 
 **As etapas 4-7 e 4b (revisão) sempre passam pela skill própria — nunca invoque `code-reviewer`,
 `ux-designer`, `qa-engineer`, `security-engineer` ou `sre` diretamente via Agent tool fora de
