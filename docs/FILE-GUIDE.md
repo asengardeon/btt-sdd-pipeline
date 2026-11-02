@@ -88,8 +88,9 @@ DEPOIS" como opção quando cabível.
   relatório de cobertura quando
   precisa (o resumo já gerado pela implementação em `specs/<slug>/coverage/` é reaproveitado
   quando ainda corresponde ao commit atual — `docs/TESTING.md`), e para commitar/enviar (push) o
-  próprio `qa-report.md` na branch do PR antes de terminar; `Write`/`Edit` só para esse arquivo —
-  QA não corrige código de produção, reporta.
+  próprio artefato de revisão (`specs/<slug>/reviews/qa-report/` no formato novo, `qa-report.md`
+  no legado — `docs/MICRO-CONTEXT.md`, seção 2) na branch do PR antes de terminar; `Write`/`Edit`
+  só para esse artefato — QA não corrige código de produção, reporta.
 - **`security-engineer.md`** — revisa segurança da aplicação (OWASP, segredos, autenticação/
   autorização, validação de entrada, dependências) depois do QA. Mesma lógica de `Write`/`Edit`
   restrito ao próprio `security-review.md`, que também commita e envia (push) antes de terminar —
