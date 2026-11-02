@@ -229,3 +229,11 @@
   produzido se confirmou correto em toda verificação independente feita depois, mas o *mecanismo*
   é uma violação de fronteira de responsabilidade: ninguém pediu, e o orquestrador real só soube
   ao ler o relatório final.
+- [ ] **Toda versão de formato nova de um artefato gerado pelo pipeline que quebra a estrutura do
+  arquivo exige, no mesmo commit/PR, a regra de migração correspondente — nunca fica para
+  depois.** Quem aumenta `<!-- sdd-format-version: N -->` num template de
+  `specs/_template/` (`docs/MICRO-CONTEXT.md`, seção 3) é responsável por também criar
+  `.claude/skills/sdd-migrate/migrations/<artefato>-v<N-1>-to-v<N>.md` descrevendo a conversão
+  retroativa daquela versão para a nova — entregar o template novo sem a regra deixa qualquer
+  spec existente sem caminho de migração, mesmo que `/sdd-migrate` já exista como comando.
+  `python scripts/check-migration-coverage.py` verifica isso mecanicamente antes de commitar.

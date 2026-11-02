@@ -109,6 +109,17 @@ inevitável: não existe como gravar retroativamente um marcador num arquivo esc
 inventado — ela se fecha sozinha conforme specs antigas são migradas ou specs novas nascem já com
 o marcador.
 
+**Toda versão de formato nova que quebra a estrutura do arquivo exige a regra de migração
+correspondente no mesmo commit/PR — não é opcional, não fica para depois.** Quem bumpa
+`<!-- sdd-format-version: N -->` de um template (`N` maior do que a versão anterior conhecida
+daquele artefato) é responsável por também criar `migrations/<artefato>-v<N-1>-to-v<N>.md` —
+nunca entregar o template novo e deixar a conversão retroativa para uma sessão futura decidir
+como fazer. `python scripts/check-migration-coverage.py` verifica isso mecanicamente (compara
+a versão de cada template de arquivo único com a versão do split correspondente, quando
+existir, e confirma que o arquivo de regra para cada salto existe) — rode antes de comitar
+qualquer mudança que bump a versão de um template, mesmo padrão de
+`python scripts/check-plugin-sync.py` para a sincronia entre as duas cópias do pipeline.
+
 ## 4. Ferramenta conhecida antes de verificação manual
 
 `docs/TOOLING.md` já cataloga ferramentas determinísticas por área (rtk para saída de shell,
