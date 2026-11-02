@@ -144,7 +144,8 @@ seguem com o `sre`, junto do acionamento do `tech-writer`.
 - **Agente**: `.claude/agents/code-reviewer.md`
 - **Skill**: `/sdd-code-review`
 - **Entrada**: PR aberto pela etapa de implementação desta fatia + TRD.
-- **Saída**: `specs/<slug>/code-review.md` — veredito sobre ports & adapters/regra da
+- **Saída**: `specs/<slug>/reviews/code-review/` (formato novo) ou `specs/<slug>/code-review.md`
+  (legado — `docs/MICRO-CONTEXT.md`, seção 2) — veredito sobre ports & adapters/regra da
   dependência, SOLID, clean code, qualidade dos próprios testes (não cobertura numérica),
   consistência com o contrato Frontend↔Backend quando full-stack, tratamento de erros/casos de
   borda no código, e débito técnico introduzido. Foca em **qualidade e design do código**; não

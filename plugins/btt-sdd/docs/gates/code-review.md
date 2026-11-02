@@ -58,8 +58,10 @@
   declará-la aqui deixa a decisão auditável em vez de implícita. Já aconteceu de uma fatia com
   superfície de UI pular a 4b inteira e ser mergeada em `main` sem revisão de usabilidade, numa
   spec onde a etapa já existia.
-- [ ] `code-review.md` existe, referencia o PR e a fatia desta rodada, e cada área de revisão tem
-  veredito com evidência (arquivo/linha) ou "sem achados".
+- [ ] O artefato de revisão existe (`specs/<slug>/reviews/code-review/` no formato novo,
+  `specs/<slug>/code-review.md` no legado — `docs/MICRO-CONTEXT.md`, seção 2), referencia o PR e
+  a fatia desta rodada, e cada área de revisão tem veredito com evidência (arquivo/linha) ou "sem
+  achados".
 - [ ] **A linha desta rodada existe em `specs/<slug>/timing-log.md` e nomeia uma única etapa.**
   Etapa
   cujo trabalho de orquestrador foi zero registra `0m` com justificativa — nunca nenhuma linha; e
@@ -72,8 +74,10 @@
   como evidência concreta de performance, e os três defeitos de medição empurram na **mesma
   direção**: superestimam as etapas de agente e subestimam as do orquestrador — numa fatia medida,
   29% do esforço era de orquestrador.
-- [ ] `code-review.md` commitado (só esse arquivo, nunca `git add -A`/`.`) na branch do PR pelo
-  próprio `code-reviewer` antes de devolver o resultado, e **integrado na branch da fatia**
+- [ ] O(s) arquivo(s) do artefato de revisão desta rodada (`F-<N>.md`/`hotfix-<data>.md` +
+  `INDEX.md` + `tracking.md` no formato novo; `code-review.md` no legado — nunca `git add
+  -A`/`.`) commitados na branch do PR pelo próprio `code-reviewer` antes de devolver o resultado,
+  e **integrados na branch da fatia**
   por quem o invocou (`git merge --ff-only` da branch informada, com o artefato confirmado
   alcançável) antes de a etapa seguinte começar. **O push não é por etapa**: é um por fatia,
   ao final da cadeia de revisão dela (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia: o

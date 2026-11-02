@@ -1,5 +1,10 @@
 # Code Review — <Nome da Feature>
 
+> **Formato legado.** Specs novas usam o split físico em
+> `specs/_template/reviews/code-review/` (`index.template.md`/`tracking.template.md`/
+> `round.template.md`, `MICRO-CONTEXT.md` do pipeline, seção 2). Este arquivo único só continua
+> sendo usado por specs que já o tinham antes da migração — a migração não é retroativa.
+
 > Autor: agente `code-reviewer`
 > TRD: `specs/<slug>/trd.md`
 > Fatia revisada nesta rodada: `<F-1, ou "única — feature não fatiada">`

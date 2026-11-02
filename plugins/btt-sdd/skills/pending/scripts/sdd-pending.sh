@@ -142,7 +142,15 @@ if [ -d "$SPECS_DIR" ]; then
     if [ -n "$FILTER" ] && [ "$slug" != "$FILTER" ]; then continue; fi
 
     for f in "${FILES[@]}"; do
-      file="${dir}${f}"
+      # Formato novo (docs/MICRO-CONTEXT.md, seção 2): pendências de "<etapa>.md" migrada
+      # vivem em reviews/<etapa>/tracking.md, não no arquivo único legado. Hoje só
+      # "code-review" migrou; as demais caem sempre no legado até migrarem.
+      stage="${f%.md}"
+      if [ -f "${dir}reviews/${stage}/INDEX.md" ]; then
+        file="${dir}reviews/${stage}/tracking.md"
+      else
+        file="${dir}${f}"
+      fi
       [ -f "$file" ] || continue
       collect_rows "$slug" "$f" "$file"
     done

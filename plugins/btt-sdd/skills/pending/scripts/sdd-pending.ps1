@@ -136,7 +136,16 @@ if (Test-Path $SpecsDir) {
 
   foreach ($d in $dirs) {
     foreach ($f in $Files) {
-      $file = Join-Path $d.FullName $f
+      # Formato novo (docs/MICRO-CONTEXT.md, secao 2): pendencias de "<etapa>.md" migrada
+      # vivem em reviews/<etapa>/tracking.md, nao no arquivo unico legado. Hoje so
+      # "code-review" migrou; as demais caem sempre no legado ate migrarem.
+      $stage = $f -replace '\.md$', ''
+      $novo = Join-Path $d.FullName "reviews\$stage\INDEX.md"
+      if (Test-Path $novo) {
+        $file = Join-Path $d.FullName "reviews\$stage\tracking.md"
+      } else {
+        $file = Join-Path $d.FullName $f
+      }
       if (-not (Test-Path $file)) { continue }
       $content = Get-Content $file -Raw -Encoding UTF8
       foreach ($row in (Get-PendingRows -Content $content)) {

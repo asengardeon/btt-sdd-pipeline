@@ -70,8 +70,10 @@ DEPOIS" como opção quando cabível.
 - **`code-reviewer.md`** — engenheiro de software sênior fazendo *code review* do PR entre a
   implementação e o QA: ports & adapters, SOLID, clean code, qualidade dos próprios testes,
   contrato Frontend↔Backend quando full-stack. Tem `Bash` para ler o diff do PR, rodar lint, e
-  commitar/enviar (push) o próprio `code-review.md` na branch do PR antes de terminar; `Write`/
-  `Edit` só para esse arquivo — não corrige código de produção, reporta.
+  commitar/enviar (push) o próprio artefato de revisão (`specs/<slug>/reviews/code-review/` no
+  formato novo, `code-review.md` no legado — `docs/MICRO-CONTEXT.md`, seção 2) na branch do PR
+  antes de terminar; `Write`/`Edit` só para esse artefato — não corrige código de produção,
+  reporta.
 - **`ux-designer.md`** — designer de produto sênior em **dois modos**: (1) etapa **condicional**
   (4b) — revisão pós-implementação de usabilidade/navegabilidade (heurísticas de Nielsen) de uma
   fatia com superfície de UI perceptível, entre a revisão de código e o QA, com veredito formal em

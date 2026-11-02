@@ -175,6 +175,27 @@ function Test-FatiaPendente {
 $SpecsDir = "specs"
 $Stages = @("prd", "trd", "code-review", "ux-review", "qa-report", "security-review", "sre-review")
 
+# Resolve o arquivo "primario" de uma etapa (onde fica o veredito/Historico de aprovacoes):
+# formato novo usa INDEX.md dentro de reviews/<etapa>/, legado usa <etapa>.md direto
+# (docs/MICRO-CONTEXT.md, secao 2). Hoje so "code-review" tem formato novo migrado; as demais
+# etapas caem sempre no legado até migrarem.
+function Get-StagePrimaryFile {
+  param([string]$DirPath, [string]$Stage)
+  $novo = Join-Path $DirPath "reviews\$Stage\INDEX.md"
+  if (Test-Path $novo) { return $novo }
+  return (Join-Path $DirPath "$Stage.md")
+}
+
+# Resolve o arquivo de "tracking" de uma etapa (achados/pendencias VALIDAR DEPOIS/log de
+# revisoes): formato novo usa tracking.md dentro de reviews/<etapa>/; legado usa o mesmo
+# arquivo do veredito, porque la tudo vive junto.
+function Get-StageTrackingFile {
+  param([string]$DirPath, [string]$Stage)
+  $novo = Join-Path $DirPath "reviews\$Stage\INDEX.md"
+  if (Test-Path $novo) { return (Join-Path $DirPath "reviews\$Stage\tracking.md") }
+  return (Join-Path $DirPath "$Stage.md")
+}
+
 $Labels = @{
   "prd"              = "PRD"
   "trd"              = "TRD"
@@ -278,9 +299,11 @@ foreach ($d in $dirs) {
   $fatiaPendente = Test-FatiaPendente (Join-Path $d.FullName "trd.md")
 
   foreach ($stage in $Stages) {
-    $file = Join-Path $d.FullName "$stage.md"
+    $file = Get-StagePrimaryFile $d.FullName $stage
     if (-not (Test-Path $file)) { continue }
     $content = Get-Content $file -Raw -Encoding UTF8
+    $trackFile = Get-StageTrackingFile $d.FullName $stage
+    $trackContent = if (Test-Path $trackFile) { Get-Content $trackFile -Raw -Encoding UTF8 } else { "" }
 
     if ($stage -eq "prd" -or $stage -eq "trd") {
       if ($content -match '(?m)^\s*-\s*\[x\]\s*Aprovado por') {
@@ -332,27 +355,29 @@ foreach ($d in $dirs) {
       }
     }
 
-    if ($content -match '(?i)requer revalida') {
+    if ($trackContent -match '(?i)requer revalida') {
       # Uma flag "requer revalidacao" registrada no log pode ja ter sido resolvida de duas
       # formas: (a) uma (re)aprovacao formal posterior do artefato-alvo - so PRD e TRD tem o
       # checkbox "Aprovado por"; (b) uma linha de log posterior no proprio artefato-alvo
       # assinada pelo agente daquela etapa, que e como uma revisao registra que refez o
       # trabalho. Antes da #332 so (a) existia, entao as cinco etapas de revisao nao tinham
       # caminho de resolucao nenhum e a flag ficava para sempre.
-      $flagLines = [regex]::Matches($content, '(?mi)^\|\s*(\d{4}-\d{2}-\d{2})\s*\|.*requer revalida.*$')
+      $flagLines = [regex]::Matches($trackContent, '(?mi)^\|\s*(\d{4}-\d{2}-\d{2})\s*\|.*requer revalida.*$')
 
       foreach ($m in $flagLines) {
         $flagDate = $m.Groups[1].Value
         # sem artefato colado na frase nao sai alvo nenhum: e mencao, ou a negacao que o
         # template induz ("nenhuma etapa a jusante requer revalidacao")
         foreach ($targetStage in (Get-RevalidationTargets $m.Value)) {
-          $targetFile = Join-Path $d.FullName "$targetStage.md"
+          $targetFile = Get-StagePrimaryFile $d.FullName $targetStage
+          $targetTrackFile = Get-StageTrackingFile $d.FullName $targetStage
           if (-not (Test-Path $targetFile)) {
             $revalAlvos[$targetStage] = $true
             continue
           }
 
           $targetContent = Get-Content $targetFile -Raw -Encoding UTF8
+          $targetTrackContent = if (Test-Path $targetTrackFile) { Get-Content $targetTrackFile -Raw -Encoding UTF8 } else { "" }
           # @(...) força coleção mesmo com um único match — sem isso, um resultado só vira
           # string escalar e "[-1]" pega o último caractere da data, não a data inteira.
           $approveDates = @([regex]::Matches($targetContent, '(?i)(?:re)?aprovad[oa] por.*?em\s+(\d{4}-\d{2}-\d{2})') |
@@ -361,14 +386,14 @@ foreach ($d in $dirs) {
           if ($approveDate -and $flagDate -le $approveDate) { continue }
 
           $agent = $StageAgents[$targetStage]
-          if ($agent -and (Test-RevalidatedInLog $targetContent $flagDate $agent)) { continue }
+          if ($agent -and (Test-RevalidatedInLog $targetTrackContent $flagDate $agent)) { continue }
 
           $revalAlvos[$targetStage] = $true
         }
       }
     }
 
-    $pending += Get-ValidarDepoisPendentesCount $content
+    $pending += Get-ValidarDepoisPendentesCount $trackContent
   }
 
   if ($revalAlvos.Count -gt 0) {
