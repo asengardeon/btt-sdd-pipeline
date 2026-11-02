@@ -178,8 +178,8 @@ $Stages = @("prd", "trd", "code-review", "ux-review", "qa-report", "security-rev
 # Resolve o arquivo "primario" de uma etapa (onde fica o veredito/Historico de aprovacoes):
 # formato novo usa INDEX.md dentro de reviews/<etapa>/, legado usa <etapa>.md direto
 # (docs/MICRO-CONTEXT.md, secao 2). A deteccao e generica — nenhuma etapa precisa de mudanca
-# de codigo aqui quando migra; "code-review", "qa-report", "security-review" e "sre-review" ja
-# migraram, as demais caem no legado até migrarem.
+# de codigo aqui quando migra; as 5 etapas de revisao (code-review, ux-review, qa-report,
+# security-review, sre-review) ja migraram — specs antigas continuam caindo no legado.
 function Get-StagePrimaryFile {
   param([string]$DirPath, [string]$Stage)
   $novo = Join-Path $DirPath "reviews\$Stage\INDEX.md"
