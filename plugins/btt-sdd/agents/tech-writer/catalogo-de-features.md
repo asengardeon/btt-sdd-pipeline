@@ -53,10 +53,15 @@ tarefa" + "rejeitar título vazio" + "rejeitar título duplicado") formam um com
    (`docs/MICRO-CONTEXT.md`, seção 4): se `/btt-sdd:gap-report` (ou os scripts em
    `skills/gap-report/scripts/`) estiver disponível, rode-o para esta spec e reaproveite o
    veredito implementado/não-implementado como ponto de partida — converte a maior parte desta
-   verificação em achado já pronto para triar, em vez de grepar classe por classe de novo. Para
-   todo veredito "não implementado" ou duvidoso, confirme com leitura pontual do arquivo mais
-   provável antes de escrever "Planejado" — o próprio `/btt-sdd:gap-report` já avisa que "NÃO" é
-   sinal, não certeza (`docs/gates/governanca.md`, "nenhuma conclusão de 'nenhum consumidor'...").
+   verificação em achado já pronto para triar, em vez de grepar classe por classe de novo. **Se não
+   houver `src/`/código de produção real para o script varrer** (ex.: projeto cujo código original
+   foi removido e só sobrevive como exemplo documentado, `docs/FILE-GUIDE.md` sobre
+   `code-examples.md`), confirme contra o exemplo documentado e contra o veredito por critério já
+   registrado no `qa-report.md` daquela fatia — nunca pule a confirmação só porque a ferramenta não
+   se aplica. Para todo veredito "não implementado" ou duvidoso, confirme com leitura pontual do
+   arquivo mais provável antes de escrever "Planejado" — o próprio `/btt-sdd:gap-report` já avisa
+   que "NÃO" é sinal, não certeza (`docs/gates/governanca.md`, "nenhuma conclusão de 'nenhum
+   consumidor'...").
 3. **Agrupe critérios de aceite relacionados num comportamento só** — um agrupamento natural de
    2-4 critérios da mesma US (ex.: criar + validar + rejeitar casos de borda) normalmente
    descreve **um** comportamento do ponto de vista de quem usa o sistema, não um por critério.
