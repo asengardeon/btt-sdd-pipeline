@@ -858,6 +858,12 @@ nem fatia (não é uma feature de produto), então usa uma branch simples em vez
    que até agora não tinha o passo escrito em lugar nenhum e por isso deixava a versão parada em
    silêncio (issue #439: três PRs seguidas tocaram conteúdo empacotado sem bater a versão, porque o
    processo manual não previa este passo).
+3c. **Toda vez que o passo 3b bate a versão, adicione a entrada correspondente em
+   `plugins/btt-sdd/CHANGELOG.md`** (topo do arquivo, versão mais nova primeiro) no mesmo
+   commit/PR — nunca um passo adiado para depois. A entrada é curta: o que mudou, em qual
+   arquivo, e por quê (reaproveite o "Resumo" do próprio PR, não reescreva do zero). Esse
+   changelog ficou sem receber entrada nenhuma por ~295 bumps de versão antes de ser reaproveitado
+   como changelog geral do plugin — o próprio arquivo explica esse histórico no topo.
 4. Commite nessa branch, abra o PR **referenciando `Closes #N` da issue confirmada/criada no passo
    1**, e só mergeie em `main` com decisão explícita do usuário — as mesmas regras 1, 4, 6 e 7
    acima se aplicam (PR obrigatório, sem push direto, sem force-push). Não há gate de QA/segurança/
