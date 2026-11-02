@@ -191,7 +191,8 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
   nasce**: jobs e gate de cobertura, `concurrency`, short-circuit de docs-only pela comparação com
   o último run verde, cache, e o que não entra por padrão. É o contrato entre o `architect` (que
   cria a tarefa que faz o arquivo nascer), quem a implementa, e o `sre` (que audita) — a medição e
-  o histórico de cada regra ficam em `.claude/agents/sre.md`, área "CI".
+  o histórico de cada regra ficam em `.claude/agents/sre.md`, área "CI", e no arquivo-filho
+  `.claude/agents/sre/ci-cadencia-e-custo.md`.
 - **`BASELINE.md`** — **gerado condicionalmente** pelo `codebase-archaeologist` (não existe por
   padrão neste repositório, já que ele nasceu 100% documentado pelo próprio pipeline). Quando
   existe, descreve um sistema/código pré-existente "como é" (as-is), não como deveria ser.
@@ -241,6 +242,15 @@ tipicamente: validar pré-condição, invocar o agente correspondente, e comunic
   agente, nunca em correção de achado, uma única repromoção) e o laço de avaliação via coluna
   `Modelo` do `timing-log.md`, lida pela retrospectiva de fatia. O gate transversal correspondente
   está em `docs/gates/governanca.md`.
+- **`MICRO-CONTEXT.md`** — como manter cada arquivo pequeno e carregar só o contexto necessário.
+  Três convenções: núcleo pequeno + arquivo-filho lido sob demanda para agentes/skills
+  (`.claude/agents/<nome>/<topico>.md`, `.claude/skills/<nome>/_rules/<topico>.md`, referenciados
+  por um "Índice de regras sob demanda" com gatilho objetivo); split físico por rodada para
+  artefatos de revisão gerados em projetos consumidores (`specs/<slug>/reviews/<área>/` com
+  `INDEX.md`/`tracking.md`/`F-<N>.md`, em migração artefato por artefato — formato legado de
+  arquivo único ainda vale para o que não migrou); e prioridade de ferramenta conhecida
+  (`docs/TOOLING.md`) antes de verificação manual, sem criar gate novo. Migração em andamento, não
+  retroativa a specs já existentes.
 - **`POST-MERGE-VALIDATION.md`** — checklist leve para validação manual contra produção real
   depois de um merge (sessão autenticada real, confirmação de deploy efetivo, DNS/certificados,
   limpeza de dados de teste, e o lembrete de fechar itens "VALIDAR DEPOIS" via `/sdd-amend`).

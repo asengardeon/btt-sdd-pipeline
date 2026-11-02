@@ -220,8 +220,7 @@ Docker/emuladores locais — nunca contra o ambiente de produção real:
 - **Serviço de nuvem gerenciado** (S3, filas, etc.): emulador local (`docs/STACK.md`, seção
   "Simulação de nuvem local") — nunca a conta real de produção.
 - **Banco/filas/dependências próprias do projeto**: container de teste (`docker-compose.yml`,
-  `infra/docker/`, `agents/sre.md`, seção "Docker de desenvolvimento local") — nunca o banco de
-  produção.
+  `infra/docker/`, `agents/sre/docker-dev-local.md`) — nunca o banco de produção.
 - **Testes de navegação** (e2e via browser automation): sobem a aplicação localmente (Docker ou
   equivalente) e navegam contra esse ambiente controlado — nunca contra a URL de produção real, o
   que arrisca poluir dados reais e torna o resultado do teste dependente de rede/disponibilidade

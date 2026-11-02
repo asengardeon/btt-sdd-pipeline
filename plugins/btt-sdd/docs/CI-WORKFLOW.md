@@ -5,8 +5,10 @@ precisa ter. É o contrato entre três papéis que antes não se encontravam em 
 `architect`, que cria a tarefa que faz o arquivo nascer; quem a implementa
 (`backend-developer`/`frontend-developer`); e o `sre`, que audita o resultado.
 
-A medição e o histórico de cada regra abaixo ficam em `agents/sre.md`, área "CI" — aqui
-está só a forma, para quem escreve o arquivo não precisar carregar a área inteira do `sre`.
+A medição e o histórico de cada regra abaixo ficam em `agents/sre.md`, área "CI", e no
+arquivo-filho `agents/sre/ci-cadencia-e-custo.md` (cadência, custo de runner, short-circuit de
+docs-only, concorrência) — aqui está só a forma, para quem escreve o arquivo não precisar carregar
+a área inteira do `sre`.
 
 ## Por que isto existe
 
@@ -139,7 +141,7 @@ tempo de runner que hoje se gasta por acidente, e produz série temporal em vez 
   projeto**, registrada em `docs/PROJECT-CONVENTIONS.md`, nunca adotada por conta própria. O motivo
   é honesto: um defeito que só o ambiente do CI pega passa a aparecer mais tarde, já com as
   revisões aprovadas. Detalhe e a receita (gate nos passos, nunca no gatilho) em
-  `agents/sre.md`.
+  `agents/sre/ci-cadencia-e-custo.md`.
 - **Sharding da camada cara** — reduz tempo de parede e **multiplica minutos faturáveis** (N jobs
   pagam a subida de ambiente N vezes). Só com os dois eixos medidos, como `docs/gates/sre.md` já
   exige.

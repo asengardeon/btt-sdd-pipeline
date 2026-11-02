@@ -244,6 +244,10 @@ em `asengardeon/btt-sdd-pipeline` assim que fica claro, não só quando uma fati
   Inclui `docs/MODEL-TIERING.md`: quando um subagente de trabalho bem definido roda num modelo mais
   barato (sub-tarefa auxiliar isolada) e quando nunca roda (qualquer etapa com veredito), com o
   laço de avaliação registrado na coluna `Modelo` do `timing-log.md`. Inclui
+  `docs/MICRO-CONTEXT.md`: núcleo pequeno + arquivo-filho lido sob demanda para agentes/skills
+  (migração em andamento, agente por agente), split físico por rodada para artefatos de revisão
+  gerados em projetos consumidores, e prioridade de ferramenta conhecida (`docs/TOOLING.md`) antes
+  de verificação manual. Inclui
   `docs/WRITING-STYLE.md`: as regras da **ASD-STE100** adaptadas ao idioma do artefato (uma ideia
   por frase, limite de palavras, voz ativa, um termo por conceito), com os itens verificáveis
   cobrados pelo gate transversal `docs/gates/escrita.md` — e o limite explícito de que frase longa

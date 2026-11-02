@@ -189,7 +189,11 @@ def canonizar(texto: str) -> str:
     t = re.sub(r"(?:\.claude/skills/sdd-|(?<![\w/.:-])skills/)([a-z][a-z-]*)/",
                r"«skill:\1»/", t)
     t = re.sub(r"\.claude/skills/sdd-([a-z][a-z-]*)", r"«skill:\1»", t)
-    t = t.replace(".claude/skills/", "«skills»/").replace("`skills/`", "`«skills»/`")
+    t = t.replace(".claude/skills/", "«skills»/")
+    # Referência genérica (placeholder, não nome de skill real — ex. `<nome-da-skill>` num
+    # texto de convenção): mesmo blanket match já usado para `agents/` abaixo, aplicado depois
+    # das substituições específicas acima para não interferir com `«skill:<nome>»`.
+    t = re.sub(r"(?<![\w/.:-])skills/", "«skills»/", t)
     # Agentes: `.claude/agents/<n>.md` (raiz) e `agents/<n>.md` (plugin).
     t = t.replace(".claude/agents/", "«agents»/")
     t = re.sub(r"(?<![\w/.:-])agents/", "«agents»/", t)
@@ -247,14 +251,25 @@ def pares() -> list[tuple[str, Path, Path, str]]:
         alvo = PLUGIN / "docs" / rel
         if alvo.exists():
             p.append(("docs", doc, alvo, f"docs/{rel}"))
-    for agente in sorted((RAIZ / ".claude" / "agents").glob("*.md")):
-        p.append(("agents", agente, PLUGIN / "agents" / agente.name,
-                  f".claude/agents/{agente.name}"))
-    for skill in sorted((RAIZ / ".claude" / "skills").glob("*/SKILL.md")):
-        nome = skill.parent.name
+    # rglob, não glob: um agente pode ter arquivos-filho de detalhe sob demanda em
+    # `.claude/agents/<nome>/<topico>.md` (`docs/MICRO-CONTEXT.md`, seção 1) — um pareamento
+    # não-recursivo deixaria de cobrir exatamente os arquivos-filho novos, mesmo erro que o
+    # pareamento de `docs/` já corrigiu antes (comentário acima).
+    agents_dir = RAIZ / ".claude" / "agents"
+    for agente in sorted(agents_dir.rglob("*.md")):
+        rel = agente.relative_to(agents_dir).as_posix()
+        p.append(("agents", agente, PLUGIN / "agents" / rel, f".claude/agents/{rel}"))
+    for skill_dir in sorted((RAIZ / ".claude" / "skills").glob("*")):
+        if not (skill_dir / "SKILL.md").exists():
+            continue
+        nome = skill_dir.name
         alvo_nome = nome[4:] if nome.startswith("sdd-") else nome
-        p.append(("skills", skill, PLUGIN / "skills" / alvo_nome / "SKILL.md",
-                  f".claude/skills/{nome}/SKILL.md"))
+        # rglob dentro de cada skill: cobre SKILL.md e qualquer arquivo-filho em
+        # `<skill>/_rules/<topico>.md`.
+        for arquivo in sorted(skill_dir.rglob("*.md")):
+            rel = arquivo.relative_to(skill_dir).as_posix()
+            p.append(("skills", arquivo, PLUGIN / "skills" / alvo_nome / rel,
+                      f".claude/skills/{nome}/{rel}"))
     scaffold = PLUGIN / "skills" / "create-project" / "scaffold" / "specs" / "_template"
     for tpl in sorted((RAIZ / "specs" / "_template").glob("*.md")):
         p.append(("templates", tpl, scaffold / tpl.name, f"specs/_template/{tpl.name}"))

@@ -7,12 +7,21 @@ que está aqui valia para todas e estava copiado dentro de cada uma — 15 cópi
 O equivalente para os agentes é `docs/AGENT-PREAMBLE.md`; a diferença entre os dois é só como cada
 um resolve o próprio caminho de instalação.
 
+## Como esta skill está organizada: núcleo + detalhe sob demanda
+
+Se o seu próprio `SKILL.md` tiver uma seção "Índice de regras sob demanda", ela lista
+arquivos-filho (`skills/<esta-skill>/_rules/<topico>.md`) com um gatilho objetivo cada. **Leia um
+arquivo-filho só quando a tarefa atual bater no gatilho descrito** — nunca pré-carregue todos "por
+garantia". Detalhe completo em `docs/MICRO-CONTEXT.md`, seção 1. Ausência dessa seção significa
+que esta skill ainda carrega tudo inline — não é um erro, é migração pendente.
+
 ## Onde ficam os docs de governança citados nas skills deste pipeline
 
 Referências como `docs/GIT-WORKFLOW.md`, `docs/QUALITY-GATES.md`, `docs/gates/*.md`,
 `docs/TESTING.md`, `docs/ENGINEERING-PILLARS.md`, `docs/ARCHITECTURE.md`, `docs/SDD-WORKFLOW.md`,
 `docs/FILE-GUIDE.md`, `docs/POST-MERGE-VALIDATION.md` `docs/MODEL-TIERING.md`,
-`docs/WRITING-STYLE.md` e `docs/TOOLING.md` apontam para os docs genéricos deste pipeline — **não
+`docs/MICRO-CONTEXT.md`, `docs/WRITING-STYLE.md` e `docs/TOOLING.md` apontam para os docs
+genéricos deste pipeline — **não
 são copiados para dentro de cada projeto que o usa**. Resolva-os a partir de onde a própria skill
 está instalada (o
 "Base directory" da invocação): se for `.claude/skills/<esta-skill>/` apontando para este

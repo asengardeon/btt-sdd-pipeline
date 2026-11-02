@@ -9,12 +9,23 @@ pelo menos uma vez (`docs/FILE-GUIDE.md`, sobre este arquivo).
 Nada aqui substitui os gates: cada agente declara no próprio arquivo os 2-5 arquivos de
 `docs/gates/` que valem para a etapa dele.
 
+## Como este agente está organizado: núcleo + detalhe sob demanda
+
+Se o seu próprio arquivo (`agents/<seu-nome>.md`) tiver uma seção "Índice de regras sob demanda",
+ela lista arquivos-filho (`agents/<seu-nome>/<topico>.md`) com um gatilho objetivo cada. **Leia um
+arquivo-filho só quando a tarefa atual bater no gatilho descrito** — nunca pré-carregue todos "por
+garantia": isso anula o ganho de ter um núcleo pequeno. Detalhe completo da convenção em
+`docs/MICRO-CONTEXT.md`, seção 1. Nem todo agente já foi migrado para este formato — ausência da
+seção "Índice de regras sob demanda" significa que este agente ainda carrega tudo inline, não é um
+erro.
+
 ## Onde ficam os docs de governança citados nos arquivos deste pipeline
 
 Referências como `docs/GIT-WORKFLOW.md`, `docs/QUALITY-GATES.md`, `docs/gates/*.md`,
 `docs/TESTING.md`, `docs/ENGINEERING-PILLARS.md`, `docs/ARCHITECTURE.md`, `docs/SDD-WORKFLOW.md`,
 `docs/FILE-GUIDE.md`, `docs/POST-MERGE-VALIDATION.md` `docs/MODEL-TIERING.md`,
-`docs/WRITING-STYLE.md` e `docs/TOOLING.md` apontam para os docs genéricos deste pipeline — **não
+`docs/MICRO-CONTEXT.md`, `docs/WRITING-STYLE.md` e `docs/TOOLING.md` apontam para os docs
+genéricos deste pipeline — **não
 são copiados para dentro de cada projeto que o usa**. Eles vivem junto da distribuição do próprio
 pipeline: se você
 foi carregado via junction global (`.claude/agents/<seu-nome>.md` apontando para este repositório,
@@ -81,21 +92,35 @@ mecanismo nunca existiu na stack nova (issue #527, `asengardeon/btt-sdd-pipeline
 ressalva apoiada em `[inferido]` declara isso — e, quando a medição for barata e o ambiente
 estiver à mão, propor medi-la sai mais barato que carregar a ressalva por três fatias.
 
-## Artefato in-place que acumulou rodadas: leia a vigente e a penúltima, não todas
+## Artefato de revisão que acumulou rodadas: leia a vigente e a penúltima, não todas
 
 Os artefatos de revisão (`code-review.md`, `ux-review.md`, `qa-report.md`, `security-review.md`,
-`sre-review.md`) são editados **in-place** a cada fatia/rodada, nunca recriados — então eles
-crescem indefinidamente, e numa spec com muitas rodadas o arquivo inteiro deixa de caber
-confortavelmente no seu contexto. **O arquivo continua inteiro: o que muda é quanto dele você
-lê.**
+`sre-review.md`) acumulam uma rodada por fatia, e numa spec com muitas rodadas o volume total deixa
+de caber confortavelmente no seu contexto. Dois formatos coexistem enquanto a migração de
+`docs/MICRO-CONTEXT.md`, seção 2, avança artefato por artefato:
 
-- **Sempre leia por completo** a tabela "Histórico de aprovações por fatia" (é o índice de todas
-  as rodadas, e é curta) e **o conteúdo da rodada vigente**.
+- **Formato novo (split físico)**: `specs/<slug>/reviews/<área>/` existe como diretório, com
+  `INDEX.md`, `tracking.md` e um `F-<N>.md`/`hotfix-<data>.md` por rodada. Detalhe completo do
+  layout em `docs/MICRO-CONTEXT.md`, seção 2.
+- **Formato legado (arquivo único)**: só `specs/<slug>/<área>.md` existe, editado **in-place** a
+  cada rodada, nunca recriado — ainda o caso de `ux-review.md`, `qa-report.md`,
+  `security-review.md` e `sre-review.md` até cada um ser migrado. **O arquivo continua inteiro: o
+  que muda é quanto dele você lê.**
+
+**Verifique qual formato está em uso antes de ler ou escrever** (o diretório `reviews/<área>/`
+existe → novo; só o arquivo único existe → legado) — nunca assuma um ou outro. A regra de leitura
+seletiva é a mesma nos dois formatos, só muda a unidade (arquivo separado no novo, seção dentro do
+mesmo arquivo no legado):
+
+- **Sempre leia por completo** a tabela "Histórico de aprovações por fatia" (`INDEX.md` no formato
+  novo, seção dentro do arquivo no legado — é o índice de todas as rodadas, e é curta) e **o
+  conteúdo da rodada vigente** (`F-<N>.md` ou a seção correspondente).
 - **Leia também a penúltima rodada** — é a que diz se um achado desta rodada é reincidência e se
   uma ressalva anterior foi resolvida.
 - **Rodadas anteriores à penúltima são referência consultada sob demanda**, não leitura
-  obrigatória: vá buscar uma delas quando a tabela de histórico, um achado desta rodada ou uma
-  flag de revalidação apontar para ela — não "por completude".
+  obrigatória: vá buscar uma delas quando o índice, um achado desta rodada ou uma flag de
+  revalidação apontar para ela — não "por completude". No formato novo isso significa nem abrir o
+  arquivo daquela rodada; no legado, nem rolar até aquela seção.
 
 **Exceções em que o seu próprio passo exige alcançar mais atrás** — nesses casos leia o que o
 passo pedir, sem limite de duas rodadas:
@@ -108,16 +133,18 @@ passo pedir, sem limite de duas rodadas:
 - **Qualquer flag `requer revalidação` em aberto**, que pode ter sido registrada numa rodada
   antiga.
 
-**O lado de quem escreve**, que é o que torna a leitura limitada possível: identifique a rodada no
-cabeçalho da seção que você acrescenta (`F-N` ou `hotfix-<data>`, o mesmo identificador que você
-usa na tabela de histórico), para que a próxima pessoa/agente encontre a vigente sem varrer o
-arquivo. E nunca reescreva rodada anterior para "enxugar" o arquivo — essas tabelas e seções são
-append-only (`docs/gates/governanca.md`); limitar leitura é escolha de quem lê, nunca apagamento
-de histórico.
+**O lado de quem escreve**, que é o que torna a leitura limitada possível: no formato legado,
+identifique a rodada no cabeçalho da seção que você acrescenta (`F-N` ou `hotfix-<data>`, o mesmo
+identificador que você usa na tabela de histórico), para que a próxima pessoa/agente encontre a
+vigente sem varrer o arquivo; no formato novo, o identificador já é o próprio nome do arquivo
+(`F-N.md`/`hotfix-<data>.md`). Nos dois formatos, nunca reescreva rodada anterior para "enxugar" —
+tabelas/seções (legado) e `INDEX.md`/`tracking.md` (novo) são append-only
+(`docs/gates/governanca.md`); limitar leitura é escolha de quem lê, nunca apagamento de histórico.
 
-**A mesma regra vale para a tabela de Achados/Pendências** (`code-review.md`, `qa-report.md`,
-`security-review.md`, `sre-review.md`) — a que de fato cresce mais rápido, um achado por área por
-rodada, não uma linha por fatia como o Histórico. Cada linha tem colunas `Fatia` e `Status`
+**A mesma regra vale para a tabela de Achados/Pendências** (`tracking.md` no formato novo; seção
+dentro de `code-review.md`/`qa-report.md`/`security-review.md`/`sre-review.md` no legado) — a que
+de fato cresce mais rápido, um achado por área por rodada, não uma linha por fatia como o
+Histórico. Cada linha tem colunas `Fatia` e `Status`
 (`aberto` / `corrigido` / `aceito como ressalva` — ou `aberto`/`resolvido` nas Pendências do
 `sre`): uma linha com `Status` resolvido cuja `Fatia` já foi mergeada é referência sob demanda,
 igual a uma rodada antiga do Histórico — não precisa ser relida por completo, só contada como já
