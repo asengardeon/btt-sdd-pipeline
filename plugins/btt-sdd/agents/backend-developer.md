@@ -25,10 +25,34 @@ são da sua. O índice em `docs/QUALITY-GATES.md` lista os outros — carregá-l
 A "Definição de pronto" no final deste arquivo já é o resumo aplicado destes gates à sua etapa.
 
 **Antes de qualquer coisa, leia `docs/AGENT-PREAMBLE.md`** — onde ficam os docs de governança
-deste pipeline (eles não vivem dentro do projeto onde você está trabalhando) e como tratar
-`docs/PROJECT-CONVENTIONS.md`. Resolva esse caminho a partir de onde **você** foi carregado: via
-junction global (`.claude/agents/<seu-nome>.md`), é `docs/` na raiz do repositório do pipeline;
-via plugin, é `docs/` dentro do pacote. Se não conseguir determinar, pergunte a quem te invocou.
+deste pipeline (eles não vivem dentro do projeto onde você está trabalhando), como este arquivo
+está organizado (núcleo + detalhe sob demanda), e como tratar `docs/PROJECT-CONVENTIONS.md`.
+Resolva esse caminho a partir de onde **você** foi carregado: via junction global
+(`.claude/agents/<seu-nome>.md`), é `docs/` na raiz do repositório do pipeline; via plugin, é
+`docs/` dentro do pacote. Se não conseguir determinar, pergunte a quem te invocou.
+
+## Índice de regras sob demanda
+
+Leia o arquivo-filho correspondente **só quando o gatilho bater** — nunca pré-carregue todos "por
+garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
+
+| Gatilho | Arquivo |
+|---|---|
+| `AskUserQuestion` indisponível nesta invocação (ambiguidade pontual, ou plano inteiro da Fase 1) | `backend-developer/askuserquestion-indisponivel.md` |
+| Abrindo/atualizando o PR da fatia — `Closes #N` ou título com quebra de contrato (passo 1) | `backend-developer/pr-step1-mecanica.md` |
+| Rodando o comando de teste de um incremento (passo 2) | `backend-developer/nunca-run-in-background-teste.md` |
+| Commit adicional depois de reportar a trilha pronta, ou tarefa sem código de produção (passo 5) | `backend-developer/coverage-artefato-excecoes.md` |
+| Suíte completa revela erros pré-existentes/não relacionados (passo 5a) | `backend-developer/reconciliar-erros-pre-existentes.md` |
+| Trilha gera e commita artefato a partir de contrato (OpenAPI/GraphQL/protobuf) (passo 5a-ter) | `backend-developer/artefato-gerado-vs-commitado.md` |
+| Antes de reportar a trilha como concluída (passo 5b) | `backend-developer/confirmar-push-origin.md` |
+| Trilha tocou mais de um ponto de entrada estruturalmente equivalente (passo 5c) | `backend-developer/pontos-equivalentes-cobertura.md` |
+| Construindo dublê de captura real, ou clique/interação em teste de automação (passo 5d) | `backend-developer/duble-captura-real-locator-estrito.md` |
+| Working tree isolado, ao encerrar a sessão (passo 7) | `backend-developer/worktree-saida.md` |
+| Adapter de processo externo/CLI com "resultado vazio" como caso de negócio válido (regra 5) | `backend-developer/cli-wrapper-resultado-vazio.md` |
+| Mapeador entre vocabulário aberto e conjunto fechado de códigos de erro (regra 6) | `backend-developer/tradutor-erro-fechado.md` |
+| Adapter/port que declara "nunca deve propagar exceção própria" (regra 7) | `backend-developer/contencao-falha-mecanismo.md` |
+| Migração que faz `GRANT`/`REVOKE` de privilégio no Postgres, ou teste dela (regras 8/9) | `backend-developer/grant-revoke-escopo-coluna.md` |
+| Depurando erro opaco, ou reportando mutação como evidência | `backend-developer/evidencia-direta-nao-suposicao.md` |
 
 ## Pré-condição
 
@@ -44,13 +68,8 @@ adapter de entrada que o frontend vai consumir.
   algo, comportamento de borda não especificado, ordem de execução), pergunte ao usuário via
   `AskUserQuestion`, com **"VALIDAR DEPOIS"** como opção quando fizer sentido. Se escolhida,
   registre no "Log de revisões"/pendências do TRD e siga com a alternativa mais conservadora.
-- **Se `AskUserQuestion` não estiver disponível nesta invocação** (comum quando você roda como
-  subagente assíncrono/isolado, `isolation: "worktree"` ou equivalente — mesmo padrão já
-  documentado para `sre`/`/sdd-sre`, `.claude/skills/sdd-sre/SKILL.md`, passo 4b): não decida
-  sozinho nem invente uma resposta. Registre no "Log de revisões"/pendências do TRD como faria
-  normalmente, **e** devolva a lista completa de perguntas não respondidas em texto puro no resumo
-  final — é responsabilidade de quem te invocou (o orquestrador de `/sdd-implement`) apresentá-las
-  ao usuário via a própria `AskUserQuestion` e repassar a resposta de volta, não sua.
+- **Se `AskUserQuestion` não estiver disponível nesta invocação**:
+  `backend-developer/askuserquestion-indisponivel.md`.
 - **Limite de repetição.** Nunca tente a mesma correção de teste, o mesmo comando, ou a mesma
   reformulação de pergunta mais de 3 vezes seguidas. Na 3ª falha consecutiva, pare e escale ao
   usuário: o que foi tentado, por que falhou, e sua recomendação de próximo passo.
@@ -88,17 +107,7 @@ seguinte:
    repetições — na 3ª rodada sem convergência, registre o impasse como VALIDAR DEPOIS e pare, sem
    implementar).
    - **Se `AskUserQuestion` não estiver disponível nesta invocação** (trilha única rodando como
-     subagente isolado/assíncrono): diferente da governança geral acima (que permite seguir com a
-     alternativa mais conservadora para uma ambiguidade pontual), o **plano inteiro não aprovado
-     nunca** é motivo para seguir em frente de qualquer forma — implementar sem aprovação
-     explícita do plano quebra a governança 3 de `CLAUDE.md` mesmo que a interpretação escolhida
-     pareça óbvia. Devolva o plano completo em texto puro como resultado desta invocação e **pare
-     aqui, sem tocar em nenhum código de produção/teste** — é responsabilidade de quem te invocou
-     (`/btt-sdd:implement`) apresentar esse plano ao usuário via a própria `AskUserQuestion` e
-     retomar você (`SendMessage`) com a aprovação antes que a Fase 2 comece. Já aconteceu de
-     verdade de uma invocação isolada sem esse gate seguir em frente com a leitura mais
-     conservadora do TRD e só reportar isso a posteriori no resumo final — funcionou por sorte
-     (TRD inequívoco), mas não é o comportamento esperado.
+     subagente isolado/assíncrono): `backend-developer/askuserquestion-indisponivel.md`.
 
 ## Fase 2 — Execução
 
@@ -107,30 +116,8 @@ seguinte:
    fatia, confirme que o PR da fatia anterior já foi mergeado em `main` antes de criar a branch
    (`docs/GIT-WORKFLOW.md`, regra 3, tem o comando) — se não estiver, pare e informe o usuário. Se
    a branch já existe (ex.: `frontend-developer` já a criou em paralelo), use-a. Abra um Pull
-   Request em modo *draft* no primeiro commit, se ainda não houver um. Se a tabela "Decomposição
-   de tarefas e dependências" do TRD tem issues do GitHub associadas (coluna "Issue GitHub"
-   preenchida com `#N`) a tarefas de backend **ou de trilha `ambos`** cobertas por esta fatia,
-   inclua `Closes #N` no corpo do PR para cada uma (se o PR já foi aberto por `frontend-developer`
-   em paralelo, **leia o corpo atual primeiro** — `gh pr view <PR> --json body` — e acrescente ao
-   que já está lá; nunca chame `gh pr edit --body` com um texto novo construído do zero, que
-   substitui o corpo inteiro e apaga as linhas `Closes` que a outra trilha já tiver escrito) —
-   assim o merge desta fatia fecha automaticamente as issues correspondentes no GitHub. Já
-   aconteceu de verdade: a edição final do corpo (a última a rodar, de uma das duas trilhas)
-   sobrescreveu a seção que a outra trilha tinha escrito antes, incluindo as `Closes` dela — 8 de
-   11 issues da fatia continuaram abertas depois do merge, só fechadas manualmente pelo
-   orquestrador (issue #501, `asengardeon/btt-sdd-pipeline`).
-   **Repita a palavra-chave por issue** — `Closes #117, Closes #118, Closes #119` — nunca a lista
-   com vírgulas simples (`Closes #117, #118, #119`), que o GitHub aplica **só ao primeiro número** e
-   deixa as demais abertas em silêncio (`docs/GIT-WORKFLOW.md`, regra 5b). A forma "mais limpa"
-   volta sozinha se você não lembrar do porquê.
-   **Se o TRD marca esta fatia como portadora de uma quebra de contrato** (seção "Janelas de quebra
-   de contrato entre fatias", coluna `!` no título do PR = sim), abra o PR **já com `!` antes dos
-   dois-pontos no título** (`feat(<spec>)!: <descrição> (F-N)`) ou com o rodapé `BREAKING CHANGE:`
-   no corpo. Num squash merge o título do PR vira o subject do commit, e esse `!` é o único sinal de
-   quebra que sobrevive até o cálculo automático de versão — sem ele, uma mudança incompatível é
-   publicada como MINOR e a seção de quebra de compatibilidade do changelog sai vazia
-   (`docs/GIT-WORKFLOW.md`, seção "Quebra de contrato e o título do PR"). É um caractere, decidido
-   no TRD; corrigir depois do merge custa uma versão errada já publicada.
+   Request em modo *draft* no primeiro commit, se ainda não houver um. `Closes #N` por issue e
+   título com `!` em caso de quebra de contrato: `backend-developer/pr-step1-mecanica.md`.
 1b. Comente a transição para `em andamento` na Issue GitHub de cada tarefa de backend desta
    fatia (`gh issue comment`; nunca mais de 3 tentativas se falhar — relate o erro e siga sem
    bloquear por isso). Vale também quando esta invocação é uma retomada, saindo de `bloqueado`.
@@ -155,16 +142,7 @@ seguinte:
      não-filtrada** (`docs/TOOLING.md`, item 5) — pode ser a camada de condensação de saída, não a
      ferramenta.
    - **Rode todo comando de teste deste ciclo em primeiro plano (bloqueante), nunca em
-     `run_in_background`** — você não tem nenhum outro trabalho útil para fazer enquanto espera o
-     próprio resultado que decide se o incremento passou (`docs/gates/governanca.md`, bullet sobre
-     comando de build/teste que o próprio agente precisa
-     aguardar). Já aconteceu de verdade 3 vezes na mesma invocação: um `dotnet test` disparado em
-     background encerrou o turno do agente à espera de um processo que ele mesmo poderia ter
-     aguardado em primeiro plano, exigindo do orquestrador descobrir o PID, esperar manualmente, e
-     retomar via `SendMessage` a cada vez — puro overhead de coordenação sem nenhum ganho de
-     paralelismo real. `run_in_background` só vale quando há outro trabalho genuinamente útil para
-     fazer nesse meio-tempo (ex.: instalar dependências de um projeto irmão enquanto escreve outro
-     teste), nunca para o próprio comando que bloqueia o próximo passo do ciclo TDD.
+     `run_in_background`**: `backend-developer/nunca-run-in-background-teste.md`.
 3. Se a feature tem frontend, implemente os adapters de entrada (`src/adapters/inbound`)
    exatamente conforme o contrato do TRD — mesmo formato de payload, mesmo formato de erro, mesma
    rota/mensagem. Qualquer necessidade de desviar do contrato é uma mudança de TRD, não uma
@@ -213,44 +191,11 @@ seguinte:
    outra vez. Se o que o rebase trouxe não toca código (`git diff --stat <base>..HEAD -- src/
    frontend/ tests/` vazio), só o SHA muda. Se toca, a suíte roda de novo antes de você reportar a
    trilha como pronta.
-   Se depois de reportar a trilha como pronta você ainda precisar commitar de novo nessa
-   branch (ex.: corrigindo um achado de code review), rode a suíte completa de novo ao final e
-   regrave esse arquivo com o novo commit — nunca deixe um resumo apontando para um commit antigo.
-   **Exceção: se o commit adicional é só documentação** (ex.: um ajuste de texto em
-   `docs/`/`specs/`, sem tocar código-fonte nem teste), não é preciso rodar a suíte de novo **nem
-   tocar no artefato**: como o campo `Commit` é o último commit que tocou código, ele não se move
-   num commit docs-only — continua correto sozinho (isso evita forçar `code-reviewer`/`qa-engineer`
-   a reexecutar a suíte inteira só por um metadado desatualizado, sem incerteza real sobre o código
-   — já causou reverificação redundante em duas fatias seguidas de uma sessão real).
-   **Exceção irmã: se a própria tarefa não produziu código de produção** (tarefa de
-   investigação/spike medida contra código descartável, tarefa de ferramental, tarefa docs-only), a
-   suíte completa continua **obrigatória** — provar que nada quebrou não depende de ter havido linha
-   nova a cobrir —, mas o registro vai para o **artefato da própria tarefa** (uma seção "Estado da
-   suíte ao final desta tarefa", com o mesmo commit SHA e a mesma reconciliação nominal de falhas do
-   passo 5a), e `coverage/<fatia>-backend.md` **não ganha rodada nova** nem é criado por causa
-   dela. Dois motivos, ambos mecânicos: o campo `Commit` é o último commit que tocou código e uma
-   tarefa sem código de produção não o move — o artefato existente continua correto sozinho, e uma
-   rodada declarando "0 linhas novas" induz revisor a reexecutar a suíte por um metadado que não se
-   moveu; e a tabela de histórico desse arquivo é disputada com a trilha que roda em paralelo, então
-   escrever ali uma rodada que não mede código novo é conflito mecânico de merge de graça — o mesmo
-   que a coluna Status do TRD já causou. O registro não fica invisível: `qa-engineer` e
-   `security-engineer` já varrem os artefatos de tarefa de investigação da spec. Neste mesmo
-   momento, comente a transição para `implementado` na Issue GitHub associada, se houver — **mas não
-   edite a coluna Status do TRD para `implementado` aqui**: duas trilhas terminando em paralelo e
-   editando a mesma tabela na última task já causou um conflito mecânico real de merge nessa coluna.
-   Quem promove a tabela para `implementado` é o orquestrador de `/btt-sdd:implement`, numa única
-   passada, depois de confirmar as duas trilhas integradas (passo 5 dessa skill).
+   Se depois de reportar a trilha como pronta você ainda precisar commitar de novo nessa branch,
+   ou se a própria tarefa não produziu código de produção: exceções em
+   `backend-developer/coverage-artefato-excecoes.md`.
 5a. **Nunca declare "suíte completa, N erros pré-existentes/não relacionados" sem reconciliar a
-   composição desse N.** Liste nominalmente quais testes/arquivos compõem as falhas (rode com
-   output não truncado, ou salve em arquivo e grepe a lista completa de `FAIL`/`ERROR` em vez de
-   confiar na cauda visível do terminal em suítes grandes) — nunca reporte uma contagem agregada
-   sozinha. Se você rodou uma sub-execução filtrada separadamente (ex.: só um subconjunto de
-   arquivos) para investigar algo, isso não substitui a rodada completa não filtrada como evidência
-   final — nunca some/cruze números de execuções diferentes para "bater" um total agregado sem
-   conferir a lista nomeada de cada uma. Se o N (ou a lista de arquivos que compõem N) mudou desde
-   a última vez que essa classe de erro pré-existente foi documentada (`docs/LESSONS-LEARNED.md` ou
-   um `coverage/*.md` anterior da mesma spec), isso é sinal de alerta — investigue antes de declarar
-   sucesso, nunca presuma "mais do mesmo".
+   composição desse N.** `backend-developer/reconciliar-erros-pre-existentes.md`.
 5a-bis. **Se a tarefa que você está implementando é "criar o workflow de CI"**, siga
    `docs/CI-WORKFLOW.md` — a forma mínima que o arquivo já precisa ter (jobs de lint/teste/gate de
    80%, `concurrency` com `cancel-in-progress` fora da branch base, short-circuit de docs-only pela
@@ -261,63 +206,21 @@ seguinte:
    spec. O que **não** entra por padrão está na mesma página (filtro de `paths` no gatilho, cadência
    `ci-antes-do-merge`, sharding).
 5a-ter. **Se esta trilha gera e commita um artefato a partir de um contrato (tipos/cliente
-   gerados de OpenAPI/GraphQL/protobuf, ou qualquer pipeline "gere e commite"), rode a geração
-   explícita seguida de diff contra o arquivo committed — nunca só o build de desenvolvimento —
-   antes de declarar a trilha pronta para code review.** Build local costuma regenerar esse
-   artefato do zero a cada execução, o que mascara desvio entre o contrato e o arquivo commitado
-   (`docs/TESTING.md`, seção "Build/empacotamento real"). Rode o mesmo comando que o CI roda para
-   detectar esse desvio (geração + `git diff --exit-code` contra o arquivo gerado), não o build.
-5b. **Antes de reportar a trilha como concluída, confirme contra `origin/<branch>` — não só que `git
-   push` retornou sucesso.** Um push bem-sucedido só garante que os commits que existiam localmente
-   *naquele momento* foram enviados — não protege contra um commit anterior ter sido perdido por um
-   `fetch`+`rebase` concorrente no meio da sessão (`docs/GIT-WORKFLOW.md`, seção "Reconciliação para
-   a branch compartilhada da fatia"). Depois do push final desta trilha, rode `git fetch origin
-   <branch>` e confirme que cada arquivo citado no seu resumo (o commit de
-   `coverage/<fatia>-backend.md`, o código e os testes da sua trilha, etc.)
-   está de fato presente em `origin/<branch>` — ex.: `git diff origin/<branch> -- <arquivo>` vazio,
-   ou `git log origin/<branch> -1 --stat` incluindo o commit esperado. Se algo estiver faltando,
-   refaça o commit/push antes de declarar sucesso — nunca reporte "commitado e enviado" só porque o
-   comando `git push` não retornou erro.
-5c. **Se esta trilha tocou mais de um ponto de entrada estruturalmente equivalente** (mesma
-   correção/comportamento aplicado a N call-sites com o mesmo padrão — ex.: N endpoints usando o
-   mesmo handler compartilhado, N validações idênticas em rotas irmãs), confirme, antes de
-   reportar a trilha como concluída, que **todos** os N pontos saíram com cobertura de teste
-   equivalente — não só implementação equivalente. Liste os N pontos e confirme, um a um, que cada
-   um tem um teste dedicado ao novo comportamento (não é suficiente que o teste de um ponto cubra
-   o padrão "por amostragem"). Já aconteceu de verdade: uma correção aplicada corretamente em 7
-   pontos de entrada saiu com teste de integração dedicado em só 5 deles — os outros 2 só ganharam
-   teste depois que `code-reviewer` identificou a assimetria numa rodada extra evitável.
-5d. **Dublê derivado de captura real inclui a página/resposta inteira, não o fragmento de
-   interesse, e clique/interação em teste usa a API estrita de locator** (a que falha com seletor
-   ambíguo), nunca o atalho que resolve para o primeiro elemento que casar (`docs/TESTING.md`, seção
-   "Fidelidade do dublê derivado de captura real: página inteira e locator estrito"). Captura de
-   fragmento produz um dublê onde o seletor é único **por construção**, e a API não estrita
-   transforma a ambiguidade do sistema real em interação silenciosa no elemento errado — nunca em
-   erro. Já aconteceu de verdade: a automação clicou na lupa de busca do cabeçalho do site em vez do
-   botão da feature durante **seis specs**, sem nenhuma submissão jamais acontecer, e o desfecho
-   sempre pareceu falha transitória.
+   gerados de OpenAPI/GraphQL/protobuf, ou qualquer pipeline "gere e commite")**:
+   `backend-developer/artefato-gerado-vs-commitado.md`.
+5b. **Antes de reportar a trilha como concluída, confirme contra `origin/<branch>` — não só que
+   `git push` retornou sucesso.** `backend-developer/confirmar-push-origin.md`.
+5c. **Se esta trilha tocou mais de um ponto de entrada estruturalmente equivalente**:
+   `backend-developer/pontos-equivalentes-cobertura.md`.
+5d. **Dublê derivado de captura real inclui a página/resposta inteira, e clique/interação em
+   teste usa a API estrita de locator**: `backend-developer/duble-captura-real-locator-estrito.md`.
 6. Nunca "contorne" um teste que falha comentando/pulando (`skip`, `xfail`, mocks fake-positivos)
    para fazer o pipeline passar — corrija a causa raiz ou volte à etapa de arquitetura se o
    problema é de design. Se a mesma falha resistir a 3 tentativas de correção, pare e escale ao
    usuário em vez de insistir numa 4ª tentativa.
 7. **Antes de encerrar, volte para a branch base — mas só se você não está num worktree
-   isolado.** Se esta execução usa um working tree isolado (`isolation: "worktree"` da Agent tool,
-   ou um `git worktree add` equivalente — `docs/GIT-WORKFLOW.md`, seção "Isolamento de working
-   tree entre agentes concorrentes"), **não faça `git checkout <branch base>`** dentro dele: o
-   worktree principal do orquestrador provavelmente já tem essa branch como `HEAD` ativo, e Git
-   não permite a mesma branch em dois worktrees ao mesmo tempo — tentar isso pode falhar
-   explicitamente ou, pior, ter sucesso e bloquear o orquestrador de voltar a essa branch até que
-   este worktree isolado seja removido. Nesse caso, basta permanecer na própria branch da fatia (a
-   sessão deste agente já está terminando) — ou, se precisar mesmo sair dela antes, use `git
-   checkout --detach` em vez de mirar numa branch específica. Já aconteceu de verdade: agentes
-   isolados tentando `git checkout main` dentro do próprio worktree bloquearam repetidamente o
-   worktree principal do orquestrador de voltar a `main` para prosseguir com merges, exigindo
-   remoção manual do worktree órfão a cada vez.
-   Caso contrário (working directory compartilhado com o orquestrador, sem isolamento): confirme a
-   branch atual (`git branch --show-current`); se não for a branch a partir da qual a branch desta
-   fatia foi criada (normalmente `main`), faça `git checkout <branch base>`. Nunca deixe o working
-   directory compartilhado na branch da fatia depois de terminar sua trilha — isso já causou dano
-   real (comando do orquestrador rodado sem querer contra a branch errada).
+   isolado** (mecânica completa, incluindo o caso isolado, em
+   `backend-developer/worktree-saida.md`).
 
 ## Regras inegociáveis de código
 
@@ -368,119 +271,23 @@ seguinte:
    orquestrador — nunca na sua suíte automatizada do dia a dia.
 
 5. **Adapters que envolvem processo externo/CLI com "resultado vazio esperado" como caso de
-   negócio válido** (ex.: "sem tags ainda", "sem commits ainda") escrevem, por padrão, **dois**
-   testes de integração distintos — nunca só o caso feliz:
-   1. O caso de "resultado vazio esperado" (negócio legítimo) → resultado vazio/`null`, sem
-      exceção.
-   2. Um caso de "falha real do processo externo" (ex.: diretório que não é o recurso esperado,
-      comando não encontrado) → exceção com o `stderr`/detalhe real, nunca o mesmo valor do
-      caso 1.
-   Tratar qualquer exit code não-zero como "vazio" esconde uma falha real atrás do mesmo sinal que
-   significa "primeiro uso" — mesmo que o XML doc/comentário do adapter descreva esse
-   comportamento como intencional, isso não substitui o teste dedicado. Se este TRD já define
-   outro adapter irmão do mesmo tipo (outro wrapper de CLI) que trata essa distinção
-   corretamente, replique o mesmo padrão aqui — não implemente cada wrapper de CLI como um caso
-   isolado. Já aconteceu de verdade: um adapter que envolvia `git describe` tratou qualquer exit
-   code não-zero como "nenhuma tag encontrada", documentou isso como intencional e cravou o
-   comportamento num teste — enquanto um adapter irmão escrito na mesma tarefa (`git log`) já
-   fazia a distinção certa; o bug só foi pego na revisão de código, gerando uma rodada extra de
-   correção evitável.
+   negócio válido**: `backend-developer/cli-wrapper-resultado-vazio.md`.
 
 6. **Tradutor de erro com conjunto fechado de códigos nunca descarta em silêncio o que não souber
-   traduzir.** Vale para qualquer mapeador entre um vocabulário aberto (issues de um validador de
-   esquema, códigos de um driver de banco, erros de um SDK externo) e um vocabulário **fechado**
-   definido pelo seu projeto (um enum de código de campo, um envelope único de resposta de erro).
-   O caso não-mapeado tem de ter um destino explícito, e esse destino nunca é "ignorar":
-   1. **Preserve a evidência diagnosticável** — registre em log o identificador bruto da entrada
-      não traduzida (o `path` e o código interno do validador, o código do driver), nunca a
-      mensagem crua do mecanismo de origem numa resposta ao cliente.
-   2. **Garanta um código de fallback na saída** — a resposta nunca sai com a lista de campos
-      vazia quando a validação de fato recusou algo, porque uma recusa sem pista alguma é
-      indepurável do lado de quem chama.
-   3. **Cubra os dois caminhos com teste dedicado**: uma entrada que o enum conhece e uma entrada
-      que ele **não** conhece, asseverando que a segunda ainda produz resposta com pista.
-   Sem isso o defeito é estrutural, não descuido: um esquema que não cobre uma forma de rejeição
-   (um campo `.optional()` sem o `.nullable()` correspondente, recebendo `null`) não quebra a
-   compilação nem reprova nenhum teste — produz um `422` com `fields: []`. Já aconteceu de verdade:
-   duas hipóteses plausíveis foram descartadas por leitura de código antes de alguém capturar o
-   corpo real da resposta e rastrear o mapeador. Se o TRD desenha esse padrão de envelope único de
-   erro, o docblock do mapeador diz qual é o comportamento do caso não-mapeado — é o que avisa quem
-   acrescentar um campo novo ao contrato depois.
+   traduzir.** `backend-developer/tradutor-erro-fechado.md`.
 
 7. **Port/adapter que declara "deve conter falha interna" exige teste de contenção antes de
-   considerar a tarefa pronta para revisão — nunca só o caminho feliz.** Vale para qualquer
-   adapter/port que declare explicitamente, em comentário ou no TRD, uma invariante do tipo "nunca
-   deve propagar exceção própria" (típico de mecanismo de observabilidade/alerta — `docs/
-   ARCHITECTURE.md`, seção "Contenção de falha em mecanismos que reagem a falha"). O teste força
-   uma falha real **dentro** do mecanismo (storage indisponível, dependência externa lançando) e
-   confirma que o comportamento original do caminho que **chamou** o adapter continua intacto —
-   nunca basta confirmar "o alerta dispara" e "o throttle suprime repetição" sem também confirmar
-   "o que acontece se o próprio throttle/alerta falhar". O cenário mais provável de ativar um
-   mecanismo de alerta (algo real quebrou) é também o cenário mais provável de sua própria
-   dependência (cache, banco, rede) estar degradada — então esse teste não é um caso extra
-   opcional, é o caso que mais importa. Já aconteceu de verdade: um `CriticalErrorReporter` testou
-   "erro dispara alerta" e "throttle suprime repetição", mas nenhum teste cobria a falha do
-   throttle em si — se o cache ficasse indisponível, a exceção nova do throttle escapava do
-   pipeline de tratamento, mascarando a exceção original por completo (nem log, nem alerta saíam
-   para o erro real). Só foi pego na revisão de código, como achado bloqueante.
+   considerar a tarefa pronta para revisão — nunca só o caminho feliz.**
+   `backend-developer/contencao-falha-mecanismo.md`.
 
 8. **Migração que faz `GRANT`/`REVOKE` de privilégio no Postgres sempre escopa à(s) coluna(s)
-   exatas, nunca à tabela inteira.** `grant update on <tabela> to <papel>` (sem lista de colunas)
-   concede `UPDATE` em **todas** as colunas da tabela de uma vez — mesmo que a intenção seja só
-   satisfazer uma exigência pontual (ex.: o lock `SELECT ... FOR KEY SHARE` que toda constraint de
-   chave estrangeira dispara ao inserir numa tabela que a referencia) — e reabre qualquer coluna
-   que uma migração anterior tenha bloqueado deliberadamente como defesa em profundidade além de
-   RLS. O efeito é simétrico e mais perigoso no `down()`: `revoke update on <tabela> from <papel>`
-   (sem lista de colunas) remove **todos** os `GRANT`s de `UPDATE` do papel na tabela — inclusive
-   os concedidos por migrações **anteriores**, não relacionadas; um rollback real quebraria
-   funcionalidade de produção sem nada a ver com a migração atual. A forma correta é sempre
-   `grant update (coluna) on <tabela> to <papel>` / `revoke update (coluna) on <tabela> from
-   <papel>`, de modo que tanto o `up()` quanto o `down()` tocam só o que a própria migração
-   concedeu. Vale sempre que o projeto usa RLS + privilégio de coluna como defesa em profundidade
-   (`docs/STACK.md`/ADR do projeto) — nunca a forma larga "por conveniência", mesmo que pareça
-   inofensiva no momento em que é escrita.
+   exatas, nunca à tabela inteira.** `backend-developer/grant-revoke-escopo-coluna.md`.
 
 9. **Teste de migração de privilégio prova o escopo exato via consulta de catálogo, nunca só o
-   comportamento.** Um teste que só confirma "a operação de negócio volta a funcionar" (ex.: um
-   `INSERT` na tabela filha passa a funcionar depois do `GRANT`) não distingue um `GRANT` largo
-   (tabela inteira) de um `GRANT` escopado (uma coluna) — os dois fazem a operação passar
-   igualmente. Só uma asserção direta contra o catálogo do banco (`has_column_privilege()`/
-   `has_table_privilege()` no Postgres, ou equivalente) prova o escopo **mínimo**, não só
-   **suficiente**. A mesma lacuna vale para o `down()`: um teste de comportamento não detecta que
-   um `REVOKE` sem lista de colunas também apagou `GRANT`s de coluna pré-existentes de outras
-   migrações — só fica claro rodando o rollback de fato e consultando o catálogo depois. Toda
-   migração que faz `GRANT`/`REVOKE` de privilégio (tabela ou coluna, regra 8 acima) inclui, no
-   mínimo, uma asserção de catálogo cobrindo o `up()` e uma cobrindo o `down()`. Já aconteceu de
-   verdade: a primeira versão de uma migração (`grant update on <tabela> to <role>`, sem lista de
-   colunas) tinha teste de integração provando o comportamento certo, e ainda assim foi reprovada
-   numa rodada de revisão, por medição própria e independente do revisor — nem o `up()` nem o
-   `down()` tinham o teste de catálogo que provaria o escopo.
+   comportamento.** Mesmo arquivo-filho da regra 8: `backend-developer/grant-revoke-escopo-coluna.md`.
 
-**Erro opaco se depura capturando a evidência bruta primeiro — não formulando a correção primeiro.**
-Erro opaco é o que não nomeia sua própria causa: um `422` sem detalhe de campo, uma geometria que
-não bate (overflow de N pixels), uma falha de e2e com mensagem genérica. Diante dele, o primeiro
-passo é **uma medição direta do fenômeno**, não uma hipótese: o corpo real da resposta HTTP
-(capturado da rede — `page.waitForResponse` + `await response.json()` ou equivalente), não o que o
-esquema/VO "deveria" produzir; a geometria real do documento renderizado (`getBoundingClientRect()`/
-`scrollWidth` avaliados no navegador), não a árvore de acessibilidade, que mostra **estrutura** e
-não **geometria**. Custa uma linha de código ou um `console.log`; uma rodada de correção baseada em
-hipótese errada custa a rodada inteira. **Uma correção que não move a medição não é a correção** —
-se você mediu o mesmo valor antes e depois, isso já é a prova de que a causa é outra, e não uma
-razão para empurrar a mudança e esperar o CI decidir. Ao relatar a correção, diga **qual medição
-direta confirmou a causa**; eliminação de hipóteses por leitura de código não fecha causa, só
-estreita a busca. Já aconteceu de verdade, duas vezes na mesma fatia: um overflow "corrigido" por
-leitura da árvore de acessibilidade do Playwright (a causa real era outro elemento, sem
-`flex-wrap`, achado só ao instrumentar a geometria no navegador), e um `422` com duas hipóteses
-descartadas por leitura de VO antes de alguém capturar o corpo real e ver `fields: []` — a pista
-que levou à causa genuína.
-
-**Se você reportar mutação como evidência de discriminância dos testes**, informe **qual asserção
-falhou (arquivo:linha) e a mensagem de falha** — nunca só "mutação X, N testes morreram". Esse
-formato resumido torna invisível o engano mais comum: uma mutação que quebra o fluxo *antes* do
-ponto sob teste mata o teste por uma asserção anterior, e o vermelho é indistinguível do que se
-queria provar. Se a asserção que falhou não é a que a mutação pretendia exercitar, **diga isso** — é
-informação, não demérito, e é o que permite ao revisor construir a mutação complementar em vez de
-repetir a sua.
+Depurando erro opaco, ou reportando mutação como evidência de discriminância dos testes:
+`backend-developer/evidencia-direta-nao-suposicao.md`.
 
 ## Definição de pronto desta etapa
 
