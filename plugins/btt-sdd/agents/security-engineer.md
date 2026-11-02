@@ -39,6 +39,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 | Isolamento por tenant (área 9), ou condição de corrida com lock (área 10) | `security-engineer/medicao-sobre-leitura.md` |
 | Um achado propaga um controle que repousa sobre premissa nunca validada | `code-reviewer/controle-premissa-nao-validada.md` |
 | Achado recomenda ação futura, ou pendência resolvida com "aceitar risco + documentar" (passos 3a-3c) | `security-engineer/pendencia-documentacao-nao-fecha-sozinha.md` |
+| Registrando achado (passo 3), escrevendo o veredito (passo 4), ou commitando (passo 5) | `security-engineer/artefato-split-fisico.md` |
 
 ## Pré-condição
 
@@ -85,8 +86,9 @@ vulnerabilidade original) e rode pelo menos o subconjunto de testes do arquivo/m
 auditoria completa das 6 áreas continua obrigatória na fatia final (parágrafo acima) — essa
 reverificação pontual de achado específico não substitui isso, só evita repetir a análise completa
 das 6 áreas a cada rodada intermediária que só confirma uma correção já apontada. Confirmada a
-correção, atualize o `Status` da linha original na tabela de Achados (seção 8) de `aberto` para
-`corrigido` — nunca apague a linha nem crie uma nova. Se a correção não procede, deixe
+correção, atualize o `Status` da linha original na tabela de Achados de `tracking.md` (ou seção 8
+do artefato legado) de `aberto` para `corrigido` — nunca apague a linha nem crie uma nova. Se a
+correção não procede, deixe
 `Status = aberto` e registre o motivo. Uma linha com `Status = corrigido` cuja `Fatia` já foi
 mergeada passa a ser referência sob demanda para rodadas seguintes (`docs/AGENT-PREAMBLE.md`,
 seção "Artefato in-place que acumulou rodadas").
@@ -204,8 +206,9 @@ checkout.md` — leia antes do primeiro `git checkout` desta rodada.
    ou por contexto.
 2. Revise o código implementado e o PR desta fatia (`docs/GIT-WORKFLOW.md`) contra as áreas acima.
 3. Para cada área, registre achado (se houver) com severidade, ou "não aplicável" com
-   justificativa — nunca deixe uma área sem veredito. Ao registrar um achado novo na tabela da
-   seção 8, preencha `Fatia` (a desta rodada) e `Status = aberto`. Para cada achado, verifique se corresponde a
+   justificativa — nunca deixe uma área sem veredito. Ao registrar um achado novo, preencha
+   `Fatia` (a desta rodada) e `Status = aberto`. Formato novo vs. legado:
+   `security-engineer/artefato-split-fisico.md`. Para cada achado, verifique se corresponde a
    uma lição recorrente já confirmada (`docs/gates/licoes.md`) — se sim, cite o ID e acrescente
    esta fatia às ocorrências; se não, e o mesmo
    padrão já apareceu num `security-review.md` de outra feature, é a 2ª ocorrência: crie a entrada
@@ -218,20 +221,20 @@ checkout.md` — leia antes do primeiro `git checkout` desta rodada.
 3c. **Na revisão da última fatia da spec, MEÇA se as condições de documentação de decisões
    anteriores foram cumpridas** — mesmo arquivo-filho:
    `security-engineer/pendencia-documentacao-nao-fecha-sozinha.md`.
-4. Produza (primeira fatia) ou edite in-place (fatias seguintes) `specs/<slug>/security-review.md`
-   a partir de `specs/_template/security-review.template.md`, referenciando o PR e a fatia desta
-   rodada, com veredito geral (aprovado/aprovado com ressalvas/reprovado) e uma linha nova na
-   seção "Histórico de aprovações por fatia" — nunca sobrescreva o veredito de uma fatia já
+4. **Detecte o formato do artefato antes de escrever**: `security-engineer/artefato-split-fisico.md`.
+   Nos dois formatos: preencha o link do PR e a fatia desta rodada, com veredito geral
+   (aprovado/aprovado com ressalvas/reprovado) — nunca sobrescreva o veredito de uma fatia já
    aprovada e mergeada. Preencha `Profundidade` (`completo` se esta rodada revisou as 6 áreas por
    completo — sempre o caso na fatia final — ou `fast-path` se alguma área foi condensada) e
    `Commit` (`git rev-parse HEAD` no momento desta revisão) nas colunas correspondentes. Se o
    veredito geral for **reprovado**, atualize também, no TRD, a coluna Status das tarefas desta
    fatia para `bloqueado` (com o motivo em uma linha), refletindo a mesma transição na Issue
    GitHub associada, se houver.
-5. **Commite e envie (push) o `security-review.md`** antes de devolver o resultado — não deixe
-   essa parte para quem chamou você: `git add specs/<slug>/security-review.md` (mais
-   `docs/LESSONS-LEARNED.md`, só se você o criou ou atualizou nesta rodada; nunca `git add -A`/`.`
-   — outra trilha pode ter mudanças não commitadas em paralelo na mesma branch), uma mensagem de
+5. **Commite e envie (push) o artefato** antes de devolver o resultado — não deixe essa parte
+   para quem chamou você. Quais arquivos entram no `git add`: `security-engineer/artefato-split-
+   fisico.md` (mais `docs/LESSONS-LEARNED.md`, só se você o criou ou atualizou nesta rodada; nunca
+   `git add -A`/`.` — outra trilha pode ter mudanças não commitadas em paralelo na mesma branch),
+   uma mensagem de
    commit descritiva com a fatia, o veredito geral e as vulnerabilidades
    principais encontradas (você já tem essa informação da própria rodada, não precisa reformular),
    Commite na branch atual — a mesma branch do PR aberto pela implementação, nunca uma branch
