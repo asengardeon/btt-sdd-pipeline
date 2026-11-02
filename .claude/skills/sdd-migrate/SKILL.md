@@ -27,8 +27,10 @@ geração de conteúdo novo a partir de análise.
 Este arquivo **não sabe como transformar nenhum artefato específico** — só sabe onde procurar a
 regra certa. Cada arquivo em
 `.claude/skills/sdd-migrate/migrations/<artefato>-v<origem>-to-v<destino>.md` descreve a
-detecção e a transformação de **um** par de versões de **um** artefato. Hoje existem 5 regras,
-todas `v1 → v2` (arquivo único → split físico por rodada, `docs/MICRO-CONTEXT.md`, seção 2):
+detecção e a transformação de **um** par de versões de **um** artefato. Hoje existem 7 regras,
+todas `v1 → v2`: 5 arquivo único → split físico por rodada (`docs/MICRO-CONTEXT.md`, seção 2) e 2
+arquivo único → split por tópico (`docs/MICRO-CONTEXT.md`, seção 2b — PRD/TRD não têm rodada, só
+tópico):
 
 | Artefato | Arquivo de regra |
 |---|---|
@@ -37,11 +39,13 @@ todas `v1 → v2` (arquivo único → split físico por rodada, `docs/MICRO-CONT
 | `security-review` | `migrations/security-review-v1-to-v2.md` |
 | `sre-review` | `migrations/sre-review-v1-to-v2.md` |
 | `ux-review` | `migrations/ux-review-v1-to-v2.md` |
+| `prd` | `migrations/prd-v1-to-v2.md` |
+| `trd` | `migrations/trd-v1-to-v2.md` |
 
-Artefatos sem regra registrada (`prd`, `trd`, `coverage-summary`, `timing-log`, `oneshot`) nunca
-mudaram de formato desde que o pipeline existe — não é um erro, é "nada para migrar". Quando um
-desses artefatos ganhar uma versão nova no futuro, a extensão é **acrescentar** um arquivo de
-regra novo em `migrations/`, nunca reescrever este núcleo.
+Artefatos sem regra registrada (`coverage-summary`, `timing-log`, `oneshot`) nunca mudaram de
+formato desde que o pipeline existe — não é um erro, é "nada para migrar". Quando um desses
+artefatos ganhar uma versão nova no futuro, a extensão é **acrescentar** um arquivo de regra novo
+em `migrations/`, nunca reescrever este núcleo.
 
 ## Entrada
 
@@ -58,12 +62,16 @@ haver mais de um artefato defasado na mesma spec; cada migração é deliberada 
 
 2. **Determine a versão atual do template.** Leia a primeira linha de
    `specs/_template/<artefato>.template.md` — `<!-- sdd-format-version: N -->`. Se este artefato
-   também tiver split físico (`specs/_template/reviews/<artefato>/index.template.md` existe),
-   leia o marcador desse arquivo também: a versão "atual" é sempre a mais alta das duas (hoje,
-   para os 5 artefatos de revisão, é a do split — `v2`).
+   também tiver versão split, leia o marcador do `index.template.md` correspondente também: a
+   versão "atual" é sempre a mais alta das duas (hoje é sempre a do split — `v2`). O split pode
+   estar em dois lugares (`docs/MICRO-CONTEXT.md`, seções 2 e 2b): `specs/_template/reviews/
+   <artefato>/index.template.md` (split por rodada — os 5 artefatos de revisão) ou
+   `specs/_template/<artefato>/index.template.md` (split por tópico — `prd`, `trd`).
 
 3. **Determine a versão da instância real em `specs/<slug>/`, nesta ordem**:
-   - Se `specs/<slug>/reviews/<artefato>/INDEX.md` existe, leia o marcador dele.
+   - Se `specs/<slug>/reviews/<artefato>/INDEX.md` existe (split por rodada) ou
+     `specs/<slug>/<artefato>/INDEX.md` existe (split por tópico — `prd`, `trd`), leia o marcador
+     dele.
    - Senão, se `specs/<slug>/<artefato>.md` existe, leia seu marcador na primeira linha.
      **Se não tiver marcador** (artefato escrito antes desta convenção existir — lacuna
      transitória documentada em `docs/MICRO-CONTEXT.md`, seção 3), trate como a versão mais

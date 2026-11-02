@@ -36,9 +36,11 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 ### Fallback sem o script (comportamento anterior)
 
 1. Liste os diretórios em `specs/` (exceto `_template`).
-2. Para cada um, verifique a presença de: `prd.md`, `trd.md`, `code-review.md`, `qa-report.md`,
-   `security-review.md`, `sre-review.md`, e se há código/testes associados em `src/`/`tests/`
-   referenciando a feature.
+2. Para cada um, verifique a presença de: `prd/INDEX.md` ou `prd.md`, `trd/INDEX.md` ou `trd.md`
+   (`docs/MICRO-CONTEXT.md`, seção 2b — formato novo vs. legado), `code-review.md`/`reviews/
+   code-review/INDEX.md`, `qa-report.md`/`reviews/qa-report/INDEX.md`, `security-review.md`/
+   `reviews/security-review/INDEX.md`, `sre-review.md`/`reviews/sre-review/INDEX.md`, e se há
+   código/testes associados em `src/`/`tests/` referenciando a feature.
 3. Apresente uma tabela curta: feature | etapa atual | próximo comando a rodar | pendências
    VALIDAR DEPOIS | etapas "requer revalidação". A etapa atual é a última etapa concluída; o
    próximo comando é a skill seguinte na ordem

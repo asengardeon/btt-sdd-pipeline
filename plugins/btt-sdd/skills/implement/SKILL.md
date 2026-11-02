@@ -99,12 +99,15 @@ entre trilhas paralelas após correção: `_rules/reconciliacao-contrato-trilhas
 ## Passos (implementação de uma fatia nova)
 
 1. Identifique o TRD: se `args` é um caminho de arquivo existente, use-o diretamente; senão,
-   resolva pela convenção `specs/<slug>/trd.md` (mesma lógica de `/btt-sdd:trd`: `args` como slug, ou
-   única spec com `trd.md` sem implementação concluída, ou perguntar). Confirme que existe. Se
-   não existir, sugira `/btt-sdd:trd` primeiro. Verifique também se `docs/LESSONS-LEARNED.md` existe
-   (mesmo tratamento condicional de `docs/STACK.md`/`docs/BASELINE.md`) — se existir, é passado
-   como grounding adicional ao(s) agente(s) invocado(s) nos passos seguintes.
-2. Leia a tabela "Decomposição de tarefas e dependências (fatias verticais de entrega)" do TRD e
+   resolva pela convenção `specs/<slug>/trd/INDEX.md` (formato novo) ou `specs/<slug>/trd.md`
+   (formato legado — `docs/MICRO-CONTEXT.md`, seção 2b) — mesma lógica de `/btt-sdd:trd`: `args`
+   como slug, ou única spec com TRD sem implementação concluída, ou perguntar. Confirme que
+   existe. Se não existir, sugira `/btt-sdd:trd` primeiro. Verifique também se
+   `docs/LESSONS-LEARNED.md` existe (mesmo tratamento condicional de
+   `docs/STACK.md`/`docs/BASELINE.md`) — se existir, é passado como grounding adicional ao(s)
+   agente(s) invocado(s) nos passos seguintes.
+2. Leia a tabela "Decomposição de tarefas e dependências (fatias verticais de entrega)" do TRD
+   (`specs/<slug>/trd/tasks.md` no formato novo, seção 13 de `specs/<slug>/trd.md` no legado) e
    veja quais trilhas aparecem (`backend`, `frontend`, `ambos`) e a que fatia (coluna "Fatia
    (PRD)") cada tarefa pertence. Antes de concluir que não há trabalho pendente, ou de invocar
    qualquer agente: `_rules/fatia-sem-trabalho-pendente.md`; se a fatia escolhida for a última da

@@ -1,5 +1,9 @@
 # TRD — Gestão simples de tarefas (exemplo do pipeline SDD)
 
+> **Migrado para o formato novo em 2026-11-02.** Ver
+> `specs/0001-example-task-management/trd/`. Este arquivo é mantido como referência histórica —
+> não edite; toda mudança nova usa o formato novo.
+
 > Status: aprovado
 > Autor: agente `architect`
 > PRD relacionado: `specs/0001-example-task-management/prd.md`

@@ -128,7 +128,7 @@ segurança do modo automático, informe isso e sugira o prefixo `!`, seguindo co
 
 1. **Superfície de ataque / threat modeling resumido**: quais são as fronteiras de confiança desta
    feature (entrada de usuário, chamada externa, arquivo, variável de ambiente)? A partir do TRD
-   (`specs/<slug>/trd.md`) e do código implementado.
+   (`specs/<slug>/trd/` formato novo, `specs/<slug>/trd.md` legado) e do código implementado.
 2. **OWASP Top 10** (aplicado ao que existe, não checklist genérico): injeção, quebra de
    autenticação, exposição de dados sensíveis, controle de acesso quebrado, configuração
    insegura, componentes vulneráveis conhecidos, falhas de log/monitoramento de segurança —

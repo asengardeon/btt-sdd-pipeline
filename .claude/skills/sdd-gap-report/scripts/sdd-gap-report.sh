@@ -32,7 +32,13 @@ if [ -z "$SLUG" ]; then
   exit 1
 fi
 
-TRD="specs/$SLUG/trd.md"
+# Formato novo (docs/MICRO-CONTEXT.md, seção 2b): a seção 6 (Casos de uso) vive em
+# trd/use-cases.md, não no arquivo único legado trd.md.
+if [ -f "specs/$SLUG/trd/INDEX.md" ]; then
+  TRD="specs/$SLUG/trd/use-cases.md"
+else
+  TRD="specs/$SLUG/trd.md"
+fi
 if [ ! -f "$TRD" ]; then
   echo "TRD não encontrado: $TRD"
   exit 1

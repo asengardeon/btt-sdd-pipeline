@@ -120,10 +120,19 @@ DELIBERADAS: dict[str, dict] = {
         # a lista de artefatos "sem regra registrada" não pode citá-lo do lado do plugin.
         "trocas": [
             (
-                "Artefatos sem regra registrada (`prd`, `trd`, `coverage-summary`, `timing-log`, "
-                "`oneshot`) nunca",
-                "Artefatos sem regra registrada (`prd`, `trd`, `coverage-summary`, `timing-log`) "
+                "Artefatos sem regra registrada (`coverage-summary`, `timing-log`, `oneshot`) "
                 "nunca",
+                "Artefatos sem regra registrada (`coverage-summary`, `timing-log`) nunca",
+            ),
+        ],
+    },
+    "docs/MICRO-CONTEXT.md": {
+        # Mesmo motivo: `specs/_template/oneshot.template.md` só existe neste repositório, então a
+        # lista de artefatos "sem par registrado" (seção 3) não pode citá-lo do lado do plugin.
+        "trocas": [
+            (
+                "Artefatos sem par registrado (`coverage-summary`, `timing-log`, `oneshot`) nunca",
+                "Artefatos sem par registrado (`coverage-summary`, `timing-log`) nunca",
             ),
         ],
     },

@@ -118,7 +118,8 @@ checkout.md` — leia antes do primeiro `git checkout` desta rodada.
 
 0. Ao registrar um achado novo, preencha `Fatia` (a desta rodada) e `Status = aberto`. Formato
    novo vs. legado: `qa-engineer/artefato-split-fisico.md`.
-1. Leia `specs/<slug>/prd.md` e `specs/<slug>/trd.md`, identifique a fatia sendo validada nesta
+1. Leia o PRD (`specs/<slug>/prd/` ou `prd.md`) e o TRD (`specs/<slug>/trd/` ou `trd.md`),
+   identifique a fatia sendo validada nesta
    rodada e o PR correspondente. Extraia só os critérios de aceite cobertos por essa fatia. Leia
    também `docs/LESSONS-LEARNED.md`, se existir. Ao avaliar a correção de um teste que era instável,
    pergunte se mudou a **classe** da asserção ou só a **constante de tempo**: aumentar timeout/delay

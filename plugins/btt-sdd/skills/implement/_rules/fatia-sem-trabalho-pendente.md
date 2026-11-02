@@ -65,10 +65,11 @@ checkout limpo a partir de um ref já commitado — mudanças feitas diretamente
 (ex.: a edição do PRD/TRD durante a aprovação, que por si só não passa por commit/PR,
 `docs/GIT-WORKFLOW.md`, seção "Mapeamento no pipeline SDD": "Nenhuma — documentos em `specs/`, sem
 código/branch ainda") são literalmente invisíveis para um worktree novo, mesmo que `git log --all`
-seja consultado. Se `specs/<slug>/prd.md`/`trd.md` (e `timing-log.md`, se as etapas de PRD/TRD já
-o criaram) ainda estiverem só como mudanças não commitadas no checkout principal, commite-os
-agora, nesta branch recém-criada, como parte do primeiro commit — antes de qualquer `git worktree
-add`/invocação com `isolation: "worktree"` para esta fatia.
+seja consultado. Se `specs/<slug>/prd/`/`trd/` (formato novo) ou `prd.md`/`trd.md` (legado) — e
+`timing-log.md`, se as etapas de PRD/TRD já o criaram — ainda estiverem só como mudanças não
+commitadas no checkout principal, commite-os agora, nesta branch recém-criada, como parte do
+primeiro commit — antes de qualquer `git worktree add`/invocação com `isolation: "worktree"` para
+esta fatia.
 
 **Nunca** contorne isso commitando PRD/TRD direto em `main` (regra 1 de `docs/GIT-WORKFLOW.md` —
 ninguém commita direto nela) nem criando um PR de documentação avulso para isso — eles seguem

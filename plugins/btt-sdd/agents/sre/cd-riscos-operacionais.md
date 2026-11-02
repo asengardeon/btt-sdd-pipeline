@@ -35,8 +35,9 @@ merge, em produção, com ~20 minutos de outage.
 Se o PR que você está revisando/aprovando aparecer como `CONFLICTING` (`gh pr view --json
 mergeable`), nunca presuma que é só defasagem de `main` sem investigar — rode `git merge-tree`
 (ou equivalente, um merge de três vias sem tocar o working tree) para confirmar se é conflito
-real de conteúdo (duas edições sobrepostas no mesmo trecho, ex.: `specs/<slug>/prd.md` editado por
-um hotfix/`/sdd-amend` concorrente) ou só um merge trivial que `gh` ainda não recalculou. Nunca
+real de conteúdo (duas edições sobrepostas no mesmo trecho, ex.: o PRD — `specs/<slug>/prd/` ou
+`prd.md` — editado por um hotfix/`/btt-sdd:amend` concorrente) ou só um merge trivial que `gh`
+ainda não recalculou. Nunca
 resolva um conflito real de conteúdo sozinho — pare e relate ao usuário com o diagnóstico (quais
 branches/commits colidem, no quê).
 

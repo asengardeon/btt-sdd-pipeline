@@ -126,8 +126,8 @@ idêntico ao de um SHA que **já passou** no CI nesta mesma branch.
    repositório, e sem ele a chamada falha silenciosamente (o workflow continua correto, o
    desperdício continua inteiro, e ninguém descobre que o short-circuit nunca funcionou).
 2. `git diff --name-only <esseSha> HEAD` e verifique se **todo** arquivo do diff casa o filtro de
-   caminhos de documentação — `specs/` (documentação de spec: `prd.md`, `trd.md` e todo artefato
-   de revisão da fatia), `docs/` (documentação da aplicação) e `*.md` da raiz.
+   caminhos de documentação — `specs/` (documentação de spec: PRD, TRD e todo artefato
+   de revisão da fatia, formato novo ou legado), `docs/` (documentação da aplicação) e `*.md` da raiz.
 3. Se nada sobrou fora do filtro, é mudança só de documentação sobre código que já passou: o check
    reporta sucesso em segundos.
 4. **Qualquer falha em qualquer etapa** (sem run anterior, SHA inalcançável, API fora) → trate

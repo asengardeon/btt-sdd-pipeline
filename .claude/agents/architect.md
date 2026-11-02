@@ -37,7 +37,9 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 
 ## Pré-condição
 
-Você exige um PRD aprovado. Por convenção, `specs/<slug>/prd.md` — mas se o usuário indicar um
+Você exige um PRD aprovado. Por convenção, `specs/<slug>/prd/INDEX.md` (formato novo, split por
+tópico, `docs/MICRO-CONTEXT.md` seção 2b — lido junto com `user-stories.md` e `value-order.md`)
+ou `specs/<slug>/prd.md` (formato legado, só arquivo único existe) — mas se o usuário indicar um
 caminho de arquivo diferente (ex.: uma spec fora da estrutura padrão deste projeto), use-o
 diretamente. Se nenhum PRD existir nem for indicado, diga ao usuário para rodar `/sdd-prd`
 primeiro — não invente um PRD implícito.
@@ -217,7 +219,7 @@ não se aplica.
      repos/<owner>/<repo>/milestones` se ainda não existir) e dois labels: tipo (`enhancement`/
      `bug`/`documentation`, labels padrão do GitHub) e trilha (`backend`/`frontend`/`ambos`,
      espelhando a coluna Trilha — crie com `gh label create` se faltar)** — detalhe completo em
-     `specs/_template/trd.template.md`, seção 13. Se `gh` falhar, tente de novo (mesmo limite de 3
+     `specs/_template/trd/tasks.template.md`, seção 13. Se `gh` falhar, tente de novo (mesmo limite de 3
      tentativas de sempre); na 3ª falha sem sucesso, **pare e escale ao usuário** — não aprove nem
      entregue o TRD com tarefas sem issue.
    - **Se não houver** remote GitHub configurado/autenticado: **pare aqui**, sem aprovar o TRD.
@@ -259,9 +261,16 @@ não se aplica.
     `feature/<NNNN-slug>` se só há uma fatia, `feature/<NNNN-slug>/<fatia>` (ex.:
     `feature/0002-relatorio-mensal/f-1`) para cada fatia adicional. Registre a tabela na seção
     "Controle de versão (GitHub Flow, por fatia)" do TRD.
-11. Salve o TRD em `specs/<slug>/trd.md` usando `specs/_template/trd.template.md`. Se o TRD já
-    existia e está sendo alterado após aprovado, edite in-place e registre no "Log de revisões" —
-    nunca recrie do zero.
+11. **Salve o TRD no formato split por tópico** (`docs/MICRO-CONTEXT.md`, seção 2b — todo TRD
+    novo nasce direto nesse formato, nunca no arquivo único legado): crie o diretório
+    `specs/<slug>/trd/` com `INDEX.md` a partir de `specs/_template/trd/index.template.md`,
+    `architecture.md` a partir de `architecture.template.md`, `contract.md` a partir de
+    `contract.template.md`, `use-cases.md` a partir de `use-cases.template.md`, `quality.md` a
+    partir de `quality.template.md`, `test-plan.md` a partir de `test-plan.template.md`,
+    `tasks.md` a partir de `tasks.template.md`, e `tracking.md` a partir de
+    `tracking.template.md` (todos em `specs/_template/trd/`). Se o TRD já existia e está sendo
+    alterado após aprovado, edite in-place o arquivo certo (conforme a seção) e registre em
+    `tracking.md`, "Log de revisões" — nunca recrie do zero.
 
 ## Definição de pronto desta etapa
 

@@ -29,7 +29,14 @@ param(
   [string[]]$SearchPaths
 )
 
-$Trd = "specs/$Slug/trd.md"
+# Formato novo (docs/MICRO-CONTEXT.md, secao 2b): a secao 6 (Casos de uso) vive em
+# trd/use-cases.md, nao no arquivo unico legado trd.md.
+$TrdSplit = "specs/$Slug/trd/INDEX.md"
+if (Test-Path $TrdSplit) {
+  $Trd = "specs/$Slug/trd/use-cases.md"
+} else {
+  $Trd = "specs/$Slug/trd.md"
+}
 if (-not (Test-Path $Trd)) {
   Write-Host "TRD nao encontrado: $Trd"
   exit 1

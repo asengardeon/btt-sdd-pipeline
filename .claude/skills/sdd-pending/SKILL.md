@@ -25,17 +25,18 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    `${CLAUDE_SKILL_DIR}/scripts/sdd-pending.ps1 [-Slug <slug>]` (PowerShell) — o script roda a
    partir de onde estiver instalado, mas lê `specs/`/`docs/` relativos ao diretório de trabalho
    atual, que deve ser a raiz do projeto. Ele devolve duas tabelas:
-   - **Pendências VALIDAR DEPOIS**: varre `prd.md`, `trd.md`, `code-review.md`, `ux-review.md`,
-     `qa-report.md`, `security-review.md`, `sre-review.md` e `docs/BASELINE.md`, filtra só os itens
-     com status
+   - **Pendências VALIDAR DEPOIS**: varre PRD, TRD, code review, UX review, QA report, security
+     review, SRE review (formato novo — `tracking.md` em `prd/`/`trd/`/`reviews/<etapa>/` — ou
+     legado — arquivo único, `docs/MICRO-CONTEXT.md` seções 2 e 2b, detectado automaticamente) e
+     `docs/BASELINE.md`, filtra só os itens com status
      "pendente" e devolve feature | artefato | ID | pergunta | contexto — já deduplicada (linhas
      que só repetem uma referência a uma rodada anterior sem conteúdo novo, ex. "ver rodada
      anterior", são colapsadas na ocorrência mais informativa da mesma pergunta).
-   - **Tarefas ainda não implementadas**: varre a tabela de decomposição de cada `trd.md` e lista
-     toda linha cujo **Status** ainda não chegou a "implementado" (ou seja, está em "pendente",
-     "em andamento" ou "bloqueado") — feature | ID | tarefa | trilha | status | issue. Specs com
-     `prd.md` aprovado mas sem `trd.md` ainda (nenhuma tarefa decomposta) aparecem à parte, só
-     pelo nome da feature.
+   - **Tarefas ainda não implementadas**: varre a tabela de decomposição do TRD (`trd/tasks.md`
+     no formato novo, `trd.md` no legado) e lista toda linha cujo **Status** ainda não chegou a
+     "implementado" (ou seja, está em "pendente", "em andamento" ou "bloqueado") — feature | ID |
+     tarefa | trilha | status | issue. Specs com PRD aprovado mas sem TRD ainda (nenhuma tarefa
+     decomposta) aparecem à parte, só pelo nome da feature.
 1b. **Terceira lista, que o script não enxerga: premissas não validadas com consumidores ativos.**
    Uma tarefa de validação de premissa não entrega critério de aceite de nenhum PRD, então **não
    pertence a fatia nenhuma** — e por isso não aparece nem na tabela de VALIDAR DEPOIS (some quando
@@ -73,15 +74,18 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 ### Fallback sem o script (comportamento anterior)
 
 1. Para cada diretório em `specs/` (exceto `_template`), leia a seção "Pendências de validação
-   (VALIDAR DEPOIS)" de `prd.md`, `trd.md`, `code-review.md`, `ux-review.md`, `qa-report.md`,
-   `security-review.md` e `sre-review.md` (os que existirem). Se `docs/BASELINE.md` existir, leia
-   a mesma seção nele também (pendências do arqueólogo não são por feature).
+   (VALIDAR DEPOIS)" de PRD, TRD, code review, UX review, QA report, security review e SRE
+   review (os que existirem) — `tracking.md` em `prd/`/`trd/`/`reviews/<etapa>/` no formato novo,
+   ou o arquivo único (`prd.md`, `trd.md`, `code-review.md`, `ux-review.md`, `qa-report.md`,
+   `security-review.md`, `sre-review.md`) no formato legado (`docs/MICRO-CONTEXT.md`, seções 2 e
+   2b). Se `docs/BASELINE.md` existir, leia a mesma seção nele também (pendências do arqueólogo
+   não são por feature).
 2. Filtre só os itens com status "pendente" (ignore os já marcados "validado").
 3. Se `args` traz um slug específico, mostre só aquela feature; senão, mostre todas as que têm
    pendência.
 4. Apresente uma tabela: feature | artefato | ID | pergunta | contexto resumido.
-5. Para a segunda tabela, leia a seção "Decomposição de tarefas e dependências" de cada `trd.md`
-   e filtre as linhas cujo **Status** não seja "implementado", "aprovado" nem "concluído
-   (mergeado)" (ou seja, "pendente", "em andamento" ou "bloqueado"). Apresente: feature | ID |
-   tarefa | trilha | status | issue. Liste à parte as features que têm `prd.md` mas ainda não têm
-   `trd.md`.
+5. Para a segunda tabela, leia a seção "Decomposição de tarefas e dependências" do TRD
+   (`trd/tasks.md` no formato novo, `trd.md` no legado) e filtre as linhas cujo **Status** não
+   seja "implementado", "aprovado" nem "concluído (mergeado)" (ou seja, "pendente", "em andamento"
+   ou "bloqueado"). Apresente: feature | ID | tarefa | trilha | status | issue. Liste à parte as
+   features que têm PRD aprovado mas ainda não têm TRD.

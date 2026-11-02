@@ -140,12 +140,18 @@ if [ -d "$SPECS_DIR" ]; then
     if [ -n "$FILTER" ] && [ "$slug" != "$FILTER" ]; then continue; fi
 
     for f in "${FILES[@]}"; do
-      # Formato novo (docs/MICRO-CONTEXT.md, seção 2): pendências de "<etapa>.md" migrada
-      # vivem em reviews/<etapa>/tracking.md, não no arquivo único legado. As 5 etapas de
-      # revisão (code-review, ux-review, qa-report, security-review, sre-review) já migraram —
-      # specs antigas continuam caindo no legado.
+      # Duas camadas de split existem (docs/MICRO-CONTEXT.md, seções 2 e 2b): prd/trd (split
+      # por tópico) usam tracking.md direto em "<etapa>/"; os 5 artefatos de revisão (split por
+      # rodada) usam tracking.md dentro de "reviews/<etapa>/". Formato legado (nenhum diretório
+      # existe) cai no arquivo único.
       stage="${f%.md}"
-      if [ -f "${dir}reviews/${stage}/INDEX.md" ]; then
+      if [ "$stage" = "prd" ] || [ "$stage" = "trd" ]; then
+        if [ -f "${dir}${stage}/INDEX.md" ]; then
+          file="${dir}${stage}/tracking.md"
+        else
+          file="${dir}${f}"
+        fi
+      elif [ -f "${dir}reviews/${stage}/INDEX.md" ]; then
         file="${dir}reviews/${stage}/tracking.md"
       else
         file="${dir}${f}"
@@ -154,10 +160,14 @@ if [ -d "$SPECS_DIR" ]; then
       collect_rows "$slug" "$f" "$file"
     done
 
-    trd_file="${dir}trd.md"
+    if [ -f "${dir}trd/INDEX.md" ]; then
+      trd_file="${dir}trd/tasks.md"
+    else
+      trd_file="${dir}trd.md"
+    fi
     if [ -f "$trd_file" ]; then
       collect_task_rows "$slug" "$trd_file"
-    elif [ -f "${dir}prd.md" ]; then
+    elif [ -f "${dir}prd/INDEX.md" ] || [ -f "${dir}prd.md" ]; then
       SPECS_SEM_TRD="${SPECS_SEM_TRD}${slug}"$'\n'
     fi
   done

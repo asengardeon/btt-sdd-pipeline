@@ -51,7 +51,8 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 ## Pré-condição
 
 Você exige um PR aberto pela etapa de implementação (`docs/GIT-WORKFLOW.md`), com o TRD
-(`specs/<slug>/trd.md`) aprovado como referência de arquitetura pretendida. Sem PR/branch, não há
+(`specs/<slug>/trd/` formato novo, `specs/<slug>/trd.md` legado — `docs/MICRO-CONTEXT.md` seção
+2b) aprovado como referência de arquitetura pretendida. Sem PR/branch, não há
 o que revisar — devolva para `/btt-sdd:implement`.
 
 **Se esta execução usa um working tree isolado**, resolva todo path de `specs/<slug>/` **relativo
@@ -234,8 +235,9 @@ Propagar um controle que repousa sobre premissa nunca validada:
 Mecânica de `git checkout`/sincronização em working tree isolado: `code-reviewer/worktree-
 checkout.md` — leia antes do primeiro `git checkout` desta rodada.
 
-1. Leia `specs/<slug>/trd.md` para entender a arquitetura e o contrato pretendidos, e identifique
-   qual fatia está sendo revisada nesta rodada. Leia também `docs/LESSONS-LEARNED.md`, se existir.
+1. Leia o TRD (`specs/<slug>/trd/` ou `trd.md`) para entender a arquitetura e o contrato
+   pretendidos, e identifique qual fatia está sendo revisada nesta rodada. Leia também
+   `docs/LESSONS-LEARNED.md`, se existir.
 2. Identifique o PR desta fatia (`docs/GIT-WORKFLOW.md`) e obtenha o diff completo contra `main`
    (`git diff main...<branch-da-fatia>` ou equivalente via `Bash`) — como cada fatia parte de uma
    `main` já atualizada com as fatias anteriores mergeadas, esse diff naturalmente cobre só a

@@ -157,13 +157,23 @@ has_fatia_pendente() {
 
 STAGES=(prd trd code-review ux-review qa-report security-review sre-review)
 
-# Resolve o arquivo "primário" de uma etapa (onde fica o veredito/Histórico de aprovações):
-# formato novo usa INDEX.md dentro de reviews/<etapa>/, legado usa <etapa>.md direto
-# (docs/MICRO-CONTEXT.md, seção 2). A detecção é genérica — nenhuma etapa precisa de mudança
-# de código aqui quando migra; as 5 etapas de revisão (code-review, ux-review, qa-report,
-# security-review, sre-review) já migraram — specs antigas continuam caindo no legado.
+# Resolve o arquivo "primário" de uma etapa (onde fica o veredito/Histórico de aprovações, ou —
+# para prd/trd — a seção "Aprovação"): duas camadas de split existem (docs/MICRO-CONTEXT.md,
+# seções 2 e 2b). prd/trd (split por tópico, sem rodada) usam INDEX.md direto em
+# specs/<slug>/<etapa>/; os 5 artefatos de revisão (split por rodada) usam INDEX.md dentro de
+# specs/<slug>/reviews/<etapa>/. Legado (nenhum diretório existe) cai em <etapa>.md direto. A
+# detecção é genérica — nenhuma etapa precisa de mudança de código aqui quando migra; specs
+# antigas continuam caindo no legado até serem migradas.
 stage_primary_file() {
   local dir="$1" stage="$2"
+  if [ "$stage" = "prd" ] || [ "$stage" = "trd" ]; then
+    if [ -f "${dir}${stage}/INDEX.md" ]; then
+      echo "${dir}${stage}/INDEX.md"
+      return
+    fi
+    echo "${dir}${stage}.md"
+    return
+  fi
   if [ -f "${dir}reviews/${stage}/INDEX.md" ]; then
     echo "${dir}reviews/${stage}/INDEX.md"
     return
@@ -172,15 +182,35 @@ stage_primary_file() {
 }
 
 # Resolve o arquivo de "tracking" de uma etapa (achados/pendências VALIDAR DEPOIS/log de
-# revisões): formato novo usa tracking.md dentro de reviews/<etapa>/; legado usa o mesmo arquivo
-# do veredito, porque lá tudo vive junto.
+# revisões): formato novo usa tracking.md dentro de specs/<slug>/<etapa>/ (prd/trd) ou
+# specs/<slug>/reviews/<etapa>/ (os 5 artefatos de revisão); legado usa o mesmo arquivo do
+# veredito, porque lá tudo vive junto.
 stage_tracking_file() {
   local dir="$1" stage="$2"
+  if [ "$stage" = "prd" ] || [ "$stage" = "trd" ]; then
+    if [ -f "${dir}${stage}/INDEX.md" ]; then
+      echo "${dir}${stage}/tracking.md"
+      return
+    fi
+    echo "${dir}${stage}.md"
+    return
+  fi
   if [ -f "${dir}reviews/${stage}/INDEX.md" ]; then
     echo "${dir}reviews/${stage}/tracking.md"
     return
   fi
   echo "${dir}${stage}.md"
+}
+
+# Resolve o arquivo onde vive a tabela "Decomposição de tarefas e dependências" (seção 13 do
+# TRD): formato novo usa trd/tasks.md; legado usa o trd.md único.
+trd_tasks_file() {
+  local dir="$1"
+  if [ -f "${dir}trd/INDEX.md" ]; then
+    echo "${dir}trd/tasks.md"
+    return
+  fi
+  echo "${dir}trd.md"
 }
 
 label() {
@@ -283,7 +313,7 @@ for dir in "$SPECS_DIR"/*/; do
     case " $reval_alvos " in *" $1 "*) return ;; esac
     reval_alvos="$reval_alvos $1"
   }
-  fatia_pendente="$(has_fatia_pendente "${dir}trd.md")"
+  fatia_pendente="$(has_fatia_pendente "$(trd_tasks_file "$dir")")"
 
   for stage in "${STAGES[@]}"; do
     file="$(stage_primary_file "$dir" "$stage")"

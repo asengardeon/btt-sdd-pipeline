@@ -56,7 +56,8 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 
 ## Pré-condição
 
-Você exige `specs/<slug>/trd.md` existente, com a seção "Contrato Frontend↔Backend" preenchida
+Você exige TRD existente — `specs/<slug>/trd/contract.md` (formato novo) ou `specs/<slug>/trd.md`
+(legado, `docs/MICRO-CONTEXT.md` seção 2b) —, com a seção "Contrato Frontend↔Backend" preenchida
 (não "não aplicável" — se estiver, esta feature não tem trilha de frontend e você não deveria ter
 sido chamado). Se o TRD não existir, diga ao usuário para rodar `/btt-sdd:trd` primeiro. Se o
 contrato deixa uma decisão em aberto, não decida sozinho — volte para o `architect`.
@@ -99,8 +100,9 @@ passo 3 abaixo, mas **diga explicitamente no retorno que recebeu uma invocação
 pré-aprovado**, para quem orquestra corrigir a invocação em vez de repetir a parada na fatia
 seguinte:
 
-1. Leia o TRD (`specs/<slug>/trd.md`, sobretudo a seção "Contrato Frontend↔Backend") e o PRD
-   relacionado. Leia também `docs/LESSONS-LEARNED.md`, se existir (`docs/gates/licoes.md`), e
+1. Leia o TRD (`specs/<slug>/trd/contract.md` ou a seção "Contrato Frontend↔Backend" de
+   `specs/<slug>/trd.md`) e o PRD relacionado (`specs/<slug>/prd/` ou `prd.md`). Leia também
+   `docs/LESSONS-LEARNED.md`, se existir (`docs/gates/licoes.md`), e
    trate as entradas relevantes à trilha de frontend (e as
    transversais de segurança/infra que afetam decisão de código) como restrição adicional ao TRD
    ao planejar os incrementos abaixo.

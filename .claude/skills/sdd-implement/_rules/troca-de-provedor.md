@@ -12,8 +12,9 @@ o `sre` tomam sozinhos caso a caso "se merece" ADR — troca de provedor já des
 merece. Acione `architect` (ou `/sdd-trd` se a mudança também precisa refletir no corpo do TRD)
 antes de prosseguir.
 
-**Acione sempre com `isolation: "worktree"`** — ele vai editar arquivos compartilhados (`trd.md`,
-`docs/STACK.md`, ADRs), e essa invocação ad-hoc concorre com qualquer outra tarefa ativa no mesmo
+**Acione sempre com `isolation: "worktree"`** — ele vai editar arquivos compartilhados (TRD —
+`trd/architecture.md`/`trd/tasks.md` no formato novo, `trd.md` no legado —, `docs/STACK.md`,
+ADRs), e essa invocação ad-hoc concorre com qualquer outra tarefa ativa no mesmo
 repositório pela mesma razão que etapas de revisão já usam isolamento por padrão
 (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes concorrentes") — não só
 quando você já sabe de outra tarefa ativa, mas sempre, porque você (orquestrador) pode precisar

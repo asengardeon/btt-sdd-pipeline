@@ -59,7 +59,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 
 6. **Gere o primeiro PRD**: conduza o processo completo de `/sdd-prd`
    (`.claude/skills/sdd-prd/SKILL.md`, passos 2a a 5) usando os requisitos coletados no passo 1
-   como o pedido, salvando em `<diretório novo>/specs/0001-<slug>/prd.md`. **Aqui o passo 2a é a
+   como o pedido, salvando no formato split por tópico em
+   `<diretório novo>/specs/0001-<slug>/prd/` (`docs/MICRO-CONTEXT.md`, seção 2b). **Aqui o passo 2a é a
    regra, não a exceção**: o pedido que cria um projeto do zero quase sempre reúne várias features
    de usuário, e uma spec é **uma** feature (`.claude/agents/product-design.md`, passo 1b). Quebre
    em sequência numerada com o usuário e escreva o PRD só da primeira — `specs/0001-...` — deixando

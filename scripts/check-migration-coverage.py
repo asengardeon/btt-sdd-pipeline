@@ -1,20 +1,24 @@
 #!/usr/bin/env python3
 """Garante que toda versão de formato nova de um artefato tem regra de migração registrada.
 
-Quando um artefato gerado pelo pipeline (`specs/_template/<artefato>.template.md`, ou o split
-físico em `specs/_template/reviews/<artefato>/`) ganha uma versão de formato nova que quebra a
-estrutura do arquivo (`<!-- sdd-format-version: N -->` maior do que a versão anterior conhecida),
-a regra de migração correspondente em `.claude/skills/sdd-migrate/migrations/` é **obrigatória
-no mesmo commit/PR** — não é opcional, não fica para depois (`docs/MICRO-CONTEXT.md`, seção 3).
-Nada, até este script, verificava isso mecanicamente.
+Quando um artefato gerado pelo pipeline (`specs/_template/<artefato>.template.md`, ou um split em
+`specs/_template/reviews/<artefato>/` ou `specs/_template/<artefato>/`) ganha uma versão de
+formato nova que quebra a estrutura do arquivo (`<!-- sdd-format-version: N -->` maior do que a
+versão anterior conhecida), a regra de migração correspondente em
+`.claude/skills/sdd-migrate/migrations/` é **obrigatória no mesmo commit/PR** — não é opcional,
+não fica para depois (`docs/MICRO-CONTEXT.md`, seção 3). Nada, até este script, verificava isso
+mecanicamente.
 
 Hoje a convenção tem duas camadas por artefato: o template de arquivo único em
 `specs/_template/<artefato>.template.md` (a versão mais antiga conhecida daquele artefato) e,
-quando o artefato migrou para o split físico por rodada, `specs/_template/reviews/<artefato>/`
-(a versão atual). Este script lê o marcador de ambas as camadas quando existirem e confirma que
-existe um arquivo `.claude/skills/sdd-migrate/migrations/<artefato>-v<origem>-to-v<destino>.md`
-cobrindo cada salto de versão — hoje sempre `v1 → v2` para os 5 artefatos de revisão, mas o
-script generaliza para qualquer `N → N+1` se uma terceira versão nascer no futuro.
+quando o artefato migrou para um formato split, um `index.template.md` que carrega a versão
+atual — em `specs/_template/reviews/<artefato>/` para split por rodada (os 5 artefatos de
+revisão, `docs/MICRO-CONTEXT.md` seção 2) ou direto em `specs/_template/<artefato>/` para split
+por tópico (`prd`, `trd`, seção 2b). Este script lê o marcador de ambas as camadas quando
+existirem e confirma que existe um arquivo
+`.claude/skills/sdd-migrate/migrations/<artefato>-v<origem>-to-v<destino>.md` cobrindo cada salto
+de versão — hoje sempre `v1 → v2` para os 7 artefatos com split, mas o script generaliza para
+qualquer `N → N+1` se uma terceira versão nascer no futuro.
 
 Além dessas duas camadas, existe um terceiro tipo de artefato: docs de `docs/` gerados por um
 agente sem template em `specs/_template/` (a estrutura exata vive inline no arquivo-filho do
@@ -83,15 +87,25 @@ def collect_single_file_versions() -> dict[str, int]:
 
 
 def collect_split_versions() -> dict[str, int]:
-    """Artefato -> versão, a partir de specs/_template/reviews/<artefato>/index.template.md."""
+    """Artefato -> versão, a partir de index.template.md num diretório split.
+
+    Duas camadas de split existem hoje (`docs/MICRO-CONTEXT.md`, seções 2 e 2b): split por rodada
+    em `specs/_template/reviews/<artefato>/index.template.md` (os 5 artefatos de revisão) e split
+    por tópico direto em `specs/_template/<artefato>/index.template.md` (`prd`, `trd`) — mesma
+    detecção, só muda a profundidade do diretório.
+    """
     versions = {}
-    if not REVIEWS_DIR.is_dir():
-        return versions
-    for sub in REVIEWS_DIR.iterdir():
-        if not sub.is_dir():
+    if REVIEWS_DIR.is_dir():
+        for sub in REVIEWS_DIR.iterdir():
+            if not sub.is_dir():
+                continue
+            v = read_version(sub / "index.template.md")
+            if v is not None:
+                versions[sub.name] = v
+    for sub in TEMPLATES_DIR.iterdir():
+        if not sub.is_dir() or sub.name == "reviews":
             continue
-        index = sub / "index.template.md"
-        v = read_version(index)
+        v = read_version(sub / "index.template.md")
         if v is not None:
             versions[sub.name] = v
     return versions
