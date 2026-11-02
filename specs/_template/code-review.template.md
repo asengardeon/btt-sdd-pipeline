@@ -3,7 +3,8 @@
 > **Formato legado.** Specs novas usam o split físico em
 > `specs/_template/reviews/code-review/` (`index.template.md`/`tracking.template.md`/
 > `round.template.md`, `docs/MICRO-CONTEXT.md`, seção 2). Este arquivo único só continua
-> sendo usado por specs que já o tinham antes da migração — a migração não é retroativa.
+> sendo usado por specs que já o tinham antes da migração — a migração não é automática.
+> Para converter uma spec antiga para o formato novo, rode `/sdd-migrate-reviews <slug> code-review`.
 
 > Autor: agente `code-reviewer`
 > TRD: `specs/<slug>/trd.md`

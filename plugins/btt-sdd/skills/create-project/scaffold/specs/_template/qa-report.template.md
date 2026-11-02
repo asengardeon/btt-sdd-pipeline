@@ -3,7 +3,8 @@
 > **Formato legado.** Specs novas usam o split físico em
 > `specs/_template/reviews/qa-report/` (`index.template.md`/`tracking.template.md`/
 > `round.template.md`, `MICRO-CONTEXT.md` do pipeline, seção 2). Este arquivo único só continua
-> sendo usado por specs que já o tinham antes da migração — a migração não é retroativa.
+> sendo usado por specs que já o tinham antes da migração — a migração não é automática.
+> Para converter uma spec antiga para o formato novo, rode `/btt-sdd:migrate-reviews <slug> qa-report`.
 
 > Autor: agente `qa-engineer`
 > PRD: `specs/<slug>/prd.md` | TRD: `specs/<slug>/trd.md`

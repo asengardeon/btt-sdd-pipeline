@@ -74,9 +74,17 @@ scroll dentro de um arquivo gigante.
 
 **Formato legado continua suportado para leitura.** Uma spec já em andamento num projeto
 consumidor, criada antes desta convenção existir, continua com `specs/<slug>/<stage>.md` único —
-a migração não é retroativa. Toda skill/agente que lê esses artefatos detecta qual formato está
-em uso (o diretório `specs/<slug>/reviews/<stage>/` existe → novo; só o arquivo único existe →
-legado) antes de decidir como ler ou escrever.
+a migração **não é automática**. Toda skill/agente que lê esses artefatos detecta qual formato
+está em uso (o diretório `specs/<slug>/reviews/<stage>/` existe → novo; só o arquivo único existe
+→ legado) antes de decidir como ler ou escrever.
+
+**Migração retroativa, por pedido explícito.** `/sdd-migrate-reviews <slug> <stage>` converte um
+artefato de uma spec existente do formato legado para o novo — nunca automaticamente, sempre um
+artefato de uma spec por vez. As tabelas (Histórico, achados/pendências, VALIDAR DEPOIS, log) são
+append-only desde o formato legado e migram sem perda; o conteúdo de área de rodadas anteriores à
+vigente não é recuperável, porque o próprio formato legado já o sobrescrevia a cada rodada — só a
+rodada vigente no momento da migração ganha um `F-<N>.md` real, as anteriores ficam com
+`Arquivo = —` na tabela de histórico.
 
 ## 3. Ferramenta conhecida antes de verificação manual
 
