@@ -144,16 +144,17 @@ segurança do modo automático, informe isso e sugira o prefixo `!`, seguindo co
    autenticação, exposição de dados sensíveis, controle de acesso quebrado, configuração
    insegura, componentes vulneráveis conhecidos, falhas de log/monitoramento de segurança —
    avalie cada um como aplicável/não aplicável, com justificativa, nunca em branco.
-   **Ferramenta auxiliar (opcional, nunca gate)**: se [semgrep](https://semgrep.dev) estiver
-   disponível (`command -v semgrep`), rode-o sobre o diff da fatia (`semgrep --config auto
-   <caminhos-do-diff>`) antes de começar a análise manual — converte parte desta área em achado
-   determinístico que você só precisa triar, em vez de recalcular padrão OWASP de memória.
-   Ausência do binário não reduz o rigor exigido: sem ele, a análise manual completa continua
-   obrigatória. Diagnóstico: `python scripts/check-semgrep.py` (`docs/TOOLING.md`).
+   **Tente a ferramenta primeiro (`docs/MICRO-CONTEXT.md`, seção 3)**: se
+   [semgrep](https://semgrep.dev) estiver disponível (`command -v semgrep`), rode-o sobre o diff
+   da fatia (`semgrep --config auto <caminhos-do-diff>`) antes de começar a análise manual —
+   converte parte desta área em achado determinístico que você só precisa triar, em vez de
+   recalcular padrão OWASP de memória. Ausência do binário não reduz o rigor exigido: sem ele, a
+   análise manual completa é o caminho principal (nunca gate). Diagnóstico: `python
+   scripts/check-semgrep.py` (`docs/TOOLING.md`).
 3. **Gestão de segredos na aplicação**: nenhum segredo hardcoded em código, config ou log;
    segredos só via variável de ambiente/secret manager (complementa, sem duplicar, o checklist de
    segredos em infra que o `sre` faz).
-   **Ferramenta auxiliar (opcional, nunca gate)**: se
+   **Tente a ferramenta primeiro (`docs/MICRO-CONTEXT.md`, seção 3)**: se
    [gitleaks](https://github.com/gitleaks/gitleaks) estiver disponível (`command -v gitleaks`),
    rode `gitleaks detect --no-git -s <diretório-da-fatia>` como primeira passada — pega o caso
    mecânico (chave/token em texto claro) antes da sua leitura manual, que continua obrigatória
@@ -177,13 +178,14 @@ segurança do modo automático, informe isso e sugira o prefixo `!`, seguindo co
    pelo cliente) em vez de `getMimeType()` (detecção por conteúdo), e a exceção do `match` fechado
    nunca era capturada em nenhum ponto da cadeia, produzindo um `500` não controlado em vez do `422`
    esperado (issue #495, `asengardeon/btt-sdd-pipeline`).
-6. **Dependências**: verifique o manifesto de dependências (`pyproject.toml` ou equivalente) por
-   pacotes com vulnerabilidade conhecida. **Ferramenta auxiliar (opcional, nunca gate)**: se
-   [osv-scanner](https://github.com/google/osv-scanner) estiver disponível (`command -v
-   osv-scanner`), rode `osv-scanner scan -r .` (ou o lockfile da stack) antes de concluir esta
-   área — cobre a maioria dos ecossistemas (npm, pip, composer, cargo, go) contra a mesma base de
-   dados (OSV), sem depender de memorizar CVEs. Diagnóstico: `python scripts/check-osv-scanner.py`
-   (`docs/TOOLING.md`). Sem o binário, identifique o que conseguir manualmente; se não houver
+6. **Dependências**: o manifesto de dependências (`pyproject.toml` ou equivalente) não tem
+   pacote com vulnerabilidade conhecida. **Tente a ferramenta primeiro (`docs/MICRO-CONTEXT.md`,
+   seção 3)**: se [osv-scanner](https://github.com/google/osv-scanner) estiver disponível
+   (`command -v osv-scanner`), rode `osv-scanner scan -r .` (ou o lockfile da stack) antes de
+   verificar manualmente — cobre a maioria dos ecossistemas (npm, pip, composer, cargo, go)
+   contra a mesma base de dados (OSV), sem depender de memorizar CVEs. Diagnóstico: `python
+   scripts/check-osv-scanner.py` (`docs/TOOLING.md`). Sem o binário, identifique o que conseguir
+   manualmente — o caminho principal, nunca gate; se não houver
    scanner automatizado configurado no CI, sinalize isso como recomendação (não é seu trabalho
    configurar o `ci.yml` — isso é do `sre`, se decidido). Se
    precisar de dependências instaladas para rodar um scanner e estiver num working tree isolado

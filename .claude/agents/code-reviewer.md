@@ -144,13 +144,15 @@ categoria fica sem declaração?", não para "o que acontece se isto disparar?".
 
 1. **Ports & Adapters / regra da dependência**: `domain` não importa nada de fora; `application`
    depende só de ports (interfaces), nunca de adapter concreto; adapters implementam ports sem
-   vazar detalhe de infraestrutura para dentro. Verifique importações de fato, não só a intenção
-   declarada no TRD.
-   **Ferramenta auxiliar (opcional, nunca gate)**: se [ast-grep](https://ast-grep.github.io)
-   estiver disponível (`command -v ast-grep`/`command -v sg`), use-o para buscar import estrutural
-   de `src/domain` apontando para `src/adapters`/`src/application` (ou o padrão equivalente desta
-   stack) em vez de ler arquivo por arquivo. Sem o binário, a verificação manual de importação
-   continua obrigatória. Diagnóstico: `python scripts/check-ast-grep.py` (`docs/TOOLING.md`).
+   vazar detalhe de infraestrutura para dentro.
+   **Tente a ferramenta primeiro (`docs/MICRO-CONTEXT.md`, seção 3)**: confira se
+   [ast-grep](https://ast-grep.github.io) está disponível (`command -v ast-grep`/`command -v
+   sg`) e, se estiver, use-o para buscar import estrutural de `src/domain` apontando para
+   `src/adapters`/`src/application` (ou o padrão equivalente desta stack) **antes** de ler
+   arquivo por arquivo — o achado dele já entra pronto para triar. Só sem o binário a verificação
+   manual de importação é o caminho principal (nunca gate: a etapa roda igual sem a ferramenta).
+   Diagnóstico: `python scripts/check-ast-grep.py` (`docs/TOOLING.md`). Verifique importações de
+   fato, não só a intenção declarada no TRD.
    **Binding de interface genérica reaproveitado**: sempre que o diff registrar/resolver um
    binding de uma interface **genérica** já existente em vez de criar uma interface nova e
    específica do caso de uso, pergunte explicitamente: **o próprio framework (ou outra parte já
