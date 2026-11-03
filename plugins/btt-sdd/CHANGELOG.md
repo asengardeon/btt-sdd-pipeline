@@ -17,6 +17,26 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.53.6 — 2026-11-03
+
+- **Vazamento de identificação de projeto consumidor privado, corrigido.** `sdd-sre/SKILL.md`
+  (passo 5c) criava, e `repo-issues/SKILL.md` (passo d2/d3) reaproveitava/espelhava, um label
+  `spec:<projeto>/<slug>` — onde `<projeto>` era o nome do repositório consumidor — em toda
+  issue/PR aberta contra este repositório público a partir da retrospectiva de fatia. Isso
+  publicou o nome de três projetos privados via ~32 labels reais no repositório. Removido por
+  completo o mecanismo de label de origem (`sdd-sre`, `repo-issues`, root + mirror no plugin para
+  `sdd-sre`); adicionada instrução explícita para nunca nomear o projeto/repositório consumidor
+  no título ou corpo da issue também, mesmo princípio.
+- As ~32 labels históricas (`spec:ridersbnu-app/...`, `spec:gwm-form-fill/...`,
+  `spec:controle-espaco-terapias/...`) apagadas do repositório — remove automaticamente de toda
+  issue/PR que as carregava.
+- Este próprio `CHANGELOG.md` também citava os três nomes em ~28 entradas históricas — todas
+  substituídas por identificadores genéricos (`projeto-A`/`projeto-B`/`projeto-C`), preservando o
+  resto de cada relato técnico.
+- Pedido direto do usuário ao notar o label `spec:controle-espaco-terapias/0017-deploy-producao`
+  numa issue real (issue #607).
+- Bump de versão do plugin: `1.53.5` -> `1.53.6`.
+
 ## 1.53.5 — 2026-11-03
 
 - `/sdd-migrate` (passo 9): o texto exato do banner "migrado" era uma referência circular — o
@@ -1299,7 +1319,7 @@ Closes #491
   da imagem Docker oficial da ferramenta como `container:`, eliminando o
   `apt-get` do caminho crítico.
 - **Por quê**
-  No projeto `controle-espaco-terapias`, o job `navegador (Playwright, backend
+  No projeto `projeto-C`, o job `navegador (Playwright, backend
   real)` falhou por timeout de 30 minutos **duas vezes seguidas**, sempre
   travado em `npm exec playwright install --with-deps chromium firefox webkit`
   baixando de um mirror Ubuntu lento — nunca chegou a rodar um teste. A 3ª
@@ -1324,7 +1344,7 @@ Closes #491
   2. Compartilhar literalmente o diretório **já instalado** (`vendor`/`node_modules`)
   via symlink/junction entre worktrees — inseguro.
   Um `qa-engineer` isolado tomou a leitura (2) por economia de tempo, numa sessão
-  real (projeto `controle-espaco-terapias`, spec `0003`, fatia F-3, stack
+  real (projeto `projeto-C`, spec `0003`, fatia F-3, stack
   PHP/Laravel): criou uma junction `backend/vendor` apontando para o vendor do
   worktree principal. Rodar a suíte via `vendor/bin/phpunit` sem `--env` fez o
   Laravel carregar o `.env.testing` do worktree **principal**, não o do worktree
@@ -1557,7 +1577,7 @@ Closes #441
   Closes #416
 - **Problema**
   O procedimento documentado para sincronizar a branch de uma fatia atrasada com `main` (`git fetch origin main` + `git rebase origin/main` + push) é **estruturalmente incompatível com o modo automático**: rebase reescreve commits **já publicados**, o push seguinte exige `--force-with-lease`, e força-push é recusado pelo classificador de segurança ("Blocked by classifier") sem olhar o contexto — branch de fatia exclusiva da sessão, sem outro humano empurrando nela, dá no mesmo. Como o modo automático é o padrão para sessão longa, o pipeline mandava fazer justamente o que o ambiente em que ele mais roda recusa.
-  Aconteceu na F-4 de `controle-espaco-terapias/0001-fundacao-multi-tenant-e-acesso`: rebase limpo de 16 commits, push recusado, e a saída foi desfazer tudo (`git reset --hard origin/<branch>`) e refazer por `git merge origin/main` — que passou de primeira.
+  Aconteceu na F-4 de `projeto-C/0001-fundacao-multi-tenant-e-acesso`: rebase limpo de 16 commits, push recusado, e a saída foi desfazer tudo (`git reset --hard origin/<branch>`) e refazer por `git merge origin/main` — que passou de primeira.
 - **Mudança**
   Seção canônica nova em `docs/GIT-WORKFLOW.md`: **"Sincronizar a branch da fatia com `main`: `merge`, nunca `rebase`"**, colocada deliberadamente **ao lado** de "Reconciliação para a branch compartilhada da fatia" — porque a confusão entre as duas é o ponto:
   - **reconciliação com a branch compartilhada** (bloco existente): rebase de commits **locais ainda não publicados** sobre a ponta da branch; push é fast-forward, sem força. **Rebase continua certo ali.**
@@ -1701,7 +1721,7 @@ Closes #441
 
   Closes #409
 - **Problema**
-  O método padrão de verificação de isolamento multi-tenant é a mutação: alterar no código de produção a consulta que delimita o escopo, de forma que ela deixe de delimitá-lo, e confirmar que a suíte de isolamento pega a falha (ou que a política de row-level security sustenta sozinha, se a suíte continuar verde). Na Fatia F-3 de `controle-espaco-terapias/0001-fundacao-multi-tenant-e-acesso` essa edição foi **recusada pelo classificador de segurança do ambiente em 3 tentativas seguidas** — a classe de mutação casa com um padrão reconhecido como perigoso, mesmo sendo parte de um teste que seria revertido antes do commit. O mesmo método havia funcionado em F-1 e F-2 da mesma spec.
+  O método padrão de verificação de isolamento multi-tenant é a mutação: alterar no código de produção a consulta que delimita o escopo, de forma que ela deixe de delimitá-lo, e confirmar que a suíte de isolamento pega a falha (ou que a política de row-level security sustenta sozinha, se a suíte continuar verde). Na Fatia F-3 de `projeto-C/0001-fundacao-multi-tenant-e-acesso` essa edição foi **recusada pelo classificador de segurança do ambiente em 3 tentativas seguidas** — a classe de mutação casa com um padrão reconhecido como perigoso, mesmo sendo parte de um teste que seria revertido antes do commit. O mesmo método havia funcionado em F-1 e F-2 da mesma spec.
   Sem a alternativa documentada, o risco é o agente **desistir da verificação** e aceitar o relato do QA sem medição própria — justamente numa área em que leitura do filtro não substitui medição.
 - **Mudança**
   Área de revisão **9** nova em `.claude/agents/security-engineer.md`, registrando os dois métodos:
@@ -1718,7 +1738,7 @@ Closes #441
   Closes #408
 - **Problema**
   O pipeline já tinha a regra num sentido — passo 6b de `sdd-ux-review`: correção de achado de UX que toca código de produção volta para `/sdd-code-review` escopado ao delta, porque é o `code-reviewer` quem sabe avaliar código. Faltava a **simétrica**: quando a correção de um achado levantado **pela 4b** é reverificada só tecnicamente (código + testes) pelo `code-reviewer`, nada no pipeline exigia que a própria UX reconfirmasse, do ângulo de usabilidade, que a correção resolve o que ela apontou.
-  Sem essa simetria, um achado bloqueante de usabilidade pode ser formalmente fechado **só com evidência técnica** — exatamente o tipo de lacuna que a etapa 4b existe para evitar. Já aconteceu na fatia F-3 de `controle-espaco-terapias/0001-fundacao-multi-tenant-e-acesso`: achado bloqueante de navegação (edição pendente descartada em silêncio), corrigido com `useBlocker`, reverificado por uma rodada escopada de code review, e o pipeline seguiu direto para `/sdd-qa`. `code-review.md` chegou a atribuir a aprovação a uma seção de `ux-review.md` que **não existia**. Foi o `qa-engineer` — não o orquestrador — que conferiu via `git log` e registrou a lacuna como achado de processo, forçando uma rodada extra fora do fluxo.
+  Sem essa simetria, um achado bloqueante de usabilidade pode ser formalmente fechado **só com evidência técnica** — exatamente o tipo de lacuna que a etapa 4b existe para evitar. Já aconteceu na fatia F-3 de `projeto-C/0001-fundacao-multi-tenant-e-acesso`: achado bloqueante de navegação (edição pendente descartada em silêncio), corrigido com `useBlocker`, reverificado por uma rodada escopada de code review, e o pipeline seguiu direto para `/sdd-qa`. `code-review.md` chegou a atribuir a aprovação a uma seção de `ux-review.md` que **não existia**. Foi o `qa-engineer` — não o orquestrador — que conferiu via `git log` e registrou a lacuna como achado de processo, forçando uma rodada extra fora do fluxo.
 - **Mudança**
   - **`.claude/skills/sdd-ux-review/SKILL.md`**, passo `6c` (ao lado do `6b` existente): achado desta etapa só fecha com reconfirmação desta etapa. Depois da rodada técnica, o retorno antes de `/sdd-qa` é uma rodada de `/sdd-ux-review` **escopada ao achado** (não uma revisão completa nova das 7 áreas), que acrescenta a `ux-review.md` uma seção de reverificação nomeando o achado, o método e a evidência.
   - **`.claude/skills/sdd-code-review/SKILL.md`**, passo `5b`: o roteamento do lado de quem reverifica — se a rodada foi escopada ao delta de uma correção de achado da 4b, a próxima etapa é `/sdd-ux-review`, não `/sdd-qa`. É onde o orquestrador de fato decide o próximo passo, então é onde a regra precisa estar escrita.
@@ -1732,7 +1752,7 @@ Closes #441
   Closes #407
 - **Problema**
   O padrão de envelope único de resposta de erro (comum a projetos que seguem a orientação de "um único produtor de resposta de erro") costuma ter um mapeador que traduz issues do validador de esquema para `fields: [{ path, code }]`, contra um **enum fechado** de códigos conhecidos. Quando uma issue não tem código reconhecido no enum, o mapeador a descarta em silêncio — e se for a única issue, o resultado é um `422 validation_failed` com `fields: []`: nenhuma pista de qual campo falhou.
-  O risco é estrutural, não descuido. Um esquema que não cobre uma forma de rejeição (um campo `.optional()` sem o `.nullable()` correspondente, recebendo `null`) **não** quebra a compilação e **não** reprova nenhum teste — só produz silenciosamente uma resposta inútil para depuração. Na fatia F-2 de `controle-espaco-terapias/0001-fundacao-multi-tenant-e-acesso` isso custou uma rodada de correção inteira: duas hipóteses plausíveis (CNPJ, CEP) descartadas por leitura de código antes de alguém capturar o corpo real da resposta e rastrear o `error-mapper.ts`.
+  O risco é estrutural, não descuido. Um esquema que não cobre uma forma de rejeição (um campo `.optional()` sem o `.nullable()` correspondente, recebendo `null`) **não** quebra a compilação e **não** reprova nenhum teste — só produz silenciosamente uma resposta inútil para depuração. Na fatia F-2 de `projeto-C/0001-fundacao-multi-tenant-e-acesso` isso custou uma rodada de correção inteira: duas hipóteses plausíveis (CNPJ, CEP) descartadas por leitura de código antes de alguém capturar o corpo real da resposta e rastrear o `error-mapper.ts`.
 - **Mudança**
   - **`.claude/agents/backend-developer.md`** (seção "Regras inegociáveis de código", regra 6, irmã da regra 5 sobre "resultado vazio esperado"): generaliza o padrão para qualquer mapeador entre vocabulário **aberto** (issues de validador de esquema, códigos de driver de banco, erros de SDK externo) e vocabulário **fechado** do projeto. O caso não-mapeado tem destino explícito, e nunca é "ignorar" — log do identificador bruto (`path`/código interno, nunca a mensagem crua ao cliente), código de fallback na saída, e teste dedicado para a entrada que o enum **não** conhece. Mais o docblock do mapeador dizendo qual é o comportamento do caso não-mapeado, para quem acrescentar um campo novo ao contrato depois.
   - **`docs/gates/code-review.md`**: item de gate correspondente, **bloqueante** quando a resposta pode sair sem pista alguma — é o `code-reviewer` que pega isso antes do merge.
@@ -1744,7 +1764,7 @@ Closes #441
 
   Closes #406
 - **Problema**
-  Na fatia F-2 de `controle-espaco-terapias/0001-fundacao-multi-tenant-e-acesso`, dois achados do CI real passaram por uma rodada de correção **errada** (plausível, mas sem efeito medido) antes de uma segunda rodada achar a causa. Nos dois casos a primeira tentativa partiu de uma representação **indireta** do problema:
+  Na fatia F-2 de `projeto-C/0001-fundacao-multi-tenant-e-acesso`, dois achados do CI real passaram por uma rodada de correção **errada** (plausível, mas sem efeito medido) antes de uma segunda rodada achar a causa. Nos dois casos a primeira tentativa partiu de uma representação **indireta** do problema:
   - **overflow de 360px** — corrigido por leitura da árvore de acessibilidade do Playwright, que mostra **estrutura**, não **geometria**; a causa real (`.acoes` sem `flex-wrap`) só apareceu ao instrumentar `getBoundingClientRect()`/`scrollWidth` no navegador. O agente mediu "0 overflow local" antes e depois da mudança — o sinal já estava lá, e só foi tratado como sinal depois do CI repetir os mesmos pixels exatos;
   - **`422` genérico no `PUT /api/space/profile`** — duas hipóteses descartadas por leitura de VO antes de alguém capturar o corpo real da resposta e ver `fields: []`, a pista que levou à causa (um sub-campo `.optional()` recebendo `null`).
   O custo da evidência direta é uma linha de código; o da correção baseada em hipótese errada é a rodada inteira.
@@ -1773,7 +1793,7 @@ Closes #441
 
   Closes #402
 - **Problema**
-  Na fatia F-1 (2º PR) de `controle-espaco-terapias/0001-fundacao-multi-tenant-e-acesso`, a tarefa que devolvia o job `navegador` ao CI precisou de duas rodadas. Na primeira, o `backend-developer` acrescentou um passo no `ci.yml` exportando uma variável de URL base para `$GITHUB_ENV`, pensando apenas no consumidor que motivou a mudança — que **não** lê essa variável.
+  Na fatia F-1 (2º PR) de `projeto-C/0001-fundacao-multi-tenant-e-acesso`, a tarefa que devolvia o job `navegador` ao CI precisou de duas rodadas. Na primeira, o `backend-developer` acrescentou um passo no `ci.yml` exportando uma variável de URL base para `$GITHUB_ENV`, pensando apenas no consumidor que motivou a mudança — que **não** lê essa variável.
   Outro arquivo tinha um mecanismo de override manual não documentado como "nunca usar em CI", com fallback silencioso (`process.env.X ?? PADRÃO`). Exportar a variável job-wide desviou **toda a suíte de outra história de usuário** — nada relacionado à mudança — para um caminho de rede diferente: ~80 falhas de `502 Bad Gateway`, descobertas só no primeiro run real do job. Nenhuma validação local pegava, porque o mecanismo de override só importa dentro do CI.
   Variável exportada para `$GITHUB_ENV` vale para todos os passos seguintes do job. Ela não é escopada ao consumidor que motivou a exportação, e qualquer leitor do mesmo nome com fallback silencioso muda de comportamento sem erro e sem aviso.
 - **O que muda**
@@ -1788,7 +1808,7 @@ Closes #441
 
   Closes #401
 - **Problema**
-  Na fatia F-1 (2º PR) de `controle-espaco-terapias/0001-fundacao-multi-tenant-e-acesso`, **sete de sete** invocações com `isolation: "worktree"` relataram que o worktree isolado nasceu com a branch local já desatualizada contra a remota — em alguns casos ~30 commits atrás. As duas trilhas de implementação (`backend-developer`, `frontend-developer`) e as cinco etapas de revisão (`code-reviewer`, `ux-designer`, `qa-engineer`, `security-engineer`, `sre`).
+  Na fatia F-1 (2º PR) de `projeto-C/0001-fundacao-multi-tenant-e-acesso`, **sete de sete** invocações com `isolation: "worktree"` relataram que o worktree isolado nasceu com a branch local já desatualizada contra a remota — em alguns casos ~30 commits atrás. As duas trilhas de implementação (`backend-developer`, `frontend-developer`) e as cinco etapas de revisão (`code-reviewer`, `ux-designer`, `qa-engineer`, `security-engineer`, `sre`).
   Nenhum dos sete tinha sido instruído a checar isso. Cada um gastou tempo e tokens próprios fazendo `fetch` + `reset --hard`/`rebase` antes de poder começar. Sete de sete não é acaso: é o comportamento padrão do mecanismo quando reaproveita um worktree de uma invocação anterior em vez de criar um novo a partir do `HEAD` atual.
   O custo visível é o desperdício repetido. O risco invisível é pior — um agente que *não* checasse revisaria ou implementaria sobre a base errada, sem nada avisar até o push divergir.
 - **O que muda**
@@ -2286,16 +2306,16 @@ Closes #441
 - **Problema**
   O GitHub limita nome de label a **50 caracteres**, e a convenção `spec:<projeto>/<slug>` estoura isso rotineiramente. Reproduzido de verdade na rodada anterior de `/repo-issues`, ao rotular a #351:
   ```
-  $ gh label create "spec:ridersbnu-app/0006-navegacao-global-menu-topbar-alertas" ...
+  $ gh label create "spec:projeto-A/0006-navegacao-global-menu-topbar-alertas" ...
   HTTP 422: Validation Failed
   name is too long (maximum is 50 characters)
   ```
   Nenhuma das duas instruções que montam esse nome mencionava o limite — `.claude/skills/sdd-sre/SKILL.md` passo 5c (onde os labels nascem, na retrospectiva de fatia) e `.claude/skills/repo-issues/SKILL.md` passo `d2` (que reusa a convenção). Então o agente monta o nome, recebe o 422, e **em seguida o `gh issue create --label` também falha** com `'<label>' not found` — dois erros em sequência cuja causa real está na primeira chamada.
-  Não é um slug azarado: `spec:` + o nome do repositório já consome ~20 caracteres (`spec:ridersbnu-app/` = 19) e slug de spec com 32+ é rotineiro. Como a retrospectiva é obrigatória ao final de **toda** fatia aprovada, a falha é recorrente por construção — e a issue acaba sem o label de origem que existe justamente para permitir filtrar depois todas as issues de uma mesma spec.
+  Não é um slug azarado: `spec:` + o nome do repositório já consome ~20 caracteres (`spec:projeto-A/` = 19) e slug de spec com 32+ é rotineiro. Como a retrospectiva é obrigatória ao final de **toda** fatia aprovada, a falha é recorrente por construção — e a issue acaba sem o label de origem que existe justamente para permitir filtrar depois todas as issues de uma mesma spec.
 - **Mudança**
   Duas regras, não uma:
   1. **Truncar** o `<slug>` no último limite de palavra (`-`) que couber, **preservando o prefixo numérico da spec** (é ele que identifica), com o slug completo na `--description`, que não tem esse limite:
-  `spec:ridersbnu-app/0006-navegacao-global-menu-topbar-alertas` (60) → `spec:ridersbnu-app/0006-navegacao-global-menu` (45).
+  `spec:projeto-A/0006-navegacao-global-menu-topbar-alertas` (60) → `spec:projeto-A/0006-navegacao-global-menu` (45).
   2. **Procurar o label existente por prefixo** (`spec:<projeto>/<NNNN>`), não por nome exato, e **reusar** o que já houver.
   A segunda regra vai além do que a issue pedia, e é o que torna a primeira utilizável: o nome truncado é a **chave de filtro** da spec. Duas fatias da mesma spec cortando em pontos diferentes criariam dois labels para a mesma origem, quebrando exatamente o filtro que o label existe para dar. Truncar sem fixar a estabilidade do nome trocaria um erro visível (422) por um silencioso.
 - **Escopo**
@@ -2428,7 +2448,7 @@ Closes #441
   > **Antes de ler qualquer artefato ou rodar qualquer suíte, confirme que está na branch do PR sendo revisado** (`git fetch origin <branch> && git checkout <branch>`) — (...) Se estiver rodando em working tree isolado, o checkout acontece no próprio worktree, não no working directory principal.
   A segunda frase dá a entender que o comando funciona em worktree isolada. **Não funciona** — e worktree isolada é justamente o modo obrigatório dessas invocações (`isolation: "worktree"`, "é o padrão desta invocação" nas skills de revisão). O orquestrador que abriu o PR normalmente tem a branch como `HEAD` no worktree principal, e o Git recusa a mesma branch em dois worktrees:
   ```
-  fatal: 'fix/topbar-alvo-de-toque-44px' is already used by worktree at 'C:/repositorios/ridersbnu-app'
+  fatal: 'fix/topbar-alvo-de-toque-44px' is already used by worktree at 'C:/repositorios/projeto-A'
   ```
 - **Mudança**
   O passo agora diz que o checkout **vai** falhar nesse modo e manda ir direto para a variante que funciona — branch temporária rastreando `origin/<branch>` (ou `--detach`), com `git push origin HEAD:<branch>` ao final. É a mesma prescrição que `docs/GIT-WORKFLOW.md` já documentava na seção "Isolamento de working tree entre agentes concorrentes", mas que nenhum agente lia no próprio passo de preparação — por isso cada rodada re-derivava o contorno do zero.
@@ -3459,7 +3479,7 @@ Closes #441
 ## 1.27.14 — 2026-09-24
 
 - **Problema**
-  O PR #127 da fatia F-1 de `0004-sem-retentativa-cor-indisponivel` (`gwm-form-fill`) tinha no corpo:
+  O PR #127 da fatia F-1 de `0004-sem-retentativa-cor-indisponivel` (`projeto-B`) tinha no corpo:
   ```
   Closes #117, #118, #119, #120, #121
   ```
@@ -3490,7 +3510,7 @@ Closes #441
 - **O aprendizado**
   **Quando uma feature corrige uma classe de defeito, as correções de achados de revisão das fatias seguintes são o lugar mais provável de reintroduzi-la.** O motivo é estrutural: a atenção de todos está no **achado** (o que foi apontado), não na **classe** (o que a feature existe para impedir); e a correção é pequena, o que desarma a desconfiança.
 - **O caso**
-  Spec `0004-sem-retentativa-cor-indisponivel` (`gwm-form-fill`). A fatia F-1 existia, em parte, para corrigir um defeito latente com esta forma:
+  Spec `0004-sem-retentativa-cor-indisponivel` (`projeto-B`). A fatia F-1 existia, em parte, para corrigir um defeito latente com esta forma:
   > uma exceção lançada de **dentro de um caminho de reporte de falha** escapava da linha e, via `Task.WhenAll`, derrubava o **lote inteiro** — em vez de falhar só aquela linha.
   Corrigido, mergeado, revisado por quatro etapas. Na fatia seguinte (F-2), o `code-reviewer` apontou uma ressalva legítima: um braço `_ => SpecificReason` num `switch` faria uma categoria futura renderizar **sem declaração de desfecho**, silenciosamente. O desenvolvedor a fechou com:
   ```csharp
@@ -3514,7 +3534,7 @@ Closes #441
 
 - **Problema**
   `docs/GIT-WORKFLOW.md`, seção "Aguardando CI antes do merge", orientava corretamente a esperar o CI antes do merge. Mas **o merge é decisão do usuário, conduzida pelo orquestrador** — e não havia nada dizendo ao agente de revisão que a espera não é dele.
-  Medido no `timing-log.md` da fatia F-2 de `0004-sem-retentativa-cor-indisponivel` (`gwm-form-fill`):
+  Medido no `timing-log.md` da fatia F-2 de `0004-sem-retentativa-cor-indisponivel` (`projeto-B`):
   | Etapa | Agente | Duração |
   |---|---|---|
   | Implementação | `backend-developer` | 26m46s |
@@ -3539,7 +3559,7 @@ Closes #441
 ## 1.27.11 — 2026-09-24
 
 - **Problema**
-  O TRD da spec `0004-sem-retentativa-cor-indisponivel` (`gwm-form-fill`), seção "Riscos e trade-offs", descrevia um risco assim:
+  O TRD da spec `0004-sem-retentativa-cor-indisponivel` (`projeto-B`), seção "Riscos e trade-offs", descrevia um risco assim:
   > **Motivo raspado da página muito longo** pode, em teoria, aproximar o limite de 32.767 caracteres por célula de `.xlsx` (ClosedXML lançaria, virando `PersistFailedException` para aquela linha).
   A revisão de segurança mediu com a biblioteca real (ClosedXML 0.104.1) e constatou que **as duas metades estavam erradas**:
   1. O tipo lançado é `System.ArgumentOutOfRangeException`, que **não** é `IOException` nem `UnauthorizedAccessException` — portanto **escapa** do `catch when` do adapter de persistência;
@@ -3560,7 +3580,7 @@ Closes #441
 
 - **Problema**
   Uma entrada de `docs/LESSONS-LEARNED.md` acumula autoridade junto com ocorrências. Quando ela carrega uma **métrica de ambiente** na assinatura ou na causa, cada nova ocorrência que a repete *parece* confirmá-la quando na verdade só a está copiando — e a conduta que a métrica induz nunca é questionada.
-  No projeto `gwm-form-fill`, uma lição de flakiness da suíte de integração chegou à **18ª ocorrência** citando "71 `chrome.exe` + 7 `dotnet.exe` concorrentes de outros worktrees" como causa ambiental, e como razão para esperar/reexecutar. Na fatia F-1 da spec `0004`, o `sre` **mediu em vez de citar** (`Get-CimInstance`), sob exatamente os mesmos números de manchete:
+  No projeto `projeto-B`, uma lição de flakiness da suíte de integração chegou à **18ª ocorrência** citando "71 `chrome.exe` + 7 `dotnet.exe` concorrentes de outros worktrees" como causa ambiental, e como razão para esperar/reexecutar. Na fatia F-1 da spec `0004`, o `sre` **mediu em vez de citar** (`Get-CimInstance`), sob exatamente os mesmos números de manchete:
   - dos 71 `chrome.exe`, **só 2 são navegadores** — os outros 69 são processos filhos (59 renderer, 6 utility, 2 gpu, 2 crashpad);
   - **60 dos 71** pertencem ao Chrome **pessoal do operador**, aberto **4 dias antes** da spec começar;
   - **9** são **um** Chrome CDP remanescente da própria aplicação, sobrevivente de uma sessão sem teardown;
@@ -3580,7 +3600,7 @@ Closes #441
 
 - **Problema**
   Quando um agente de implementação reporta uma **auto-avaliação quantificada da força dos próprios testes** — tabela de mutações, "mutei X e N testes morreram", contagem de asserções discriminantes — nada instruía a etapa de revisão a tratá-la com desconfiança. É relato do autor sobre o próprio trabalho: aceitá-lo e seguir adiante devolve um gate que *parece* cumprido e não foi.
-  Na fatia F-1 de `0004-sem-retentativa-cor-indisponivel` (`gwm-form-fill`) o orquestrador pediu essa desconfiança explicitamente, e três agentes independentes justificaram o pedido:
+  Na fatia F-1 de `0004-sem-retentativa-cor-indisponivel` (`projeto-B`) o orquestrador pediu essa desconfiança explicitamente, e três agentes independentes justificaram o pedido:
   | Agente | O que fez | O que encontrou |
   |---|---|---|
   | `code-reviewer` | Reaplicou 4 das 6 mutações **e criou 2 que o autor não tinha feito** (as de normalização) | As 2 novas mataram 1 e 12 testes — um bloco que estava sem mutação nenhuma. A numeração pulava de `M5` para `M7`, e o revisor **não presumiu** erro de numeração: identificou o bloco descoberto e o mutou |
@@ -3598,7 +3618,7 @@ Closes #441
 
 - **Problema**
   A seção "Retomando para corrigir achados de revisão" já ensina a dosar o **contexto** pela complexidade da correção (passo 1b), mas não tinha equivalente para o **custo de validação**: uma correção de 3 `InlineData` pagava o mesmo preço de validação que uma fatia inteira.
-  Medido na fatia F-1 de `0004-sem-retentativa-cor-indisponivel` (`gwm-form-fill`): a rodada de correção foi **a etapa mais longa da fatia** — 41m14s, mais que a implementação inteira (34m45s). O que ela mudou: **3 `InlineData` num arquivo de teste unitário e um comentário de XML doc**. Zero linhas de comportamento.
+  Medido na fatia F-1 de `0004-sem-retentativa-cor-indisponivel` (`projeto-B`): a rodada de correção foi **a etapa mais longa da fatia** — 41m14s, mais que a implementação inteira (34m45s). O que ela mudou: **3 `InlineData` num arquivo de teste unitário e um comentário de XML doc**. Zero linhas de comportamento.
   O tempo não foi gasto na correção. Foi gasto rodando a suíte de integração completa (158 testes, navegador real) **duas vezes**, ambas vermelhas por flakiness de ambiente — para validar uma mudança que não tocava nenhuma linha de produção. Nos **dois** runs de CI em runner dedicado da mesma fatia, os mesmos 158 testes passaram verdes de primeira, sem rerun.
 - **O que muda**
   - **`/sdd-implement`, passo 3a novo** (logo após o passo 3, que mantém a suíte completa como padrão): se o diff da correção **não toca nenhum arquivo de `src/`/`frontend/`**, ou toca apenas código que a suíte rápida cobre integralmente, a validação local pode ser escopada aos módulos afetados — com o **CI do PR verde no commit final** como gate real, e com o relatório declarando explicitamente o que rodou localmente, o que foi delegado ao CI, e por quê. A omissão dessa declaração é o que transformaria escopar num atalho silencioso.
@@ -3614,7 +3634,7 @@ Closes #441
 
 - **Problema**
   A instrução de registro em `timing-log.md` (`/sdd-implement` passo 5a, e equivalentes nas outras skills) dizia literalmente "o horário anotado no passo 3 ... o horário atual, e a diferença calculada" — wall-clock puro do início ao fim da invocação.
-  Quando a invocação inclui uma **pausa para aprovação humana** (o agente devolve o plano da Fase 1 e fica parado até o usuário responder, passo 5b), esse número registra o tempo de resposta do usuário como se fosse custo do pipeline. Na fatia F-3 de `0003-selecao-cor-disponivel-reserva` (`gwm-form-fill`) o gap real foi de mais de 10h: seguida ao pé da letra, a instrução teria produzido a linha `Implementação | backend-developer | F-3 | 10h+`.
+  Quando a invocação inclui uma **pausa para aprovação humana** (o agente devolve o plano da Fase 1 e fica parado até o usuário responder, passo 5b), esse número registra o tempo de resposta do usuário como se fosse custo do pipeline. Na fatia F-3 de `0003-selecao-cor-disponivel-reserva` (`projeto-B`) o gap real foi de mais de 10h: seguida ao pé da letra, a instrução teria produzido a linha `Implementação | backend-developer | F-3 | 10h+`.
   Esse arquivo é lido pela retrospectiva de fatia do `sre` justamente para identificar etapas anormalmente lentas — um número desses leva à conclusão errada. O orquestrador daquela sessão percebeu e registrou a soma das durações reais dos subagentes, com nota explicativa, mas isso foi julgamento improvisado: nenhuma instrução cobria o caso.
 - **O que muda**
   - **`specs/_template/timing-log.template.md`** ganha a seção **"O que a coluna 'Duração' mede"**: tempo de trabalho do(s) agente(s) da invocação, somável a partir do `duration_ms` que cada notificação de conclusão de subagente já reporta, com **nota parentética obrigatória** declarando o que ficou de fora — com o exemplo real daquela fatia. O template é o lugar canônico porque é lido por todo orquestrador que escreve no log, não só pelo de `/sdd-implement`.
@@ -3641,7 +3661,7 @@ Closes #262
   - `plugins/btt-sdd/.claude-plugin/plugin.json`: `1.27.4` → `1.27.5` (patch).
 - **Por quê**
   Closes #260
-  `docs/QUALITY-GATES.md` já tinha a regra geral ("Comando de build/teste que o próprio agente precisa aguardar antes de decidir o próximo passo sempre roda em primeiro plano... nunca em background"), mas nenhum dos dois agentes de implementação citava isso no próprio ciclo TDD, onde a situação realmente ocorre. Numa invocação real de `backend-developer` (fatia F-2, `gwm-form-fill` PR #107), um `dotnet test` disparado em background pausou o turno do agente 3 vezes seguidas na mesma trilha, exigindo o orquestrador descobrir o PID, esperar manualmente, e retomar via `SendMessage` a cada vez — sem nenhum ganho de paralelismo real, já que não havia outro trabalho útil para o agente fazer nesse meio-tempo.
+  `docs/QUALITY-GATES.md` já tinha a regra geral ("Comando de build/teste que o próprio agente precisa aguardar antes de decidir o próximo passo sempre roda em primeiro plano... nunca em background"), mas nenhum dos dois agentes de implementação citava isso no próprio ciclo TDD, onde a situação realmente ocorre. Numa invocação real de `backend-developer` (fatia F-2, `projeto-B` PR #107), um `dotnet test` disparado em background pausou o turno do agente 3 vezes seguidas na mesma trilha, exigindo o orquestrador descobrir o PID, esperar manualmente, e retomar via `SendMessage` a cada vez — sem nenhum ganho de paralelismo real, já que não havia outro trabalho útil para o agente fazer nesse meio-tempo.
 
 (PR #261)
 
@@ -3653,7 +3673,7 @@ Closes #262
   - `plugins/btt-sdd/.claude-plugin/plugin.json`: `1.27.3` → `1.27.4` (patch).
 - **Por quê**
   Closes #255
-  3ª ocorrência do mesmo padrão em PRs diferentes (#66, #86, #105 do projeto `gwm-form-fill`): o PR nasce em draft (`docs/GIT-WORKFLOW.md`, regra 4), o pipeline inteiro roda e aprova a fatia, mas o PR continua `mergeable=MERGEABLE`/`mergeStateStatus=CLEAN` e mesmo assim bloqueado na UI do GitHub até uma transição manual para "Ready for review" que só o usuário pode fazer — nada no pipeline fazia essa transição sozinho.
+  3ª ocorrência do mesmo padrão em PRs diferentes (#66, #86, #105 do projeto `projeto-B`): o PR nasce em draft (`docs/GIT-WORKFLOW.md`, regra 4), o pipeline inteiro roda e aprova a fatia, mas o PR continua `mergeable=MERGEABLE`/`mergeStateStatus=CLEAN` e mesmo assim bloqueado na UI do GitHub até uma transição manual para "Ready for review" que só o usuário pode fazer — nada no pipeline fazia essa transição sozinho.
 
 (PR #259)
 
@@ -3664,7 +3684,7 @@ Closes #262
   - `plugins/btt-sdd/.claude-plugin/plugin.json`: `1.27.2` → `1.27.3` (patch).
 - **Por quê**
   Closes #254
-  O workaround já estava documentado (adicionado depois de uma 3ª ocorrência anterior), mas o enquadramento "se falhar" não impediu uma 4ª ocorrência: na fatia F-1 de `0003-selecao-cor-disponivel-reserva` (`gwm-form-fill`, PR #105), cada uma das três últimas etapas de revisão sequenciais (`code-reviewer`, `qa-engineer`, `security-engineer`) bateu no mesmo erro e precisou redescobrir o mesmo workaround, mesmo com a seção já existindo. A mudança deixa explícito que isso é esperado a partir da 2ª etapa — não vale a pena tentar diagnosticar de novo.
+  O workaround já estava documentado (adicionado depois de uma 3ª ocorrência anterior), mas o enquadramento "se falhar" não impediu uma 4ª ocorrência: na fatia F-1 de `0003-selecao-cor-disponivel-reserva` (`projeto-B`, PR #105), cada uma das três últimas etapas de revisão sequenciais (`code-reviewer`, `qa-engineer`, `security-engineer`) bateu no mesmo erro e precisou redescobrir o mesmo workaround, mesmo com a seção já existindo. A mudança deixa explícito que isso é esperado a partir da 2ª etapa — não vale a pena tentar diagnosticar de novo.
 
 (PR #258)
 
@@ -3675,7 +3695,7 @@ Closes #262
   - `plugins/btt-sdd/.claude-plugin/plugin.json`: `1.27.1` → `1.27.2` (patch).
 - **Por quê**
   Closes #253
-  Durante a transição entre `/btt-sdd:code-review` e `/btt-sdd:qa` da fatia F-1 de `0003-selecao-cor-disponivel-reserva` (`gwm-form-fill`, PR #105), um `git checkout <branch-da-fatia>` falhou por colisão de worktree, mas o `git pull origin <branch-da-fatia>` seguinte rodou mesmo assim — sobre `main`, não sobre a branch da fatia — avançando `main` local vários commits à frente do `origin/main` com código de uma fatia ainda não aprovada. Nada foi perdido nem enviado a `origin/main` (só notado por checagem adicional de `git status`/`git log`), mas um `git push origin main` subsequente teria violado a regra 1 de `GIT-WORKFLOW.md`.
+  Durante a transição entre `/btt-sdd:code-review` e `/btt-sdd:qa` da fatia F-1 de `0003-selecao-cor-disponivel-reserva` (`projeto-B`, PR #105), um `git checkout <branch-da-fatia>` falhou por colisão de worktree, mas o `git pull origin <branch-da-fatia>` seguinte rodou mesmo assim — sobre `main`, não sobre a branch da fatia — avançando `main` local vários commits à frente do `origin/main` com código de uma fatia ainda não aprovada. Nada foi perdido nem enviado a `origin/main` (só notado por checagem adicional de `git status`/`git log`), mas um `git push origin main` subsequente teria violado a regra 1 de `GIT-WORKFLOW.md`.
 
 (PR #257)
 
@@ -3686,7 +3706,7 @@ Closes #262
   - `plugins/btt-sdd/.claude-plugin/plugin.json`: `1.27.0` → `1.27.1` (patch — reforço, não capacidade nova).
 - **Por quê**
   Closes #252
-  Amplia o escopo de #138 (fechada, tratava só o fluxo de hotfix): na fatia `dedicated-chrome-profile` (T-34/T-35, `gwm-form-fill` PR #81) — uma fatia **normal com TRD**, não hotfix — o PR foi mergeado logo depois da aprovação de segurança, sem que o SRE tivesse rodado. A causa raiz não é específica de hotfix: nenhuma etapa do pipeline normal deixa claro, de forma difícil de ignorar, que o SRE ainda não rodou antes do usuário decidir mergear.
+  Amplia o escopo de #138 (fechada, tratava só o fluxo de hotfix): na fatia `dedicated-chrome-profile` (T-34/T-35, `projeto-B` PR #81) — uma fatia **normal com TRD**, não hotfix — o PR foi mergeado logo depois da aprovação de segurança, sem que o SRE tivesse rodado. A causa raiz não é específica de hotfix: nenhuma etapa do pipeline normal deixa claro, de forma difícil de ignorar, que o SRE ainda não rodou antes do usuário decidir mergear.
 
 (PR #256)
 
@@ -3714,7 +3734,7 @@ Closes #262
   - `plugins/btt-sdd/.claude-plugin/plugin.json`: `1.26.2` → `1.26.3` (patch).
 - **Por quê**
   Closes #240
-  Na spec `0001-automacao-form-reserva-ml` do projeto `gwm-form-fill`, uma validação manual de premissa (login não exigido, testado abrindo a URL sem estar logado) embasou uma migração de arquitetura completa (ADR 0009: eliminar CDP attach em favor de lançamento isolado do Chrome via Playwright) — implementada, revisada e mergeada. No teste geral pós-merge, a automação real foi bloqueada pelo Mercado Livre mesmo carregando os mesmos cookies, forçando reverter a arquitetura por completo (duas migrações completas, cada uma com ciclo inteiro de revisão). O padrão: validação manual confirma condição necessária, não suficiente, quando a decisão elimina um mecanismo que preservava "parecer" tráfego humano.
+  Na spec `0001-automacao-form-reserva-ml` do projeto `projeto-B`, uma validação manual de premissa (login não exigido, testado abrindo a URL sem estar logado) embasou uma migração de arquitetura completa (ADR 0009: eliminar CDP attach em favor de lançamento isolado do Chrome via Playwright) — implementada, revisada e mergeada. No teste geral pós-merge, a automação real foi bloqueada pelo Mercado Livre mesmo carregando os mesmos cookies, forçando reverter a arquitetura por completo (duas migrações completas, cada uma com ciclo inteiro de revisão). O padrão: validação manual confirma condição necessária, não suficiente, quando a decisão elimina um mecanismo que preservava "parecer" tráfego humano.
 
 (PR #249)
 
@@ -3766,7 +3786,7 @@ Closes #262
   - `plugins/btt-sdd/.claude-plugin/plugin.json`: `1.24.16` → `1.25.0` (minor — nova capacidade, não só ajuste).
 - **Por quê**
   Closes #241
-  Nenhuma etapa do pipeline hoje avalia usabilidade/navegabilidade percebida — só qualidade de código, critério de aceite, segurança e infra. Uma sessão real de uso do projeto `ridersbnu-app` encontrou, numa checagem manual fora do pipeline, problemas reais (navegação desalinhada, ações não adaptadas ao ciclo de vida do domínio, mídia corrompida sem fallback, hierarquia de menu sem separação de risco) que nenhuma etapa existente tinha motivo para pegar.
+  Nenhuma etapa do pipeline hoje avalia usabilidade/navegabilidade percebida — só qualidade de código, critério de aceite, segurança e infra. Uma sessão real de uso do projeto `projeto-A` encontrou, numa checagem manual fora do pipeline, problemas reais (navegação desalinhada, ações não adaptadas ao ciclo de vida do domínio, mídia corrompida sem fallback, hierarquia de menu sem separação de risco) que nenhuma etapa existente tinha motivo para pegar.
   Este PR só cria o agente (issue #241) — a skill `/btt-sdd:ux-review` que o aciona é a issue #242, próxima do lote.
 
 (PR #245)

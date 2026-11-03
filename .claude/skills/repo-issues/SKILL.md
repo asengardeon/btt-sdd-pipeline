@@ -94,34 +94,31 @@ outra tarefa, pare e informe o usuário em vez de misturar.
       tocou nada em `plugins/btt-sdd/`, não bata a versão.
    d. Commit, `git push -u origin <branch>`, e abra o PR (`gh pr create`) com `Closes #<N>` no
       corpo, resumindo o que mudou e por quê (cite a issue).
-   d2. **Garanta que a issue tem os labels que a identificam contra a implementação** — issues
-      abertas manualmente (fora da retrospectiva automática do `sre`, `.claude/skills/sdd-sre/
-      SKILL.md`, seção "Retrospectiva da fatia") costumam chegar sem eles (`labels: []` no JSON do
-      passo 1). Antes de seguir para o passo `e`, confirme via `gh issue view <N> --repo
-      asengardeon/btt-sdd-pipeline --json labels` e adicione o que faltar com `gh issue edit <N>
-      --repo asengardeon/btt-sdd-pipeline --add-label <nome>` (criando o label primeiro com `gh
-      label create`, mesma mecânica de `sdd-sre`, se ainda não existir no repositório):
-      - **Tipo**: `melhoria` se o título/corpo descreve uma sugestão de melhoria (ou já tem o
-        prefixo "Melhoria:"), `aprendizado` se descreve um padrão de comportamento observado a
-        generalizar (prefixo "Aprendizado:"), `bug` (label padrão do GitHub, já existe neste
-        repositório) se descreve um comportamento incorreto/quebrado. Infira pelo conteúdo real da
-        issue — não pelo prefixo do título sozinho, que pode faltar em issues manuais.
-      - **Origem**: `spec:<projeto>/<slug>` **só quando o corpo da issue citar claramente** um
-        projeto e uma spec de origem (ex.: "ridersbnu-app/specs/0012-..."). Não invente essa
-        referência quando a issue não a menciona — nesse caso, deixe a issue só com o label de
-        tipo. **Nome de label tem no máximo 50 caracteres** (limite do GitHub): se
-        `spec:<projeto>/<slug>` passar disso, trunque o `<slug>` no último limite de palavra (`-`)
-        que couber, preservando o prefixo numérico da spec, e registre o slug completo na
-        `--description` — e **procure o label existente por prefixo**
-        (`spec:<projeto>/<prefixo-numérico>`), reusando o que já houver em vez de criar um segundo
-        com outro corte. Mesma regra de `.claude/skills/sdd-sre/SKILL.md`, passo 5c, que é onde
-        esses labels nascem; já falhou aqui de verdade com `HTTP 422: name is too long` num slug de
-        60 caracteres, derrubando em seguida o `--add-label` com `'<label>' not found`.
-   d3. **Aplique os mesmos labels da issue ao PR que a fecha** — o PR também deve carregar os
-      labels compatíveis (tipo + origem, se houver), não só a issue. `gh pr edit <PR> --repo
-      asengardeon/btt-sdd-pipeline --add-label <nome>` para cada label confirmado no passo `d2`
-      (os labels já existem nesse ponto, não precisa criar de novo). Faça isso logo após abrir o
-      PR no passo `d`, antes do passo `e`.
+   d2. **Garanta que a issue tem o label de tipo que a identifica** — issues abertas manualmente
+      (fora da retrospectiva automática do `sre`, `.claude/skills/sdd-sre/SKILL.md`, seção
+      "Retrospectiva da fatia") costumam chegar sem ele (`labels: []` no JSON do passo 1). Antes
+      de seguir para o passo `e`, confirme via `gh issue view <N> --repo asengardeon/btt-sdd-
+      pipeline --json labels` e adicione o que faltar com `gh issue edit <N> --repo
+      asengardeon/btt-sdd-pipeline --add-label <nome>` (criando o label primeiro com `gh label
+      create`, mesma mecânica de `sdd-sre`, se ainda não existir no repositório): `melhoria` se o
+      título/corpo descreve uma sugestão de melhoria (ou já tem o prefixo "Melhoria:"),
+      `aprendizado` se descreve um padrão de comportamento observado a generalizar (prefixo
+      "Aprendizado:"), `bug` (label padrão do GitHub, já existe neste repositório) se descreve um
+      comportamento incorreto/quebrado. Infira pelo conteúdo real da issue — não pelo prefixo do
+      título sozinho, que pode faltar em issues manuais.
+
+      **Nunca adicione (nem reaproveite) um label identificando o projeto/repositório consumidor
+      de origem** (ex.: `spec:<projeto>/<slug>`) — mesmo que o corpo da issue já cite um nome de
+      projeto. `asengardeon/btt-sdd-pipeline` é público; o projeto consumidor normalmente não é, e
+      um label assim publica qual operador privado reportou aquele feedback. Esse mecanismo
+      existiu e foi removido depois de vazar publicamente o nome de três projetos privados via
+      ~32 labels (issue #607, `asengardeon/btt-sdd-pipeline`) — se você encontrar uma issue cujo
+      **corpo** ainda nomeie o projeto de origem explicitamente (resíduo de antes do fix), não
+      propague esse nome para o título/corpo do PR que a fecha; descreva o contexto de forma
+      genérica lá.
+   d3. **Aplique o mesmo label de tipo da issue ao PR que a fecha.** `gh pr edit <PR> --repo
+      asengardeon/btt-sdd-pipeline --add-label <nome>` (o label já existe nesse ponto, não
+      precisa criar de novo). Faça isso logo após abrir o PR no passo `d`, antes do passo `e`.
    e. **Aguarde o PR ficar limpo para merge**: `gh pr view <PR> --repo asengardeon/btt-sdd-pipeline
       --json mergeable,mergeStateStatus`. Se este repositório tiver CI configurado, siga
       `docs/GIT-WORKFLOW.md`, seção "Aguardando CI antes do merge" (espera inicial maior, não
