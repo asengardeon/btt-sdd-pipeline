@@ -129,10 +129,22 @@ haver mais de um artefato defasado na mesma spec; cada migração é deliberada 
    histórico real já está preservado pelo Git (`git log`/`git show` continuam funcionando no
    arquivo legado); manter o conteúdo inteiro duplicado nos dois formatos não serve a nenhum
    propósito além de inflar o repositório. Para todas as 7 migrações: substitua o corpo do
-   arquivo pelo título original seguido só do banner "migrado" (que passa a dizer que o conteúdo
-   foi **removido**, não que o arquivo é "referência histórica" — já que não sobra conteúdo nele)
-   apontando para onde o conteúdo real agora vive. Texto exato do banner e do corte: arquivo de
-   regra de migração aplicável.
+   arquivo pelo título original seguido só do banner "migrado" abaixo — **texto exato, o único
+   lugar onde ele é definido** (cada regra de migração em `migrations/*.md` só aponta para aqui;
+   nunca componha o seu próprio texto):
+
+   ```
+   # <título original do arquivo, verbatim>
+
+   > **Migrado para o formato novo em <data de hoje, AAAA-MM-DD>.** O conteúdo deste artefato foi
+   > movido para `<caminho-destino>/` e removido deste arquivo para evitar duplicação — leia a
+   > versão atual lá. Não recrie o conteúdo aqui.
+   ```
+
+   `<caminho-destino>` é `specs/<slug>/prd` ou `specs/<slug>/trd` (split por tópico) para as
+   migrações de `prd`/`trd`, ou `specs/<slug>/reviews/<stage>` (split por rodada) para as 5
+   migrações de revisão — sem a barra final dentro do crase, ela já está fora. Nada mais sobra no
+   arquivo: nem o cabeçalho antigo (Status/Autor/...), nem qualquer seção do corpo original.
 
 9b. **Confirme mecanicamente que o passo 9 funcionou — nunca confie só em ter seguido os passos.**
    Rode `${CLAUDE_SKILL_DIR}/scripts/check-legacy-emptied.sh <arquivo-legado>` (bash) ou
