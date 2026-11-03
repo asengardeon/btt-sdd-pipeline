@@ -17,6 +17,17 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.53.5 — 2026-11-03
+
+- `/sdd-migrate` (passo 9): o texto exato do banner "migrado" era uma referência circular — o
+  núcleo da skill apontava para "a regra de migração aplicável" e cada uma das 7 regras apontava
+  de volta para "o núcleo da skill, passo 9" — nenhum dos dois continha o texto literal. Quem
+  rodava a migração chegava ao fim da referência sem nunca encontrar o que escrever, e tinha que
+  compor o próprio banner (confirmado ao vivo num projeto consumidor). Texto exato agora
+  declarado uma única vez no passo 9, no formato já usado nas migrações reais deste repositório
+  (`specs/0001-example-task-management/`).
+- Bump de versão do plugin: `1.53.4` -> `1.53.5` (correção de documentação).
+
 ## 1.53.4 — 2026-11-03
 
 - `/sdd-migrate` ganha verificação mecânica do passo 9 (esvaziar o corpo do arquivo legado):
