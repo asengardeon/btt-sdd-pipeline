@@ -134,6 +134,19 @@ haver mais de um artefato defasado na mesma spec; cada migração é deliberada 
    apontando para onde o conteúdo real agora vive. Texto exato do banner e do corte: arquivo de
    regra de migração aplicável.
 
+9b. **Confirme mecanicamente que o passo 9 funcionou — nunca confie só em ter seguido os passos.**
+   Rode `${CLAUDE_SKILL_DIR}/scripts/check-legacy-emptied.sh <arquivo-legado>` (bash) ou
+   `${CLAUDE_SKILL_DIR}/scripts/check-legacy-emptied.ps1 -File <arquivo-legado>` (PowerShell) —
+   devolve "OK" e sai com código 0 se só título + banner sobraram, ou "FALHOU" com a lista exata
+   de linhas extras e código 1 se qualquer conteúdo original ainda estiver lá. **Nunca prossiga
+   para o passo 10 enquanto o script reportar "FALHOU"** — corrija o arquivo (remova o que o
+   script listou) e rode de novo. Esta verificação existe porque o passo 9, sendo só prosa, já
+   falhou silenciosamente em produção: todas as execuções anteriores de `/sdd-migrate` num
+   projeto consumidor fizeram a transformação para v2 corretamente mas nenhuma esvaziou o arquivo
+   legado — 75 arquivos com ~78.700 linhas de conteúdo original duplicado, só descoberto por
+   auditoria manual (issue #602, `asengardeon/btt-sdd-pipeline`). Um check de código, não a
+   lembrança de quem roda a migração, é o que fecha essa lacuna de raiz.
+
 10. **Commite as mudanças** (os arquivos novos + o artefato original com o banner/marcação que a
     regra específica definir) na branch atual — a mesma branch que o usuário já estava usando se
     o passo 1b não disparou, ou a branch nova criada pelo passo 1b se disparou (nunca uma branch
