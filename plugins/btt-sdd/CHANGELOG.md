@@ -17,6 +17,19 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.53.3 — 2026-11-03
+
+- `code-reviewer.md`/`qa-engineer.md`: título do passo de commit corrigido de "Commite e envie
+  (push) o(s) arquivo(s)/o artefato" para "Commite (nunca dê push)" — o corpo da instrução já
+  dizia explicitamente para não dar push (regra de "um push por fatia",
+  `docs/GIT-WORKFLOW.md`), mas o título contradizia isso, um defeito editorial que convida
+  justamente ao tipo de leitura rápida/skim que causou um push indevido real relatado pelo
+  usuário (issue #544).
+- A regra "nunca dê push" em si já existia desde 2026-10-13 (commit `b910ab4`), antes do
+  incidente relatado (2026-10-31) — a causa provável do incidente real foi um plugin desatualizado
+  no projeto consumidor, não ausência da regra.
+- Bump de versão do plugin: `1.53.2` -> `1.53.3` (ajuste editorial).
+
 ## 1.53.2 — 2026-11-03
 
 - `/sdd-migrate` ganha uma salvaguarda de GitHub Flow: antes do passo 1b novo, a skill

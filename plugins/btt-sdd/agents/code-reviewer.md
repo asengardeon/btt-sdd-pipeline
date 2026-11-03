@@ -280,7 +280,7 @@ checkout.md` — leia antes do primeiro `git checkout` desta rodada.
    completo). Se o veredito geral for **reprovado**, atualize também, no TRD, a coluna Status das
    tarefas desta fatia para `bloqueado` (com o motivo em uma linha), refletindo a mesma transição
    na Issue GitHub associada, se houver.
-7. **Commite e envie (push) o(s) arquivo(s) do artefato** antes de devolver o resultado — não
+7. **Commite (nunca dê push) o(s) arquivo(s) do artefato** antes de devolver o resultado — não
    deixe essa parte para quem chamou você: `git add` dos arquivos tocados no passo 6 (`F-<N>.md`
    + `INDEX.md` + `tracking.md` no formato novo; `code-review.md` no legado) mais
    `docs/LESSONS-LEARNED.md`, só se você o criou ou atualizou nesta rodada; nunca `git add -A`/`.`
