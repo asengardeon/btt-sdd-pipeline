@@ -17,6 +17,18 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.53.4 — 2026-11-03
+
+- `/sdd-migrate` ganha verificação mecânica do passo 9 (esvaziar o corpo do arquivo legado):
+  novo passo 9b roda `scripts/check-legacy-emptied.sh`/`.ps1` (bundled na própria skill) e recusa
+  prosseguir para o commit se qualquer conteúdo original ainda estiver no arquivo. O passo 9
+  sendo só prosa já falhou silenciosamente em produção: todas as execuções anteriores de
+  `/sdd-migrate` num projeto consumidor fizeram a transformação para v2 corretamente mas nenhuma
+  esvaziou o arquivo legado — 75 arquivos com ~78.700 linhas de conteúdo duplicado, só descoberto
+  por auditoria manual (issue #602).
+- Bump de versão do plugin: `1.53.3` -> `1.53.4` (fecha uma lacuna de verificação — tratado como
+  ajuste de comportamento, não capacidade nova, já que o passo 9 já existia).
+
 ## 1.53.3 — 2026-11-03
 
 - `code-reviewer.md`/`qa-engineer.md`: título do passo de commit corrigido de "Commite e envie
