@@ -51,5 +51,6 @@ migração. Marque `Arquivo = —` em toda linha do histórico anterior à rodad
 4. Crie `specs/<slug>/reviews/ux-review/<identificador-da-rodada-vigente>.md` a partir de
    `specs/_template/reviews/ux-review/round.template.md`: veredito geral = valor da última linha
    do Histórico; copie o conteúdo das áreas 2–8 verbatim, sem resumir.
-5. Adicione o banner de migração no topo do arquivo legado (texto exato no núcleo da skill, passo
-   7) — nunca delete nem mova o arquivo original.
+5. **Esvazie o corpo do arquivo legado**, mantendo só o título e o banner de migração (texto
+   exato no núcleo da skill, passo 9) apontando para `specs/<slug>/reviews/ux-review/` — nunca
+   delete nem mova o arquivo original, só o conteúdo dele.

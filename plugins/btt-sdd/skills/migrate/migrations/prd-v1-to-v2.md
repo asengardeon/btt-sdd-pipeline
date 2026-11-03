@@ -53,5 +53,6 @@ documentado" em vez de deixar em branco ou copiar o placeholder do template como
    alterar valores.
 5. Crie `specs/<slug>/prd/tracking.md` a partir de `specs/_template/prd/tracking.template.md`:
    copie as tabelas das seções 11 e 12 linha por linha, sem alterar valores.
-6. Adicione o banner de migração no topo do arquivo legado (texto exato no núcleo da skill, passo
-   7 de `.claude/skills/sdd-migrate/SKILL.md`) — nunca delete nem mova o arquivo original.
+6. **Esvazie o corpo do arquivo legado**, mantendo só o título e o banner de migração (texto
+   exato no núcleo da skill, passo 9 de `.claude/skills/sdd-migrate/SKILL.md`) apontando para
+   `specs/<slug>/prd/` — nunca delete nem mova o arquivo original, só o conteúdo dele.

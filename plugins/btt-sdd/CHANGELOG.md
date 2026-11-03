@@ -17,6 +17,22 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.53.1 — 2026-11-03
+
+- `/sdd-migrate` deixa de manter o conteúdo completo do artefato legado após a migração: agora
+  esvazia o corpo do arquivo, mantendo só o título e o banner de migração (que passa a dizer que
+  o conteúdo foi *removido*, não que o arquivo é "referência histórica"). O histórico real já
+  está preservado pelo Git (`git log`/`git show`); manter o conteúdo duplicado nos dois formatos
+  não servia a nenhum propósito.
+- Mudança aplicada às 7 regras de migração (`migrations/*.md`) e ao núcleo da skill
+  (`.claude/skills/sdd-migrate/SKILL.md`, passo 9).
+- Aplicada retroativamente aos 3 artefatos reais já migrados em
+  `specs/0001-example-task-management/`: `prd.md`, `trd.md`, `qa-report.md`.
+- Pedido direto do usuário depois de testar `/sdd-migrate` ao vivo numa spec de validação: o
+  conteúdo antigo continuava inteiro no arquivo legado depois da migração, e o usuário preferiu
+  que fosse removido (issue #598).
+- Bump de versão do plugin: `1.53.0` -> `1.53.1` (ajuste de comportamento, não capacidade nova).
+
 ## 1.53.0 — 2026-11-02
 
 - PRD e TRD ganham formato v2: split por tópico (núcleo `INDEX.md` + arquivos-filho lidos sob
