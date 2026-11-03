@@ -17,6 +17,21 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.53.2 — 2026-11-03
+
+- `/sdd-migrate` ganha uma salvaguarda de GitHub Flow: antes do passo 1b novo, a skill
+  confirmava a branch atual mas nunca verificava se ela era a branch padrão — seguindo o passo de
+  commit literalmente, uma migração rodada sem fatia ativa (ex.: migrando uma spec antiga muito
+  depois de mergeada) commitaria direto em `main`/`master`, violando a regra 1 de
+  `docs/GIT-WORKFLOW.md`. Agora, se a branch atual é a padrão, a skill confirma/cria uma issue e
+  cria uma branch (prefixo `docs/`) antes de prosseguir; se já está no meio de outro trabalho,
+  continua commitando ali, sem branch nova.
+- `docs/GIT-WORKFLOW.md`, tabela "Mapeamento no pipeline SDD": nova linha para `/sdd-migrate`
+  (não tinha nenhuma até agora).
+- Pedido direto do usuário depois de observar a lacuna ao testar `/sdd-migrate` ao vivo a partir
+  de `master` (issue #600).
+- Bump de versão do plugin: `1.53.1` -> `1.53.2` (ajuste de comportamento).
+
 ## 1.53.1 — 2026-11-03
 
 - `/sdd-migrate` deixa de manter o conteúdo completo do artefato legado após a migração: agora
