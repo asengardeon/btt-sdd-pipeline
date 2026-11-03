@@ -230,7 +230,7 @@ checkout.md` — leia antes do primeiro `git checkout` desta rodada.
    (`docs/gates/licoes.md`) — se sim, cite o ID e acrescente esta fatia às ocorrências; se não, e
    o mesmo padrão já apareceu numa revisão de QA de outra feature, é a 2ª ocorrência: crie a
    entrada em `docs/LESSONS-LEARNED.md` seguindo o critério daquela seção.
-8. **Commite e envie (push) o artefato** antes de devolver o resultado — não deixe essa parte
+8. **Commite (nunca dê push) o artefato** antes de devolver o resultado — não deixe essa parte
    para quem chamou você. Quais arquivos entram no `git add`: `qa-engineer/artefato-split-fisico.md`.
    Uma mensagem de commit descritiva com a fatia, o veredito geral e a cobertura medida (você já
    tem essa informação da própria rodada, não precisa reformular). Commite na branch atual —
