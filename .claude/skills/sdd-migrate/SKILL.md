@@ -60,6 +60,27 @@ haver mais de um artefato defasado na mesma spec; cada migração é deliberada 
 1. **Confirme a branch atual (`git branch --show-current`)** antes de editar qualquer coisa —
    mesma regra de `/sdd-amend`, passo 1b: nunca assuma que o workspace já está na branch certa.
 
+1b. **Se a branch atual for a branch padrão do repositório** (normalmente `main` — confirme com
+   `git symbolic-ref refs/remotes/origin/HEAD` se houver dúvida, ou pela convenção já declarada
+   para este projeto), **nunca commite a migração ali**: `/sdd-migrate` pode ser invocado sem
+   fatia ativa (ex.: migrando uma spec antiga muito depois dela ter mergeado), e seguir o passo 10
+   literalmente nesse estado commitaria direto na branch padrão — violando `docs/GIT-WORKFLOW.md`,
+   regra 1 ("`main` sempre implantável. Ninguém commita direto nela — toda mudança entra via
+   PR"), que vale para qualquer artefato de qualquer projeto consumidor, não só feature rastreada
+   em `specs/` (a seção "Mudanças no próprio pipeline" daquele doc é especificamente sobre manter
+   os `agents/`/`skills/`/templates do próprio pipeline, não aplica aqui — mas a regra 1 em si é
+   geral). Antes de prosseguir para o passo 2:
+   - Confirme/crie uma issue (do GitHub, ou do sistema de rastreamento deste projeto, se outro)
+     descrevendo por que esta migração está sendo feita agora — reaproveite uma issue existente
+     se o pedido já nasceu de uma; senão, crie uma antes de criar a branch, nunca depois como
+     formalidade retroativa. Se o projeto não usar issues, pule esta etapa.
+   - Crie uma branch a partir da branch padrão atualizada, prefixo `docs/` (é uma mudança só de
+     documentação/Markdown em `specs/`, sem código) — ex. `docs/migrate-<slug>-<artefato>`.
+   - Só prossiga com os passos 2+ nessa branch nova.
+   Se a branch atual **já não é** a padrão (o usuário está no meio de outro trabalho — fatia,
+   chore, etc.), siga como sempre: nenhuma branch nova, commite a migração na branch atual
+   (passo 10).
+
 2. **Determine a versão atual do template.** Leia a primeira linha de
    `specs/_template/<artefato>.template.md` — `<!-- sdd-format-version: N -->`. Se este artefato
    também tiver versão split, leia o marcador do `index.template.md` correspondente também: a
@@ -114,16 +135,19 @@ haver mais de um artefato defasado na mesma spec; cada migração é deliberada 
    regra de migração aplicável.
 
 10. **Commite as mudanças** (os arquivos novos + o artefato original com o banner/marcação que a
-    regra específica definir) na branch atual — mesma branch que o usuário já estava usando,
-    nunca uma branch nova própria desta migração a menos que o usuário peça. Mensagem de commit
+    regra específica definir) na branch atual — a mesma branch que o usuário já estava usando se
+    o passo 1b não disparou, ou a branch nova criada pelo passo 1b se disparou (nunca uma branch
+    própria desta migração **fora** desse caso, a menos que o usuário peça). Mensagem de commit
     descritiva citando a spec e o artefato migrados. Nunca `git add -A`/`.` — liste os arquivos
-    explicitamente.
+    explicitamente. **Se o passo 1b criou uma branch nova**, abra também um PR (`gh pr create`)
+    referenciando a issue do passo 1b — nunca mergeie sozinho; merge continua sendo decisão do
+    usuário.
 
 11. **Resuma ao usuário**: de qual versão para qual versão, quantas rodadas/linhas de cada
     tabela foram preservadas, e — quando a regra específica apontar perda de conteúdo de rodada
     anterior — isso explicitamente, como limitação do formato de origem, não desta migração.
-    Sugira rodar `/sdd-status` depois, para confirmar que a spec aparece corretamente na versão
-    nova.
+    Se o passo 1b criou branch/PR, inclua o link do PR no resumo. Sugira rodar `/sdd-status`
+    depois, para confirmar que a spec aparece corretamente na versão nova.
 
 ## Quando recusar
 
