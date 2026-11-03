@@ -104,9 +104,14 @@ haver mais de um artefato defasado na mesma spec; cada migração é deliberada 
    herdado do próprio template usado como base (`specs/_template/.../*.template.md` já inclui a
    linha correta); nunca copie o marcador do artefato de origem para o de destino.
 
-9. **Nunca delete nem mova o artefato original.** A regra de migração específica decide como ele
-   é tratado — hoje, para as 5 migrações de revisão, sempre: banner "migrado" no topo, mantido
-   como referência histórica.
+9. **Nunca delete nem mova o arquivo do artefato original — mas esvazie o corpo dele.** O
+   histórico real já está preservado pelo Git (`git log`/`git show` continuam funcionando no
+   arquivo legado); manter o conteúdo inteiro duplicado nos dois formatos não serve a nenhum
+   propósito além de inflar o repositório. Para todas as 7 migrações: substitua o corpo do
+   arquivo pelo título original seguido só do banner "migrado" (que passa a dizer que o conteúdo
+   foi **removido**, não que o arquivo é "referência histórica" — já que não sobra conteúdo nele)
+   apontando para onde o conteúdo real agora vive. Texto exato do banner e do corte: arquivo de
+   regra de migração aplicável.
 
 10. **Commite as mudanças** (os arquivos novos + o artefato original com o banner/marcação que a
     regra específica definir) na branch atual — mesma branch que o usuário já estava usando,

@@ -58,5 +58,6 @@ sem perda:
    a fonte de verdade usada por `/sdd-implement`/`/sdd-status`/`/sdd-pending`.
 9. Crie `specs/<slug>/trd/tracking.md` a partir de `specs/_template/trd/tracking.template.md`:
    copie as tabelas das seções 15 e 16 linha por linha, sem alterar valores.
-10. Adicione o banner de migração no topo do arquivo legado (texto exato no núcleo da skill,
-    passo 7) — nunca delete nem mova o arquivo original.
+10. **Esvazie o corpo do arquivo legado**, mantendo só o título e o banner de migração (texto
+    exato no núcleo da skill, passo 9) apontando para `specs/<slug>/trd/` — nunca delete nem mova
+    o arquivo original, só o conteúdo dele.
