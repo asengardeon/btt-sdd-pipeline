@@ -225,52 +225,37 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    Para cada sugestão concreta e acionável (não "poderia ser melhor" genérico), abra uma issue
    nova em `asengardeon/btt-sdd-pipeline` — o repositório de origem deste plugin, **sempre esse
    repositório, independente de qual projeto está rodando o pipeline agora**: `gh issue create
-   --repo asengardeon/btt-sdd-pipeline --title "..." --body "..." --label melhoria --label
-   "spec:<projeto>/<slug>"`, com contexto suficiente (o que aconteceu nesta fatia, por que a
-   sugestão faz sentido, qual arquivo do plugin mudaria). Prefixe o título com "Melhoria:". Se
-   `gh` falhar (comum quando o plugin está instalado num projeto de outro operador sem acesso a
-   este repositório específico), não tente mais de 3 vezes — relate as sugestões como texto ao
-   usuário em vez de bloquear a aprovação da fatia por isso.
+   --repo asengardeon/btt-sdd-pipeline --title "..." --body "..." --label melhoria`, com contexto
+   suficiente (o que aconteceu nesta fatia, por que a sugestão faz sentido, qual arquivo do
+   plugin mudaria). Prefixe o título com "Melhoria:". Se `gh` falhar (comum quando o plugin está
+   instalado num projeto de outro operador sem acesso a este repositório específico), não tente
+   mais de 3 vezes — relate as sugestões como texto ao usuário em vez de bloquear a aprovação da
+   fatia por isso.
+
+   **Nunca identifique o projeto/repositório consumidor de origem** — nem no título, nem no
+   corpo, nem como label. `asengardeon/btt-sdd-pipeline` é público; o projeto consumidor
+   normalmente não é, e nomeá-lo ali (mesmo só como contexto, ex.: "na spec X do projeto Y")
+   vaza publicamente qual operador privado usa o pipeline. Descreva o contexto de forma genérica
+   ("nesta fatia", "um projeto usando o pipeline", "a stack em uso") em vez de citar o nome real
+   do repositório/projeto/cliente. Isso já vazou de verdade: ~32 labels `spec:<projeto>/<slug>`
+   identificando publicamente três projetos privados, além do corpo de pelo menos uma issue
+   citando o nome do projeto em prosa (issue #607, `asengardeon/btt-sdd-pipeline`).
 
    **Abra também, separadamente, uma issue de aprendizado** (prefixo "Aprendizado:" no título,
-   label `aprendizado` em vez de `melhoria`, mesmo mecanismo) para todo padrão de comportamento
-   observado nesta fatia que faça sentido generalizar para o plugin — não algo específico deste
-   projeto, mas algo que outro projeto usando o pipeline também se beneficiaria de ter
-   documentado/instruído nos agentes ou skills. Se nenhuma sugestão ou aprendizado concreto surgir
-   desta fatia, não abra issue artificial só para cumprir o passo — siga sem abrir nada, mas ainda
-   assim não pule a própria avaliação: "nada digno de issue" é uma conclusão válida, "não avaliei"
-   não é.
+   label `aprendizado` em vez de `melhoria`, mesmo mecanismo, mesma regra de nunca identificar o
+   projeto de origem) para todo padrão de comportamento observado nesta fatia que faça sentido
+   generalizar para o plugin — não algo específico deste projeto, mas algo que outro projeto
+   usando o pipeline também se beneficiaria de ter documentado/instruído nos agentes ou skills.
+   Se nenhuma sugestão ou aprendizado concreto surgir desta fatia, não abra issue artificial só
+   para cumprir o passo — siga sem abrir nada, mas ainda assim não pule a própria avaliação: "nada
+   digno de issue" é uma conclusão válida, "não avaliei" não é.
 
-   **Toda issue criada aqui leva dois labels, para ficar identificável contra a implementação que
-   a originou:**
-   - **Tipo**: `melhoria` ou `aprendizado`, conforme acima.
-   - **Origem**: `spec:<projeto>/<slug>`, onde `<projeto>` é o nome do repositório onde esta
-     sessão está rodando agora (`basename "$(git remote get-url origin)" .git`, ou o nome do
-     diretório de trabalho se não houver remote configurado) e `<slug>` é a feature desta fatia —
-     permite filtrar depois, no `asengardeon/btt-sdd-pipeline`, todas as issues originadas da
-     mesma spec/projeto. **Nome de label tem no máximo 50 caracteres** — limite do GitHub, não
-     recomendação: `gh label create` falha com `HTTP 422: Validation Failed / name is too long
-     (maximum is 50 characters)`, e aí o `gh issue create --label` seguinte também falha, com
-     `'<label>' not found`, cuja causa real está na chamada anterior. Isso **não** é um caso de
-     borda: `spec:` + nome do repositório já consome ~20 caracteres (`spec:ridersbnu-app/` = 19),
-     e slug de spec com 32+ caracteres é rotineiro. Duas regras, então:
-     - **Se passar de 50, trunque o `<slug>`** no último limite de palavra (`-`) que couber,
-       **sempre preservando o prefixo numérico da spec** (é ele que identifica), e registre o slug
-       completo na `--description`, que não tem esse limite. Ex.:
-       `spec:ridersbnu-app/0006-navegacao-global-menu-topbar-alertas` (60) →
-       `spec:ridersbnu-app/0006-navegacao-global-menu` (45).
-     - **Procure o label existente por prefixo, não por nome exato.** O nome truncado é a *chave de
-       filtro* da spec, e precisa ser o mesmo em todas as fatias dela: busque por
-       `spec:<projeto>/<prefixo-numérico>` e **reuse** o label que já existir, em vez de criar um
-       segundo com outro ponto de corte — dois labels para a mesma origem quebram exatamente o
-       filtro que o label existe para dar.
-
-   Antes de usar qualquer um desses labels pela primeira vez neste repositório, confirme que
-   existe (`gh label list --repo asengardeon/btt-sdd-pipeline --json name`; para o label de
-   origem, procure por prefixo conforme acima); se não existir, crie com `gh label create <nome>
-   --repo asengardeon/btt-sdd-pipeline --color <hex> --description "<descrição curta>"` antes do
-   `gh issue create` — `gh issue create --label` falha se o label ainda não existir no repositório
-   de destino.
+   **Toda issue criada aqui leva um label de tipo** — `melhoria` ou `aprendizado`, conforme acima
+   — e nenhum outro label identificando a origem. Confirme que o label existe (`gh label list
+   --repo asengardeon/btt-sdd-pipeline --json name`); se não existir, crie com `gh label create
+   <nome> --repo asengardeon/btt-sdd-pipeline --color <hex> --description "<descrição curta>"`
+   antes do `gh issue create` — `gh issue create --label` falha se o label ainda não existir no
+   repositório de destino.
 5c-bis. **Faça o push único da fatia antes do passo 5d**, agora que todos os artefatos de revisão
    dela estão commitados e integrados localmente (`docs/GIT-WORKFLOW.md`, seção "Push único por
    fatia: o CI roda uma vez, não uma vez por artefato de revisão"). Um `git push` só, na branch da
