@@ -2,7 +2,8 @@
 
 Gatilho: a fatia muda algo em CD/deploy/infra que não é só "deploy roda depois do CI verde" —
 contrato de API consumido por cliente já implantado, novo proxy/sidecar entre app e serviço
-remoto, PR marcado `CONFLICTING`, ou plano que toca mutação real de infra/geração de carga.
+remoto, PR marcado `CONFLICTING`, ou plano que toca mutação real de infra/geração de carga, ou
+qualquer comando de CLI (inclusive só leitura/diagnóstico) contra um app de produção real.
 
 ## Janela de quebra de contrato entre fatias
 
@@ -54,3 +55,14 @@ qualquer plano que envolva essas duas categorias, inclua no próprio texto apres
 `AskUserQuestion`: "as etapas X e Y provavelmente serão bloqueadas pelo modo automático desta
 sessão e vão precisar que você mesmo rode os comandos, ou libere uma regra de permissão — quer
 fazer isso agora ou seguimos e eu aviso quando chegar lá?".
+
+**O bloqueio não distingue leitura de mutação** — qualquer comando de CLI contra um app de
+produção real (`heroku run`/`heroku <verbo> --app <app-real>` ou equivalente) tende a cair no mesmo
+bloqueio, mesmo quando é só diagnóstico somente-leitura (ex.: `heroku run "php -v && php -m"` para
+listar módulos carregados, `heroku builds --app <app>` para listar builds — nenhum dos dois muta
+nada). Antecipe isso no plano para **qualquer** comando contra o app real de produção, não só para
+mutação/geração de carga. Já aconteceu numa sessão real: três comandos somente-leitura seguidos
+contra um app de produção real (duas variações de `heroku run "php -v && php -m"` e um `heroku
+builds --app <app>`) foram bloqueados um atrás do outro antes do agente desistir e escalar ao
+usuário — gastando as 3 tentativas do limite de `docs/gates/governanca.md` descobrindo na prática
+o que já poderia ter sido antecipado no plano (issue #609, `asengardeon/btt-sdd-pipeline`).
