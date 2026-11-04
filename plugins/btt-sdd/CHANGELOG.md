@@ -17,6 +17,21 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.53.9 — 2026-11-03
+
+- **Bloqueio do classificador de modo automático: deixado explícito que cobre também comandos
+  somente-leitura contra produção.** `agents/sre/cd-riscos-operacionais.md` (+ mirror no plugin),
+  seção "Bloqueio do classificador de modo automático", documentava só mutação real de
+  infra/geração de carga como tipicamente bloqueada. Numa rodada real de `/btt-sdd:sre`, três
+  comandos somente-leitura/diagnóstico seguidos contra um app de produção real (`heroku run "php
+  -v && php -m"`, duas variações, e `heroku builds --app <app>`) foram bloqueados um atrás do
+  outro — nenhuma mutação. Deixado explícito que o bloqueio não distingue leitura de mutação:
+  qualquer comando de CLI contra app de produção real tende a cair nele, e o plano deve antecipar
+  isso para qualquer comando desse tipo, não só para mutação.
+- Relatado em `specs/0007-relatorios/reviews/sre-review/F-1.md` (seção 3, TRD-3) de um projeto
+  real usando este pipeline, reportado como issue #609.
+- Bump de versão do plugin: `1.53.8` -> `1.53.9`.
+
 ## 1.53.8 — 2026-11-03
 
 - **Injeção de fórmula em CSV (CWE-1236), flagueada proativamente no desenho do TRD.** Nova
