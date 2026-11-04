@@ -45,6 +45,17 @@ e o porquê estão em `docs/GIT-WORKFLOW.md`, seção "Isolamento de working tre
 concorrentes". Isso já aconteceu em sete de sete invocações isoladas da mesma fatia, e nenhuma
 delas tinha sido instruída a checar.
 
+## Se for retomado via `SendMessage` e instruído a registrar sua própria linha em `timing-log.md`
+
+Escreva só a descrição do que fez nesta rodada — nunca um valor de duração. Medir a duração é
+responsabilidade exclusiva de quem te invocou (o orquestrador da skill), porque só ele vê a
+notificação de conclusão da sua invocação anterior e consegue calcular a diferença contra o
+horário anotado antes do `SendMessage` (`specs/_template/timing-log.template.md`, seção "O que a
+coluna 'Duração' mede"). Você, retomado, não tem acesso a essa notificação anterior — qualquer
+número que você escrever ali é inventado, não medido, mesmo que pareça plausível. Isso já
+aconteceu de verdade: agentes retomados relataram explicitamente não ter como medir a própria
+duração ao serem instruídos a preencher essa coluna (issue #611, `asengardeon/btt-sdd-pipeline`).
+
 ## `docs/PROJECT-CONVENTIONS.md`: leia antes de começar, se existir
 
 É o canal pelo qual cada projeto registra como particulariza este pipeline — modelo de workflow de
