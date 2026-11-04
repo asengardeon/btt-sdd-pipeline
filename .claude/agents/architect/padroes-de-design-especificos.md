@@ -1,6 +1,6 @@
 # Padrões de desenho a verificar em cenários específicos
 
-Quatro verificações independentes, cada uma com gatilho próprio — leia só a seção cujo gatilho
+Cinco verificações independentes, cada uma com gatilho próprio — leia só a seção cujo gatilho
 bate com a tarefa atual.
 
 ## Isolamento de teste contra serviço com estado
@@ -67,6 +67,24 @@ de enum de tipo de alerta "por completo" no mesmo parágrafo em que afirmava "ne
 dados necessária" — as duas frases eram estruturalmente incompatíveis (remover o valor faria o
 adapter de leitura lançar erro ao hidratar qualquer registro já persistido com esse tipo), só
 percebido pelo `backend-developer` durante a implementação, não durante o desenho do TRD.
+
+## Exportação para CSV/planilha a partir de campo de texto livre do usuário
+
+Gatilho: alguma tarefa da decomposição grava CSV/planilha (`fputcsv` ou biblioteca equivalente de
+geração de spreadsheet) a partir de um campo de texto livre escolhido por um usuário/titular (ex.:
+nome de pessoa, descrição, comentário).
+
+Documente explicitamente na seção "Riscos e trade-offs" (seção 12) o risco de injeção de fórmula
+em CSV (CWE-1236): um valor começando com `=`, `+`, `-`, `@`, tab ou retorno de carro é interpretado
+como fórmula por planilhas (Excel, Google Sheets, LibreOffice) ao abrir o arquivo exportado, não só
+como texto. A mitigação recomendada é prefixar/escapar a célula cujo primeiro caractere cair nesse
+conjunto antes de escrevê-la — mesmo nível de proatividade que você já aplica a XSS em template
+HTML ou a SQL injection em query cru, não algo reservado para a revisão de segurança descobrir
+depois da implementação. Já aconteceu de verdade: numa fatia de exportação de relatório em CSV, a
+seção de riscos do TRD cobriu performance e extensões de runtime, mas não esse padrão — só
+percebido na revisão de segurança, via reprodução ao vivo com um payload `=HYPERLINK(...)`, depois
+de uma rodada inteira de implementação já ter sido feita sem a mitigação (issue #610,
+`asengardeon/btt-sdd-pipeline`).
 
 ## Campo de schema externo sem fonte clara nos objetos internos
 

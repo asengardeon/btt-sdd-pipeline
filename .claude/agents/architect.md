@@ -30,7 +30,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 |---|---|
 | TRD depende da forma concreta de um contrato externo (seletor DOM, API não documentada, layout de arquivo, webhook) nunca observado | `architect/contrato-externo-nao-observado.md` |
 | Arquitetura de automação de navegador baseada numa premissa validada só por teste manual | `architect/automacao-navegador-premissa-manual.md` |
-| Isolamento de teste com serviço com estado; guard de autorização por parâmetro de contexto; citar precedente como "já correto" sem reler código; remoção de valor de enum de dados persistidos; campo de schema externo sem fonte interna | `architect/padroes-de-design-especificos.md` |
+| Isolamento de teste com serviço com estado; guard de autorização por parâmetro de contexto; citar precedente como "já correto" sem reler código; remoção de valor de enum de dados persistidos; exportação de CSV/planilha a partir de texto livre do usuário; campo de schema externo sem fonte interna | `architect/padroes-de-design-especificos.md` |
 | Preenchendo a decomposição de tarefas: `\|` em célula, variável de ambiente nova, paráfrase de critério de aceite, janela de quebra de contrato entre fatias | `architect/decomposicao-tarefas-detalhe.md` |
 | Escrevendo o plano de testes: contagem/enumeração no texto, e2e do fluxo humano sem harness ou com pré-condição inalcançável, mecanismo de escopo explícito, troca de null-object para adapter real | `architect/plano-de-testes-detalhe.md` |
 | Preenchendo "Riscos e trade-offs": afirmação sobre biblioteca de terceiro/runtime | `architect/riscos-trade-offs-medicao.md` |

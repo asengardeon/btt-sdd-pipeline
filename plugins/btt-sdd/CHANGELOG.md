@@ -17,6 +17,19 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.53.8 — 2026-11-03
+
+- **Injeção de fórmula em CSV (CWE-1236), flagueada proativamente no desenho do TRD.** Nova
+  verificação em `agents/architect/padroes-de-design-especificos.md` (+ mirror no plugin): quando
+  uma tarefa exporta CSV/planilha a partir de campo de texto livre do usuário, o `architect`
+  documenta explicitamente o risco e a mitigação (escapar célula cujo primeiro caractere seja
+  `=`/`+`/`-`/`@`/tab/CR) na seção "Riscos e trade-offs" do TRD, mesmo nível de proatividade já
+  aplicado a XSS/SQL injection — em vez de só a revisão de segurança descobrir depois da
+  implementação.
+- Padrão observado numa fatia real de exportação de relatório em CSV, onde o achado só foi pego
+  na revisão de segurança via reprodução com payload `=HYPERLINK(...)`, reportado como issue #610.
+- Bump de versão do plugin: `1.53.7` -> `1.53.8`.
+
 ## 1.53.7 — 2026-11-03
 
 - **`docs/AGENT-PREAMBLE.md`: nova seção sobre quem mede a duração de um agente retomado.**
