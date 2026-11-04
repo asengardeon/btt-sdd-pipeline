@@ -17,6 +17,18 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.53.7 — 2026-11-03
+
+- **`docs/AGENT-PREAMBLE.md`: nova seção sobre quem mede a duração de um agente retomado.**
+  Agentes retomados via `SendMessage` (ex.: `frontend-developer`, `security-engineer`) relataram
+  não ter como medir a própria duração quando instruídos a registrar sua linha em
+  `timing-log.md` — eles não veem a notificação de conclusão da própria invocação anterior, só o
+  orquestrador vê. Deixado explícito: um agente retomado escreve só a descrição do que fez, nunca
+  um valor de duração; medir a duração é responsabilidade exclusiva de quem o invocou.
+- Padrão observado em duas invocações reais (`frontend-developer` e `security-engineer`) na mesma
+  fatia, reportado como issue #611.
+- Bump de versão do plugin: `1.53.6` -> `1.53.7`.
+
 ## 1.53.6 — 2026-11-03
 
 - **Vazamento de identificação de projeto consumidor privado, corrigido.** `sdd-sre/SKILL.md`
