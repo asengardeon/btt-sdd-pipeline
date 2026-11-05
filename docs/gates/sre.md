@@ -80,6 +80,12 @@
   a revisão é sempre completa no checklist — nunca fast-path — cobrindo o diff acumulado desde a
   última revisão registrada como `completo` na tabela "Histórico de aprovações por fatia", não só
   o diff desta última fatia isolada.
+- [ ] **Na fatia final que expõe a feature em produção, proponha um limiar de monitoramento que
+  abra `/sdd-hotfix` automaticamente** (`docs/ENGINEERING-PILLARS.md`, seção Observabilidade) via
+  `AskUserQuestion` — a métrica crítica identificada no TRD, com o valor que caracteriza violação.
+  Projeto sem infraestrutura de monitoramento real: registre como pendência em "Pendências de
+  validação (VALIDAR DEPOIS)", nunca simule o mecanismo sem a infraestrutura por trás. Recusa do
+  usuário não bloqueia esta etapa — a oferta é o gate, não a aceitação.
 - [ ] **A linha desta rodada existe em `specs/<slug>/timing-log.md` e nomeia uma única etapa.**
    Etapa
   cujo trabalho de orquestrador foi zero registra `0m` com justificativa — nunca nenhuma linha; e
