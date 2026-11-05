@@ -21,7 +21,13 @@ gravada por quem causa a transição.
   `bloqueado` (com o motivo em uma linha) as tarefas da fatia cujo veredito desta rodada foi
   reprovado.
 - [ ] `sre` atualiza para `aprovado` as tarefas da fatia ao aprová-la (ou aprovar com ressalvas) — o
-  último gate antes do merge.
+  último gate antes do merge. **Se nenhuma etapa de `sre` roda nesta fatia** (a cadência de
+  `docs/SDD-WORKFLOW.md` não exige — fatia intermediária sem tarefa marcando `sre` na "Validação
+  na fatia" e que não é a última fatia pendente da spec), quem fecha a fatia (`qa-engineer` ou
+  `security-engineer`, a depender de qual delas for a última etapa desta fatia) herda esta
+  transição ao fechar — mesmo passo em que já herda push final e retrospectiva da fatia
+  (`skills/qa/SKILL.md`/`skills/security/SKILL.md`, passo 7). Nunca deixe a tarefa presa em
+  `bloqueado`/`em andamento` esperando um `sre` que a cadência desta fatia não vai acionar.
 - [ ] `/btt-sdd:implement`, ao confirmar (pré-condição antes de iniciar a fatia seguinte) que o PR
   de uma fatia já foi mergeado em `main`, atualiza essa fatia para `concluído (mergeado)`.
 - [ ] **Caso especial: a última fatia de uma spec nunca tem "fatia seguinte" para disparar a regra
