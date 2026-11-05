@@ -87,6 +87,13 @@ outra tarefa, pare e informe o usuário em vez de misturar.
       faça isso no mesmo commit. Instrução escrita sem verificação já falhou cinco vezes neste
       repositório (issue #281), inclusive desligando a etapa 4b inteira para quem usa o plugin
       (issue #280) — é por isso que este passo é uma verificação, não um lembrete.
+   b3. **Se a mudança altera uma regra de decisão** (quando um gatilho dispara, o que uma etapa
+      faz/recusa numa condição específica — não só prosa/wording sem efeito em comportamento),
+      monte um cenário curto que bata no gatilho novo e invoque o agente/skill modificado via Agent
+      tool nesse cenário, confirmando que o resultado reflete a regra nova antes de abrir o PR.
+      `check-plugin-sync.py` confere só estrutura (as duas cópias batem); este passo confere
+      comportamento — o gap que ele existe para fechar. Pule este passo quando a mudança é só
+      documentação/estilo sem efeito de decisão (ex.: a varredura de simplificação de prosa).
    c. **Se a mudança tocou qualquer arquivo dentro de `plugins/btt-sdd/`**, incremente a versão em
       `plugins/btt-sdd/.claude-plugin/plugin.json` (patch por padrão — `1.X.Y` → `1.X.(Y+1)`; minor
       se a issue introduziu uma capacidade nova, não só um ajuste; pergunte ao usuário só se a
