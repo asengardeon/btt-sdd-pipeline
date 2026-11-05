@@ -265,7 +265,11 @@ checkout.md` — leia antes do primeiro `git checkout` desta rodada.
    desta rodada) e `Status = aberto`. Para cada achado, verifique se corresponde a uma lição
    recorrente já confirmada (`docs/gates/licoes.md`) — se sim, cite o ID e acrescente esta fatia
    às ocorrências; se não, e o mesmo padrão já apareceu numa revisão de outra feature, é a 2ª
-   ocorrência: crie a entrada em `docs/LESSONS-LEARNED.md`.
+   ocorrência: crie a entrada em `docs/LESSONS-LEARNED.md`. **Teto de 5 achados de severidade
+   "sugestão" detalhados por rodada** — a partir do 6º, acrescente só uma linha de contagem ("+N
+   sugestões adicionais de menor impacto, não detalhadas nesta rodada") em vez de uma linha por
+   achado na tabela. Este teto nunca se aplica a achado "bloqueante": todo bloqueante é detalhado,
+   sem limite.
 6. **Detecte o formato do artefato antes de escrever**: `specs/<slug>/reviews/code-review/`
    existe como diretório → **formato novo** (passo 6a); só `specs/<slug>/code-review.md` existe →
    **formato legado** (passo 6b). Para uma spec nova (nenhum dos dois existe ainda), use o
