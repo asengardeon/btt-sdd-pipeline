@@ -51,6 +51,11 @@
   uma configuração a preservar.
 - [ ] `main` protegida: sem push direto, PR obrigatório, status checks obrigatórios (verificado, não
   necessariamente configurado pelo agente — configuração real é do administrador do repo).
+- [ ] **Ao configurar CI/CD de um projeto novo (ou revisar a infraestrutura de um já existente),
+  ofereça o reforço determinístico de `docs/HOOKS-GUARDRAILS.md`** via `AskUserQuestion` — hook
+  que bloqueia commit/push direto em `main`/`master`, entre outros. Decisão de adotar (e quais
+  regras reforçar) é registrada em `docs/PROJECT-CONVENTIONS.md`. Recusa do usuário não bloqueia
+  esta etapa — a oferta é o gate, não a aceitação.
 - [ ] **Se o diff desta fatia renomeia ou remove um `name:` de job em `ci.yml`/`cd.yml`,
   `required_status_checks.contexts` da proteção de `main` foi conferido e reconciliado** (com
   confirmação do usuário, nunca correção silenciosa) **antes** do veredito — não só ao notar

@@ -7,7 +7,9 @@ dependências entre histórias (fatias verticais de entrega)"), PR obrigatório 
 
 ## Regras
 
-1. **`main` sempre implantável.** Ninguém commita direto nela — toda mudança entra via PR.
+1. **`main` sempre implantável.** Ninguém commita direto nela — toda mudança entra via PR. Reforço
+   determinístico opcional (hook que bloqueia o comando, não só a instrução): `docs/HOOKS-
+   GUARDRAILS.md`.
 2. **Uma branch por fatia**, nunca uma para a feature inteira. `feature/<NNNN-slug>` se a
    feature tem uma única fatia; `feature/<NNNN-slug>/<fatia>` (ex.:
    `feature/0002-relatorio-mensal/f-1`) quando o TRD lista mais de uma (seção "Decomposição de
