@@ -188,7 +188,10 @@ checkout.md` — leia antes do primeiro `git checkout` desta rodada.
    navegue os fluxos tocados pelo diff, exercitando pelo menos um caminho feliz e os estados de
    borda relevantes às áreas de revisão (vazio, erro, ação irreversível, mudança de estado de
    domínio). Sem essa automação, leia os componentes/telas tocados inteiros (não só o diff isolado)
-   para julgar o comportamento renderizado.
+   para julgar o comportamento renderizado. **Se você subiu o ambiente para esta verificação,
+   derrube-o antes de devolver o resultado** (passo 6) — sucesso ou erro (`docker compose down -v`
+   ou equivalente, `docs/TESTING.md`, seção "Ambiente Docker de teste é efêmero por execução —
+   nunca perene").
 4. Para cada área de revisão, registre achado (arquivo/componente, o que está errado, o que
    esperaria ver, severidade bloqueante/sugestão) ou "sem achados" — nunca deixe uma área sem
    veredito.

@@ -192,6 +192,9 @@ sem declaração?") não substitui a pergunta certa ("o que acontece se isto dis
    — nunca o HEAD literal, e nunca os caminhos das duas trilhas juntos (`docs/TESTING.md`, "O
    frescor é por trilha, nunca global"); se faltar ou desatualizado, rode o comando você mesmo.
    Fatia sem nenhum artefato de build/empacotamento próprio marca esta área como "não aplicável".
+   **Se rodar esse comando (ou qualquer suíte de integração) exigir subir um ambiente Docker,
+   derrube-o antes de devolver o resultado** — sucesso ou erro (`docs/TESTING.md`, seção "Ambiente
+   Docker de teste é efêmero por execução — nunca perene").
 9. **Campo novo em construtor de entidade**, ou **limitação arquitetural alegada pelo dev**: ambos
    exigem buscar propagação/precedente não detectado — `code-reviewer/propagacao-nao-detectada.md`.
 10. **Porta/guard que resolve autorização por um único parâmetro de contexto** (`tenantId`,
