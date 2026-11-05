@@ -20,16 +20,14 @@ acessibilidade, ordem de foco ou geometria**, a asserção só vale se a regra d
 veredito daquela área é declarado explicitamente como **não medido** — nunca como "sem achados": o
 jsdom é ignorante sobre o CSS do projeto, então a asserção passa e o que ela afirma é falso.
 
-Já aconteceu de verdade, e é por isso que este parágrafo não é zelo. Uma correção passou a
-renderizar uma região de anúncio (`role="status"`) "sempre montada", com a classe `empty:hidden`
-para não deixar um `gap` órfão no layout. **Quatro artefatos** passaram a afirmar essa garantia
-(seção 11 do TRD, docblock do componente, `code-review.md`, `POST-MERGE-VALIDATION.md`), a suíte
-ficou verde, e **nenhuma das três etapas de revisão seguintes pegou nada por leitura**. A
-reverificação de UX pegou porque compilou `empty:hidden` com o Tailwind daquele repositório e
-injetou a regra no jsdom antes de consultar: com a regra presente, `getByRole('status')` devolve
-**0** enquanto a região está vazia — ou seja, ela **nunca está na árvore de acessibilidade antes
-de ter conteúdo**, que é exatamente o mecanismo que a correção existia para eliminar. Agravante
-medido: aquele desfecho tinha um **único** canal de anúncio.
+Um padrão comum que produz esse falso positivo: uma classe utilitária como `empty:hidden`, usada
+para esconder uma região de anúncio (`role="status"`) enquanto ela está vazia (em vez de desmontar
+o elemento, para não deixar um `gap` órfão no layout), só some da árvore de acessibilidade quando
+essa regra de fato está presente no documento consultado. Sem compilá-la e injetá-la, `getByRole
+('status')` no jsdom continua encontrando o elemento mesmo vazio, mascarando exatamente o
+mecanismo que a correção deveria garantir — ela **nunca** está na árvore antes de ter conteúdo.
+Quando esse componente é o único canal de anúncio da página, esse falso negativo esconde a
+ausência completa de anúncios, não uma falha parcial.
 
 Vale para qualquer projeto com CSS utilitário (Tailwind, UnoCSS, CSS Modules com composição): a
 relação entre classe escrita no código e regra que existe no documento **não é lida, é

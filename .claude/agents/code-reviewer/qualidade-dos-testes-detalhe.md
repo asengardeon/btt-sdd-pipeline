@@ -24,11 +24,10 @@ par das duas é que responde; nenhuma sozinha responde.
 é mais informativa que qualquer linha presente nela, e **um número faltando na sequência (`M5` →
 `M7`) é sinal a investigar, não a arredondar como erro de numeração**.
 
-Já aconteceu de verdade: das 6 mutações relatadas pelo autor, as 2 que o revisor criou por conta
-própria (num bloco de normalização sem mutação nenhuma na tabela) mataram 1 e 12 testes, e uma
-mutação inventada pelo `qa-engineer` na etapa seguinte achou o único buraco real — um literal
-movido para dentro de uma fábrica mantinha a suíte **inteira** verde e ressuscitava um defeito
-latente em dois outros caminhos.
+Mutações criadas pelo revisor num bloco sem nenhuma mutação na tabela podem matar um número de
+testes muito diferente entre si, e uma mutação adicional pode achar um buraco que nenhuma das
+anteriores achou: um literal movido para dentro de uma fábrica pode manter a suíte **inteira**
+verde e ressuscitar um defeito latente em outros caminhos.
 
 Ao avaliar a correção de um teste que era instável, pergunte se mudou a **classe** da asserção ou
 só a **constante de tempo**: aumentar timeout/delay é adiamento, não correção (`docs/TESTING.md`,

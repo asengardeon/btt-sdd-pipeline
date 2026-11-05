@@ -15,8 +15,3 @@ significa "primeiro uso" — mesmo que o XML doc/comentário do adapter descreva
 como intencional, isso não substitui o teste dedicado. Se este TRD já define outro adapter irmão
 do mesmo tipo (outro wrapper de CLI) que trata essa distinção corretamente, replique o mesmo
 padrão aqui — não implemente cada wrapper de CLI como um caso isolado.
-
-Já aconteceu de verdade: um adapter que envolvia `git describe` tratou qualquer exit code
-não-zero como "nenhuma tag encontrada", documentou isso como intencional e cravou o comportamento
-num teste — enquanto um adapter irmão escrito na mesma tarefa (`git log`) já fazia a distinção
-certa; o bug só foi pego na revisão de código, gerando uma rodada extra de correção evitável.

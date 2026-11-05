@@ -9,9 +9,9 @@ Aciona a **etapa 5** do pipeline SDD descrito em `CLAUDE.md`: revisão de segura
 
 **Sempre passe por esta skill — nunca invoque o agente `security-engineer` diretamente via Agent
 tool** (diferente da etapa 3, onde invocar `backend-developer`/`frontend-developer` direto é o
-padrão correto). Esta skill em si não carrega lógica extra além de acionar o agente, mas o hábito
-de pular a skill nas etapas 4-7 já causou passos de outras skills de revisão (`/sdd-sre`) serem
-pulados silenciosamente numa sessão real — ver `CLAUDE.md`, seção do pipeline.
+padrão correto). Esta skill em si não carrega lógica extra além de acionar o agente, mas pular a skill
+nas etapas 4-7 pode fazer passos de outras skills de revisão (`/sdd-sre`) serem pulados
+silenciosamente — ver `CLAUDE.md`, seção do pipeline.
 
 **Antes de qualquer coisa, leia `docs/SKILL-PREAMBLE.md`** — onde ficam os docs de governança
 deste pipeline e de onde vêm os templates de `specs/_template/` (nenhum dos dois vive dentro do
@@ -81,15 +81,14 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    procedência, indistinguível de um fato do desenho — e quem recebe não tem como saber que precisa
    reconferir. Rotule assim: *"medido pelo `security-engineer` lendo `pull_request.base.sha` —
    **reconfira se sua conclusão depender disso**"*. Vale também para medição **sua**, de
-   orquestrador: diga o que você leu para chegar nela. Já aconteceu de verdade, duas vezes na mesma
-   fatia: (a) um achado de segurança afirmava que o pulo de um job de CI vinha "inteiramente" de uma
-   condição, com base em ler `pull_request.base.sha`; repassado como fato medido, o `sre` reconferiu
-   por iniciativa própria e descobriu que em evento `synchronize` o `base` efetivo é
-   `github.event.before` — a causa variava de run para run, e **o defeito era pior do que o
-   descrito**; (b) o orquestrador afirmou "1 módulo do Workbox importado", verdade no fonte e errado
-   sobre o artefato construído (que tinha marcadores de 4), e o `security-engineer` corrigiu. Nos
-   dois casos o resultado foi bom **por iniciativa do agente que recebeu**, não por instrução — e
-   uma medição errada herdada custa mais que uma remedição.
+   orquestrador: diga o que você leu para chegar nela. Duas armadilhas concretas mostram por que
+   isso importa: ler `pull_request.base.sha` não garante a causa real do pulo de um job de CI em
+   evento `synchronize`, onde o `base` efetivo é `github.event.before` — a causa pode variar de run
+   para run, e um defeito repassado como medido pode ser mais grave do que o descrito; e contar
+   módulos no código-fonte (ex.: "1 módulo do Workbox importado") pode divergir do artefato
+   construído, que pode ter mais de um marcador. Confira o artefato construído, não só o
+   código-fonte, e marque a procedência do fato — uma medição errada herdada custa mais que uma
+   remedição.
 3b. **Registre a duração desta invocação em `specs/<slug>/timing-log.md`** (crie a partir de
    `specs/_template/timing-log.template.md` se ainda não existir): uma linha com o horário do
    passo 3, o horário atual, e a diferença calculada (etapa "Segurança", agente
@@ -131,10 +130,7 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    usuário no campo `Escalonamento` da entrada correspondente neste mesmo turno** — não só no
    artefato da rodada. O gate instrui a *ler* o campo antes de ofertar de novo, mas sem dono para o
    preenchimento ele acumula `sem resposta` em entradas cuja resposta já foi dada, e a rodada
-   seguinte repete a oferta que o campo existe para evitar. Já aconteceu de uma entrada ter
-   `Escalonamento: sem resposta` com a decisão do usuário registrada em prosa no corpo do artefato
-   da rodada — terceira vez na mesma spec que uma decisão existia em prosa e não no campo
-   estruturado que a consome.
+   seguinte repete a oferta que o campo existe para evitar.
 3d. **Integre o commit do agente na branch da fatia, localmente** (`docs/GIT-WORKFLOW.md`,
    seção "Push único por fatia: o CI roda uma vez, não uma vez por artefato de revisão"). O agente
    commitou o artefato e informou a branch e o SHA; se ele rodou em working tree isolado, essa
@@ -172,18 +168,12 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
      rodado antes de você, nessa mesma sequência de fim de spec) → a próxima etapa é `/sdd-sre`,
      agora. **Destaque isso como um aviso explícito, não só como a última frase de um resumo
      maior**: "⚠️ Segurança aprovada — o merge deste PR não deveria acontecer ainda; o SRE (última
-     etapa) ainda não rodou." Já aconteceu de verdade (fatia normal com TRD, não só hotfix — a
-     mesma lacuna que motivou esta instrução já tinha reforço equivalente em `/sdd-hotfix`, passo
-     6b, mas não aqui): um PR foi mergeado logo depois da aprovação de segurança, sem que o SRE
-     tivesse rodado, porque a menção à próxima etapa estava perdida no meio de um resumo maior e
-     fácil de não notar — descoberto só numa auditoria de SRE de uma fatia posterior.
+     etapa) ainda não rodou."
    - **Nenhum dos dois** (fatia intermediária, segurança antecipada aqui mas `sre` não marcado
      para nenhuma tarefa restante, e esta não é a última fatia da spec) → **esta é a última etapa
      desta fatia**: siga para o passo 7 e depois o merge. Não acione `/sdd-sre` "por garantia" — a
-     cadência é deliberada, e rodá-la por fatia é exatamente o custo que ela existe para cortar.
-     Antes desta correção, essa ramificação não existia aqui (diferente de `/sdd-qa`, que já a tem
-     nos passos 6-7) e tinha que ser reconstruída manualmente cruzando `docs/SDD-WORKFLOW.md` e
-     `skills/qa/SKILL.md` (issue #463, `asengardeon/btt-sdd-pipeline`).
+     cadência é deliberada, e rodá-la por fatia é exatamente o custo que ela existe para cortar
+     (issue #463).
 7. **Se esta foi a última etapa desta fatia** (o segundo caso do passo 6), você herda as
    responsabilidades que o `/sdd-sre` carrega quando é ele quem fecha a fatia — nenhuma delas é
    sobre infraestrutura, e todas desapareceriam junto com a etapa 7:

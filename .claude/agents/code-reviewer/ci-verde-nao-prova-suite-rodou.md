@@ -20,7 +20,7 @@ se os passos caros executaram ou ficaram `skipped`; (b) se ficaram, identifique 
 executou a suíte de verdade e prove que o código é o mesmo (`git diff --stat <sha-desse-run> HEAD
 -- src tests`), em vez de apontar o run mais recente.
 
-Já aconteceu de verdade: um run de **23 s** com 15 passos `skipped` reportou verde no HEAD de um
-PR, e só não virou "código validado" no artefato porque o agente estranhou a duração e foi olhar
-os passos. Reporte também quais commits estão cobertos por qual run, se o seu próprio push disparou
-um run novo, e se o último run verde cobre o código atual — e encerre.
+Duração anormalmente curta do run é sinal de alerta: um run de poucos segundos com a maioria dos
+passos `skipped` reporta verde da mesma forma que um run completo. Reporte também quais commits
+estão cobertos por qual run, se o seu próprio push disparou um run novo, e se o último run verde
+cobre o código atual — e encerre.

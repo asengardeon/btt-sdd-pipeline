@@ -15,8 +15,6 @@ O cenário mais provável de ativar um mecanismo de alerta (algo real quebrou) �
 mais provável de sua própria dependência (cache, banco, rede) estar degradada — então esse teste
 não é um caso extra opcional, é o caso que mais importa.
 
-Já aconteceu de verdade: um `CriticalErrorReporter` testou "erro dispara alerta" e "throttle
-suprime repetição", mas nenhum teste cobria a falha do throttle em si — se o cache ficasse
-indisponível, a exceção nova do throttle escapava do pipeline de tratamento, mascarando a
-exceção original por completo (nem log, nem alerta saíam para o erro real). Só foi pego na
-revisão de código, como achado bloqueante.
+Sem esse teste, uma falha dentro do próprio mecanismo de contenção escapa do pipeline de
+tratamento e mascara a exceção original por completo — nem log, nem alerta chegam a sair para o
+erro real.

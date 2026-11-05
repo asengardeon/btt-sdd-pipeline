@@ -14,11 +14,7 @@ verifique se os gates de deploy automático relevantes desta stack já estão at
 list`, ou o mecanismo equivalente documentado em `docs/STACK.md`/`cd.yml`). Se estiverem, isso é
 **achado bloqueante**, não uma nota informativa de coordenação de deploy — exija antes do merge
 (a) um default retrocompatível nesta mesma fatia, ou (b) confirmação explícita do usuário, via
-`AskUserQuestion`, de que aceita conscientemente a janela de quebra em produção. Já aconteceu de
-verdade: esse cenário foi identificado e registrado como "pendência de coordenação, não de
-código" (achado não-bloqueante) sem checar se os gates de deploy automático já estavam ligados —
-estavam, o merge disparou CI/CD automaticamente, e todo login por senha em produção passou a
-falhar até um hotfix horas depois.
+`AskUserQuestion`, de que aceita conscientemente a janela de quebra em produção.
 
 ## Novo proxy/sidecar/cache local entre a aplicação e um serviço antes remoto
 
@@ -26,10 +22,7 @@ falhar até um hotfix horas depois.
 frente de um Redis gerenciado) exige reavaliar toda configuração de segurança de transporte que
 assumia esse serviço como remoto — TLS/SSL (`sslmode`/equivalente), autenticação, timeouts.
 Normalmente essa configuração precisa ficar condicional ao destino real da conexão (local vs.
-remoto), não um valor fixo herdado de quando só existia o hop remoto. Já aconteceu numa sessão
-real: introduzir PgBouncer via buildpack manteve `sslmode=require` fixo, correto para o Postgres
-remoto mas incompatível com a nova conexão loopback local ao PgBouncer — só descoberto depois do
-merge, em produção, com ~20 minutos de outage.
+remoto), não um valor fixo herdado de quando só existia o hop remoto.
 
 ## PR `CONFLICTING`
 
@@ -48,9 +41,7 @@ Sinalize de antemão, no próprio plano, qualquer etapa que provavelmente será 
 classificador de modo automático desta sessão. Mutação real de infraestrutura/config vars de
 produção e geração deliberada de tráfego/carga (ex.: múltiplos logins concorrentes para validar
 esgotamento de conexão) são tipicamente bloqueadas para orquestrador e subagentes, exigindo
-execução manual do usuário ou uma regra de permissão explícita. Já aconteceu numa sessão real: um
-plano de hotfix de infra só descobriu esse bloqueio **durante a execução**, depois de comandos já
-terem falhado — não antecipado no plano apresentado ao usuário antes de começar. Ao montar
+execução manual do usuário ou uma regra de permissão explícita. Ao montar
 qualquer plano que envolva essas duas categorias, inclua no próprio texto apresentado via
 `AskUserQuestion`: "as etapas X e Y provavelmente serão bloqueadas pelo modo automático desta
 sessão e vão precisar que você mesmo rode os comandos, ou libere uma regra de permissão — quer
@@ -61,8 +52,6 @@ produção real (`heroku run`/`heroku <verbo> --app <app-real>` ou equivalente) 
 bloqueio, mesmo quando é só diagnóstico somente-leitura (ex.: `heroku run "php -v && php -m"` para
 listar módulos carregados, `heroku builds --app <app>` para listar builds — nenhum dos dois muta
 nada). Antecipe isso no plano para **qualquer** comando contra o app real de produção, não só para
-mutação/geração de carga. Já aconteceu numa sessão real: três comandos somente-leitura seguidos
-contra um app de produção real (duas variações de `heroku run "php -v && php -m"` e um `heroku
-builds --app <app>`) foram bloqueados um atrás do outro antes do agente desistir e escalar ao
-usuário — gastando as 3 tentativas do limite de `docs/gates/governanca.md` descobrindo na prática
-o que já poderia ter sido antecipado no plano (issue #609, `asengardeon/btt-sdd-pipeline`).
+mutação/geração de carga. Um comando bloqueado repetido consome o limite de 3 tentativas de
+`docs/gates/governanca.md` antes de escalar — antecipar no plano evita gastar esse limite
+descobrindo na prática (issue #609).

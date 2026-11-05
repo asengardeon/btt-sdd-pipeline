@@ -19,11 +19,6 @@ depois, isso já é a prova de que a causa é outra, e não uma razão para empu
 esperar o CI decidir. Ao relatar a correção, diga **qual medição direta confirmou a causa**;
 eliminação de hipóteses por leitura de código não fecha causa, só estreita a busca.
 
-Já aconteceu de verdade, duas vezes na mesma fatia: um overflow "corrigido" por leitura da árvore
-de acessibilidade do Playwright (a causa real era outro elemento, sem `flex-wrap`, achado só ao
-instrumentar a geometria no navegador), e um `422` com duas hipóteses descartadas por leitura de
-VO antes de alguém capturar o corpo real e ver `fields: []` — a pista que levou à causa genuína.
-
 ## Relato de mutação: a asserção que falhou, não só "N testes morreram"
 
 Se você reportar mutação como evidência de discriminância dos testes, informe **qual asserção

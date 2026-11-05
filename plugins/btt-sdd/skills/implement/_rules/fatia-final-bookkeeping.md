@@ -17,9 +17,7 @@ e a coluna Status ainda não disser `concluído (mergeado)`, promova-a agora (me
 sempre, só aplicada retroativamente por não haver "fatia seguinte" que a disparasse). Se essa
 promoção nunca tinha acontecido antes, é sinal de que o "Teste geral obrigatório ao mergear a
 última fatia de uma spec" também pode nunca ter rodado — confirme com o usuário se já rodou antes
-de considerar a spec de fato encerrada. Já aconteceu de verdade em 7 specs diferentes de um mesmo
-projeto: todas 100% implementadas e mergeadas, mas a tabela continuava reportando "próxima fatia
-pendente" indefinidamente.
+de considerar a spec de fato encerrada.
 
 ## Sinalize a fatia final ao CI assim que o PR dela for aberto
 
@@ -38,22 +36,15 @@ projeto real documenta esse mecanismo como comentário extenso dentro do própri
 registrada por issue própria do projeto, nunca copiada para `PROJECT-CONVENTIONS.md`. A decisão de
 onde documentar esse tipo de mecanismo varia por projeto; checar só um dos dois lugares possíveis
 faz o orquestrador concluir "não documentado" quando o mecanismo existe, e instruir o
-`code-reviewer`/`qa-engineer` erradamente nesse sentido. Já aconteceu de verdade: a última fatia de
-uma spec quase foi mergeada sem o job de e2e completo ter rodado nenhuma vez, porque o mecanismo
-real (um label de PR comentado no próprio `ci.yml`) nunca foi checado — só corrigido porque o
-`code-reviewer`, investigando por conta própria em vez de aceitar a premissa de "nenhum mecanismo
-existe" recebida do orquestrador, encontrou o label real antes do merge (issue #617,
-`asengardeon/btt-sdd-pipeline`).
+`code-reviewer`/`qa-engineer` erradamente nesse sentido (issue #617).
 
 **Não invente esse mecanismo se nenhum dos dois lugares o documentar** — decidir como sinalizar a
 fatia final ao CI é do `architect`/`sre` deste projeto, registrado em `docs/PROJECT-CONVENTIONS.md`
 ou no próprio workflow quando a cadência "e2e completo só na última fatia" for adotada
-(`docs/CI-WORKFLOW.md`, seção "O que não entra por padrão"). Já aconteceu de verdade, em duas
-specs diferentes do mesmo projeto: o
-sinal só foi aplicado durante a rodada de QA (ou mais tarde), depois que code review e UX já
-tinham aprovado sem a suíte e2e real ter rodado nenhuma vez — a primeira execução real do job
-encontrou um defeito presente desde a primeira fatia da spec (issue #473,
-`asengardeon/btt-sdd-pipeline`).
+(`docs/CI-WORKFLOW.md`, seção "O que não entra por padrão"). Sinalizar tarde (durante a rodada de
+QA ou depois) deixa code review e UX aprovarem sem a suíte e2e real ter rodado nenhuma vez — um
+defeito presente desde a primeira fatia da spec só aparece na primeira execução real do job
+(issue #473).
 
 ## Confirme que todas as issues da fatia anterior fecharam de fato
 

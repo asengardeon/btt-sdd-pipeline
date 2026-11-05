@@ -61,9 +61,7 @@ dependências entre histórias (fatias verticais de entrega)"), PR obrigatório 
    pendente que não existe, e o gate de "toda tarefa precisa de issue associada"
    (`.claude/skills/sdd-implement/_rules/fatia-sem-trabalho-pendente.md`) pode levar uma fatia
    futura a
-   **reimplementar** trabalho já mergeado. Já aconteceu de verdade: um PR com `Closes #117, #118,
-   #119, #120, #121` fechou só a primeira, e as outras quatro precisaram ser fechadas à mão — só
-   percebido porque o orquestrador conferiu em vez de assumir que o `Closes` tinha funcionado.
+   **reimplementar** trabalho já mergeado.
 6. **Merge só depois de code review, QA, segurança e SRE aprovados *para aquela fatia*** e CI
    verde (lint + testes + gate de cobertura 80%) naquele PR. Preferência por *squash merge* — um
    commit por fatia em `main`.
@@ -163,10 +161,9 @@ justifica push próprio (precisa de CI real para validar a correção, mesma exc
 artefato de revisão puro — mesmo numa reverificação — espera o próximo push que já for necessário
 por outro motivo, nunca dispara o seu. A tentação de pushar a cada integração é a mesma de uma
 fatia intermediária (onde é inofensivo) — só a cadência de ser "a fatia final" muda o custo de
-continuar fazendo isso. Já aconteceu de verdade: numa fatia final com um achado real que precisou
-de correção + duas rodadas de reverificação (code review e UX), sete pushes separados — a maioria
-sobre diffs só de `specs/**/*.md` — reexecutaram o job real de navegador (Playwright, backend
-real) sete vezes (issue #475, `asengardeon/btt-sdd-pipeline`).
+continuar fazendo isso. Um achado real seguido de duas rodadas de reverificação (code review e UX)
+pode gerar sete pushes separados — a maioria sobre diffs só de `specs/**/*.md` — e cada um
+reexecuta o job real de navegador (Playwright, backend real) (issue #475).
 
 ## Revisão retroativa de um PR já mergeado
 
@@ -191,11 +188,10 @@ novo a revisar) — merge a critério do usuário, como qualquer PR de manutenç
 `checkout`/`commit`/`push`/`reset` são operações **globais ao repositório**, não escopadas a um
 diretório — dois agentes tocando pastas diferentes (`src/` vs. `frontend/`) ainda competem pelo
 mesmo `HEAD`, pelo mesmo índice do Git, e pela mesma branch remota se dividirem o mesmo diretório
-de trabalho. Já aconteceu de verdade: dois agentes fazendo `checkout`/`commit`/`push` no mesmo
-diretório em paralelo perderam edição não commitada, um commit caiu na branch errada, e um
-`reset` de um agente desfez trabalho do outro. Os agentes se recuperaram sozinhos via rebase
-não-destrutivo naquela ocasião, mas isso **não é garantido** — não é uma corrida aceitável de se
-repetir só porque "geralmente dá certo".
+de trabalho. `checkout`/`commit`/`push`/`reset` concorrentes no mesmo diretório podem perder
+edição não commitada, fazer um commit cair na branch errada, ou um `reset` desfazer trabalho de
+outro agente — recuperável via rebase não-destrutivo, mas **não é garantido**: não é uma corrida
+aceitável de se repetir só porque "geralmente dá certo".
 
 **Regra: sempre que dois agentes/tarefas puderem tocar `checkout`/`commit`/`push`/`reset` no mesmo
 repositório dentro da mesma janela de tempo, cada um trabalha num working tree isolado — nunca
@@ -214,17 +210,15 @@ tool — o harness cria um worktree temporário isolado (diretório + branch pr�
 agente, eliminando a disputa de `HEAD`/índice com qualquer outra tarefa ativa.
 
 **Dê `git push` antes de invocar, se você (orquestrador) tiver commits locais ainda não enviados
-na branch da fatia.** Já aconteceu de verdade, três vezes na mesma fatia: o orquestrador fez
-commits locais (típico de correção pontual pequena, onde o push só aconteceria ao final da rodada —
-"Push único por fatia" acima) e, ao invocar a etapa seguinte com `isolation: "worktree"`, o worktree
-novo nasceu de `origin/<branch>` sem nenhum desses commits — chegou a nascer de `origin/main`,
-fazendo um arquivo que só existia na branch da fatia (ex.: um componente novo) aparentar não
-existir. Isso não contradiz a premissa de object store compartilhado entre worktrees manuais
-(abaixo) — é uma proteção adicional para o caminho do harness, onde não há garantia observada de
-que o worktree novo prefira o commit local mais recente sobre o estado publicado em `origin`. Um
-push intermediário aqui não quebra a regra de "push único por fatia": aquela regra é sobre não
-fragmentar pushes arbitrariamente, não sobre nunca dar push quando outro agente isolado depende de
-ver aquele commit (issue #488, `asengardeon/btt-sdd-pipeline`).
+na branch da fatia.** Sem isso, ao invocar a etapa seguinte com `isolation: "worktree"`, o worktree
+novo pode nascer de `origin/<branch>` sem esses commits — ou até de `origin/main` —, fazendo um
+arquivo que só existia na branch da fatia (ex.: um componente novo) aparentar não existir. Isso não
+contradiz a premissa de object store compartilhado entre worktrees manuais (abaixo) — é uma
+proteção adicional para o caminho do harness, onde não há garantia observada de que o worktree novo
+prefira o commit local mais recente sobre o estado publicado em `origin`. Um push intermediário
+aqui não quebra a regra de "push único por fatia": aquela regra é sobre não fragmentar pushes
+arbitrariamente, não sobre nunca dar push quando outro agente isolado depende de ver aquele commit
+(issue #488).
 
 **Mecanismo equivalente manual** (Agent tool sem essa opção, ou um agente seguindo sua própria
 definição `.md` diretamente fora do harness): crie um worktree próprio antes de começar a
@@ -263,15 +257,11 @@ fi
 Se nenhum dos dois lados for ancestral do outro (as duas divergiram), **não resolva com `reset`** —
 é o caso de divergência real, tratado em "Reconciliação para a branch compartilhada da fatia"
 abaixo. `reset --hard` é seguro no caminho feliz acima porque o worktree ainda não tem trabalho
-seu. Se já tiver commit seu, use `rebase` contra a referência mais avançada em vez de `reset`. Já
-aconteceu de verdade, duas vezes por motivos diferentes: **sete de sete** invocações isoladas da
-mesma fatia relataram o worktree desatualizado (as duas trilhas de implementação e as
-cinco etapas de revisão, cada agente resolvendo por iniciativa própria o mesmo problema sem ter
-sido instruído) — e, numa fatia posterior, um agente de segurança sincronizado só contra
-`origin/<branch>` concluiu (corretamente, dada a sincronização que seguiu) que o QA aprovado na
-etapa anterior não existia, porque esse commit só estava na branch local retida pela regra "Push
-único por fatia", custando uma rodada de orquestração inteira só para redescobrir que o commit
-existia — só não tinha sido publicado ainda (issue #443, `asengardeon/btt-sdd-pipeline`).
+seu. Se já tiver commit seu, use `rebase` contra a referência mais avançada em vez de `reset`. Um
+agente sincronizado só contra `origin/<branch>` pode concluir, de forma consistente com essa
+sincronização, que uma aprovação de etapa anterior não existe — quando na verdade esse commit só
+está retido na branch local pela regra "Push único por fatia", ainda não publicado. O engano custa
+uma rodada de orquestração inteira só para redescobrir isso (issue #443).
 
 **Reaproveite o cache de dependências entre worktrees do mesmo repositório.** Isolamento de
 working tree separa árvore de arquivos e estado de Git — não precisa (e não deve) forçar
@@ -288,12 +278,12 @@ estado de Git, nunca precisa se estender ao cache de dependências.
 **Isolamento de arquivos não é isolamento de serviços com estado.** `git worktree` separa árvore
 de arquivos e estado de Git — não separa serviços com estado compartilhados no host, como um banco
 de dados de teste ou um emulador de nuvem local (LocalStack, floci) reaproveitado entre worktrees.
-Já aconteceu de verdade: dois agentes rodando suíte de teste de integração em paralelo, cada um no
-seu próprio worktree, contra o **mesmo** banco Postgres de teste — um deles rodou uma migração
-destrutiva (`migrate:fresh`, que dropa e recria todo o schema) enquanto o outro ainda lia esse
-schema, produzindo erros espúrios de "coluna/tabela não existe" que pareciam bug de produto e só
-foram identificados como corrupção cruzada depois de investigação adicional (comparando o schema
-via `\d <tabela>` entre tentativas). Sempre que mais de um agente/worktree puder rodar testes de
+Dois agentes rodando testes de integração em paralelo, cada um no seu próprio worktree, contra o
+**mesmo** banco Postgres de teste, arriscam uma migração destrutiva de um (`migrate:fresh`, que
+dropa e recria todo o schema) correr enquanto o outro ainda lê esse schema — produzindo erros
+espúrios de "coluna/tabela não existe" que parecem bug de produto e só se revelam corrupção cruzada
+depois de comparar o schema (`\d <tabela>`) entre tentativas. Sempre que mais de um agente/worktree
+puder rodar testes de
 integração contra um serviço com estado na mesma janela de tempo, cada execução usa uma
 instância/banco/schema isolado — ex.: nome de banco derivado do worktree ou da branch
 (`<projeto>_test_<id-do-worktree>`), ou um container efêmero por execução — nunca um único serviço
@@ -366,11 +356,6 @@ Duas obrigações, não uma:
   rebase trouxe não toca código (`git diff --stat <base>..HEAD -- src/ frontend/ tests/` vazio), só
   o SHA muda. Se toca, a suíte roda de novo.
 
-Já aconteceu de verdade: um artefato de cobertura foi gravado antes do rebase, o rebase trouxe um
-commit docs-only, e o SHA gravado ficou inválido. Os números da suíte continuavam corretos e bastou
-corrigir o campo — mas só porque o agente conferiu por iniciativa própria. Com um commit de código
-no lugar do docs-only, a correção certa teria sido reexecutar a suíte.
-
 **`git checkout <branch-da-fatia>` falhar dentro do worktree isolado é o caminho esperado, não uma
 exceção rara, sempre que mais de uma etapa de revisão roda em sequência sobre a mesma branch**
 (code review → UX, quando aplicável → QA → segurança → SRE, o fluxo padrão deste pipeline com
@@ -406,25 +391,16 @@ como saber isso só olhando o nome da branch.** Depois de um push assim, **sempr
 origin <branch-da-fatia> && git branch -f <branch-da-fatia> origin/<branch-da-fatia>` antes de
 qualquer `git worktree add <caminho> <branch-da-fatia>` ou `git merge`/`rebase` subsequente que
 referencie essa branch pelo **nome local** — nunca assuma que a ref local já reflete o último push
-remoto. Já aconteceu de verdade: um `backend-developer` fez esse push direto depois de colidir com
-a branch (workaround acima), e um `git worktree add` posterior do orquestrador, usando o nome
-local da branch para sincronizar `main`, resolveu para a ref local desatualizada (só os commits de
-uma trilha `frontend-developer` anterior) — o `git push` seguinte foi corretamente rejeitado como
-non-fast-forward (a ref remota real já tinha os commits do backend que a base local não tinha), um
-near-miss que, com `--force`, teria apagado silenciosamente esses commits (issue #615,
-`asengardeon/btt-sdd-pipeline`).
+remoto. Um `git worktree add` posterior que sincroniza por nome local, sem esse fetch, pode
+resolver para uma ref local desatualizada (ex.: faltando os commits de uma trilha anterior) — o
+`git push` seguinte é então corretamente rejeitado como non-fast-forward, mas um `--force` ali
+apagaria esses commits silenciosamente (issue #615).
 
-Já aconteceu de 3 agentes de revisão em sequência
-baterem nesse mesmo erro de colisão e cada um re-derivar essa mesma solução de forma independente,
-em vez de tratá-la como o caminho normal já documentado — inclusive numa 4ª ocorrência depois
-desta seção já existir, sinal de que só documentar o workaround como "se falhar" não bastou;
-precisava dizer explicitamente que ele **vai** falhar a partir da 2ª etapa, então nem vale a pena
-tentar o `checkout` normal de novo. E, numa ocorrência posterior, basear a branch temporária sempre
-em `origin/<branch-da-fatia>` (sem a preferência pela ref local acima) fez a etapa seguinte
-(segurança) encontrar a branch remota 4 commits atrás — três rodadas de revisão anteriores
-(code review, UX, QA) tinham integrado seus artefatos só localmente, pela própria regra "Push
-único" — e abortar sem produzir veredito, descartando uma invocação inteira só para redescobrir
-que os commits existiam, só retidos localmente (issue #453, `asengardeon/btt-sdd-pipeline`).
+Basear a branch temporária sempre em `origin/<branch-da-fatia>`, sem a preferência pela ref local
+acima, pode fazer uma etapa posterior (ex.: segurança) encontrar a branch remota vários commits
+atrás de rodadas de revisão anteriores que integraram seus artefatos só localmente (regra "Push
+único") — e abortar sem produzir veredito até redescobrir que os commits existiam, só retidos
+localmente (issue #453).
 
 **O `checkout` direto "funcionar" (nenhum worktree concorrente tem a branch aberta neste
 instante) não torna correto usá-lo — vá para a branch temporária de qualquer forma.** O parágrafo
@@ -435,13 +411,11 @@ uma garantia — numa fatia com duas trilhas em paralelo, ou com o orquestrador 
 principal ao mesmo tempo, o mesmo `checkout` teria colidido. A regra não é "tente o `checkout`
 normal e use o workaround se falhar": é **sempre** criar a branch temporária a partir da referência
 mais avançada (mesmo bloco de código acima), incondicionalmente, em todo working tree isolado —
-independente de haver colisão aparente ou não. Já aconteceu de verdade: três agentes de revisão em
-sequência (`code-reviewer`, `qa-engineer`, `sre`), cada um isolado, conseguiram `checkout` direto da
-branch real da fatia porque nenhum outro worktree a tinha aberta naquele instante — funcionou sem
-dano nas três vezes, mas custou ao orquestrador descobrir a branch presa (`fatal: ... already used
-by worktree`), liberá-la (`git checkout --detach HEAD` dentro do worktree isolado), remover o
-worktree e só então fazer `checkout` real no diretório principal — trabalho evitável se cada agente
-tivesse ido direto para a branch temporária, como já faz quando o `checkout` falha.
+independente de haver colisão aparente ou não. Mesmo quando o `checkout` direto funciona sem
+colisão aparente, um worktree concorrente seguinte pode travar nela — custando descobrir a branch
+presa (`fatal: ... already used by worktree`), liberá-la (`git checkout --detach HEAD` dentro do
+worktree isolado), remover o worktree e só então fazer o `checkout` real no diretório principal:
+trabalho evitável indo direto para a branch temporária desde o início.
 
 **Isolamento aninhado — o próprio orquestrador rodando num worktree isolado (não o checkout
 principal) — quebra o workaround acima: integre via push direto ao remoto, nunca merge/fetch
@@ -478,14 +452,11 @@ commits que acabaram de ser publicados):
 - **`git checkout <branch>` que falha por colisão de worktree.** `fatal: '<branch>' is already
   used by worktree at '<caminho>'` não é um erro fatal de shell — a sessão/script continua
   executando os comandos seguintes no branch em que já estava, silenciosamente, a menos que se
-  preste atenção à mensagem de erro específica. Já aconteceu de verdade: entre duas etapas de
-  revisão sequenciais da mesma fatia, um `git checkout <branch-da-fatia>` falhou por colisão de
-  worktree, mas o `git pull origin <branch-da-fatia>` seguinte rodou mesmo assim — sobre `main`
-  (branch em que a sessão já estava, não a branch da fatia) — fazendo `main` local avançar vários
-  commits à frente do `origin/main` com código de uma fatia ainda não aprovada. Nada foi perdido
-  (resolvido com `git reset --hard origin/main` local, nada enviado a `origin/main`), mas um `git
-  push origin main` subsequente teria empurrado esse código direto para `main`, violando a regra 1
-  deste documento.
+  preste atenção à mensagem de erro específica. Um `git pull origin <branch-da-fatia>` seguinte a
+  essa falha pode rodar mesmo assim — sobre `main` (branch em que a sessão já estava, não a branch
+  da fatia) — fazendo `main` local avançar vários commits à frente do `origin/main` com código de
+  uma fatia ainda não aprovada; um `git push origin main` subsequente empurraria esse código direto
+  para `main`, violando a regra 1 deste documento.
 - **Agente retomado sem isolamento (`SendMessage`, sem `isolation: "worktree"` porque o worktree
   original já não existia) devolve o workspace via `git checkout <branch base>` ao final do
   próprio protocolo de "sem isolamento".** Isso é esperado do agente, mas deixa o workspace
@@ -493,25 +464,19 @@ commits que acabaram de ser publicados):
   --ff-only origin/<branch-da-fatia>` rodado em seguida, sem confirmar a branch primeiro, é sempre
   um fast-forward **válido** (a branch da fatia descende de `main`), só que move a ponta de `main`
   **local** para a ponta da branch da fatia, em vez de avançar a branch da fatia — sem erro
-  nenhum. Já aconteceu de verdade: um commit de `timing-log.md` feito logo depois foi parar em
-  `main` local; o push para `origin main` foi corretamente recusado pela proteção de branch
-  (nenhum dano ao remoto), mas custou uma rodada de diagnóstico e correção (`git branch -f main
-  origin/main` + `git cherry-pick` do commit perdido) que um `git branch --show-current` antes do
-  merge teria evitado por completo (issue #458, `asengardeon/btt-sdd-pipeline`).
+  nenhum. Um commit feito logo depois nessas condições (ex.: `timing-log.md`) acaba em `main`
+  local; o push para `origin main` é recusado pela proteção de branch (sem dano ao remoto), mas
+  custa uma rodada de diagnóstico e correção (`git branch -f main origin/main` + `git cherry-pick`
+  do commit perdido) que um `git branch --show-current` antes do merge evita por completo
+  (issue #458).
 - **Orquestrador alternando entre `main` e a branch da fatia a cada invocação de agente isolado
   (`git checkout main` para liberar o nome literal da branch para o próximo worktree, padrão
   normal com `isolation: "worktree"`).** Entre uma invocação e outra, qualquer edição direta de
   artefato feita pelo orquestrador — não só comando de Git — herda o `checkout` que a invocação
-  anterior deixou. Já aconteceu de verdade: depois de uma rodada de `ux-review`, o orquestrador fez
-  `git checkout main` (liberando a branch para o próximo worktree), o usuário respondeu a uma
-  pergunta de `AskUserQuestion` sobre uma pendência, e o orquestrador seguiu direto para
-  `/sdd-amend`, editando `trd.md` **sem confirmar `git branch --show-current` antes** — o checkout
-  local ainda estava em `main`, não na branch da fatia. O erro só foi percebido porque a
-  reversão de um campo específico via script não bateu com o valor esperado; nada tinha sido
-  commitado ainda, então `git checkout -- <arquivo>` descartou com segurança e o trabalho foi
-  refeito na branch correta — mas o mesmo padrão, com uma edição já commitada, já custou ~28k
-  tokens numa fatia anterior (worktree criado antes do TRD estar commitado) (issue #468,
-  `asengardeon/btt-sdd-pipeline`).
+  anterior deixou. Editar um artefato (ex.: `trd.md` via `/sdd-amend`) sem confirmar `git branch
+  --show-current` antes pode acabar aplicado sobre `main`, não sobre a branch da fatia; se a
+  edição já estiver commitada quando o engano é percebido, a correção pode custar ~28k tokens
+  (issue #468).
 - **Duas ou mais trilhas em `isolation: "worktree"` apontando para a mesma branch compartilhada da
   fatia terminam, cada uma dando `git push` para `origin/<branch-da-fatia>` a partir do próprio
   worktree.** O checkout principal do orquestrador — de onde a branch foi criada antes de invocar
@@ -520,9 +485,7 @@ commits que acabaram de ser publicados):
   no working tree local". Editar um artefato (ex.: promover Status no TRD) e commitar sobre essa
   base desatualizada produz um `git push` rejeitado por non-fast-forward, exigindo
   `fetch`+`rebase`/merge de emergência no meio da sessão para recuperar sem perder os commits das
-  trilhas. Já aconteceu de verdade: o orquestrador precisou de um `git fetch`+`git rebase` de
-  emergência depois de comitar sobre uma base que não tinha os commits publicados pelas duas
-  trilhas paralelas (issue #618, `asengardeon/btt-sdd-pipeline`).
+  trilhas (issue #618).
 
 Rode `git branch --show-current` (ou confira com atenção o output do próprio `checkout`) antes de
 prosseguir sempre que houver qualquer dúvida sobre em que branch o passo anterior deixou o
@@ -551,11 +514,10 @@ seja removido manualmente. Cada agente (`.claude/agents/backend-developer.md`,
 passo "Antes de encerrar, volte para a branch base") já trata esse caso: dentro de um worktree
 isolado, permanece na própria branch da fatia (ou usa `git checkout --detach` se precisar sair
 dela) em vez de mirar a branch base — essa regra só se aplica quando o agente compartilha
-literalmente o mesmo diretório de trabalho do orquestrador. Já aconteceu de verdade pelo menos 3
-vezes na mesma sessão: agentes isolados (`code-reviewer`, `qa-engineer`, `security-engineer`,
-`sre`) tentando `git checkout main` dentro do próprio worktree bloquearam o worktree principal do
-orquestrador de voltar a `main` para prosseguir com merges, cada vez exigindo investigação
-(`git worktree list`) e remoção manual do worktree órfão antes de continuar.
+literalmente o mesmo diretório de trabalho do orquestrador. Um agente isolado tentando `git
+checkout main` dentro do próprio worktree bloqueia o worktree principal do orquestrador de voltar
+a `main` para prosseguir com merges, exigindo investigação (`git worktree list`) e remoção manual
+do worktree órfão antes de continuar.
 
 **No Windows, `git worktree remove --force` pode falhar com "Permission denied" mesmo depois de
 já ter desregistrado o worktree.** Um handle de arquivo ainda aberto por um processo da stack
@@ -567,19 +529,17 @@ erro como sucesso funcional (a branch já está livre para reuso pelo próximo `
 ou `checkout`) — não é bloqueante, e não precisa ser investigado como um erro real toda vez que
 acontece. O diretório físico órfão em `.claude/worktrees/` pode ser limpo depois, sem pressa, com
 uma segunda tentativa de remoção (ou remoção manual do diretório) depois que os processos
-relevantes liberarem os handles. Já aconteceu de forma repetida numa mesma sessão longa
-(múltiplos agentes: `code-reviewer`, `security-engineer`, `sre`), sempre resolvido apenas
-ignorando o erro depois de confirmar via `git worktree list`.
+relevantes liberarem os handles.
 
 **Se `git worktree list` ainda mostrar o caminho depois de `remove --force` (ou `remove --force
 --force`) falhar, `git worktree prune -v` é o fallback — não insista numa 3ª tentativa de
-`remove`.** Já aconteceu de verdade, duas vezes, de `remove --force` falhar com "Permission
-denied" **sem** desregistrar o worktree (diferente do caso acima, onde o índice já tinha sido
-desregistrado antes da falha física) — provavelmente por um processo da stack ou antivírus
-escaneando o diretório no momento exato da remoção. `git worktree prune -v` desregistra o worktree
-do ponto de vista do Git mesmo quando o diretório físico não pode ser apagado: `git worktree list`
-para de listá-lo e `merge`/outras operações seguem normalmente, com o diretório órfão ficando só
-como lixo de disco a limpar depois, sem urgência (issue #492, `asengardeon/btt-sdd-pipeline`).
+`remove`.** `remove --force` pode falhar com "Permission denied" **sem** desregistrar o worktree
+(diferente do caso acima, onde o índice já tinha sido desregistrado antes da falha física) —
+provavelmente por um processo da stack ou antivírus escaneando o diretório no momento exato da
+remoção. `git worktree prune -v` desregistra o worktree do ponto de vista do Git mesmo quando o
+diretório físico não pode ser apagado: `git worktree list` para de listá-lo e `merge`/outras
+operações seguem normalmente, com o diretório órfão ficando só como lixo de disco a limpar depois,
+sem urgência (issue #492).
 
 **Sincronizar a branch da fatia com `main`: `merge`, nunca `rebase`.** Operação diferente da
 reconciliação acima, e a confusão entre as duas é o ponto desta regra. Ali você rebaseia **commits
@@ -601,8 +561,8 @@ Três motivos, em ordem de peso:
    "Blocked by classifier", e a recusa não olha o contexto (branch de fatia exclusiva da sessão,
    sem outro humano empurrando nela). Como o modo automático é o padrão para sessão longa, o
    procedimento com rebase era **estruturalmente incompatível** com o modo em que este pipeline
-   mais roda. Já aconteceu de verdade: rebase limpo de 16 commits, push recusado, e a saída foi
-   desfazer tudo (`git reset --hard origin/<branch>`) e refazer por merge — que passou de primeira.
+   mais roda: até um rebase limpo tem o push recusado, exigindo desfazer tudo (`git reset --hard
+   origin/<branch>`) e refazer por merge.
 2. **Força-push sobre branch que vários agentes isolados tocaram já apagou trabalho revisado**, em
    silêncio, neste mesmo pipeline (o bloco "Antes de rebasear/forçar push manualmente", abaixo,
    tem o caso completo: dois commits aprovados descartados, sem erro visível). Merge não tem essa
@@ -631,23 +591,20 @@ flakiness por rerun) não prova que a segunda não existe, são independentes. A
 CI vermelho/verde da fatia como definitivo, em qualquer ponto do ciclo de correção — não só nas
 quatro skills —, rode `git fetch origin main && git merge-base --is-ancestor origin/main
 <branch-da-fatia>`; se retornar falso, sincronize primeiro (`git merge origin/main`, nunca
-rebase) e só então interprete o resultado do CI. Já aconteceu de verdade: dois hotfixes mergearam
-em `main` enquanto uma fatia continuava em correções próprias; o job de build mostrou vermelho por
-flakiness real (confirmada por rerun) e o job de e2e mostrou vermelho por 4 falhas deterministas
-não relacionadas ao diff da fatia — quase descartadas como "mais flakiness" pela mesma lógica que
-resolveu o build, até a branch se revelar 2 merges atrás de `main` (issue #525,
-`asengardeon/btt-sdd-pipeline`).
+rebase) e só então interprete o resultado do CI. Duas causas podem coexistir: um job vermelho por
+flakiness real (confirmável por rerun) não prova que outro job vermelho, na mesma fatia, não seja
+por desincronização real com `main` — descartar o segundo como "mais flakiness" pela mesma lógica
+que resolveu o primeiro é o erro a evitar (issue #525).
 
 **Antes de rebasear/forçar push manualmente sobre uma branch que múltiplos agentes concorrentes já
 tocaram** (qualquer branch de fatia que já passou por 2+ rodadas de revisão, cada uma em worktree
 separado) — risco maior que o da sincronização de rotina acima, porque aqui é o orquestrador
-resolvendo um conflito manualmente, muitas vezes reaproveitando um worktree já existente. Já
-aconteceu de verdade: um `git rebase origin/main` seguido de `git push --force-with-lease` teve
-sucesso **silencioso** rodando num worktree desatualizado (de uma rodada de revisão anterior, nunca
-atualizado com os commits que outros agentes enviaram — *push* — depois, cada um em seu próprio
-worktree) —
-descartando dois commits já revisados e aprovados, sem nenhum erro visível, só descoberto numa
-auditoria bem posterior. `--force-with-lease` só protege contra o estado do `origin` que aquele
+resolvendo um conflito manualmente, muitas vezes reaproveitando um worktree já existente. Um `git
+rebase origin/main` seguido de `git push --force-with-lease` rodando num worktree desatualizado
+(de uma rodada de revisão anterior, nunca atualizado com os commits que outros agentes enviaram
+depois, cada um em seu próprio worktree) pode ter sucesso **silencioso** descartando commits já
+revisados e aprovados, sem nenhum erro visível — só descoberto numa auditoria posterior.
+`--force-with-lease` só protege contra o estado do `origin` que aquele
 worktree tinha em cache no último `fetch` — não contra o estado real mais recente do remote se esse
 fetch estiver atrasado. Sempre, antes de rebasear manualmente uma branch nessas condições:
 
@@ -696,12 +653,11 @@ normalmente resolve como fast-forward limpo. Mas quando um hotfix de outra spec 
 escopo com esta fatia) já foi mergeado em `main` tocando o mesmo arquivo de produção que esta fatia
 edita, o rebase pode gerar um **conflito de merge real** — situação distinta da anterior (conflito
 em `code-review.md`/`qa-report.md`/etc.) porque aqui o conflito está em código/lógica de
-comportamento, não em prosa de relatório. Já aconteceu de verdade: um hotfix de outra spec mergeado
-em `main` no meio da implementação de uma fatia tocou o mesmo arquivo, exigindo do orquestrador
-resolver o conflito manualmente duas vezes (uma vez após o merge do hotfix, outra antes do code
-review), incluindo ler o arquivo inteiro por leitura direta para confirmar que as duas mudanças não
-compartilhavam estado — trabalho de reconciliação sem TDD por trás, diferente do rigor normal de
-quem implementa a fatia.
+comportamento, não em prosa de relatório. Um hotfix de outra spec mergeado em `main` no meio da
+implementação de uma fatia, tocando o mesmo arquivo, pode exigir do orquestrador resolver o
+conflito manualmente mais de uma vez (ex.: após o merge do hotfix e de novo antes do code review),
+incluindo ler o arquivo inteiro para confirmar que as duas mudanças não compartilham estado —
+trabalho de reconciliação sem TDD por trás, diferente do rigor normal de quem implementa a fatia.
 
 Quem resolve depende da natureza do conflito:
 - **Conflito mecânico trivial** (import reordenado, formatação, marcador de conflito em torno de
@@ -723,10 +679,10 @@ orquestrador (não um agente novo) precisa tocar diretamente uma branch de fatia
 com `isolation: "worktree"` tocou por último — ex.: para resolver um conflito de rebase
 manualmente — um `git checkout <branch-da-fatia>` no worktree principal pode falhar com `fatal:
 '<branch>' is already used by worktree at '<caminho>'`, mesmo que o agente já tenha terminado e
-relatado ter "devolvido" seu working directory. Isso já aconteceu de verdade: o agente relatou ter
-devolvido, mas voltou para uma branch de estacionamento própria do worktree, não a branch da fatia
-— porque `main` e a branch da fatia já estavam ocupadas por outros worktrees concorrentes no
-momento em que ele tentou voltar, então a branch da fatia continuou presa àquele worktree.
+relatado ter "devolvido" seu working directory. Um agente pode relatar ter devolvido mas na
+verdade ter voltado para uma branch de estacionamento própria do worktree, não a branch da fatia —
+porque `main` e a branch da fatia já estavam ocupadas por outros worktrees concorrentes no momento
+em que ele tentou voltar, deixando a branch da fatia presa àquele worktree.
 
 Antes de assumir que o `checkout` vai funcionar no worktree principal, rode `git worktree list`
 para descobrir se algum worktree isolado ainda segura aquela branch. Se sim, opere diretamente no
@@ -737,11 +693,11 @@ no worktree principal.
 pelo mecanismo acima, ou reaproveitado por agentes de revisão subsequentes na mesma fatia — QA,
 segurança, SRE reusando o worktree que o `backend-developer`/`frontend-developer` já tinha criado)
 ainda existir no momento do merge, `git branch -d`/`gh pr merge --delete-branch` falha (`git`
-recusa apagar uma branch em uso por um worktree). Isso já aconteceu de verdade: um worktree
-reaproveitado por várias rodadas de revisão da mesma fatia nunca foi removido por nenhuma delas —
-cada agente assumia que não era "dono" do worktree, já que não foi quem o criou — bloqueando a
-exclusão da branch depois do merge, com um erro só descoberto na hora (`error: cannot delete
-branch '...' used by worktree at '...'`). Antes de tentar `gh pr merge --delete-branch` (ou
+recusa apagar uma branch em uso por um worktree). Um worktree reaproveitado por várias rodadas de
+revisão da mesma fatia, onde cada agente assume que não é "dono" dele por não tê-lo criado, pode
+nunca ser removido por nenhuma — bloqueando a exclusão da branch depois do merge com `error:
+cannot delete branch '...' used by worktree at '...'`. Antes de tentar `gh pr merge
+--delete-branch` (ou
 qualquer exclusão de branch) para uma fatia que usou isolamento de worktree, remova o worktree
 primeiro — `git worktree remove --force <caminho>` (sem erro se ele já não existir mais) — como
 parte padrão do fluxo de merge, sem depender de nenhum agente individual ter lembrado de limpar ao
@@ -777,12 +733,10 @@ e dizer qual dos dois é — e, quando for o segundo, apontar qual run executou 
 código não mudou desde então. Um verde que nunca compilou o projeto é pior que um vermelho: ele
 encerra a dúvida em vez de abri-la. Nunca fica num `gh run watch` bloqueado: isso consome tempo de
 parede sem produzir trabalho nenhum, e ainda distorce o `timing-log.md`, que a retrospectiva de
-fatia lê para identificar etapas anormalmente lentas. Já aconteceu de verdade: uma invocação de
-revisão levou **6h52m** — quase 8× a segunda etapa mais longa da fatia — com auditoria comparável à
-que o mesmo agente tinha feito em **17m13s** na fatia anterior; a diferença inteira foi espera
-bloqueante de CI, inclusive dos runs que os próprios commits de documentação do agente dispararam. O
-log passou a dizer "SRE é a etapa mais cara desta spec" quando o trabalho de SRE foi um dos mais
-baratos. Quando uma duração registrada for dominada por espera e não por trabalho, diga isso na
+fatia lê para identificar etapas anormalmente lentas — uma invocação dominada por espera bloqueante
+de CI pode registrar horas onde o trabalho real levou minutos, fazendo uma etapa barata aparentar
+ser a mais cara da spec. Quando uma duração registrada for dominada por espera e não por trabalho,
+diga isso na
 própria entrada do `timing-log.md` (`specs/_template/timing-log.template.md`, seção "O que a coluna
 'Duração' mede") — sem isso o número entra na série histórica como se fosse custo de trabalho.
 
@@ -810,10 +764,9 @@ está quebrada — um desperdício de tempo/tokens investigando o lugar errado.
 Quando `/sdd-implement` (ou o orquestrador de uma sessão) dispara múltiplas fatias/PRs em paralelo
 no mesmo projeto, os runners/rede do provedor de CI ficam sob contenção real — passos normalmente
 rápidos (`npm ci`, `npm audit`, instalação de dependências em geral) podem levar bem mais tempo que
-o observado isoladamente, estourando `timeout-minutes` do job sem nenhum teste vermelho. Já
-aconteceu de verdade: um job cancelado só por timeout, sob 3+ branches rodando CI ao mesmo tempo
-pela mesma sessão, sem nenhum defeito de código — confirmado comparando com um run de CI
-concorrente da mesma janela. Antes de investigar isso como bug de código, tente `gh run rerun
+o observado isoladamente, estourando `timeout-minutes` do job sem nenhum teste vermelho — um job
+pode ser cancelado só por timeout, sob 3+ branches rodando CI ao mesmo tempo pela mesma sessão, sem
+nenhum defeito de código real. Antes de investigar isso como bug de código, tente `gh run rerun
 --failed` uma vez — se o rerun passar limpo sem qualquer mudança de código, a causa era contenção
 de CI, não a feature. Só escale como achado bloqueante se o rerun também falhar, ou se falhar com
 teste vermelho (não só timeout).
@@ -825,9 +778,9 @@ esse CI contém alguma mudança de código capaz de explicar essa falha (não s�
 como possível regressão real — reabrindo investigação — quando os dois sinais apontarem nessa
 direção (mesmo teste + diff de código relevante). Quando o teste é diferente do achado original e o
 push não teve diff de código, reexecute (`gh run rerun --failed`) antes de escalar, do mesmo jeito
-que a contenção descrita acima. Já aconteceu de verdade: depois de corrigir um timeout de Playwright
-reverificado de forma independente, o push seguinte (só `timing-log.md`, sem código) falhou em um
-teste completamente diferente; reexecutar sem abrir nova investigação resolveu.
+que a contenção descrita acima: um push seguinte que só toca `timing-log.md` (sem código de
+produção) falhando num teste diferente do original é o caso típico resolvido por reexecução, sem
+abrir nova investigação.
 
 ## Por que `/sdd-amend` não reescreve histórico
 
@@ -878,8 +831,8 @@ nem fatia (não é uma feature de produto), então usa uma branch simples em vez
    install`), e quem edita só a raiz não vê a deriva de dentro da própria sessão, porque nesta
    máquina os agentes leem a cópia da raiz. Detalhe das adaptações legítimas em
    `plugins/btt-sdd/README.md`, seção "⚠️ Isto é uma cópia, não um link". Deriva nesses arquivos não
-   degrada a experiência de quem usa o plugin: ela **desliga gates** — já aconteceu com a etapa 4b
-   inteira (revisão de UX), ausente dos docs do plugin por cinco commits (issues #280 e #281).
+   degrada a experiência de quem usa o plugin: ela **desliga gates** — a etapa 4b inteira (revisão
+   de UX) já ficou ausente dos docs do plugin por cinco commits (issues #280 e #281).
 3b. **Se a mudança tocou qualquer arquivo dentro de `plugins/btt-sdd/`** (replicado no passo 3 ou
    já nativo do plugin), incremente a versão em `plugins/btt-sdd/.claude-plugin/plugin.json` como
    parte do mesmo commit/PR — patch por padrão (`1.X.Y` → `1.X.(Y+1)`), minor se a mudança
@@ -917,12 +870,11 @@ agente
 de implementação abre o PR já com ele, e `code-reviewer` confere — três etapas antes do SRE.
 
 Por que a regra mora aqui e não só no cabeçalho de um workflow de release: um guard procedimental
-que depende de alguém lembrar dele no ato do merge falha exatamente quando mais importa. Já
-aconteceu de verdade: uma fatia tornou uma coluna obrigatória — **rejeitando toda planilha que o
-operador já tinha** — com a quebra declarada corretamente no PRD, no TRD e no README que a própria
-fatia escreveu, e ainda assim publicaria `v1.10.0` (MINOR). Foi pego na última etapa do pipeline,
-como a única ressalva bloqueante no ato do merge. Para quem só baixa o artefato da página de
-Releases, o número de versão é o único aviso que chega.
+que depende de alguém lembrar dele no ato do merge falha exatamente quando mais importa: uma fatia
+pode tornar uma coluna obrigatória — **rejeitando toda planilha que o operador já tinha** — com a
+quebra declarada corretamente no PRD, no TRD e no README, e ainda assim ser publicada como MINOR
+sem o `!`, pego só na última etapa do pipeline como a única ressalva bloqueante no ato do merge.
+Para quem só baixa o artefato da página de Releases, o número de versão é o único aviso que chega.
 
 ## Exceção histórica
 

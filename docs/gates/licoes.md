@@ -25,11 +25,7 @@ confirmado ainda").
   lição já identificada está no resultado da medição/correção em si (a regra sustenta sozinha? o
   achado se repete?), não na tarefa administrativa de voltar e atualizar uma tabela num arquivo
   diferente — e por isso essa atualização é a parte mais fácil de esquecer, mesmo citando o ID da
-  entrada corretamente no próprio relatório. Já aconteceu de verdade: a ocorrência de uma rodada
-  ficou registrada só em prosa no `security-review.md` daquela rodada ("mesmo método equivalente
-  aplicado..."), sem nunca chegar à tabela de `docs/LESSONS-LEARNED.md` — só corrigido
-  retroativamente pela rodada seguinte, que precisou notar a lacuna por conta própria (issue #500,
-  `asengardeon/btt-sdd-pipeline`).
+  entrada corretamente no próprio relatório (issue #500).
 - [ ] **Formato de entrada**: uma seção por área (Backend / Frontend / Segurança / Infra-SRE /
   Testes-QA), com ID no formato `L-<AAAA-MM-DD>-<slug-curto>` (data da criação da entrada +
   slug curto em kebab-case do próprio achado, ex.: `L-2026-08-25-timeout-http-nao-configuravel`)
@@ -41,12 +37,11 @@ confirmado ainda").
   de branch/environment, segredo, permissão de infra — que nenhum agente corrige sozinho sem
   aprovação explícita do usuário). A distinção importa porque a estratégia para quebrar o ciclo de
   repetição é diferente para cada classe (próximo bullet). **Nunca use um contador sequencial simples
-  (`L-001`, `L-002`, ...)**: duas branches de fatia diferentes, cada uma calculando o "próximo
-  ID" a partir da sua própria cópia local do arquivo, já geraram colisão real de ID em merge —
-  exigiu renumeração manual e correção de autorreferências. Data + slug do achado é
-  suficientemente único entre branches paralelas sem precisar coordenar um contador global; na
-  rara colisão de duas entradas com data e slug idênticos, acrescente um sufixo numérico ao
-  segundo (`-2`, `-3`, ...) no momento do merge.
+  (`L-001`, `L-002`, ...)**: duas branches de fatia diferentes calculando o "próximo ID" cada a
+  partir da sua própria cópia local do arquivo colidem no merge, exigindo renumeração manual e
+  correção de autorreferências. Data + slug do achado é suficientemente único entre branches
+  paralelas sem precisar coordenar um contador global; na rara colisão de duas entradas com data e
+  slug idênticos, acrescente um sufixo numérico ao segundo (`-2`, `-3`, ...) no momento do merge.
 - [ ] **Métrica de ambiente citada numa entrada vale só para a ocorrência que a mediu — quem
   registra uma ocorrência nova remede e reatribui, nunca copia da anterior.** Quando a assinatura
   ou a causa de uma entrada cita um número de ambiente ("N processos concorrentes de outros
@@ -55,12 +50,10 @@ confirmado ainda").
   perguntas que o número de manchete não responde: quantos dos processos contados são realmente o
   que se supõe (processo real vs. processo filho), e **desde quando existem**. Repetir a métrica
   sem remedir registra **correlação, não causa** — e cada nova ocorrência que a copia faz a
-  explicação *parecer* mais confirmada quando só está sendo propagada. Já aconteceu de verdade: uma
-  entrada de flakiness de suíte de integração chegou à **18ª ocorrência** carregando "71
-  `chrome.exe` + 7 `dotnet.exe` concorrentes de outros worktrees" como causa ambiental; medido sob
-  exatamente os mesmos números de manchete, só **2** dos 71 eram navegadores (os outros 69, processos
-  filhos), **60** pertenciam ao navegador pessoal do operador aberto 4 dias antes da spec começar, e
-  6 dos 7 `dotnet.exe` eram nós ociosos de reuso do build. A flakiness era real; a explicação
+  explicação *parecer* mais confirmada quando só está sendo propagada. Uma causa ambiental mal
+  atribuída pode inflar a contagem de processos concorrentes com sessões antigas do operador
+  (abertas antes da spec começar) ou com nós ociosos de reuso de build, em vez de contenção real de
+  outros worktrees. A flakiness pode ser real; a explicação
   causal não — e a conduta que ela induzia ("esperar a contenção baixar") nunca poderia convergir,
   porque o número quase não desce.
 - [ ] **A recíproca: entrada cuja métrica se mostra mal atribuída tem a prosa corrigida, não só a
@@ -83,11 +76,10 @@ confirmado ainda").
   sobrevive** dela (frequentemente sobra a parte de método, mesmo quando o diagnóstico caduca). As
   ocorrências históricas ficam **preservadas, nunca apagadas** — elas aconteceram, e sob o regime
   antigo o diagnóstico estava certo. Quando a obsolescência cria um risco novo no lugar do antigo, a
-  entrada aponta o **sucessor** pelo ID. Já aconteceu de verdade: uma entrada com 6 ocorrências
-  sobre "PR mergeável mas ainda marcado como draft" inverteu de sentido quando o projeto adotou
-  `ci-antes-do-merge` — `isDraft: true` durante a fatia passou a ser **o mecanismo** que suprime a
-  suíte cara, e um PR fora do draft é que seria anômalo. O agente chegou a registrar a 7ª ocorrência
-  antes de perceber, desfez o registro, e teve de inventar a marcação na hora.
+  entrada aponta o **sucessor** pelo ID. Por exemplo, uma entrada sobre "PR mergeável mas ainda
+  marcado como draft" inverte de sentido quando o projeto adota `ci-antes-do-merge`: `isDraft: true`
+  durante a fatia passa a ser **o mecanismo** que suprime a suíte cara, e um PR fora do draft é que
+  seria anômalo.
 - [ ] `docs/LESSONS-LEARNED.md`, quando criado ou atualizado, é commitado junto do artefato de
   revisão da própria rodada (`code-review.md`/`qa-report.md`/`security-review.md`/
   `sre-review.md`) — nunca num commit separado.
@@ -100,8 +92,7 @@ confirmado ainda").
   explícita antes de qualquer mudança real, nunca aplicado sozinho), em vez de silenciar a
   repetição como mais uma linha na tabela. Sem essa capacidade, ainda assim escala explicitamente
   ao usuário. Uma lição sobre configuração externa nunca se resolve sozinha só por ser lida no
-  planejamento — já aconteceu de uma entrada ser reconfirmada 17 vezes em 9 features sem nunca
-  resultar em correção efetiva da configuração.
+  planejamento.
 - [ ] **Entrada classificada como `acionável-por-agente` que atinge 3 ocorrências confirmadas sem
   correção efetiva também escala — não é exclusividade de `depende de ação externa`.** "Virar
   entrada e ser lida no planejamento" evita o bug em código *novo*, mas não corrige consumidores já
@@ -112,11 +103,7 @@ confirmado ainda").
   que estiver rodando) propõe explicitamente, via `AskUserQuestion` (ou repassando a pergunta ao
   orquestrador se estiver rodando em background), uma mini-fatia/hotfix dedicada para aplicar a
   correção já conhecida a todos os consumidores afetados — mesmo que a correção em si fique fora do
-  escopo da fatia atual, a proposta explícita ao usuário não fica. Já aconteceu de verdade: uma
-  correção conhecida e testada desde a 1ª ocorrência (trocar um método de resolução de identidade
-  tenant-escopado por uma variante entre tenants) nunca foi propagada aos demais consumidores, e a
-  mesma entrada chegou à 3ª ocorrência com o próprio achado já recomendando prioridade em texto
-  livre — sem nada no processo formal forçando essa priorização a acontecer.
+  escopo da fatia atual, a proposta explícita ao usuário não fica.
 - [ ] **A oferta de escalonamento tem estado, e ele fica na própria entrada.** Os dois bullets
   acima criam o gatilho da oferta; sem registrar a resposta, a oferta é refeita a cada fatia, a
   pendência nunca converge, e o usuário é treinado a ignorá-la. A entrada ganha um campo
@@ -145,19 +132,7 @@ confirmado ainda").
   - **Entrada com `sem resposta` cuja decisão consta em artefato de rodada anterior é
     inconsistência a corrigir, não oferta em aberto.** Quem lê o campo antes de ofertar confere
     também o artefato da rodada em que a oferta foi feita; se a decisão estiver lá e o campo não,
-    complete o campo citando onde a decisão foi registrada, em vez de reabrir a oferta. Já aconteceu
-    de verdade: uma entrada tinha `Escalonamento: sem resposta` **e a resposta existia** — o usuário
-    havia decidido, e a decisão estava no corpo do artefato da rodada. Foi a terceira vez na mesma
-    spec que uma decisão do usuário existia em prosa e não no campo estruturado que a consome, e só
-    não virou oferta repetida porque um agente completou o campo por iniciativa própria.
-
-  Já aconteceu de verdade, em três entradas da mesma spec: uma na **5ª** ocorrência ("oferecido e
-  não aplicado" em três fatias seguidas), uma na **6ª spec** consecutiva, e uma com **29**
-  ocorrências e "mitigação ainda não decidida". No caso mais ilustrativo o agente **reuniu os dados
-  que resolveriam a dúvida** na própria rodada — mediu o custo do check, mostrou que não interagia
-  com a cadência nova, e derrubou a objeção plausível com um incidente real do mesmo dia — e ainda
-  assim o item ficou aberto, porque nada disso fica registrado como "já perguntado, faltando X". Na
-  spec seguinte o próximo agente recomeça do zero.
+    complete o campo citando onde a decisão foi registrada, em vez de reabrir a oferta.
 - [ ] `backend-developer`/`frontend-developer` leem `docs/LESSONS-LEARNED.md`, se existir, na fase
   de planejamento (antes de quebrar o TRD em incrementos) e aplicam as lições da(s) área(s)
   relevante(s) à trilha como restrição adicional ao TRD, citando no plano apresentado ao usuário
@@ -168,8 +143,4 @@ confirmado ainda").
   ser mais estreita que uma regra já formalizada em outro doc do projeto (`docs/TESTING.md`,
   `docs/QUALITY-GATES.md`, etc.), a regra canônica prevalece: releia a doc de origem antes de
   tratar a lição como atalho, e sinalize a divergência como um sinal de que a própria entrada
-  precisa de correção, não de que a regra mudou. Já aconteceu: uma lição registrada como "sempre
-  que X tocar Y" restringiu implicitamente uma regra original incondicional ("toda fatia com
-  trilha Z"), e `frontend-developer` pulou uma etapa obrigatória (build real) a partir da versão
-  estreita — só pego porque duas rodadas de revisão independentes checaram a regra original em vez
-  de confiar na paráfrase.
+  precisa de correção, não de que a regra mudou.

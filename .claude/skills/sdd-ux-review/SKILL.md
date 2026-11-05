@@ -105,10 +105,7 @@ pulado" em `/sdd-hotfix`), em vez de simplesmente não mencionar a etapa.
    usuário no campo `Escalonamento` da entrada correspondente neste mesmo turno** — não só no
    artefato da rodada. O gate instrui a *ler* o campo antes de ofertar de novo, mas sem dono para o
    preenchimento ele acumula `sem resposta` em entradas cuja resposta já foi dada, e a rodada
-   seguinte repete a oferta que o campo existe para evitar. Já aconteceu de uma entrada ter
-   `Escalonamento: sem resposta` com a decisão do usuário registrada em prosa no corpo do artefato
-   da rodada — terceira vez na mesma spec que uma decisão existia em prosa e não no campo
-   estruturado que a consome.
+   seguinte repete a oferta que o campo existe para evitar.
 4c. **Integre o commit do agente na branch da fatia, localmente, e não dê push aqui**
    (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia: o CI roda uma vez, não uma vez por
    artefato de revisão"). O agente commitou o artefato e informou a branch e o SHA. Se ele rodou em
@@ -154,12 +151,7 @@ pulado" em `/sdd-hotfix`), em vez de simplesmente não mencionar a etapa.
    uma seção de reverificação nomeando o achado fechado, o método usado e a evidência — e só então
    o fluxo segue para `/sdd-qa`. Sem essa simetria, um achado bloqueante de usabilidade pode ser
    formalmente fechado **só com evidência técnica**, que é exatamente o tipo de lacuna que a etapa
-   4b existe para evitar. Já aconteceu de verdade: um achado bloqueante de navegação (edição
-   pendente descartada em silêncio) foi corrigido, reverificado só pelo `code-reviewer`, e o
-   pipeline seguiu direto para `/sdd-qa` — `code-review.md` chegou a atribuir a aprovação a uma
-   seção de `ux-review.md` que não existia. O `qa-engineer`, não o orquestrador, percebeu a lacuna
-   por iniciativa própria e a registrou como achado de processo, forçando uma rodada extra fora do
-   fluxo.
+   4b existe para evitar.
 
 ## Quando usar sem o agente
 

@@ -16,11 +16,10 @@ Duas heurísticas baratas:
 2. **Mute você mesmo um bloco que a tabela não cobre** — a lacuna é mais informativa que qualquer
    linha presente nela.
 
-Já aconteceu de verdade: numa fatia com 6 mutações relatadas pelo autor e reverificadas pelo
-`code-reviewer`, foi uma mutação **própria do QA** sobre um literal de reserva que achou o único
-buraco real — mover esse literal para dentro de uma das fábricas mantinha a suíte **inteira**
-verde e ressuscitava o defeito latente que a fatia existia para eliminar, em dois outros
-caminhos.
+Preste atenção especial a literais de reserva/fallback movidos entre fábricas: esse tipo de
+mutação pode manter a suíte **inteira** verde enquanto ressuscita, em outros caminhos, o defeito
+latente que a fatia existia para eliminar — exatamente o tipo de buraco que a heurística 2 existe
+para achar.
 
 Registre no `qa-report.md` quais mutações você executou e o que cada uma matou; se a correção do
 buraco vier numa rodada seguinte, exija que ela **reproduza a sua medição** (em número e em nome

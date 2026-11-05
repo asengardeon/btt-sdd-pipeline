@@ -13,10 +13,3 @@ texto *parecer* análise prudente e desarma a verificação.
 **E quando a afirmação alega contenção** ("isso vira falha daquela linha", "o erro fica contido no
 item"), cite o ponto do código onde a contenção acontece — se você não conseguir citar o ponto, a
 contenção provavelmente não existe e o risco é maior do que você está descrevendo.
-
-Já aconteceu de verdade: um TRD descreveu um limite de célula de planilha como risco contido por
-linha ("`PersistFailedException` para aquela linha"); a revisão de segurança mediu com a
-biblioteca real e achou as duas metades erradas — o tipo lançado escapava do `catch when` do
-adapter, e a chamada acontecia **fora** do `try` do caso de uso, então qualquer falha subia ao
-`Task.WhenAll` e derrubava o lote inteiro. O impacto real era o oposto do descrito, e a frase
-atravessou a aprovação do TRD, a implementação e duas etapas de revisão sem ser questionada.

@@ -35,8 +35,3 @@ lista de colunas também apagou `GRANT`s de coluna pré-existentes de outras mig
 claro rodando o rollback de fato e consultando o catálogo depois. Toda migração que faz
 `GRANT`/`REVOKE` de privilégio (tabela ou coluna, regra 8) inclui, no mínimo, uma asserção de
 catálogo cobrindo o `up()` e uma cobrindo o `down()`.
-
-Já aconteceu de verdade: a primeira versão de uma migração (`grant update on <tabela> to
-<role>`, sem lista de colunas) tinha teste de integração provando o comportamento certo, e ainda
-assim foi reprovada numa rodada de revisão, por medição própria e independente do revisor — nem
-o `up()` nem o `down()` tinham o teste de catálogo que provaria o escopo.

@@ -27,9 +27,11 @@ issue — exclusão deliberada, registrada em `docs/WRITING-STYLE.md`.
 - [ ] **Verbo em vez de nominalização** quando as duas formas dizem o mesmo.
 - [ ] **Nenhuma negação dupla.**
 - [ ] **Divisão nunca apaga fato.** Divida a frase acima do limite. Nunca a resuma com perda de
-  conteúdo. A narrativa de incidente concreto ("já aconteceu de verdade: ...") é a evidência de por
-  que a regra existe. Este gate nunca é motivo para removê-la. Seção mais longa é resultado
-  aceitável; fato perdido não é.
+  conteúdo — mas narrativa de incidente ("já aconteceu de verdade: quem fez o quê, em que
+  sessão/projeto") não é fato protegido por este item: é moldura, cortável a qualquer momento. O
+  fato protegido é a condição observável, a ação exigida e a citação curta `(issue #N)`, quando já
+  existir (`docs/WRITING-STYLE.md`, regra 2). Seção mais longa é resultado aceitável; condição ou
+  ação perdida não é.
 - [ ] **Divergência entre a regra e a clareza fica registrada, não resolvida em silêncio.** Às
   vezes seguir um item à risca deixa o texto menos claro. Nesse caso, o artefato traz a forma mais
   clara e uma linha dizendo por quê (`docs/gates/governanca.md`, "nenhuma suposição não

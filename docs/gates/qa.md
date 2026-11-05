@@ -32,13 +32,7 @@
   **não cobre este caso**: o que avançou foi a própria branch da fatia, depois do carimbo. Isso
   acontece no caminho normal, não num desvio — a etapa 4b roda depois da 4 e **gera código de
   produção**, então correções de achados de UX aceitas pelo usuário atravessam duas etapas com um
-  carimbo que já não corresponde ao código. Já aconteceu de verdade: 5 arquivos de produção e 824
-  inserções depois do sha aprovado, dois commits de correção de UX sem rodada nenhuma de revisão —
-  a rodada escopada ao delta **reprovou**, achando um bloqueante (um `useEffect` dependendo do
-  **valor** e não da **transição**, roubando o foco a cada volta à tela) e um 5º sinal de plataforma
-  sem nenhuma menção em `specs/`, `docs/` ou código. Foi pego só porque o `qa-engineer` inventou a
-  checagem por iniciativa própria — ela não estava escrita em lugar nenhum. O custo da checagem é
-  um comando.
+  carimbo que já não corresponde ao código. O custo da checagem é um comando.
 - [ ] Cobertura medida e comparada ao gate de 80% — sem relatório de cobertura confiável, não há
   aprovação possível.
 - [ ] Se a fatia tem trilha de frontend, ou gera qualquer outro artefato de build/empacotamento
@@ -50,9 +44,7 @@
   existir, ausência quando depende de ela ter sido removida. O extrator varre o arquivo inteiro,
   **comentários incluídos**, então o fonte não decide o que existe em produção: citar o nome literal
   de uma classe antiga no comentário que explica a mudança mantém a regra morta dela no CSS de
-  produção, e uma classe que o código escreve pode não gerar regra nenhuma. Já aconteceu nas duas
-  direções na mesma fatia — `empty:hidden` com contagem **0** nos dois arquivos de CSS do build,
-  enquanto quatro artefatos afirmavam a garantia que ela deveria dar e a suíte ficava verde. É a
+  produção, e uma classe que o código escreve pode não gerar regra nenhuma. É a
   contrapartida, do lado do build, do item equivalente de `docs/gates/ux.md` (compilar e injetar a
   regra no jsdom antes de consultar).
 - [ ] Todo critério de aceite coberto pela fatia desta rodada tem veredito individual com

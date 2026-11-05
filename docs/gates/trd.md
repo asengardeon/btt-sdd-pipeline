@@ -31,9 +31,8 @@
   de SSO. O motivo é que nenhuma etapa posterior pega esse erro: o dublê escrito a partir da
   suposição
   valida a suposição, e a suíte fica verde contra ela — code review, UX, QA, segurança e SRE revisam
-  o código contra o TRD, e aqui o TRD é a fonte do erro. Já aconteceu de um locator desenhado casar
-  zero elementos no DOM real por um defeito do próprio site de terceiro, pego só porque a tarefa de
-  investigação existia (`.claude/agents/architect/contrato-externo-nao-observado.md`).
+  o código contra o TRD, e aqui o TRD é a fonte do erro
+  (`.claude/agents/architect/contrato-externo-nao-observado.md`).
 - [ ] **Na seção "Riscos e trade-offs", toda afirmação sobre comportamento concreto de biblioteca
   de terceiro ou de runtime está marcada `[medido]` (com versão e como) ou `[não medido]`**, e toda
   alegação de contenção ("vira falha daquela linha") cita o ponto do código onde a contenção
@@ -45,12 +44,7 @@
   mecanismo escrito como se fosse critério, e a seção 11 é estruturalmente **a seção que caduca**:
   seu conteúdo é mecanismo por definição, e mecanismo é o que cada rodada de correção troca.
   Escreva o critério que sobrevive à troca ("toda renderização visível", "trocar a ordem de qualquer
-  par adjacente mata ao menos um teste"). Já aconteceu de verdade: de seis frases de artefato
-  desmentidas por medição numa única fatia, **quatro estavam nesta seção** ou em docblock de teste —
-  duas mutações de ordem sobreviveram a 113/113 verdes contra uma linha que dizia "os 3 casos de
-  precedência", e depois de a contagem ser trocada por critério o defeito seguinte entrou pelo
-  **segundo eixo da mesma frase** (quais propriedades asseverar), com duas mutações sobrevivendo à
-  suíte inteira, 1644/1644 verdes.
+  par adjacente mata ao menos um teste").
 - [ ] **Toda tarefa de "e2e do fluxo humano da fatia" tem ponto de entrada dentro da própria
   fatia.** Percorra o roteiro do primeiro passo para trás. As pré-condições típicas são sessão
   autenticada, credencial ativada, dado-semente e confirmação por e-mail. Cada uma tem produtor
@@ -60,9 +54,8 @@
   ferramental um modo que dispense a tela ausente; declarar que o e2e cobre só o alcançável.
   Nenhuma outra
   asserção de completude pega isto. Elas cobram "permissão tem rota" e "rota tem handler", nunca "o
-  roteiro tem início". Já aconteceu de verdade: uma fatia consistente, com cada tarefa cumprindo sua
-  célula, tinha roteiro demonstrável inalcançável por construção. O custo apareceu no meio da
-  implementação.
+  roteiro tem início" — sem isso, o custo de um roteiro inalcançável por construção só aparece no
+  meio da implementação.
 - [ ] "Decomposição de tarefas e dependências" preenchida, com trilha (backend/frontend/ambos) e
   dependências técnicas explícitas para cada tarefa, e a coluna Status inicializada como
   `pendente` para cada tarefa nova (ciclo de vida completo na seção "Status de tarefas" abaixo).

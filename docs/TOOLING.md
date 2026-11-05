@@ -57,11 +57,10 @@ hook vive na configuração do Claude Code, não na sessão ou no agente individ
    "deveria" ter tido sucesso silencioso (lint limpo não imprime nada, e uma camada que tenta
    interpretar saída vazia como JSON falha de forma confusa). Redirecionar a saída para um arquivo
    e ler o arquivo (ou `rtk proxy <comando>`, que força saída não condensada) é o mecanismo
-   equivalente a "saída crua" quando o resumo automático está no caminho. Já aconteceu de verdade:
-   dois agentes independentes concluíram, cada um por conta própria, que `npm run lint` estava
-   quebrado em toda a codebase — o lint na verdade passava limpo, e o achado falso se propagou por
-   5-6 artefatos antes de ser refutado por quem rodou `npm ci` + `npm run lint` no próprio worktree
-   isolado e mediu a saída direta.
+   equivalente a "saída crua" quando o resumo automático está no caminho. Um achado falso desse
+   tipo (ex.: concluir que `npm run lint` está quebrado quando na verdade passa limpo) pode se
+   propagar por vários artefatos, cada agente confirmando o anterior, até alguém rodar o comando
+   no próprio worktree isolado e medir a saída direta.
 
 ## Orientação para projetos que usam este pipeline
 

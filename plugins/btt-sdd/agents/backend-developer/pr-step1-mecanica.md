@@ -10,12 +10,7 @@ por esta fatia, inclua `Closes #N` no corpo do PR para cada uma. Se o PR já foi
 `frontend-developer` em paralelo, **leia o corpo atual primeiro** — `gh pr view <PR> --json
 body` — e acrescente ao que já está lá; nunca chame `gh pr edit --body` com um texto novo
 construído do zero, que substitui o corpo inteiro e apaga as linhas `Closes` que a outra trilha
-já tiver escrito.
-
-Já aconteceu de verdade: a edição final do corpo (a última a rodar, de uma das duas trilhas)
-sobrescreveu a seção que a outra trilha tinha escrito antes, incluindo as `Closes` dela — 8 de 11
-issues da fatia continuaram abertas depois do merge, só fechadas manualmente pelo orquestrador
-(issue #501, `asengardeon/btt-sdd-pipeline`).
+já tiver escrito (issue #501).
 
 **Repita a palavra-chave por issue** — `Closes #117, Closes #118, Closes #119` — nunca a lista
 com vírgulas simples (`Closes #117, #118, #119`), que o GitHub aplica **só ao primeiro número** e

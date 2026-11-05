@@ -19,7 +19,7 @@ Sem isso o defeito é estrutural, não descuido: um esquema que não cobre uma f
 campo `.optional()` sem o `.nullable()` correspondente, recebendo `null`) não quebra a compilação
 nem reprova nenhum teste — produz um `422` com `fields: []`.
 
-Já aconteceu de verdade: duas hipóteses plausíveis foram descartadas por leitura de código antes
-de alguém capturar o corpo real da resposta e rastrear o mapeador. Se o TRD desenha esse padrão
-de envelope único de erro, o docblock do mapeador diz qual é o comportamento do caso não-mapeado
-— é o que avisa quem acrescentar um campo novo ao contrato depois.
+Confirme a causa pelo corpo real da resposta, não só por leitura de código do mapeador — leitura
+de código sozinha leva a hipóteses erradas sobre qual caminho de fato executou. Se o TRD desenha
+esse padrão de envelope único de erro, o docblock do mapeador diz qual é o comportamento do caso
+não-mapeado — é o que avisa quem acrescentar um campo novo ao contrato depois.

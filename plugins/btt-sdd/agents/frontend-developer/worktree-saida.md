@@ -10,12 +10,10 @@ worktrees ao mesmo tempo — tentar isso pode falhar explicitamente ou, pior, te
 bloquear o orquestrador de voltar a essa branch até que este worktree isolado seja removido.
 Nesse caso, basta permanecer na própria branch da fatia (a sessão deste agente já está
 terminando) — ou, se precisar mesmo sair dela antes, use `git checkout --detach` em vez de mirar
-numa branch específica. Já aconteceu de verdade: agentes isolados tentando `git checkout main`
-dentro do próprio worktree bloquearam repetidamente o worktree principal do orquestrador de
-voltar a `main` para prosseguir com merges, exigindo remoção manual do worktree órfão a cada vez.
+numa branch específica.
 
 Caso contrário (working directory compartilhado com o orquestrador, sem isolamento): confirme a
 branch atual (`git branch --show-current`); se não for a branch a partir da qual a branch desta
 fatia foi criada (normalmente `main`), faça `git checkout <branch base>`. Nunca deixe o working
-directory compartilhado na branch da fatia depois de terminar sua trilha — isso já causou dano
-real (comando do orquestrador rodado sem querer contra a branch errada).
+directory compartilhado na branch da fatia depois de terminar sua trilha — um comando do
+orquestrador pode rodar sem querer contra a branch errada.

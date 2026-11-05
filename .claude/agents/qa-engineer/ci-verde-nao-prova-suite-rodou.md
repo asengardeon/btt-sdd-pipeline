@@ -16,9 +16,9 @@ executaram ou ficaram `skipped`; (b) se ficaram, identifique **qual** run execut
 verdade e prove que o código é o mesmo (`git diff --stat <sha-desse-run> HEAD -- src tests`), em
 vez de apontar o run mais recente.
 
-Já aconteceu de verdade: um run de **23 s** com 15 passos `skipped` reportou verde no HEAD de um
-PR, e só não virou "código validado" no artefato porque o agente estranhou a duração e foi olhar
-os passos. Reporte também quais commits estão cobertos por qual run, se o seu próprio push
+Duração anormalmente curta é um sinal de alerta por si só: um run de **23 s** com 15 passos
+`skipped` pode reportar verde no HEAD de um PR sem a suíte ter rodado de fato — estranhe a duração
+antes de aceitar o verde como prova. Reporte também quais commits estão cobertos por qual run, se o seu próprio push
 disparou um run novo, e se o último run verde cobre o código atual — e encerre. Esperar o check
 obrigatório ficar verde antes do merge é responsabilidade do **orquestrador**, que conduz o merge
 (`docs/GIT-WORKFLOW.md`, seção "Aguardando CI antes do merge"). `gh run watch` numa etapa de

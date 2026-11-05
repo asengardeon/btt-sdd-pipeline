@@ -11,19 +11,16 @@ de domínio já existente, grep por todo `new <Entidade>(` (ou equivalente na st
 todo o código-fonte, e confirme explicitamente, para cada ponto encontrado, se ele precisa
 propagar o campo novo — não confie apenas na lista de arquivos que o TRD ou o dev listaram como
 tocados. Um caso de uso de escrita fora do escopo da fatia que reconstrói o agregado sem repassar
-o campo novo perde esse valor silenciosamente em toda edição futura; já causou um achado
-bloqueante de segurança real (campo `deletedAt` perdido "ressuscitando" um registro excluído)
-depois de o mesmo padrão já ter aparecido, sem gravidade, numa fatia anterior.
+o campo novo perde esse valor silenciosamente em toda edição futura — por exemplo, um campo
+`deletedAt` perdido assim "ressuscita" um registro excluído, achado bloqueante de segurança mesmo
+quando o mesmo padrão já apareceu sem gravidade numa fatia anterior.
 
 **Se esta rodada sincronizou a branch com `main` e trouxe commits substanciais de outra feature
 mergeada no meio do desenvolvimento desta fatia** (sinal vindo do passo de sincronização da skill
 `/btt-sdd:code-review`), trate qualquer varredura de propagação desse tipo que o dev tenha rodado
 *antes* dessa sincronização como potencialmente desatualizada — confirme com um grep seu, agora,
 em vez de assumir que ela continua válida: código novo trazido de `main` pode introduzir um novo
-ponto de reconstrução do agregado que a varredura original não podia ter visto. Já aconteceu de
-verdade: uma varredura completa no momento em que rodou ficou incompleta depois que outra
-feature, mergeada em paralelo, foi trazida pela sincronização final — só pega pelo `code-reviewer`
-rodando a suíte completa por hábito, não por checagem dedicada a esse cenário.
+ponto de reconstrução do agregado que a varredura original não podia ter visto.
 
 ## Limitação arquitetural alegada: busque correção precedente para o mesmo padrão
 
@@ -34,12 +31,9 @@ estrutural em outro lugar do código-fonte (grep pelo nome do método/guard rela
 limitação, ou pela mesma classe de bug já registrada em `docs/LESSONS-LEARNED.md`) antes de
 aceitar a limitação como definitiva.
 
-Já aconteceu de verdade: um dev confirmou corretamente que um requisitante impersonado "não
-existe" como registro tenant-escopado em certos consumidores — limitação real — mas uma correção
-idêntica para exatamente esse padrão (um método que resolve o requisitante entre tenants) já
-existia em outro guard do mesmo código-base, nunca propagada para os consumidores análogos. O dev
-não tinha como saber (não é seu mandato auditar todo o código correlato ao confirmar uma
-limitação já assumida); é o `code-reviewer` que precisa buscar isso, não só quando pedido
-explicitamente. Distinto do item anterior (campo novo não propagado para todo ponto de
+O dev que confirma uma limitação não tem como saber se uma correção idêntica para o mesmo padrão
+estrutural já existe em outro lugar do código-base (não é seu mandato auditar todo o código
+correlato ao confirmar uma limitação já assumida); é o `code-reviewer` que precisa buscar isso,
+não só quando pedido explicitamente. Distinto do item anterior (campo novo não propagado para todo ponto de
 reconstrução do agregado): aqui o que não foi propagado é uma correção de bug para todo consumidor
 com o mesmo padrão estrutural, não um campo novo.

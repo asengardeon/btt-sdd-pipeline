@@ -20,12 +20,15 @@ fechada. As regras de estrutura de frase, voz, tempo e procedimento valem em qua
 elas que este doc aplica. O único **valor** que a adaptação muda é o limite de palavras por frase,
 e a regra 2 abaixo explica por quê.
 
-**2. O limite é por frase, nunca por conteúdo.** Aplicada ingenuamente, a STE apaga justamente o
-que dá autoridade aos documentos deste pipeline: a narrativa de incidente concreto ("já aconteceu
-de verdade: ...") que explica **por que** uma regra existe. Isso não é verbosidade — é a evidência
-que impede a regra de ser revogada por quem não viu o problema acontecer. Frase longa demais se
-**divide**; fato nunca se apaga. Se a escolha for entre uma seção mais longa e um fato perdido, a
-seção fica mais longa.
+**2. Instrução é condição→ação, nunca relato do incidente que a originou.** Escreva o que observar
+e o que fazer. Não leve para o texto final a narrativa de quem fez o quê, em que sessão ou projeto,
+com que resultado ("já aconteceu de verdade: ...") — isso é moldura, não direcionamento, e o leitor
+que vai executar a regra não precisa dela. Mantenha só uma citação curta `(issue #N)`, quando já
+existir, como ponteiro de rastreabilidade: quem quiser a história completa a busca lá, sem ela
+inflar o próprio artefato. Se a narrativa carregava um fato que a condição por si só não
+capturava (um número, uma condição de borda, um efeito concreto), esse fato continua: vira parte
+da condição ou da ação, em prosa direta — só a moldura de incidente cai. Frase longa demais ainda
+se **divide** (regra 1); a narrativa em si deixa de ser conteúdo a preservar.
 
 ## As regras verificáveis
 
