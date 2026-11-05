@@ -1,6 +1,6 @@
 ---
 name: sdd-prd
-description: Etapa 1 do pipeline SDD. Use quando o usuário descrever uma nova feature, um problema a resolver, ou pedir explicitamente um PRD. Aciona o agente product-design para produzir specs/<slug>/prd/ (split por tópico, docs/MICRO-CONTEXT.md seção 2b).
+description: Etapa 1 do pipeline SDD. Use quando o usuário descrever uma nova feature, um problema a resolver, ou pedir explicitamente um PRD. Aciona o agente product-design para produzir specs/[slug]/prd/ (split por tópico, docs/MICRO-CONTEXT.md seção 2b).
 ---
 
 # /sdd-prd
