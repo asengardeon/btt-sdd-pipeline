@@ -401,7 +401,24 @@ fi
 
 Trabalhe nela normalmente (ler artefatos, rodar suíte, editar), e ao final use o mesmo `git push
 origin HEAD:<branch-da-fatia>` da sincronização acima — não é preciso que `HEAD` literalmente
-*seja* `<branch-da-fatia>` para isso funcionar. Já aconteceu de 3 agentes de revisão em sequência
+*seja* `<branch-da-fatia>` para isso funcionar.
+
+**Esse `push` direto (`origin HEAD:<branch-da-fatia>`) atualiza só a ref remota — a ref local de
+`<branch-da-fatia>` no repositório principal (criada por um `git worktree add -b`/`checkout -b`
+anterior, antes deste push) fica parada na base antiga, e nenhum outro agente/orquestrador tem
+como saber isso só olhando o nome da branch.** Depois de um push assim, **sempre** rode `git fetch
+origin <branch-da-fatia> && git branch -f <branch-da-fatia> origin/<branch-da-fatia>` antes de
+qualquer `git worktree add <caminho> <branch-da-fatia>` ou `git merge`/`rebase` subsequente que
+referencie essa branch pelo **nome local** — nunca assuma que a ref local já reflete o último push
+remoto. Já aconteceu de verdade: um `backend-developer` fez esse push direto depois de colidir com
+a branch (workaround acima), e um `git worktree add` posterior do orquestrador, usando o nome
+local da branch para sincronizar `main`, resolveu para a ref local desatualizada (só os commits de
+uma trilha `frontend-developer` anterior) — o `git push` seguinte foi corretamente rejeitado como
+non-fast-forward (a ref remota real já tinha os commits do backend que a base local não tinha), um
+near-miss que, com `--force`, teria apagado silenciosamente esses commits (issue #615,
+`asengardeon/btt-sdd-pipeline`).
+
+Já aconteceu de 3 agentes de revisão em sequência
 baterem nesse mesmo erro de colisão e cada um re-derivar essa mesma solução de forma independente,
 em vez de tratá-la como o caminho normal já documentado — inclusive numa 4ª ocorrência depois
 desta seção já existir, sinal de que só documentar o workaround como "se falhar" não bastou;
