@@ -72,13 +72,11 @@ Sempre que uma tarefa reaproveitar um binding/adapter genérico já existente (u
 `*Interface`/`*Contract` que outra parte do sistema, incluindo o próprio framework, também pode
 resolver), o teste de integração correspondente precisa disparar o comportamento **padrão** do
 framework/sistema (não só o novo) e medir a **saída real** (formato do log, canal que recebeu,
-corpo da resposta) — nunca só confirmar que a peça nova, chamada diretamente, funciona. Já
-aconteceu de verdade: um binding de `LoggerInterface` reaproveitado para um alerta de erro crítico
-colidiu com o fallback de log de exceção que o próprio framework já usava, fazendo toda exceção em
-produção logar em formato errado (texto simples em vez de JSON) — quatro revisões independentes
-(code review, QA, segurança, SRE) aprovaram a fatia sem pegar isso, porque cada uma testou uma
-peça isolada, e só a primeira exceção real passando pelo pipeline completo (validação manual
-pós-merge) revelou a divergência.
+corpo da resposta) — nunca só confirmar que a peça nova, chamada diretamente, funciona. Um binding
+reaproveitado pode colidir com o caminho padrão do framework sem que nenhuma revisão baseada em
+peça isolada perceba — mesmo com code review, QA, segurança e SRE aprovando a fatia — e só a
+primeira execução real passando pelo pipeline completo (validação manual pós-merge) revela a
+divergência.
 
 ## Frontend (quando aplicável)
 
@@ -137,8 +135,7 @@ repita o comando via PowerShell/`cmd` nativo quando esse erro específico aparec
 Windows com as duas ferramentas de shell disponíveis (issue #490, `asengardeon/btt-sdd-pipeline`).
 
 (sem caminho absoluto literal na entrada, não há o que a normalização interna do Jest
-mal-interprete). Achado real, levou 3 rodadas de QA para diagnosticar numa sessão anterior — ver
-issue de origem para o diagnóstico completo com scripts de reprodução.
+mal-interprete).
 ## Custo de execução da suíte: tempo de parede, tokens e infraestrutura
 
 A pirâmide acima decide **o que** testar e em que nível. Esta seção decide **como executar** pelo
@@ -243,10 +240,7 @@ de sandbox é de aproximadamente 1h, independente de o teste estar ativamente oc
 esperando. **Estratégia que funciona**: dividir o roteiro em duas (ou mais) invocações separadas
 do Playwright, persistindo em disco o estado necessário entre elas (ex.: IDs/credenciais de
 sessão, URL atual) — em vez de manter uma única sessão de navegador viva pelo tempo inteiro da
-espera. Descobrir esse limite por tentativa e erro (crash a cada rodada, sem mensagem que o
-nomeie) custa rodadas inteiras perdidas antes de chegar na estratégia de duas invocações; sabendo
-do limite de antemão, a primeira tentativa já nasce dividida (issue #529,
-`asengardeon/btt-sdd-pipeline`).
+espera (issue #529).
 
 ## Valor medido ao vivo entra no repositório já substituído por equivalente não atribuível
 
@@ -274,15 +268,12 @@ observada:
 - **Artefato de spec** (relatório de revisão, resumo de cobertura, log de validação ao vivo).
 - **Comentário/XML doc** no código de produção.
 
-Já aconteceu de verdade: numa rodada de hotfix, dados reais do operador — CPF com dígitos
-verificadores válidos, telefone, nome e e-mail — alcançaram **seis** arquivos do repositório,
-incluindo **código de produção** (XML doc de um matcher) e três arquivos de teste. Só apareceu
-porque
-o `security-engineer` conferiu os dígitos do CPF em vez de presumir que era placeholder sintético, e
-custou **uma rodada inteira** de implementação só para redigir. O achado registra explicitamente que
-não foi desatenção do desenvolvedor: nenhum lugar do pipeline dizia que artefato e teste usam dado
-não atribuível. E o risco escala — naquela rodada o titular era o próprio operador; a execução real
-seguinte usa dado de cliente.
+Dados reais de operador (CPF com dígitos verificadores válidos, telefone, nome, e-mail) podem
+alcançar vários arquivos do repositório de uma só vez — incluindo código de produção (ex.: XML doc
+de um matcher) e arquivos de teste — sem que isso pareça desatenção, só a ausência de uma regra
+explícita contra dado não atribuível. Perceber isso depende de alguém conferir os dígitos reais em
+vez de presumir placeholder sintético; redigir depois do fato custa uma rodada inteira de
+implementação. E o risco escala — um titular interno hoje, dado de cliente na execução seguinte.
 
 ## Fidelidade do dublê derivado de captura real: página inteira e locator estrito
 
@@ -302,17 +293,15 @@ do mesmo incidente real:
   (ex.: `page.click("<seletor>")`). Com a API não estrita, ambiguidade de seletor nunca vira erro:
   vira **interação silenciosa no elemento errado**, que é indistinguível de falha transitória.
 
-Já aconteceu de verdade, e passou por **seis specs**: `form button[type='submit']` casava com **2**
-elementos na página real — o primeiro era a lupa de busca do cabeçalho do site, dentro de outro
-`<form>` —, e a automação nunca clicou no botão da feature. Nenhuma submissão jamais aconteceu, e o
-desfecho sempre parecia um erro transitório genérico, retentado 5 vezes. O dublê vinha de uma
-captura
-só do fragmento do formulário, sem o cabeçalho do site; ali havia um único `<form>`, então o seletor
-era inequívoco. **O dado que fecha o argumento**: quando o dublê passou a servir a vizinhança do
-site
-por padrão, os testes de caminho feliz **que já existiam** passaram a falhar contra o código antigo,
-com a mensagem literal dos logs de produção — a suíte que já existia teria pego o defeito desde
-sempre, se o dublê tivesse a mesma ambiguidade do sistema real.
+Um seletor comum (ex.: `form button[type='submit']`) pode casar com mais de um elemento na página
+real — por exemplo, a lupa de busca do cabeçalho do site, dentro de outro `<form>` — um padrão já
+visto em seis specs diferentes. Nesse caso a automação nunca clica no botão da feature: nenhuma
+submissão acontece, e o desfecho aparenta um erro transitório genérico, retentado em vão. Um dublê
+capturado só do fragmento do formulário, sem o cabeçalho do site, não reproduz essa ambiguidade,
+porque nele o seletor é inequívoco por construção. Quando o dublê passa a servir a vizinhança
+inteira do site, testes de caminho feliz **que já existiam** passam a falhar contra esse mesmo
+código, com a mensagem literal dos logs de produção — prova de que a suíte já existente teria
+pego o defeito desde sempre, se o dublê tivesse a mesma ambiguidade do sistema real.
 
 Corolário, válido além de DOM: captura de fragmento ⟹ o dublê não pode decidir ambiguidade de
 seletor ⟹ a interação precisa ser por locator estrito, para que ambiguidade vire falha alta em vez
@@ -451,12 +440,12 @@ saída estruturada.
 ## Build/empacotamento real como parte da suíte completa (quando há trilha de frontend/artefato de
 build)
 
-Lint, checagem de tipos e teste automatizado não são a suíte completa quando a fatia tem uma trilha
-que produz um **artefato de build/empacotamento real** (frontend compilado, pacote distribuível,
-imagem — o que a stack decidida no TRD/`docs/STACK.md` gerar para produção). Já aconteceu de um
-defeito passar por duas rodadas de `code-reviewer` e duas de `qa-engineer` — só lint/tipo/teste
-unitário rodaram — e só ser pego depois pelo `sre`, várias execuções de CI adiante, porque nenhuma
-das etapas anteriores reproduziu o **comando de build/empacotamento real** da stack em uso.
+Lint, checagem de tipos e teste automatizado não são a suíte completa quando a fatia tem uma
+trilha que produz um **artefato de build/empacotamento real** (frontend compilado, pacote
+distribuível, imagem — o que a stack decidida no TRD/`docs/STACK.md` gerar para produção). Um
+defeito pode passar por várias rodadas de `code-reviewer` e `qa-engineer` sem ser pego — se só
+lint/tipo/teste unitário rodarem — e só ser achado bem mais tarde pelo `sre`, porque nenhuma das
+etapas anteriores reproduziu o **comando de build/empacotamento real** da stack em uso.
 
 **Quando esse artefato é gerado a partir de um contrato commitado (tipos/cliente gerados de
 OpenAPI/GraphQL/protobuf, ou qualquer pipeline "gere e commite"), o build de desenvolvimento não
@@ -468,10 +457,9 @@ antes de compilar, em vez de expô-lo. É exatamente o cenário que um passo de 
 explícita + `git diff --exit-code` contra o arquivo gerado) existe para pegar — mas só pega depois
 do push, uma rodada inteira de revisão mais tarde. Rode esse comando explícito (nunca o build, que
 mascara) como parte da suíte completa, antes de declarar pronta qualquer trilha que gera e commita
-um artefato assim. Já aconteceu de verdade: um defeito funcional (dado nunca persistia) atravessou
-a implementação inteira porque o build local regenerava o arquivo de tipos a cada execução, e o
-desvio só foi notado pelo `code-reviewer` numa rodada inteira depois, com o CI já vermelho desde o
-primeiro push.
+um artefato assim. Um build local com passo `prebuild`/equivalente regenerando o artefato a cada
+execução pode mascarar um desvio desses por toda a implementação, sendo notado só numa rodada de
+revisão inteira depois, com o CI já vermelho desde o primeiro push.
 
 - **O que roda**: o comando que reproduz o artefato de build/produção real desta stack — não um
   "modo dev"/watch, não só `tsc --noEmit`/checagem de tipos isolada. Qual comando é esse nunca é

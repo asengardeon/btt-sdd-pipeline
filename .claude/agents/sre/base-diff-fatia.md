@@ -8,9 +8,7 @@ Este repositório prefere *squash merge* (`docs/GIT-WORKFLOW.md`): o merge de um
 merge. Isso significa que o SHA registrado na coluna `Commit` da tabela "Histórico de aprovações
 por fatia" (capturado como "HEAD no momento da revisão", ou seja **antes** do merge) deixa de ser
 ancestral de `main` depois do squash — usá-lo direto como base de `git diff` produz uma base
-incorreta (recua até antes da fatia inteira, mostrando um diff gigante e errado). Já aconteceu
-numa sessão real: o agente só percebeu porque `git merge-base --is-ancestor` deu falso, exigindo
-uma investigação extra não prevista.
+incorreta (recua até antes da fatia inteira, mostrando um diff gigante e errado).
 
 - Para o **fast path** (só precisa da fatia imediatamente anterior), **sempre** use `git
   merge-base HEAD main` como base — nunca o SHA salvo em nenhuma tabela. `merge-base HEAD main`

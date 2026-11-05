@@ -12,6 +12,6 @@ Captura de fragmento produz um dublê onde o seletor é único **por construçã
 estrita transforma a ambiguidade do sistema real em interação silenciosa no elemento errado —
 nunca em erro.
 
-Já aconteceu de verdade: a automação clicou na lupa de busca do cabeçalho do site em vez do
-botão da feature durante **seis specs**, sem nenhuma submissão jamais acontecer, e o desfecho
-sempre pareceu falha transitória.
+Esse tipo de falha se manifesta como instabilidade aparente (submissão que nunca acontece, sem
+nenhum erro de seletor), não como falha óbvia de automação — dificultando o diagnóstico até
+alguém inspecionar qual elemento o clique realmente alcançou.

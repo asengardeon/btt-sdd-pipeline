@@ -252,10 +252,9 @@ não se aplica.
    já preveja o fallback explicitamente na própria instrução — "se não houver ocorrência recente
    dentro da janela de retenção de log disponível desta stack, registre como pendência VALIDAR
    DEPOIS para a próxima ocorrência real, em vez de bloquear a aprovação". Sem isso, o `sre`
-   precisa decidir esse julgamento ad-hoc na hora. Já aconteceu de verdade: um ADR pediu "confirme
-   que os três novos eventos aparecem nos logs de produção" sem prever que o app não tinha add-on
-   de log drain configurado (só o buffer padrão e curto do provedor) — nenhuma ação real ocorreu
-   dentro da janela disponível para gerar os eventos a confirmar.
+   precisa decidir esse julgamento ad-hoc na hora — e o buffer padrão de log de um provedor sem
+   add-on de log drain configurado costuma ter retenção curta, insuficiente para garantir que uma
+   ação real gere um evento confirmável dentro da janela disponível.
 10. Defina o nome da branch GitHub Flow **de cada fatia** (`docs/GIT-WORKFLOW.md`): uma
     branch/PR por fatia, nunca uma única para a feature inteira quando há mais de uma fatia —
     `feature/<NNNN-slug>` se só há uma fatia, `feature/<NNNN-slug>/<fatia>` (ex.:

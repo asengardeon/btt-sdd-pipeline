@@ -15,11 +15,8 @@ confirme explicitamente se a mesma premissa foi validada com o motor de automaç
 
 Se não foi, não afirme a premissa como já validada no TRD — registre o risco em "Pendências de
 validação (VALIDAR DEPOIS)" e recomende um teste real de automação (não manual) contra o recurso
-antes de investir o ciclo completo de implementação/revisão na arquitetura que depende dela; não
-é um bloqueio automático da fatia, mas a lacuna precisa ficar explícita, não implícita.
-
-Já aconteceu de verdade: uma validação manual do PRD ("login não é exigido, testei abrindo a URL
-sem estar logado") embasou a eliminação de CDP attach em favor de lançamento isolado do Chrome via
-Playwright (ADR) — a automação real foi bloqueada pelo site mesmo carregando os mesmos cookies
-exportados de uma sessão real, forçando reverter a arquitetura por completo depois de um ciclo
-inteiro de implementação e revisão já ter passado por ela.
+antes de investir o ciclo completo de implementação/revisão na arquitetura que depende dela:
+reverter uma arquitetura inteira depois desse ciclo, porque a automação real foi bloqueada mesmo
+usando os mesmos cookies de uma sessão manual validada, custa todo o ciclo de implementação e
+revisão já gasto. Não é um bloqueio automático da fatia, mas a lacuna precisa ficar explícita, não
+implícita.

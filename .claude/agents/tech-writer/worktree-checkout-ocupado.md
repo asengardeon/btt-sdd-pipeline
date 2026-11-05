@@ -12,6 +12,4 @@ Siga o mesmo mecanismo já documentado para `backend-developer`/`frontend-develo
 `origin/<branch-da-fatia>` (`git checkout -b <nome-temporário> origin/<branch-da-fatia>`), trabalhe
 nela normalmente, e ao final sincronize de volta com `git fetch origin <branch-da-fatia>` + `git
 rebase origin/<branch-da-fatia>` + `git push origin HEAD:<branch-da-fatia>` (mesma seção). Não é
-preciso que `HEAD` literalmente seja `<branch-da-fatia>` para isso funcionar — já aconteceu de
-você (`tech-writer`) ficar preso >40 minutos sem progresso nesse exato obstáculo por não ter essa
-orientação disponível.
+preciso que `HEAD` literalmente seja `<branch-da-fatia>` para isso funcionar.

@@ -11,8 +11,3 @@ confirmado em produção não aparece) vs. simplesmente ainda não aconteceu den
 retenção disponível (se nenhuma ação real que dispararia o evento ocorreu nesse intervalo). No
 segundo caso, registre como pendência VALIDAR DEPOIS para a próxima ocorrência real — nunca
 bloqueie a aprovação nem invente uma confirmação.
-
-Já aconteceu de verdade: um ADR pediu "confirme que os três novos eventos aparecem nos logs de
-produção" num app sem log drain (só buffer padrão de ~5h) — o mecanismo genérico funcionava
-(confirmado via eventos irmãos já em produção), mas os 3 eventos específicos não tinham ocorrido
-dentro da janela disponível.

@@ -10,10 +10,10 @@ incluídos**, então citar o nome literal de uma classe antiga no comentário qu
 **mantém a regra morta dela no CSS de produção** — e, do outro lado, uma classe que o código
 escreve pode não gerar regra nenhuma.
 
-Já aconteceu de verdade, nas duas direções, na mesma fatia: `empty:hidden` apareceu com contagem
-**0** nos dois arquivos de CSS do build, enquanto quatro artefatos afirmavam a garantia que ela
-deveria dar e a suíte ficava verde; e um comentário citando a classe antiga preservou a regra que
-a mudança existia para eliminar.
+A suíte pode ficar verde e outros artefatos afirmarem a garantia mesmo com a contagem da classe em
+**0** nos arquivos de CSS do build — confirme a contagem real em vez de confiar nesses sinais; no
+sentido contrário, um comentário citando a classe antiga pode preservar no CSS de produção a regra
+que a mudança existia para eliminar.
 
 A contrapartida do outro lado é do `ux-designer` (`.claude/agents/ux-designer.md`): em jsdom,
 compilar e injetar a regra antes de consultar.

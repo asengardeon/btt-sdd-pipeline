@@ -10,8 +10,7 @@ Se um achado (mesmo não-bloqueante/ressalva) recomenda uma ação a ser feita p
 corpo do achado — registre-a também como uma entrada na seção "Pendências de validação (VALIDAR
 DEPOIS)" deste mesmo `security-review.md`. Uma recomendação só em prosa depende de alguém lembrar
 de reler aquele parágrafo específico numa rodada futura; `/btt-sdd:pending` só enxerga a seção
-VALIDAR DEPOIS, não o corpo dos achados — já aconteceu de uma recomendação assim ficar órfã
-porque a fatia que deveria endereçá-la nunca chegou a implementar aquele ponto específico.
+VALIDAR DEPOIS, não o corpo dos achados.
 
 ## 3b. Resolver com "aceitar o risco + documentar" não fecha o item inteiro
 
@@ -22,15 +21,14 @@ de ser hipotética. Desdobre a parte de documentação num item próprio de "Pen
 (VALIDAR DEPOIS)", com (a) a redação mínima já escrita, (b) o arquivo/seção de destino, e (c) o
 dono. Só o item **de decisão** fecha.
 
-Já aconteceu três vezes no mesmo projeto, e a assimetria é instrutiva: **a única que fechou foi a
-que tinha dono dentro do próprio PR**; as duas que descreviam consequência para dado de terceiro
-(CPF, nome, telefone de clientes que não participaram de decisão nenhuma) não tinham dono — e a
-mais antiga já atravessou **quatro specs** sem o README ganhar a frase.
+Sem dono dentro do próprio PR, o item tende a nunca fechar: a lacuna pode atravessar múltiplas
+specs sem o documento ganhar a frase — risco mais grave quando a consequência descrita afeta dado
+de terceiros que não participaram da decisão (ex.: CPF, nome, telefone de clientes).
 
 ## 3c. Na última fatia da spec, meça — não presuma — que a documentação aconteceu
 
 `grep` no README/doc de destino pelos termos da consequência — em vez de presumir que "o usuário
-decidiu, logo está tratado". Foi literalmente assim que um achado desta classe apareceu: o `grep`
-voltou vazio, enquanto o README apresentava a mesma característica como **capacidade** em três
-lugares, um deles dentro da seção "Limitações conhecidas" e ainda assim redigido como
-tranquilização.
+decidiu, logo está tratado". Atenção à armadilha inversa: o termo pode aparecer no documento sem
+comunicar a limitação — por exemplo, descrito como capacidade ou redigido em tom de tranquilização
+dentro da própria seção "Limitações conhecidas". Confirme que a frase realmente expõe o risco para
+quem lê, não que apenas contém a palavra-chave.

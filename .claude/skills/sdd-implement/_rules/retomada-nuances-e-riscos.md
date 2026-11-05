@@ -20,12 +20,10 @@ docs/LESSONS-LEARNED.md` antes de enviar a instrução. Copiar um padrão visual
 auditar o componente-fonte reproduz qualquer lacuna já documentada nele junto com a solução — quem
 pede a correção está focado em resolver o achado atual, não em auditar o componente que está
 citando como referência. Se houver lição aberta citando esse componente, inclua explicitamente na
-instrução que a lacuna conhecida não deve ser copiada para o novo uso. Já aconteceu de verdade: uma
-correção de UX pediu para reaproveitar um componente com padrão visual já aprovado, mas esse
-componente já tinha 2 ocorrências registradas da mesma lição de acessibilidade (foco não gerenciado
-ao abrir/fechar); a instrução não mencionou a lição aberta, e o fix copiou o padrão visual junto
-com a lacuna — virando a 3ª ocorrência da mesma lição, só pega na reverificação da revisão
-seguinte, não por nenhuma instrução (issue #464, `asengardeon/btt-sdd-pipeline`).
+instrução que a lacuna conhecida não deve ser copiada para o novo uso. Pular essa instrução deixa
+a lacuna se repetir: um componente com lição aberta já citada 2 vezes vira a 3ª ocorrência da mesma
+lição, pega só na reverificação da revisão seguinte, nunca por nenhuma instrução explícita
+(issue #464).
 
 ## Investigação de causa raiz somente-leitura prefere sub-tarefa isolada
 
@@ -50,8 +48,7 @@ têm esse gate embutido (passo 2b de cada uma), mas correção pontual conduzida
 fora dessas quatro skills, não passa por ele — um hotfix mergeado em `main` durante esta correção
 fica invisível até a próxima invocação de uma delas. Um CI vermelho pode ter duas causas
 simultâneas (flakiness real + desincronização real); resolver a primeira não prova que a segunda
-não existe (`docs/GIT-WORKFLOW.md`, mesma seção, para o caso real que motivou esta regra — issue
-#525, `asengardeon/btt-sdd-pipeline`).
+não existe (`docs/GIT-WORKFLOW.md`, mesma seção — issue #525).
 
 ## Confirme a branch atual antes de qualquer `git merge`/`commit` seguinte
 

@@ -199,11 +199,7 @@ checkout.md` — leia antes do primeiro `git checkout` desta rodada.
    ver `architect.md`, passo 1c) — desta fatia e das anteriores — procurando perguntas cuja resposta
    alimenta uma decisão de segurança, **inclusive quando catalogadas sob outra área da feature**.
    Cada pergunta deve declarar qual decisão depende dela, justamente para você achar as suas sem ler
-   tudo; quando essa declaração faltar, a pergunta ainda pode ser sua. Já aconteceu de verdade: uma
-   pergunta catalogada como "instalabilidade" — se a sessão sobrevive a reabrir o app instalado —
-   decidia se o `clearAll()` do logout de outra fatia alcançava o aparelho ou só um contexto de
-   armazenamento, e com isso se o requisito de "outra pessoa no mesmo aparelho" valia por aparelho
-   ou por contexto.
+   tudo; quando essa declaração faltar, a pergunta ainda pode ser sua.
 2. Revise o código implementado e o PR desta fatia (`docs/GIT-WORKFLOW.md`) contra as áreas acima.
 3. Para cada área, registre achado (se houver) com severidade, ou "não aplicável" com
    justificativa — nunca deixe uma área sem veredito. Ao registrar um achado novo, preencha

@@ -43,20 +43,17 @@ inventados, navegação pelo diretório pai).** A fonte de verdade é
 `~/.claude/plugins/installed_plugins.json` (`%USERPROFILE%\.claude\plugins\installed_plugins.json`
 no Windows): o campo `plugins["btt-sdd@btt-sdd-pipeline"][].installPath` tem o caminho exato e
 atual da instalação (ex.: `...\.claude\plugins\cache\btt-sdd-pipeline\btt-sdd\<versão>`) — leia-o
-como primeiro passo, não como último recurso depois de tentativas falhas. Já aconteceu de verdade:
-um agente tentou um caminho inventado (`ls` numa pasta que não existia), depois listou o diretório
-pai inteiro (revelando outros repositórios não relacionados no mesmo host), depois listou um
-repositório não relacionado por nome parecido, e só na 4ª tentativa consultou
-`installed_plugins.json` — que resolvia a pergunta de forma exata desde a 1ª tentativa (issue
-#616, `asengardeon/btt-sdd-pipeline`).
+como primeiro passo, não como último recurso depois de tentativas falhas: um caminho inventado
+pode levar a listar o diretório pai inteiro — revelando outros repositórios não relacionados no
+mesmo host — antes de alguém consultar o arquivo que resolvia a pergunta de forma exata desde o
+início (issue #616).
 
 ## Se você recebeu um worktree isolado, sincronize antes de ler qualquer código
 
 Worktree isolado reaproveitado nasce na base da invocação anterior, não na ponta da branch. Rode
 `git fetch` e compare com `origin/<branch>` antes de qualquer leitura ou trabalho. O passo a passo
 e o porquê estão em `docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes
-concorrentes". Isso já aconteceu em sete de sete invocações isoladas da mesma fatia, e nenhuma
-delas tinha sido instruída a checar.
+concorrentes".
 
 ## Se for retomado via `SendMessage` e instruído a registrar sua própria linha em `timing-log.md`
 
@@ -65,9 +62,7 @@ responsabilidade exclusiva de quem te invocou (o orquestrador da skill), porque 
 notificação de conclusão da sua invocação anterior e consegue calcular a diferença contra o
 horário anotado antes do `SendMessage` (`specs/_template/timing-log.template.md`, seção "O que a
 coluna 'Duração' mede"). Você, retomado, não tem acesso a essa notificação anterior — qualquer
-número que você escrever ali é inventado, não medido, mesmo que pareça plausível. Isso já
-aconteceu de verdade: agentes retomados relataram explicitamente não ter como medir a própria
-duração ao serem instruídos a preencher essa coluna (issue #611, `asengardeon/btt-sdd-pipeline`).
+número que você escrever ali é inventado, não medido, mesmo que pareça plausível (issue #611).
 
 ## `docs/PROJECT-CONVENTIONS.md`: leia antes de começar, se existir
 
@@ -89,13 +84,11 @@ a cadência X"), `grep` a linha exata de `docs/PROJECT-CONVENTIONS.md` que a reg
 assuma que ela existe porque uma rodada anterior da mesma spec já a nomeou daquele jeito.** Ao
 explicar por que um comportamento observado aconteceu (ex.: um passo caro de CI ficou `skipped`),
 cite o mecanismo real pelo nome do job/step (`gh api .../jobs` ou equivalente) **e**, só se for
-atribuí-lo a uma convenção nomeada do projeto, cite a linha exata que a registra. Já aconteceu de
-verdade: uma convenção nomeada (`ci-antes-do-merge`) nunca existiu em `docs/PROJECT-CONVENTIONS.md`
-— o comportamento observado era real, mas produzido por um mecanismo diferente, já existente antes
-da spec. A primeira rodada da spec descreveu o mecanismo certo em prosa; a partir da rodada
-seguinte, cada artefato citou o nome errado herdado da rodada anterior, sem nenhuma conferir a
-fonte primária, porque "o comportamento observado bate" tornava a citação parecer verificada
-(issue #499, `asengardeon/btt-sdd-pipeline`).
+atribuí-lo a uma convenção nomeada do projeto, cite a linha exata que a registra. Um nome de
+convenção pode se propagar entre rodadas mesmo sem nunca ter existido no arquivo: a primeira rodada
+descreve o mecanismo real em prosa, e cada rodada seguinte cita o nome herdado da anterior sem
+conferir a fonte primária, porque "o comportamento observado bate" faz a citação parecer verificada
+(issue #499).
 
 **Antes de repetir "mecanismo X já existe desde a spec Y, inalterado" para evitar reverificação
 redundante, confirme se alguma migração de stack/framework/linguagem aconteceu desde a spec Y**
@@ -104,13 +97,11 @@ inalterado" é uma economia de tempo/contexto geralmente correta — mas só é 
 mudou estruturalmente desde a spec que o introduziu, e uma migração de stack é justamente o tipo
 de evento que invalida essa premissa. Se houver migração desde Y, a citação exige reverificação
 por leitura direta do código atual antes de ser repetida — nunca repetição verbatim da rodada
-anterior. Já aconteceu de verdade: um mecanismo de log estruturado por requisição, implementado
-na stack original, nunca foi portado numa migração de linguagem/framework que não mencionou
-observabilidade em nenhuma linha — e quatro rodadas de SRE consecutivas, em quatro specs
-diferentes já na stack nova, afirmaram que ele "já existia desde a spec original, inalterado",
-cada rodada tornando a descrição mais específica que a anterior sem nenhuma verificar contra o
-código real pós-migração. Só a quinta rodada a citar a afirmação verificou e descobriu que o
-mecanismo nunca existiu na stack nova (issue #527, `asengardeon/btt-sdd-pipeline`).
+anterior. Um mecanismo pode deixar de existir numa migração de stack sem que ninguém note: rodadas
+de SRE sucessivas, em specs diferentes já na stack nova, podem repetir que ele "já existia,
+inalterado" — cada vez com descrição mais específica que a anterior, mas sem nenhuma verificar
+contra o código real pós-migração — até que uma delas finalmente confirme por leitura direta que o
+mecanismo nunca existiu na stack nova (issue #527).
 
 **Ao citar um artefato de investigação como base de uma ressalva, verifique a marcação
 `[medido]`/`[inferido]` da frase que você está usando** (`agents/architect/contrato-externo-nao-
@@ -181,7 +172,6 @@ resolvida. Linhas com `Status` aberto continuam leitura obrigatória todo round,
 fatia anterior. Ao confirmar uma correção, **atualize o `Status` da linha original** — nunca
 apague a linha nem crie uma duplicata; a linha em si nunca é removida, só marcada.
 
-Já aconteceu de verdade: um `code-review.md` de **3.216 linhas**, com nove seções de rodadas
-históricas, era relido in-place por cada revisor seguinte só para encontrar a rodada vigente — e,
-no mesmo PR, um revisor que confiou num cabeçalho antigo em vez da tabela quase revisou a fatia
-errada.
+Um `code-review.md` que acumula muitas rodadas históricas (ex.: milhares de linhas, nove seções)
+fica caro de reler in-place a cada rodada só para encontrar a vigente — e confiar num cabeçalho
+antigo em vez da tabela de histórico pode levar a revisar a fatia errada.

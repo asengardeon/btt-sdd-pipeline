@@ -16,12 +16,10 @@ São dois comandos e uma multiplicação, e é o eixo em que o usuário decide:
 3. O total em **minutos faturáveis** (`minutos × multiplicador`), reportado junto do total em
    relógio — nunca só o relógio.
 
-Sem isso o argumento sai sistematicamente mais fraco que a realidade, em todo projeto privado. Já
-aconteceu de verdade: numa spec de três fatias, ~206 min de runner Windows foram gastos em commits
-que, por construção (só `.md` de artefato de revisão), não podiam mudar comportamento — o que são
-da ordem de **~412 minutos faturáveis**. O `sre` argumentou por tempo de parede em duas fatias
-seguidas e só olhou o eixo monetário na terceira, depois de o usuário já ter resolvido o problema
-por fora do pipeline.
+Sem isso o argumento sai sistematicamente mais fraco que a realidade, em todo projeto privado:
+uma spec de três fatias pode gastar ~206 min de runner Windows em commits que, por
+construção (só `.md` de artefato de revisão), não podiam mudar comportamento — da ordem de
+**~412 minutos faturáveis**.
 
 ## Cadência opt-in: `ci-antes-do-merge`
 
@@ -94,21 +92,19 @@ número medido e ofereça a opção ao usuário.
 As etapas de revisão commitam e enviam (push) seus artefatos na branch da fatia, então **depois
 que o código para de mudar a branch ainda recebe uma dezena de commits de documentação pura**,
 cada um disparando o CI completo. Isso é consequência estrutural do pipeline, não descuido de
-ninguém — e o custo é real: numa fatia medida, 4 linhas de Markdown compraram ~50 min de runner
-Windows em 4 runs completos, **um deles vermelho por flakiness** de suíte de navegador, num commit
-de duas linhas de texto que não podia ter mudado comportamento.
+ninguém — e o custo é real: 4 linhas de Markdown podem comprar ~50 min de runner Windows em 4
+runs completos, com risco de um deles sair vermelho por flakiness de suíte de navegador, mesmo
+num commit que não podia ter mudado comportamento.
 
-Duas formas erradas de resolver, as duas já tentadas e medidas:
+Duas formas erradas de resolver:
 
 - **`paths-ignore` no gatilho é ativamente errado** quando o job é *required status check* de
   branch protection: se o workflow não dispara, o GitHub nunca reporta status para o check
   obrigatório, e um PR só de documentação fica **bloqueado para sempre**.
 - **Um passo interno que decide comparando contra `github.event.pull_request.base.sha`** — a base
   do diff é o tip de `main`, então num PR de código o diff do PR inteiro **sempre** contém `src/`,
-  e `docs_only` é `false` para todo push subsequente, inclusive os de documentação pura. Já
-  aconteceu de verdade, num projeto real que usa este pipeline: um `ci.yml` nasceu com exatamente
-  essa forma, e a suíte completa reexecutava a cada commit de revisão gravado na própria branch da
-  fatia. A correção não é só "comparar sempre contra `base.sha` em `pull_request`" — é que
+  e `docs_only` é `false` para todo push subsequente, inclusive os de documentação pura. A
+  correção não é só "comparar sempre contra `base.sha` em `pull_request`" — é que
   `github.event.before`/`.after` também existem no payload de `pull_request` quando a ação é
   `synchronize` (todo push numa branch de PR já aberta), com o mesmo significado que em `push`.
   `base.sha` só é o ponto de comparação certo em `opened`/`reopened`. Mesmo corrigido assim, isto
@@ -140,10 +136,7 @@ vez de pular sem nunca ter testado aquele conteúdo. Se este projeto tem hoje um
 **Nunca ofereça esta receita sozinha — ofereça junto a contrapartida.** As execuções redundantes
 que ela suprime funcionam, sem ninguém ter planejado, como **amostragem de flakiness**: rodar a
 mesma suíte N vezes sobre o mesmo código é um teste de repetição, e teste de repetição acha
-asserção instável. Já aconteceu de verdade: numa fatia, os **dois runs vermelhos rodaram em
-commits só de documentação, sobre código que já tinha passado verde** — a receita os teria
-pulado, e foram exatamente eles que acharam o achado bloqueante do code review (uma asserção presa
-a relógio, que só falha sob contenção). Ao propor a receita, proponha no mesmo movimento um
+asserção instável. Ao propor a receita, proponha no mesmo movimento um
 substituto **deliberado** — tipicamente um `schedule` rodando a suíte de integração completa na
 branch base, N vezes por dia, fora do caminho crítico de qualquer PR.
 

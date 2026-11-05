@@ -10,9 +10,7 @@ Gatilho: toda invocação com `isolation: "worktree"` (o padrão desta invocaç�
 checked out; o repositório principal pode estar noutra branch e uma ferramenta de leitura com
 cache pode devolver uma versão desatualizada do mesmo path. Se tiver motivo para desconfiar do
 conteúdo retornado, reconfirme via leitura direta de shell (`cat`/equivalente) antes de basear seu
-veredito nele. Já aconteceu de verdade: uma leitura via `Read` retornou conteúdo obsoleto de
-`code-review.md` porque o path usado apontava fora do worktree isolado — só percebido porque o
-agente reconfirmou manualmente antes de confiar no trecho.
+veredito nele.
 
 **Nunca faça `git checkout <branch>` diretamente — nem tente primeiro "para ver se funciona".**
 Normalmente vai falhar (`fatal: '<branch>' is already used by worktree at '<caminho>'`, porque
@@ -63,6 +61,4 @@ permite a mesma branch em dois worktrees ao mesmo tempo — tentar isso pode fal
 ou, pior, ter sucesso e bloquear o orquestrador de voltar a essa branch até que este worktree
 isolado seja removido. Basta permanecer na própria branch da fatia (a sessão deste agente já está
 terminando) — ou, se precisar mesmo sair dela antes, use `git checkout --detach` em vez de mirar
-numa branch específica. Já aconteceu de verdade: agentes isolados tentando `git checkout main`
-dentro do próprio worktree bloquearam repetidamente o worktree principal do orquestrador de voltar
-a `main` para prosseguir com merges, exigindo remoção manual do worktree órfão a cada vez.
+numa branch específica.

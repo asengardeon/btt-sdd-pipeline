@@ -70,9 +70,7 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    padrão de UI/lógica duplicado em N lugares — ex.: N formulários de upload usando o mesmo hook
    compartilhado, N validações idênticas em rotas irmãs), inclua explicitamente na instrução:
    "aplique a correção com paridade de teste em todos os N pontos, não só paridade de
-   implementação" — já aconteceu de a implementação sair correta nos N pontos, mas só alguns
-   ganharem teste de integração dedicado ao novo caminho, achado só pelo `code-reviewer` numa
-   rodada extra de correção evitável.
+   implementação".
    **Se a correção toca o boot/bootstrap de um serviço, pergunte explicitamente (ou confira você
    mesmo) se este projeto documenta mais de um manifesto de boot para esse serviço** (ex.:
    `entrypoint.sh` de Docker local **e** `Procfile`/release phase de Heroku, ou qualquer par
@@ -90,9 +88,7 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    tráfego/carga** (ex.: múltiplos logins concorrentes para validar esgotamento de conexão),
    sinalize isso no próprio texto apresentado nesta `AskUserQuestion` — essas duas categorias são
    tipicamente bloqueadas pelo classificador de modo automático desta sessão para orquestrador e
-   subagentes, exigindo execução manual do usuário ou uma regra de permissão explícita; já
-   aconteceu de um hotfix de infra só descobrir esse bloqueio durante a execução, depois de
-   comandos já terem falhado, em vez de antecipado no plano. Abra o PR cedo,
+   subagentes, exigindo execução manual do usuário ou uma regra de permissão explícita. Abra o PR cedo,
    em modo draft, com `Closes #N` referenciando a issue do passo 1b (sempre existe, é o gate
    obrigatório). **Se outra tarefa
    desta sessão pode estar ativa no mesmo repositório**, use isolamento de working tree
@@ -104,12 +100,12 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    medidos entre eles ("esperar 250 ms antes de reler o campo", não "reler depois de preencher").
    Exija explicitamente que a implementação **e** o knob de mock que a exercita reproduzam essa
    sequência passo a passo, com os mesmos intervalos — não uma paráfrase dela. Descrever a sonda em
-   prosa perde justamente o detalhe que a faz funcionar: já aconteceu de verdade, e custou uma
-   rodada inteira de implementação evitável. A sonda esperava ~250 ms entre preencher o campo e
-   reler o valor, e era esse intervalo que fazia a correção funcionar (a hidratação do framework da
-   página reescrevia o input algumas centenas de milissegundos depois). A instrução virou
-   "preencher → reler → repetir", o intervalo não chegou ao código, a implementação releu colada na
-   escrita — medindo o DOM **antes** do efeito que queria detectar — e passou nos testes.
+   prosa perde justamente o detalhe que a faz funcionar: um intervalo específico entre passos (ex.:
+   ~250 ms entre preencher um campo e reler o valor) pode ser exatamente o que torna a correção
+   eficaz — quando um framework de página reidrata e reescreve o input pouco depois do
+   preenchimento, uma instrução parafraseada como "preencher → reler → repetir" perde esse
+   intervalo, a implementação relê colada na escrita (medindo o DOM **antes** do efeito que deveria
+   detectar), e ainda assim passa nos testes.
 3b. **Registre cada rodada desta skill em `specs/<slug>/timing-log.md`** (crie a partir de
    `specs/_template/timing-log.template.md` se ainda não existir, como qualquer outra etapa). Esta
    skill invoca `backend-developer`/`frontend-developer` **direto**, contornando `/sdd-implement` — e
@@ -127,11 +123,6 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
      lugar para tempo de orquestrador", é a cópia que está desatualizada em relação ao template desta
      instalação — vale o template (`docs/SKILL-PREAMBLE.md`), e a nota obsoleta pode ser corrigida na
      mesma rodada.
-   Já aconteceu de verdade: um hotfix com **seis** rodadas de trabalho — cinco de implementação, três
-   validações ao vivo contra produção, um diagnóstico de causa raiz do orquestrador e uma rodada de
-   SRE — deixou exatamente **duas** linhas no `timing-log.md` (code review e segurança). Quem lesse a
-   série concluiria que o hotfix custou ~71 minutos. As rodadas anteriores tinham sido registradas por
-   zelo do orquestrador, não por instrução.
 4. **Rode a suíte completa com cobertura** (e o comando de build/empacotamento real, se a trilha
    afetada tiver um — `docs/TESTING.md`) ao final, gravando o resumo em
    `specs/<slug-da-spec-relacionada-ou-dedicada>/coverage/hotfix-<data>-<trilha>.md`, mesmo padrão
@@ -140,8 +131,7 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    nunca herda o da primeira (`specs/_template/coverage-summary.template.md`) — é desse campo que a
    etapa seguinte decide se pode reaproveitar a evidência em vez de rodar a suíte de novo, e num
    hotfix com várias rodadas de correção no mesmo PR o campo desatualizado faz uma execução velha
-   passar por fresca. Já aconteceu de verdade: após três rodadas, o cabeçalho ainda apontava para o
-   commit da rodada 1, pego por uma rodada de code review. **E a base de qualquer diff desta rodada é
+   passar por fresca. **E a base de qualquer diff desta rodada é
    calculada** (`git merge-base HEAD main`), nunca lida da coluna `Commit` de uma tabela de histórico:
    com *squash merge*, o SHA registrado lá deixa de ser ancestral de `main`, e um revisor que confiar
    nele revisa o diff errado.
@@ -153,9 +143,9 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    medido ao vivo entra no repositório já substituído por equivalente não atribuível". Isso vale para
    o artefato do passo 4b, para os testes, para o knob de mock do passo 3a, para comentário/XML doc,
    e **principalmente para o corpo da instrução passada ao `backend-developer`/`frontend-developer`**
-   — foi por ali que, numa rodada real, CPF com dígitos verificadores válidos, telefone, nome e
-   e-mail reais chegaram a seis arquivos do repositório, dois deles de código de produção, custando
-   uma rodada inteira só para redigir.
+   — dado real (CPF com dígitos verificadores válidos, telefone, nome, e-mail) pode se propagar da
+   instrução para vários arquivos do repositório, inclusive código de produção, se não for
+   substituído já na origem.
 4b. **Se o defeito só era observável contra o sistema real, revalide ao vivo antes de acionar
    qualquer revisão — com artefato próprio, nunca como relato em comentário de PR.** Repita a
    medição original (a sequência do passo 3a) contra o sistema real e grave o resultado em
@@ -165,9 +155,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    verde não substitui esta medição** — o cenário que originou este passo é exatamente o de uma
    suíte verde sobre código que media o DOM antes do efeito. Enquanto o veredito não for `não
    reproduzido`, **não prossiga para o passo 5**: mandar para revisão um código que ainda não
-   corrige o defeito gasta a cadeia inteira de revisão numa rodada que vai ser refeita — já
-   aconteceu, três rodadas de implementação até a validação ao vivo passar. Isto é de rodada de
-   hotfix e **não substitui** o teste geral de fim de spec de `docs/POST-MERGE-VALIDATION.md`, que
+   corrige o defeito gasta a cadeia inteira de revisão numa rodada que vai ser refeita. Isto é de
+   rodada de hotfix e **não substitui** o teste geral de fim de spec de `docs/POST-MERGE-VALIDATION.md`, que
    continua valendo depois do merge.
    Cada execução desta validação — inclusive as que reprovaram — rende a sua própria linha no
    `timing-log.md` (passo 3b).
@@ -223,11 +212,9 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    "Histórico de aprovações por fatia", linha `hotfix-<data>`): se qualquer revisão marcada como aplicável ainda
    não tem veredito aprovado para esta rodada, **não prossiga para o passo 7** — rode a revisão
    faltante agora, ou, se por algum motivo ela não puder rodar ainda, avise isso em destaque ao
-   usuário antes de qualquer menção a merge, nunca como nota de rodapé. Já aconteceu de verdade: um
-   hotfix teve seu PR de código mergeado sem que SRE tivesse sido acionado — code review, QA e
-   segurança rodaram normalmente, SRE simplesmente não foi lembrado antes do merge, e a lacuna só
-   foi descoberta ~9 dias depois. `/sdd-status` já sinaliza esse tipo de gap corretamente quando
-   consultado — este passo existe para que o gap seja visto *antes* do merge, não só depois.
+   usuário antes de qualquer menção a merge, nunca como nota de rodapé. `/sdd-status` já sinaliza
+   esse tipo de gap corretamente quando consultado — este passo existe para que o gap seja visto
+   *antes* do merge, não só depois.
 7. **Merge é decisão do usuário**, nunca automática — mesma regra de GitHub Flow de qualquer PR
    deste pipeline. Depois do merge, **confirme que a(s) issue(s) do PR fecharam de fato** (`gh pr
    view <PR> --json closingIssuesReferences`) e feche à mão, citando o PR, qualquer uma que tenha

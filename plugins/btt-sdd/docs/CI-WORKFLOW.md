@@ -107,10 +107,8 @@ O cache do item 5 cobre o gerenciador de pacotes da stack (`composer`/`npm`/etc.
 binário do próprio navegador quando a suíte depende de um (Playwright, Selenium e equivalentes). A
 instalação desse binário (ex. `npm exec playwright install --with-deps chromium firefox webkit`)
 baixa pacotes de sistema via `apt-get` de um mirror público, cuja variância de rede não tem relação
-alguma com o código sendo testado. Já aconteceu de verdade: dois runs seguidos do job `navegador`
-travaram 30 minutos cada (timeout) presos nesse passo, sem chegar a rodar um teste — só a 3ª
-tentativa, de minutos, confirmou que o código nunca esteve quebrado (issue #479,
-`asengardeon/btt-sdd-pipeline`).
+alguma com o código sendo testado — pode travar o job em timeout, preso nesse passo, sem chegar a
+rodar um teste (issue #479).
 
 Cacheie o diretório de instalação dos navegadores (`~/.cache/ms-playwright` ou equivalente da
 ferramenta), chaveado pela versão do pacote (ex. hash do lockfile). Alternativa mais robusta —
@@ -123,11 +121,9 @@ crítico por completo.
 
 **Não adote o short-circuit sozinho.** As execuções redundantes que ele suprime funcionavam, sem
 ninguém ter planejado, como **amostragem de flakiness**: rodar a mesma suíte N vezes sobre o mesmo
-código é um teste de repetição, e teste de repetição acha asserção instável. Já aconteceu de
-verdade:
-numa fatia, os **dois runs vermelhos rodaram em commits só de documentação, sobre código que já
-tinha passado verde** — a receita os teria pulado, e foram exatamente eles que acharam o achado
-bloqueante do code review.
+código é um teste de repetição, e teste de repetição acha asserção instável — inclusive quando a
+execução redundante roda sobre um commit só de documentação cujo código já tinha passado verde, que
+a receita do item 3 teria pulado.
 
 Então um `ci.yml` que nasce com o item 3 nasce com um `schedule` rodando a suíte de integração
 completa na branch base N vezes por dia, fora do caminho crítico de qualquer PR. Custa o mesmo
@@ -149,13 +145,10 @@ tempo de runner que hoje se gasta por acidente, e produz série temporal em vez 
   padrão comum quando o `architect` espelha, na CI, a cadência de revisão "ao final da spec" deste
   pipeline (`docs/SDD-WORKFLOW.md`), mas isso concentra todo o risco de integração e de
   contaminação de estado entre arquivos de teste no momento em que não há mais fatia seguinte para
-  absorver o retrabalho — o pior momento possível para descobrir um problema sistêmico. Já
-  aconteceu de verdade: a primeira execução real de um job assim (64 testes e2e de 5 arquivos, 1
-  worker, um único Postgres compartilhado) teve mais de 150 falhas, dominadas por um seletor sem
-  escopo escrito e aprovado em 3 fatias diferentes — cada uma só o exercitou isoladamente — e
-  revelou 2 bugs reais de produção pré-existentes desde fatias anteriores, que nenhuma rodada de
-  revisão daquelas fatias tinha como pegar sem o conjunto inteiro rodando junto. Se o `architect`
-  decidir essa cadência, registre também no TRD uma variante mais barata que rode pelo menos os
-  arquivos de e2e já existentes a cada fatia nova (não precisa ser o roteiro completo acumulado) —
-  o suficiente para pegar contaminação de estado entre arquivos cedo, em vez de só na última fatia
-  (issue #457, `asengardeon/btt-sdd-pipeline`).
+  absorver o retrabalho — o pior momento possível para descobrir um problema sistêmico: um seletor
+  sem escopo aprovado isoladamente em fatias diferentes, ou um bug de produção pré-existente, só
+  aparece quando o conjunto inteiro de arquivos roda junto, porque a revisão de cada fatia só
+  exercita o seu próprio arquivo (issue #457). Se o `architect` decidir essa cadência, registre
+  também no TRD uma variante mais barata que rode pelo menos os arquivos de e2e já existentes a
+  cada fatia nova (não precisa ser o roteiro completo acumulado) — o suficiente para pegar
+  contaminação de estado entre arquivos cedo, em vez de só na última fatia.

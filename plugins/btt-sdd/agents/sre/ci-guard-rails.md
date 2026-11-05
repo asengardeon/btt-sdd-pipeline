@@ -8,10 +8,7 @@ e atualize-o na mesma rodada.** Enumerar os jobs esperados numa lista literal é
 guarda saudável: pega drift de configuração antes de qualquer outra camada. Mas a lista não se
 atualiza sozinha, e quem acrescenta o job raramente sabe que ela existe. Busque por
 `JOBS_ESPERADOS` (ou padrão equivalente) em `tests/architecture/` e nos testes de configuração do
-projeto, **antes** de empurrar o commit — não depois de o CI acusar vermelho. Já aconteceu de
-verdade: o `sre` acrescentou um job de auditoria de dependências, o teste de arquitetura reprovou
-por igualdade exata, e a correção foi acrescentar um nome a uma lista. Uma rodada inteira de CI
-por uma linha que a busca acha em segundos.
+projeto, **antes** de empurrar o commit — não depois de o CI acusar vermelho.
 
 **Se o diff renomeia ou remove um `name:` de job, confira `gh api repos/<owner>/<repo>/branches/
 main/protection/required_status_checks` antes de escrever o veredito** — não só ao notar
@@ -21,7 +18,4 @@ só a proteção de `main` sabe quais nomes ela ainda exige. Se o nome antigo ai
 novo não, isso é achado desta etapa — reconcilie via `gh api` (ajuste de
 `required_status_checks.contexts`) com confirmação do usuário antes de aplicar, nunca como
 correção silenciosa. Pegar isso no início desta área custa menos do que descobrir só no fim, com o
-resto do relatório já escrito. Já aconteceu de verdade: uma migração de stack renomeou dois jobs e
-removeu um terceiro, e o bloqueio só foi percebido ao conferir `gh pr view --json
-mergeStateStatus` quase no fim da etapa, depois de toda a implementação/revisão já pronta (issue
-#445, `asengardeon/btt-sdd-pipeline`).
+resto do relatório já escrito (issue #445).

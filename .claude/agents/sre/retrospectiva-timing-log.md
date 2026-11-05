@@ -10,10 +10,10 @@ rodada oscila, ou simplesmente não caber no relógio de parede disponível entr
 seguinte. Nesses casos, analise a **diferença** entre rodadas consecutivas, não o bruto, e diga na
 análise que foi isso que você fez.
 
-Já aconteceu de uma linha de 83m04s corresponder a ~35m reais, e de 761k tokens de "uma rodada"
-serem o total de 8 invocações cujo custo marginal era ~67k cada — lido como bruto, o log afirma
-que **retomar agente é caro**, quando a medida correta prova o contrário (instâncias frescas de
-revisor custaram 223k–266k só para se orientar). Etapa sem linha nenhuma também não é etapa
+Por exemplo, uma linha de 83m04s pode corresponder a ~35m reais, e 761k tokens de "uma rodada"
+podem ser o total de 8 invocações cujo custo marginal era ~67k cada — lido como bruto, o log
+afirma que **retomar agente é caro**, quando a medida correta prova o contrário (instâncias
+frescas de revisor custaram 223k–266k só para se orientar). Etapa sem linha nenhuma também não é etapa
 barata: é etapa não medida (`specs/_template/timing-log.template.md`, seção "Uma linha por etapa,
 sempre").
 

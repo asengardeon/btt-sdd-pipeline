@@ -27,24 +27,16 @@ contrato. Duas obrigações, não uma:
   são agrupadas pela área onde nasceram (instalabilidade, upload, notificação), e quando a decisão
   que elas alimentam está em outra fatia, outra etapa ou outro domínio, **o agente que precisa da
   resposta nunca vê a pergunta** — ele procura premissas do seu próprio domínio, não a lista de
-  perguntas da área onde ela foi catalogada. Já aconteceu de verdade: uma pergunta catalogada como
-  "instalabilidade" ("a sessão sobrevive a fechar e reabrir no standalone?") decidia uma
-  propriedade de **segurança** de outra fatia — se o standalone tem partição de armazenamento
-  própria, o `clearAll()` do logout alcança só o contexto que executou o logout, e o requisito
-  escrito para "outra pessoa no mesmo aparelho" passa a valer por contexto, não por aparelho. Só
-  foi percebido porque o `security-engineer` leu o artefato de investigação inteiro por iniciativa
-  própria, numa fatia em que não era obrigado a isso.
+  perguntas da área onde ela foi catalogada.
 - **Marcação por afirmação, dentro do artefato**: cada frase é `[medido]` (com o comando/caminho
   que produziu a observação) ou `[inferido]` (com o que precisaria ser medido para confirmar).
   Uma seção de "nota operacional"/"consequência prática" é justamente onde a inferência se
   esconde — ela **não** fica de fora da regra. O motivo é que este é o único documento da spec
   cuja autoridade vem de ter sido medido: uma frase inferida escrita aqui **herda a autoridade do
-  artefato inteiro**, e nenhum agente a jusante a questiona. Já aconteceu de verdade: num artefato
-  excelente, que derrubou quatro suposições do TRD medindo o DOM real, duas sentenças do mesmo
-  parágrafo eram uma medida e a outra inferência pura, sem marcação e com o mesmo tom afirmativo.
-  A inferida virou restrição em dois artefatos a jusante (uma seção do TRD e uma ressalva de SRE)
-  por dois agentes diferentes, e só caiu porque o **usuário** disse "isso não bate com o que eu
-  vejo" — a medição que a refutou custou poucos minutos, com ferramenta que o projeto já usava.
+  artefato inteiro**, e nenhum agente a jusante a questiona: uma frase inferida sem marcação se
+  propaga como fato por múltiplos artefatos a jusante e múltiplos agentes antes de ser contestada
+  — normalmente só quando alguém de fora do pipeline nota a divergência, mesmo quando a medição
+  real que a refuta custaria poucos minutos com ferramenta já disponível no projeto.
 - **Ao emendar o TRD com o resultado**: uma afirmação `[inferido]` entra como **pendência VALIDAR
   DEPOIS ou como premissa marcada**, nunca como restrição de desenho.
 
@@ -55,13 +47,8 @@ do erro. O modo de falha é silencioso do começo ao fim: mock verde, code revie
 e SRE aprovando, e a descoberta só na validação pós-merge contra produção, depois de um ciclo
 completo de pipeline.
 
-Já aconteceu de verdade, e a tarefa de investigação é o que evitou o desastre: um TRD desenhou a
-localização de uma linha num modal como `GetByRole(Button, { Name: <rótulo>, Exact: true })`. O
-DOM real tinha o nome acessível `"undefined. Dimas (Blumenau)."` — com prefixo `undefined. ` e
-ponto final, em **todas as 17 linhas observadas**, por um defeito do próprio site de terceiro. O
-locator desenhado casava **zero** elementos. A mesma investigação derrubou outras três suposições
-do desenho (nome acessível do gatilho também não casava por texto exato; a busca por rótulo na
-página inteira retornava 2 ocorrências, exigindo escopo obrigatório ao modal; e o contêiner do
-modal ficava visível **antes** de as linhas existirem, exigindo esperar o conteúdo, não o
-contêiner). É a terceira spec seguida do mesmo projeto em que uma tarefa de investigação agendada
-como primeira da primeira fatia se pagou.
+Formas comuns de desvio entre o contrato assumido e o real: o nome acessível observado pode ter
+texto diferente do assumido (prefixo, sufixo ou pontuação adicionais por defeito do próprio site de
+terceiro), uma busca por rótulo sem escopo pode casar múltiplas ocorrências na página, e um
+contêiner pode ficar visível antes do conteúdo existir — qualquer um desses motivos já é suficiente
+para o locator desenhado não casar nenhum elemento real.

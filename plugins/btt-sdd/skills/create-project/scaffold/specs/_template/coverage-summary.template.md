@@ -28,17 +28,13 @@ trilha cujo `Commit` continua batendo.
 inclusive a 2ª, 3ª e 4ª rodadas de correção de um mesmo PR — **atualiza** `Branch`, `Commit` e `Gerado
 em` com os valores da própria rodada. Herdar o `Commit` da primeira rodada é pior do que não ter o
 campo: é **desse** campo que o protocolo de reaproveitamento de evidência parte, então um SHA velho faz
-a etapa seguinte reaproveitar como fresca uma execução que não cobre o código atual. Já aconteceu de
-verdade: depois de três rodadas de correção, o cabeçalho ainda apontava para o commit da rodada 1 — pego
-por uma rodada de code review, não por quem escreveu o arquivo.
+a etapa seguinte reaproveitar como fresca uma execução que não cobre o código atual.
 
 **A base de qualquer diff é calculada, nunca lida de tabela de artefato.** Use sempre `git merge-base
 HEAD main` (ou a branch base do projeto). O SHA que a coluna `Commit` das tabelas "Histórico de
 aprovações por fatia" registra é capturado **antes** do merge daquela fatia; com *squash merge*
 (`docs/GIT-WORKFLOW.md`) ele deixa de ser ancestral de `main` e, usado como base, produz um diff
-gigante e errado. Já aconteceu de verdade: um `security-engineer` só revisou o diff certo porque apurou
-a base por conta própria, depois de `merge-base` refutar o commit que os cabeçalhos "vigente" dos
-artefatos nomeavam — se tivesse confiado na tabela, teria revisado outra fatia.
+gigante e errado.
 
 ## Resultado da suíte
 

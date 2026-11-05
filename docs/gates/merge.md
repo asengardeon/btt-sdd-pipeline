@@ -28,12 +28,9 @@
      `headRefOid` atual do PR; se diferirem, prove por `git diff --stat <headSha>..<headRefOid>` que
      nada relevante ao workflow mudou entre os dois (`src/`, `frontend/`, manifestos de dependência,
      os próprios workflows). Caso contrário, dispare um run novo antes de mergear.
-  Já aconteceu de verdade: três etapas de revisão em sequência delegaram essa verificação adiante —
-  code review fechou com o run `IN_PROGRESS` dizendo que aguardar era do orquestrador, segurança fez
-  o mesmo, e o SRE então encontrou o *required check* **vermelho** no HEAD (`Failed: 1, Passed: 266`)
-  e também delegou. Ninguém verificou, e o orquestrador reportou ao usuário "601 testes verdes" —
-  verdade na máquina local, falso no runner. Antes disso, **6 runs em draft reportaram verde em
-  17–27 segundos** com os 15 passos caros `skipped`: verde que não significava nada.
+  Delegar essa verificação adiante, etapa após etapa, sem que ninguém de fato a execute pode deixar
+  passar um *required check* vermelho sem inspeção até o HEAD — e um run em draft reportando verde
+  em segundos, com todos os passos caros `skipped`, não significa nada.
 - [ ] **Depois do merge, todas as issues da fatia foram confirmadas fechadas** (`gh pr view <PR>
   --json closingIssuesReferences`), e as que não fecharam sozinhas foram fechadas à mão citando o
   PR. Não basta o corpo do PR *parecer* correto: `Closes #A, #B, #C` fecha só a primeira em

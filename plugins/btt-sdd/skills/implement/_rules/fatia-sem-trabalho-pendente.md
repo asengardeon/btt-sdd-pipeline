@@ -28,11 +28,10 @@ aprovados para essa fatia, isso é **trabalho pronto aguardando merge, não trab
 pare aqui, não invoque `backend-developer`/`frontend-developer`, informe o usuário do PR
 encontrado e sugira mergear em vez de reimplementar (o merge em si continua sendo decisão do
 usuário, `docs/GIT-WORKFLOW.md`). Só prossiga quando essa checagem não encontrar nenhum PR aberto
-já aprovado para a fatia. Já aconteceu de verdade: a tabela do TRD reportava a fatia F-1 inteira
-como `pendente` porque a promoção de Status só dispara ao confirmar merge da fatia anterior antes
-de iniciar a próxima — mas o PR da fatia já existia, com code review, QA, segurança e SRE todos
-aprovados e CI verde, só faltando o merge; sem uma checagem manual, o trabalho teria sido
-reimplementado do zero.
+já aprovado para a fatia. A promoção de Status só dispara ao confirmar o merge da fatia anterior
+antes de iniciar a próxima — por isso a tabela do TRD pode mostrar uma fatia como `pendente` mesmo
+com um PR já aberto, com code review, QA, segurança e SRE todos aprovados e CI verde, só faltando
+o merge; sem essa checagem manual, o trabalho seria reimplementado do zero.
 
 ## Gate obrigatório: toda tarefa da fatia precisa ter Issue GitHub associada
 
@@ -73,9 +72,9 @@ esta fatia.
 
 **Nunca** contorne isso commitando PRD/TRD direto em `main` (regra 1 de `docs/GIT-WORKFLOW.md` —
 ninguém commita direto nela) nem criando um PR de documentação avulso para isso — eles seguem
-incluídos no mesmo PR desta fatia, revisados normalmente como o resto do conteúdo da branch. Já
-aconteceu de verdade: um agente invocado com `isolation: "worktree"` falhou de cara porque o TRD da
-spec só existia como arquivo não commitado no checkout principal — uma implementação inteira
-precisou ser refeita (~28k tokens) até alguém perceber e commitar manualmente. Se duas specs em
-paralelo estão nessa mesma situação, cada uma resolve isso na própria branch — nunca aproveite
-para commitar o PRD/TRD de uma spec na branch de outra.
+incluídos no mesmo PR desta fatia, revisados normalmente como o resto do conteúdo da branch. Um
+agente invocado com `isolation: "worktree"` sem essa commitagem prévia falha de cara, porque o TRD
+da spec só existe como arquivo não commitado no checkout principal — forçando a implementação
+inteira a ser refeita (~28k tokens de custo). Se duas specs em paralelo estão nessa mesma situação,
+cada uma resolve isso na própria branch — nunca aproveite para commitar o PRD/TRD de uma spec na
+branch de outra.

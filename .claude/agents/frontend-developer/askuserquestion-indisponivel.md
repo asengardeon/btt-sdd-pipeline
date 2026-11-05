@@ -21,7 +21,3 @@ interpretação escolhida pareça óbvia. Devolva o plano completo em texto puro
 invocação e **pare aqui, sem tocar em nenhum código de produção/teste** — é responsabilidade de
 quem te invocou (`/sdd-implement`) apresentar esse plano ao usuário via a própria
 `AskUserQuestion` e retomar você (`SendMessage`) com a aprovação antes que a Fase 2 comece.
-
-Já aconteceu de verdade de uma invocação isolada sem esse gate seguir em frente com a leitura mais
-conservadora do TRD e só reportar isso a posteriori no resumo final — funcionou por sorte (TRD
-inequívoco), mas não é o comportamento esperado.

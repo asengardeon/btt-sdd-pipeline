@@ -30,15 +30,12 @@
   - **"Quantas enumerações esta frase tem?"** Uma linha de plano de testes costuma ter **duas** — *o
     que* é coberto e *quais propriedades* são asseveradas. Trocar uma e deixar a outra **move** o
     defeito em vez de eliminá-lo, e o movimento é invisível porque a frase agora *parece* corrigida.
-    Já aconteceu de verdade: a contagem foi trocada por critério ("nos 6 estados" → "toda
-    renderização visível"), a reescrita estava certa, e o defeito seguinte entrou pelo segundo eixo —
-    duas mutações sobreviveram à suíte inteira (1644/1644 verdes), e uma terceira propriedade nem
-    constava do relatório.
   - **"Em quantos lugares este mesmo mecanismo está descrito?"** Rode `grep` pela afirmação antiga
     antes de fechar o achado, e substitua cada reaparição por referência ao lugar canônico em vez de
-    repetir a frase. Já aconteceu de um mecanismo estar descrito em **quatro** lugares (port no TRD,
-    docstring do port, docblock do provider, docblock da cópia) mais a célula de critério de outra
-    seção, e a correção acertar três — um `grep` acha o que nenhuma revisão de prosa acha.
+    repetir a frase. O mesmo mecanismo pode estar descrito em mais de um tipo de lugar ao mesmo tempo
+    (port no TRD, docstring do port, docblock do provider, docblock de uma cópia, célula de critério
+    de outra seção), e uma correção que não grepa cada um pode acertar a maioria e ainda deixar um de
+    fora — um `grep` acha o que nenhuma revisão de prosa acha.
 - [ ] **Nenhuma conclusão de "nenhum consumidor" sai de uma busca por uma única forma sintática.**
   A mesma operação se escreve de mais de um jeito na maioria das stacks. Antes de afirmar que nada
   consome uma operação, liste as formas em que ela pode estar escrita neste projeto. Depois busque
@@ -47,39 +44,29 @@
   mesmo `delete` de dois jeitos. A busca pela sintaxe do builder não vê o outro. Vale igual para
   update, insert, concessão de privilégio e nome de símbolo montado em tempo de execução. O risco
   é maior em revisão de arquitetura e de segurança. Ali "nenhum consumidor" é o que costuma
-  justificar revogar um privilégio, sem rede de segurança. Já aconteceu de verdade: `grep
-  deleteFrom` fundamentou uma premissa de "risco nulo" escrita num TRD. Um segundo agente repassou
-  a premissa ao usuário sem reverificar por conta própria. `grep -rni 'delete from'` achou em
-  seguida os dois adapters que apagavam por template literal.
+  justificar revogar um privilégio, sem rede de segurança.
 - [ ] **Nenhuma variável de ambiente é exportada com escopo amplo sem auditar todo leitor do mesmo
   nome.** Exportar para `$GITHUB_ENV` (ou equivalente) vale para todos os passos seguintes do job,
   não só para o consumidor que motivou a exportação. Antes de exportar, grepe o **nome exato** da
   variável em todo o pacote que o job executa. Confirme não só quem precisa dela, mas quem **mais**
   a lê — inclusive código que não parece ter relação com a mudança. O leitor perigoso é o que tem
   fallback silencioso (`process.env.X ?? PADRÃO`). Ele troca de comportamento sem erro, sem aviso e
-  sem falhar nenhum teste local. Já aconteceu de verdade: uma variável de URL base foi exportada
-  job-wide para um consumidor que nem a lia. Isso desviou toda a suíte de outra história de usuário
-  para um caminho de rede diferente. Foram ~80 falhas de `502 Bad Gateway`, descobertas só no
-  primeiro run real do job. O mecanismo de override só importava dentro do CI, então nenhuma
-  validação local pegava.
+  sem falhar nenhum teste local, porque o mecanismo de override só importa dentro do CI.
 - [ ] **Nenhum agente encerra numa branch de feature.** Todo agente que faz `git checkout`/
   `git switch` para uma branch de fatia (implementadores e revisores que commitam achados na
   branch do PR) confirma a branch atual (`git branch --show-current`) antes de finalizar e, se não
   for a branch base a partir da qual a branch da fatia foi criada (normalmente `main`), volta para
-  ela (`git checkout <branch base>`). Já causou dano real deixar o working directory na branch
-  errada (ex.: um `git pull origin main` rodado sem perceber a branch atual gerou um merge commit
-  espúrio).
+  ela (`git checkout <branch base>`). Terminar numa branch errada arrisca, por exemplo, que um
+  `git pull origin main` subsequente gere um merge commit espúrio sem ninguém notar o engano.
 - [ ] **Nenhum veredito agregado fica verde com uma sub-condição falhando.** Vale para item de
   checklist que agrega várias verificações (ex.: "proteção de `main` configurada", que reúne PR
   obrigatório, checks obrigatórios, `strict`, sem force-push, sem deleção, `enforce_admins`) e para
   o veredito de uma "área de revisão" que agrega vários achados. Ou o item vira ⚠️ e a
   sub-condição que falha entra como **achado**, ou cada sub-condição ganha a própria linha.
   Descrever a exceção em prosa ao lado de um ✅ é exatamente o modo de falha a evitar: **quem lê o
-  checklist não lê a prosa**, e a exceção atravessa rodadas. Já aconteceu de verdade: uma
-  sub-condição de proteção de branch desligada foi reportada como *estado*, dentro do parágrafo de
-  evidência de um item marcado ✅, em **7 ocorrências ao longo de 6 specs do mesmo projeto**, sempre
-  no mesmo item, e nunca como achado. O custo não é teórico — aquela sub-condição era a única
-  camada do pipeline que não depende de um agente obedecer.
+  checklist não lê a prosa**, e a exceção atravessa rodadas — particularmente grave quando a
+  sub-condição é proteção de branch, a única camada do pipeline que não depende de um agente
+  obedecer.
 - [ ] **Nenhum agente aprova/reprova o próprio trabalho.** Um agente implementador
   (`backend-developer`/`frontend-developer`, ou `sre` fazendo um ajuste pontual de infra) nunca
   escreve veredito em `code-review.md`/`ux-review.md`/`qa-report.md`/`security-review.md`/
@@ -139,13 +126,13 @@
   Nesse caso, o orquestrador acrescenta uma linha datada a `docs/PROJECT-CONVENTIONS.md` — criando o
   arquivo se não existir — em vez de repetir a frase no prompt de cada agente. O canal do prompt é o
   mais caro (repetido a cada invocação) e o mais frágil (desaparece quando alguém esquece, ou quando
-  a sessão muda). Já aconteceu de verdade: uma regra de processo emitida no meio de uma fatia foi
-  repassada manualmente **quatro vezes** (implementação, revisão de código, QA, segurança), e cada
-  agente a transcreveu no relatório como "instrução explícita do usuário nesta rodada" — a marca de
-  algo que chegou por prompt e não por documento, sem garantia nenhuma de chegar à fatia seguinte.
+  a sessão muda): quando o agente seguinte transcreve a regra no relatório como "instrução explícita
+  do usuário nesta rodada" em vez de referenciar o documento, é sinal de que ela chegou só por
+  prompt, sem garantia de chegar à fatia seguinte.
   Todos os agentes do pipeline leem esse arquivo como restrição que se sobrepõe ao padrão genérico
-  (`.claude/agents/*.md`, bloco de leitura obrigatória no topo), então uma linha ali substitui os quatro
-  repasses — e o agente passa a poder escrever "fora do escopo por `docs/PROJECT-CONVENTIONS.md`" em
+  (`.claude/agents/*.md`, bloco de leitura obrigatória no topo), então uma linha ali substitui os
+  repasses manuais a cada agente seguinte — e o agente passa a poder escrever "fora do escopo por
+  `docs/PROJECT-CONVENTIONS.md`" em
   vez de "por instrução do usuário nesta rodada": a diferença entre uma regra auditável e um boato
   repassado.
 - [ ] **Pergunta que um subagente isolado não conseguiu fazer é recolhida por quem o invocou, no
@@ -156,9 +143,7 @@
   etapa** (implementação, revisão de código, UX, QA, segurança, SRE) apresenta essas perguntas via
   sua própria `AskUserQuestion` antes de informar o resultado da etapa, e devolve ao relatório as
   que o usuário responder — como decisão registrada, não como pendência. As que ele não souber
-  responder agora continuam VALIDAR DEPOIS, aí legitimamente. Já aconteceu de perguntas binárias de
-  política e de comportamento — respondíveis em segundos — atravessarem QA e segurança inteiros
-  como dívida, porque só `sre` e os agentes de implementação tinham esse passo escrito.
+  responder agora continuam VALIDAR DEPOIS, aí legitimamente.
 - [ ] **Todo feedback real sobre o próprio plugin vira issue — em qualquer momento de qualquer
   sessão, não só no fim de uma fatia.** Quando o usuário dá um retorno direto sobre o plugin (algo
   que não funcionou como esperado, uma limitação real, uma sugestão concreta) ou você mesmo
@@ -181,26 +166,20 @@
   passo sempre roda em primeiro plano, bloqueando o turno até o resultado — nunca em background.**
   O harness considera o turno de um subagente "concluído" assim que ele para de emitir chamadas de
   ferramenta, mesmo que um processo real de build/teste ainda esteja rodando no sistema
-  operacional em background, fora do rastreamento que dispara notificação automática. Já aconteceu
-  de verdade: um `backend-developer` disparou `dotnet test`/`dotnet build` em background e encerrou
-  o próprio turno sem aguardar, duas vezes seguidas — o orquestrador recebeu "tarefa concluída"
-  quando na verdade era só o agente dizendo que ia esperar, sem ter esperado, e precisou monitorar
-  processos do sistema operacional manualmente para descobrir quando os testes de fato terminavam.
-  Vale para todo agente de implementação ou revisão deste pipeline (`backend-developer`,
+  operacional em background, fora do rastreamento que dispara notificação automática. Vale para
+  todo agente de implementação ou revisão deste pipeline (`backend-developer`,
   `frontend-developer`, `code-reviewer`, `ux-designer`, `qa-engineer`, `security-engineer`, `sre`)
   sempre que o
   comando decide o próximo passo da própria invocação — não é um caso a avaliar por demora
   esperada, mesmo um comando historicamente lento roda em primeiro plano até o fim.
 - [ ] **Merge de PR nunca é ação de um agente — risco conhecido de agentes autônomos com escrita
   em sistemas compartilhados.** Regra 5 de `CLAUDE.md` ("Fluxo de Git = GitHub Flow") e a linha
-  "Merge do PR" de `docs/GIT-WORKFLOW.md` já estabelecem que o merge é decisão do usuário; este
-  bullet existe porque, numa sessão real, essa regra em texto livre não foi suficiente — o agente
-  `sre`, instruído explicitamente a não mergear (no prompt de invocação e no próprio plano que ele
-  mesmo documentou), mergeou um PR sozinho de qualquer forma, ativando uma configuração quebrada
-  que causou um outage de produção. Nenhum agente com acesso a `Bash`/`gh` (implementador ou
-  revisor de qualquer etapa) executa `gh pr merge` ou equivalente, mesmo que pareça necessário
-  para "completar" a tarefa da rodada — isso vale mesmo quando o mesmo agente implementou o ajuste
-  que está sendo revisado. A única exceção deliberada e documentada é a skill `/repo-issues`
+  "Merge do PR" de `docs/GIT-WORKFLOW.md` já estabelecem que o merge é decisão do usuário; instrução
+  em texto livre não basta — instruir o agente explicitamente no prompt de invocação não garante que
+  ele não mergeie sozinho, com o risco de ativar uma configuração quebrada e causar um outage de
+  produção. Nenhum agente com acesso a `Bash`/`gh` (implementador ou revisor de qualquer etapa)
+  executa `gh pr merge` ou equivalente, mesmo que pareça necessário para "completar" a tarefa da
+  rodada — isso vale mesmo quando o mesmo agente implementou o ajuste que está sendo revisado. A única exceção deliberada e documentada é a skill `/repo-issues`
   (manutenção deste próprio repositório sobre si mesmo), que mergeia os PRs que ela mesma abre só
   depois de aprovação explícita do lote pelo usuário — nunca um padrão a copiar para as etapas do
   pipeline SDD.
@@ -214,9 +193,7 @@
   anterior pode pular direto para o Agent tool, confiando na própria memória do processo em vez de
   reinvocar a skill (proibido explicitamente, ver `CLAUDE.md`). O agente é a última linha de
   defesa quando isso acontece mesmo assim, e recusar é o comportamento esperado de qualquer um dos
-  cinco, não só de quem por acaso notou primeiro. Já aconteceu de verdade: um `security-engineer`
-  foi invocado fora de ordem (QA ainda não tinha rodado) direto via Agent tool, e recusou
-  corretamente — o custo foi só uma invocação gasta à toa, sem dano a nenhum artefato.
+  cinco, não só de quem por acaso notou primeiro.
 - [ ] **Agente de revisão nunca invoca outro agente/subagente, e nunca executa tarefas reservadas
   ao orquestrador — mesmo tendo acesso técnico às ferramentas para fazer os dois.**
   `code-reviewer`, `ux-designer`, `qa-engineer`, `security-engineer` e `sre` têm acesso a todas as
@@ -226,12 +203,7 @@
   que iria lá: editar `timing-log.md`, e editar a seção "Log de revisões"/narrativa do TRD. Um
   agente que se depara com uma tarefa que parece grande demais para uma invocação devolve essa
   constatação ao orquestrador — nunca resolve delegando para um agente filho próprio, e nunca se
-  autodenomina "o orquestrador desta skill" no relatório final. Já aconteceu de verdade: uma
-  invocação de `code-reviewer` encadeou um agente próprio num worktree/branch separados e, depois
-  de receber o resultado, editou a seção do TRD e o `timing-log.md` por conta própria — o conteúdo
-  produzido se confirmou correto em toda verificação independente feita depois, mas o *mecanismo*
-  é uma violação de fronteira de responsabilidade: ninguém pediu, e o orquestrador real só soube
-  ao ler o relatório final.
+  autodenomina "o orquestrador desta skill" no relatório final.
 - [ ] **Toda versão de formato nova de um artefato gerado pelo pipeline que quebra a estrutura do
   arquivo exige, no mesmo commit/PR, a regra de migração correspondente — nunca fica para
   depois.** Quem aumenta `<!-- sdd-format-version: N -->` num template de

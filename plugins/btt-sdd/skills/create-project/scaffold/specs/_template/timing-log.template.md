@@ -28,9 +28,7 @@ e acrescente uma nota parentética explícita dizendo o que ficou de fora:
 Sem essa distinção, a linha registra o tempo de resposta do usuário como se fosse custo do
 pipeline, e a retrospectiva que lê este arquivo conclui que a etapa foi anormalmente lenta quando
 não foi. A nota parentética não é opcional quando a exclusão acontece: quem ler o log depois
-precisa entender a diferença sem adivinhar. Já aconteceu de verdade: um gap de aprovação de mais de
-10h teria virado uma linha "Implementação | 10h+" se a instrução tivesse sido seguida como
-wall-clock puro.
+precisa entender a diferença sem adivinhar.
 
 O inverso também vale: **nunca "limpe" um número medido**. Se a duração foi de fato dominada por
 trabalho lento (ou por uma espera que o próprio agente escolheu fazer), registre o valor medido e
@@ -41,9 +39,9 @@ deixar o outlier sem explicação.
 registrá-lo.** Em agente retomado, o `duration_ms` da notificação de conclusão **pode** ser
 cumulativo desde a criação do agente, e não o da invocação isolada — e o comportamento observado é
 inconsistente, tanto entre campos (`tool_uses` e `subagent_tokens` tendem a crescer entre rodadas)
-quanto entre invocações (num caso real, três rodadas do mesmo agente reportaram 48m → 83m → 12m,
-com a segunda não cabendo no wall-clock disponível depois da primeira; noutra spec, três rodadas do
-mesmo agente tiveram durações decrescentes, incompatíveis com cumulativo). Se o número não couber
+quanto entre invocações (três rodadas do mesmo agente podem reportar 48m → 83m → 12m, com a
+segunda não cabendo no wall-clock disponível depois da primeira, ou reportar durações decrescentes,
+também incompatíveis com cumulativo). Se o número não couber
 depois da rodada anterior, registre a diferença que o relógio sustenta e **diga na própria linha**
 que o valor reportado é ambíguo e não deve ser somado ingenuamente às outras rodadas daquele
 agente:
@@ -55,8 +53,8 @@ agente:
 **A assinatura de detecção é a monotonia entre rodadas — e, detectada, o número a registrar é a
 diferença.** Contador cumulativo e contador por invocação se distinguem sem precisar do relógio:
 compare o mesmo campo entre rodadas sucessivas do mesmo agente. Se ele **cresce monotonicamente**
-enquanto o trabalho de cada rodada oscila, é total de vida, não custo da rodada. Já aconteceu de
-verdade: os `subagent_tokens` de um `frontend-developer` ao longo de 8 invocações foram
+enquanto o trabalho de cada rodada oscila, é total de vida, não custo da rodada. Um exemplo real: os
+`subagent_tokens` de um `frontend-developer` ao longo de 8 invocações foram
 `288.900 → 380.204 → 437.478 → 527.579 → 621.760 → 648.938 → 719.348 → 761.011` — monotônicos —
 com os usos de ferramenta oscilando (150, 56, 30, 52, 66, 21, 42, 31). Nesse caso, **registre a
 diferença entre o contador desta notificação e o da notificação anterior do mesmo agente**
@@ -83,17 +81,12 @@ oposto do que os dados mostram.
 **Etapa com trabalho real e nenhuma linha é pior que uma linha imperfeita.** Toda etapa desta fatia
 aparece no log, inclusive quando o trabalho de orquestrador nela foi zero — aí a linha registra
 `0m` com a justificativa, em vez de não existir. A ausência de linha é indistinguível de "não
-medido", e a série passa a comparar coisas diferentes: já aconteceu de o SRE de uma fatia ter só a
-linha do agente (47m32s) enquanto a rodada roteava 6 pendências ao orquestrador, entregava um texto
-de issue para ele criar, e conduzia a retrospectiva da fatia — contra a fatia anterior, que tinha a
-linha equivalente de ~15m. A série comparou "SRE F-1 = 29m27s + 15m" com "SRE F-2 = 47m32s + 0".
+medido", e a série passa a comparar coisas diferentes.
 
 **Nenhuma linha nomeia duas etapas na coluna `Etapa`.** Quando duas etapas rodam em paralelo — o
 que é legítimo —, são **duas linhas com o mesmo horário de início**, exatamente como
 `/btt-sdd:implement`, passo 4d, já manda fazer para as duas trilhas de uma feature full-stack. Uma
-linha "Segurança + code review" deixa uma das duas etapas com zero minuto atribuível: já aconteceu
-de a segurança de uma fatia ficar sem nenhum tempo de orquestrador registrado, apesar de 2
-perguntas de decisão intermediadas e de uma convenção gravada em `docs/PROJECT-CONVENTIONS.md`.
+linha "Segurança + code review" deixa uma das duas etapas com zero minuto atribuível.
 
 **Por que os três defeitos importam juntos:** contador cumulativo, etapa sem linha e linha agregada
 empurram todos na **mesma direção** — superestimam as etapas de agente e subestimam as do
@@ -121,10 +114,11 @@ orquestra, sem invocar agente nenhum:
 
 **Por que isso não é burocracia:** a retrospectiva de fatia lê este arquivo para achar etapas
 anormalmente lentas. Sem essas linhas, ela lê uma série que **subestima** sistematicamente as
-etapas conduzidas pelo orquestrador e **superestima** as conduzidas por agente. Já aconteceu de uma
-etapa de PRD com 13m30s de agente ter ~23 min de trabalho de orquestrador invisível no log — duas
-rodadas de `AskUserQuestion` com 7 decisões de produto e uma investigação que **reescreveu a
-motivação da spec**, ou seja, a atividade de maior valor da etapa, sem linha nenhuma.
+etapas conduzidas pelo orquestrador e **superestima** as conduzidas por agente. O desvio pode
+superar o próprio trabalho do agente: numa etapa de PRD com 13m30s de agente, houve ~23 min de
+trabalho de orquestrador invisível no log — duas rodadas de `AskUserQuestion` com 7 decisões de
+produto e uma investigação que **reescreveu a motivação da spec**, ou seja, a atividade de maior
+valor da etapa, sem linha nenhuma.
 
 ## A coluna "Modelo": qual tier pagou por esta invocação
 

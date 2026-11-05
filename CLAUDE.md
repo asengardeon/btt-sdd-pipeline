@@ -255,8 +255,8 @@ em `asengardeon/btt-sdd-pipeline` assim que fica claro, não só quando uma fati
   de verificação manual. Inclui
   `docs/WRITING-STYLE.md`: as regras da **ASD-STE100** adaptadas ao idioma do artefato (uma ideia
   por frase, limite de palavras, voz ativa, um termo por conceito), com os itens verificáveis
-  cobrados pelo gate transversal `docs/gates/escrita.md` — e o limite explícito de que frase longa
-  se divide, fato nunca se apaga. Inclui `docs/GLOSSARY.md` (condicional): o termo canônico de cada
+  cobrados pelo gate transversal `docs/gates/escrita.md` — e a regra de que instrução é condição→
+  ação, nunca o relato do incidente que a originou. Inclui `docs/GLOSSARY.md` (condicional): o termo canônico de cada
   conceito deste projeto, que nasce na primeira colisão confirmada e é consolidado pelo
   `tech-writer`. Inclui `docs/TOOLING.md`: ferramentas recomendadas para economia de tokens — hoje
   só [rtk](https://github.com/rtk-ai/rtk), que comprime a saída de comandos de shell antes de

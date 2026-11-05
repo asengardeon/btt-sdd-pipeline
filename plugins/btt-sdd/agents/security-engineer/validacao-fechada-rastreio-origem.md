@@ -12,9 +12,4 @@ que acontece quando ele diverge do que a validação de entrada já esperava?".
 Simetricamente, toda vez que a correção introduz um novo caminho de exceção (`throw`) sobre uma
 entrada que pode legitimamente variar, confirme que existe um `catch` real no caminho de chamada
 antes de aprovar — um `throw` sem `catch` em produção não é fail-closed seguro, é erro não
-classificado (ADR 0005, quando este projeto tiver um ADR equivalente).
-
-Já aconteceu de verdade: a correção usava `getClientMimeType()` (header forjável pelo cliente) em
-vez de `getMimeType()` (detecção por conteúdo), e a exceção do `match` fechado nunca era capturada
-em nenhum ponto da cadeia, produzindo um `500` não controlado em vez do `422` esperado (issue
-#495, `asengardeon/btt-sdd-pipeline`).
+classificado (ADR 0005, quando este projeto tiver um ADR equivalente) (issue #495).

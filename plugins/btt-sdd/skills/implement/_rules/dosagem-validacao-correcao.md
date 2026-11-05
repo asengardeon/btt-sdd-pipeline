@@ -13,14 +13,12 @@ escopar, o relatório da rodada declara explicitamente o que foi rodado localmen
 delegado ao CI, e por quê — a omissão dessa declaração é que transforma escopar em atalho
 silencioso.
 
-Já aconteceu de verdade: uma rodada de correção que mudou **3 `InlineData` num arquivo de teste e
-um comentário**, zero linhas de comportamento, foi a etapa mais longa da fatia inteira (41m14s,
-mais que a implementação) — gasta rodando duas vezes uma suíte de integração com navegador real
-que a correção não podia afetar, ambas vermelhas por flakiness de ambiente. Na mesma fatia, os
-mesmos testes passaram verdes de primeira nos dois runs de CI em runner dedicado, sem rerun: em
-ambiente de desenvolvimento contendido, o CI é o sinal **mais** confiável, não menos. Isso não vale
-como desculpa para pular validação de uma correção que mexe em produção — ali a suíte completa
-local continua obrigatória antes de empurrar para o CI.
+Em ambiente de desenvolvimento local contendido, uma suíte de integração com navegador real pode
+ficar vermelha por flakiness do próprio ambiente mesmo quando a correção não afeta o comportamento
+testado, enquanto o mesmo teste passa verde de primeira no CI, em runner dedicado, sem rerun: nesse
+cenário o CI é o sinal **mais** confiável, não menos. Isso não vale como desculpa para pular
+validação de uma correção que mexe em produção — ali a suíte completa local continua obrigatória
+antes de empurrar para o CI.
 
 **E essa suíte completa obrigatória é a da trilha afetada, nunca a das duas.** Numa fatia
 full-stack, uma correção que toca só `src/` exige a suíte completa de backend; a de frontend — com

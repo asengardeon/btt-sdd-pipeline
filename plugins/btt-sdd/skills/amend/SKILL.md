@@ -39,11 +39,7 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    emenda disparada logo depois, sem essa confirmação, edita o artefato em `main`, não na branch da
    fatia (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree", bloco "Confirme sempre o
    branch atual..."). Se não for a branch esperada, `git checkout <branch-da-fatia>` antes de
-   continuar. Já aconteceu de verdade: uma emenda editou 7 seções do TRD em `main` local depois de
-   uma rodada de `ux-review`; o erro só foi percebido porque a reversão de um campo via script não
-   bateu com o esperado — nada tinha sido commitado ainda, então o trabalho foi descartado
-   (`git checkout -- <arquivo>`) e refeito na branch correta sem dano (issue #468,
-   `asengardeon/btt-sdd-pipeline`).
+   continuar (issue #468).
 
 2. Edite o artefato **in-place** com a mudança pedida — nunca gere um novo arquivo nem reescreva o
    documento inteiro do zero (no formato split, isso significa editar só o arquivo-filho certo do
@@ -82,10 +78,10 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
       **seção 13** (`tasks.md` no formato split).
 
    Não é etapa nova: é um parágrafo de checklist no passo que já bumpa a revisão. O custo de não
-   fazer não é teórico — numa fatia, **4 dos 12 achados** de code review eram higiene documental do
-   TRD, e a trilha de revisão (1h43m somando revisão, correção e reverificação) saiu mais cara que a
-   própria implementação (1h21m). Um dos achados era da mesma classe de outro da fatia anterior, e
-   tinha potencial de contaminar uma fatia futura que ainda não tinha começado.
+   fazer não é teórico: higiene documental do TRD ignorada pode responder por boa parte dos achados
+   de uma rodada de code review, e o ciclo de achado, correção e reverificação pode custar mais
+   tempo que a própria implementação — e um achado dessa classe, recorrente entre fatias, tem
+   potencial de contaminar uma fatia futura ainda não iniciada.
 
 3b. **Se a emenda reescreve uma frase que descreve o *mecanismo* pelo qual uma garantia é obtida**
    (e não o critério que tem de ser verdade), responda as duas perguntas de
@@ -96,8 +92,7 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
       defeito em vez de eliminá-lo, e a frase passa a *parecer* corrigida.
    2. **Em quantos lugares este mesmo mecanismo está descrito?** `grep` pela afirmação antiga no
       repositório inteiro (artefatos de spec, docstrings, docblocks, ADRs) e substitua cada
-      reaparição por referência ao lugar canônico, em vez de repetir a frase corrigida. Já aconteceu
-      de um mecanismo estar em quatro lugares e a correção acertar três.
+      reaparição por referência ao lugar canônico, em vez de repetir a frase corrigida.
 
    A classe mais exposta é a seção 11 do TRD (plano de testes): seu conteúdo **é** mecanismo por
    definição, e mecanismo é o que cada rodada de correção troca. Quando possível, troque a frase de

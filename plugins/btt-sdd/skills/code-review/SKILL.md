@@ -11,10 +11,9 @@ de software sênior, entre a implementação e o QA.
 **Sempre passe por esta skill — nunca invoque o agente `code-reviewer` diretamente via Agent tool**
 (diferente da etapa 3, onde invocar `backend-developer`/`frontend-developer` direto é o padrão
 correto). Esta skill carrega o **roteamento da etapa seguinte** (passo 5: etapa 4b ou QA, conforme
-o diff da fatia), que o agente sozinho não faz — e o hábito de pular a skill nas etapas 4-7 já
-causou passos de outras skills de revisão (`/btt-sdd:sre`) serem pulados silenciosamente numa sessão
-real, além de uma fatia inteira atravessar o pipeline sem a etapa 4b — ver `CLAUDE.md`, seção do
-pipeline.
+o diff da fatia), que o agente sozinho não faz: pular a skill nas etapas 4-7 pula também os passos que outras skills de
+revisão (`/btt-sdd:sre`) carregam, inclusive deixar uma fatia inteira atravessar o pipeline sem a
+etapa 4b — ver `CLAUDE.md`, seção do pipeline.
 
 **Antes de qualquer coisa, leia `docs/SKILL-PREAMBLE.md`** — onde ficam os docs de governança
 deste pipeline e de onde vêm os templates de `specs/_template/` (nenhum dos dois vive dentro do
@@ -62,11 +61,7 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    checagem do `/btt-sdd:implement` roda uma vez, no momento em que o PR abre; se uma tarefa for
    acrescentada à fatia **depois** disso (ex.: um roteiro e2e retroativo que o próprio
    `code-reviewer` acabaria notando como lacuna), a condição "é a última fatia" pode não ter
-   mudado, mas o sinal pode nunca ter sido verificado de novo. Já aconteceu de verdade: o
-   `code-reviewer` notou a ausência de uma tarefa de e2e de ponta a ponta na própria rodada dele,
-   mas o sinal só foi aplicado depois dessa rodada já ter revisado a fatia inteira sem o job real
-   ter rodado nenhuma vez — a 3ª ocorrência confirmada do mesmo padrão (issue #528,
-   `asengardeon/btt-sdd-pipeline`).
+   mudado, mas o sinal pode nunca ter sido verificado de novo (issue #528).
 3. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 3b para
    registrar a duração desta invocação. Invoque o agente `code-reviewer` (Agent tool,
    `subagent_type: "code-reviewer"`) passando o caminho do TRD e o PR/branch da feature, e
@@ -85,15 +80,12 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    procedência, indistinguível de um fato do desenho — e quem recebe não tem como saber que precisa
    reconferir. Rotule assim: *"medido pelo `security-engineer` lendo `pull_request.base.sha` —
    **reconfira se sua conclusão depender disso**"*. Vale também para medição **sua**, de
-   orquestrador: diga o que você leu para chegar nela. Já aconteceu de verdade, duas vezes na mesma
-   fatia: (a) um achado de segurança afirmava que o pulo de um job de CI vinha "inteiramente" de uma
-   condição, com base em ler `pull_request.base.sha`; repassado como fato medido, o `sre` reconferiu
-   por iniciativa própria e descobriu que em evento `synchronize` o `base` efetivo é
-   `github.event.before` — a causa variava de run para run, e **o defeito era pior do que o
-   descrito**; (b) o orquestrador afirmou "1 módulo do Workbox importado", verdade no fonte e errado
-   sobre o artefato construído (que tinha marcadores de 4), e o `security-engineer` corrigiu. Nos
-   dois casos o resultado foi bom **por iniciativa do agente que recebeu**, não por instrução — e
-   uma medição errada herdada custa mais que uma remedição.
+   orquestrador: diga o que você leu para chegar nela — uma medição errada herdada custa mais que
+   uma remedição. Dois riscos concretos a rotular: ler metadado de evento de CI (ex.:
+   `pull_request.base.sha`) pode não bastar — em evento `synchronize`, o `base` efetivo é
+   `github.event.before`, que pode variar de run para run; e uma contagem sobre o código-fonte (ex.:
+   módulos importados) pode divergir da contagem sobre o artefato construído — confira o artefato,
+   não só o fonte, quando a conclusão depender do número real.
 3b. **Registre a duração desta invocação em `specs/<slug>/timing-log.md`** (crie a partir de
    `specs/_template/timing-log.template.md` se ainda não existir): uma linha com o horário do
    passo 3, o horário atual, e a diferença calculada (etapa "Code review", agente
@@ -133,10 +125,7 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    usuário no campo `Escalonamento` da entrada correspondente neste mesmo turno** — não só no
    artefato da rodada. O gate instrui a *ler* o campo antes de ofertar de novo, mas sem dono para o
    preenchimento ele acumula `sem resposta` em entradas cuja resposta já foi dada, e a rodada
-   seguinte repete a oferta que o campo existe para evitar. Já aconteceu de uma entrada ter
-   `Escalonamento: sem resposta` com a decisão do usuário registrada em prosa no corpo do artefato
-   da rodada — terceira vez na mesma spec que uma decisão existia em prosa e não no campo
-   estruturado que a consome.
+   seguinte repete a oferta que o campo existe para evitar.
 3b. **Integre o commit do agente na branch da fatia, localmente, e não dê push aqui**
    (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia: o CI roda uma vez, não uma vez por
    artefato de revisão"). O agente commitou o artefato e informou a branch e o SHA. Se ele rodou em
@@ -173,13 +162,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 
    **Por que este roteamento está escrito aqui, e não só no doc de cadência.** Um gate condicional
    cujo roteamento não está escrito no caminho que o orquestrador percorre é um gate que depende de
-   memória. Já aconteceu de verdade: uma fatia com superfície de UI (a marca do app virou link,
-   +31/-4 num componente de topbar) **pulou a 4b inteira** e foi mergeada em `main` sem nenhuma
-   revisão de usabilidade, numa spec onde a etapa já existia havia semanas — descoberto só na fatia
-   seguinte, pelo próprio `ux-designer`. E quando a 4b finalmente rodou, achou um defeito da classe
-   que **só** ela encontra (um desfecho de instalação descartado, deixando o card idêntico depois de
-   uma instalação bem-sucedida e respondendo "não foi possível" a quem acabou de instalar). Sob a
-   cadência atual o risco muda de forma, não desaparece: a 4b não pode **deixar de existir na spec**
+   memória. Sob a cadência atual o risco muda de forma, não desaparece: a 4b não pode **deixar de
+   existir na spec**
    — se a spec tem superfície de UI, ela roda na última fatia, e a decisão de não rodar é registrada
    em `specs/<slug>/ux-review.md` sob o heading padronizado `## Decisão: UX review pulado
    (justificado)`, nunca simplesmente omitida (`docs/gates/ux.md`).
@@ -190,11 +174,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    código faz o que devia"; quem fecha "isso resolve o problema de usabilidade real" é a etapa que
    levantou o achado. É a regra simétrica do passo 6b de `skills/ux-review/SKILL.md`
    (que manda a correção de UX voltar para cá quando toca produção) — e sem ela um achado
-   bloqueante de usabilidade fecha só com evidência técnica. Já aconteceu de verdade: o pipeline
-   seguiu direto para `/btt-sdd:qa` depois de uma reverificação técnica, `code-review.md` atribuiu a
-   aprovação a uma seção de `ux-review.md` que não existia, e foi o `qa-engineer` — não o
-   orquestrador — que percebeu a lacuna. Detalhe em
-   `skills/ux-review/SKILL.md`, passo 6c.
+   bloqueante de usabilidade fecha só com evidência técnica (detalhe em
+   `skills/ux-review/SKILL.md`, passo 6c).
 
 ## Quando usar sem o agente
 

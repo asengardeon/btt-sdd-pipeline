@@ -33,10 +33,9 @@
   **não** conhece. Achado bloqueante quando a resposta pode sair sem pista alguma — `fields: []`
   num `422` que de fato recusou algo é indepurável de fora. O defeito é estrutural: um campo
   `.optional()` sem o `.nullable()` correspondente, recebendo `null`, não quebra compilação nem
-  reprova teste; só produz uma resposta vazia. Já custou uma rodada de correção inteira, com duas
-  hipóteses descartadas por leitura de código antes de alguém capturar o corpo real da resposta
-  (`agents/backend-developer.md`, "Regras inegociáveis de código", regra sobre tradutor de
-  erro).
+  reprova teste; só produz uma resposta vazia. Leitura de código sozinha não identifica esse
+  defeito — é preciso capturar o corpo real da resposta (`agents/backend-developer.md`, "Regras
+  inegociáveis de código", regra sobre tradutor de erro).
 - [ ] Se a fatia tem trilha de frontend, ou gera qualquer outro artefato de build/empacotamento
   distinto do código-fonte, o comando de build/empacotamento real de produção (`docs/STACK.md`) foi
   verificado (reaproveitado do arquivo de cobertura da fatia ou reexecutado nesta rodada) antes de
@@ -55,9 +54,7 @@
   seguinte: com superfície, a próxima é a 4b (`/btt-sdd:ux-review`); sem, é o QA, e a decisão de
   pular
   fica registrada sob o heading padronizado de `ux-review.md`. A informação é de quem leu o diff —
-  declará-la aqui deixa a decisão auditável em vez de implícita. Já aconteceu de uma fatia com
-  superfície de UI pular a 4b inteira e ser mergeada em `main` sem revisão de usabilidade, numa
-  spec onde a etapa já existia.
+  declará-la aqui deixa a decisão auditável em vez de implícita.
 - [ ] O artefato de revisão existe (`specs/<slug>/reviews/code-review/` no formato novo,
   `specs/<slug>/code-review.md` no legado — `docs/MICRO-CONTEXT.md`, seção 2), referencia o PR e
   a fatia desta rodada, e cada área de revisão tem veredito com evidência (arquivo/linha) ou "sem

@@ -38,13 +38,7 @@
   **não cobre este caso**: o que avançou foi a própria branch da fatia, depois do carimbo. Isso
   acontece no caminho normal, não num desvio — a etapa 4b roda depois da 4 e **gera código de
   produção**, então correções de achados de UX aceitas pelo usuário atravessam duas etapas com um
-  carimbo que já não corresponde ao código. Já aconteceu de verdade: 5 arquivos de produção e 824
-  inserções depois do sha aprovado, dois commits de correção de UX sem rodada nenhuma de revisão —
-  a rodada escopada ao delta **reprovou**, achando um bloqueante (um `useEffect` dependendo do
-  **valor** e não da **transição**, roubando o foco a cada volta à tela) e um 5º sinal de plataforma
-  sem nenhuma menção em `specs/`, `docs/` ou código. Foi pego só porque o `qa-engineer` inventou a
-  checagem por iniciativa própria — ela não estava escrita em lugar nenhum. O custo da checagem é
-  um comando.
+  carimbo que já não corresponde ao código. O custo da checagem é um comando.
 - [ ] Superfície de ataque/fronteiras de confiança identificadas para a feature.
 - [ ] Cada categoria do OWASP Top 10 tem avaliação (aplicável com achado, ou não aplicável com
   justificativa) — nunca em branco.
@@ -56,8 +50,9 @@
   equivalente
   não atribuível"). Inclui o caminho menos visível: a **instrução passada a um agente**, que não é
   arquivo nenhum e é por onde o dado real costuma entrar. Não presuma que um identificador bem
-  formado num teste é placeholder sintético — confira o dígito verificador: já aconteceu de verdade,
-  e dados reais do operador alcançaram seis arquivos, dois de código de produção.
+  formado num teste é placeholder sintético — confira o dígito verificador: sem essa checagem, um
+  identificador real pode alcançar vários arquivos do repositório, inclusive código de produção,
+  antes de ser notado.
 - [ ] Nenhum segredo em texto claro na aplicação (código, config, log).
 - [ ] Autenticação/autorização revisada em todo caminho relevante, quando a feature tem noção de
   identidade/permissão.

@@ -135,11 +135,10 @@ normalmente.
 do achado.** Quando a correção acrescenta um `throw`, um `return` de erro, ou qualquer caminho de
 falha que não existia, confirme que ela não reintroduz — numa forma vizinha — a classe de defeito
 que a fatia (ou a spec) existe para eliminar. A pergunta adicional é **"se isto disparar, o
-resultado é melhor ou pior que a violação que ele guarda?"**. Já aconteceu de verdade que uma
-ressalva legítima sua foi fechada com um `throw` **dentro do mesmo método de renderização de
-falha** que a fatia anterior tinha endurecido justamente para impedir que uma exceção ali
-derrubasse o lote inteiro — passou pelo desenvolvedor e pelo revisor porque ambos olhavam para "a
-categoria fica sem declaração?", não para "o que acontece se isto disparar?".
+resultado é melhor ou pior que a violação que ele guarda?"** — sobretudo quando o `throw` novo
+entra num método de renderização de falha que uma fatia anterior já tinha endurecido justamente
+para impedir que uma exceção ali derrubasse o lote inteiro: a pergunta errada ("a categoria fica
+sem declaração?") não substitui a pergunta certa ("o que acontece se isto disparar?").
 
 ## Áreas de revisão
 

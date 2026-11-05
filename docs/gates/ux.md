@@ -26,13 +26,7 @@
   **não cobre este caso**: o que avançou foi a própria branch da fatia, depois do carimbo. Isso
   acontece no caminho normal, não num desvio — a etapa 4b roda depois da 4 e **gera código de
   produção**, então correções de achados de UX aceitas pelo usuário atravessam duas etapas com um
-  carimbo que já não corresponde ao código. Já aconteceu de verdade: 5 arquivos de produção e 824
-  inserções depois do sha aprovado, dois commits de correção de UX sem rodada nenhuma de revisão —
-  a rodada escopada ao delta **reprovou**, achando um bloqueante (um `useEffect` dependendo do
-  **valor** e não da **transição**, roubando o foco a cada volta à tela) e um 5º sinal de plataforma
-  sem nenhuma menção em `specs/`, `docs/` ou código. Foi pego só porque o `qa-engineer` inventou a
-  checagem por iniciativa própria — ela não estava escrita em lugar nenhum. O custo da checagem é
-  um comando.
+  carimbo que já não corresponde ao código. O custo da checagem é um comando.
 - [ ] Cada uma das 7 áreas de revisão (consistência e padrões; visibilidade do estado do sistema e
   prevenção de erro; controle/liberdade do usuário e navegabilidade; consciência de estado/ciclo
   de vida do domínio; robustez de conteúdo gerado pelo usuário; hierarquia de informação; alvo de
@@ -47,10 +41,9 @@
   com a toolchain do projeto e injetada no documento** antes da consulta; sem isso, a área é
   declarada **não medida**, não "sem achados". Isso não é redundante com o item de método acima:
   ali o problema é leitura estática apresentada como verificação ao vivo, aqui o método **era**
-  execução instrumentada e ainda assim mediu o documento errado. Já aconteceu de `empty:hidden` (que
-  compila para `display:none`) fazer `getByRole('status')` devolver **0** enquanto a região estava
-  vazia, enquanto quatro artefatos afirmavam que ela era "sempre montada" e a suíte ficava verde —
-  três etapas de revisão passaram por isso sem pegar nada por leitura.
+  execução instrumentada e ainda assim mediu o documento errado: `empty:hidden` compila para
+  `display:none`, então `getByRole('status')` devolve **0** mesmo com a região vazia e a asserção
+  dizendo "sempre montada" — sem a regra de CSS aplicada, a suíte passa apesar disso.
 - [ ] **Nenhum achado desta etapa fica fechado só com evidência técnica.** Quando uma correção de
   achado bloqueante (ou de ressalva que o usuário mandou corrigir) levantado **por esta etapa** é
   reverificada pelo `code-reviewer` escopado ao delta, essa rodada técnica não fecha o achado: o
@@ -59,12 +52,7 @@
   `code-reviewer` confirma "o código faz o que devia"; "isso resolve o problema de usabilidade
   real" é veredito desta etapa. É a regra simétrica da que já existe no sentido inverso (correção
   de UX que toca produção volta para code review escopado) — sem ela, a etapa que existe para
-  pegar essa classe de defeito carimba o fechamento sem nunca ter olhado o resultado. Já aconteceu
-  de verdade: um achado bloqueante de navegação (edição pendente descartada em silêncio) foi
-  corrigido com `useBlocker`, reverificado só tecnicamente, e o pipeline seguiu para `/sdd-qa` —
-  `code-review.md` atribuiu a aprovação a uma seção de `ux-review.md` que **não existia**. Foi o
-  `qa-engineer`, por iniciativa própria, que conferiu via `git log` e registrou a lacuna como
-  achado de processo, forçando uma rodada extra fora do fluxo.
+  pegar essa classe de defeito carimba o fechamento sem nunca ter olhado o resultado.
 - [ ] O artefato de UX existe (`specs/<slug>/reviews/ux-review/` no formato novo,
   `specs/<slug>/ux-review.md` no legado — `docs/MICRO-CONTEXT.md`, seção 2), referencia o PR e a
   fatia desta rodada.

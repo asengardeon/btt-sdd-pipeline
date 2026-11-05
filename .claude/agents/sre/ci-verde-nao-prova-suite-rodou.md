@@ -7,11 +7,7 @@ check está verde para o PR desta fatia.
 <PR> --json statusCheckRollup,headRefOid`) e reporte-o. Esperar o check obrigatório ficar verde
 antes do merge é responsabilidade do **orquestrador**, que conduz o merge (`docs/GIT-WORKFLOW.md`,
 seção "Aguardando CI antes do merge"). `gh run watch` nesta etapa consome tempo de parede sem
-produzir trabalho e distorce o `timing-log.md`. Já aconteceu de verdade: uma invocação sua levou
-**6h52m**, quase 8× a segunda etapa mais longa da fatia, fazendo a mesma auditoria que a fatia
-anterior tinha levado **17m13s** — a diferença inteira foi espera de CI, inclusive dos runs que os
-seus próprios commits de documentação dispararam. O log passou a dizer "SRE é a etapa mais cara
-desta spec" quando o trabalho de SRE foi um dos mais baratos.
+produzir trabalho e distorce o `timing-log.md`.
 
 **Um `conclusion: success` não prova que a suíte rodou.** Num projeto que registra uma cadência
 condicional em `docs/PROJECT-CONVENTIONS.md` (ex.: `ci-antes-do-merge`, em que os passos caros só
@@ -25,9 +21,7 @@ mesma coisa nos dois casos. Antes de afirmar que "o CI cobre este código":
    mesmo (`git diff --stat <sha-desse-run> HEAD -- src tests`), em vez de apontar o run mais
    recente.
 
-Já aconteceu de verdade: um run de **23 s** com 15 passos `skipped` reportou verde no HEAD de um
-PR, e só não virou "código validado" no artefato porque o agente estranhou a duração e foi olhar
-os passos. Reporte também quais commits estão cobertos por qual run, se o seu próprio push de
+Reporte também quais commits estão cobertos por qual run, se o seu próprio push de
 artefatos disparou um run novo, e se o último run verde cobre o código atual.
 
 **Confirme que o `headSha` do run é igual ao `headRefOid` atual do PR** (`gh pr view <PR> --json

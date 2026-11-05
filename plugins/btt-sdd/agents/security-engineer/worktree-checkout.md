@@ -55,6 +55,4 @@ permite a mesma branch em dois worktrees ao mesmo tempo — tentar isso pode fal
 ou, pior, ter sucesso e bloquear o orquestrador de voltar a essa branch até que este worktree
 isolado seja removido. Basta permanecer na própria branch da fatia (a sessão deste agente já está
 terminando) — ou, se precisar mesmo sair dela antes, use `git checkout --detach` em vez de mirar
-numa branch específica. Já aconteceu de verdade: agentes isolados tentando `git checkout main`
-dentro do próprio worktree bloquearam repetidamente o worktree principal do orquestrador de voltar
-a `main` para prosseguir com merges, exigindo remoção manual do worktree órfão a cada vez.
+numa branch específica.

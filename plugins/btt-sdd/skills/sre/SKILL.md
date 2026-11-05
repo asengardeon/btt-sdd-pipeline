@@ -12,13 +12,12 @@ dela** (diferente da etapa 3, onde invocar `backend-developer`/`frontend-develop
 padrão correto). Isso importa mais aqui do que nas outras etapas de revisão: os passos 5b
 (tech-writer automático na última fatia) e 5c (retrospectiva obrigatória de toda fatia, abrindo
 issues em `asengardeon/btt-sdd-pipeline`) vivem **nesta skill**, não no agente `sre` — invocar o
-agente direto já pulou os dois silenciosamente numa sessão real, só percebido depois do merge.
+agente direto pula os dois silenciosamente, sem aviso.
 **"Vivem nesta skill" quer dizer que você, o orquestrador, os executa depois que o agente `sre`
 devolver o veredito no passo 3 — nunca inclua as instruções de 5b/5c no prompt passado ao agente
 `sre` via Agent tool.** O agente `sre` roda a partir da própria definição de agente, que não
 conhece esses dois passos, e vai (corretamente) recusar executá-los ou ignorá-los silenciosamente
-se você tentar delegá-los ali — já aconteceu numa sessão real, custando uma invocação
-desperdiçada.
+se você tentar delegá-los ali, desperdiçando a invocação.
 
 **Antes de qualquer coisa, leia `docs/SKILL-PREAMBLE.md`** — onde ficam os docs de governança
 deste pipeline e de onde vêm os templates de `specs/_template/` (nenhum dos dois vive dentro do
@@ -67,10 +66,10 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    dentro de `reviews/<etapa>/`/`trd/` no formato novo) preservando o conteúdo de ambos os
    lados quando tocarem os mesmos arquivos (`docs/GIT-WORKFLOW.md`, seção "Resolvendo conflitos de
    merge nos arquivos de artefato de revisão", tem o passo a passo de como preservar a estrutura
-   Markdown desses arquivos), e envie (push) o resultado. Já aconteceu de verdade essa sincronização
-   faltar até esta última etapa — descoberta só pelo `sre`, depois que code review, QA e segurança
-   já tinham commitado às cegas sobre uma base que gerava conflito, exigindo uma invocação extra só
-   para resolver retroativamente.
+   Markdown desses arquivos), e envie (push) o resultado. Isso evita que a sincronização falte até
+   esta última etapa, descoberta só pelo `sre` depois que code review, QA e segurança já tiverem
+   commitado às cegas sobre uma base que gera conflito — exigindo uma invocação extra só para
+   resolver retroativamente.
 3. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 3b para
    registrar a duração desta invocação. Invoque o agente `sre` (Agent tool, `subagent_type:
    "sre"`) passando o caminho do TRD (seção de pilares de engenharia/infra), do `qa-report.md` e do
@@ -80,9 +79,9 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    precisa decidir isso por ele. **Sempre passe `isolation: "worktree"` nesta chamada**
    — nunca deixe dois agentes dividirem o mesmo diretório de trabalho (`docs/GIT-WORKFLOW.md`,
    seção "Isolamento de working tree entre agentes concorrentes"). Não é uma condição a avaliar
-   caso a caso ("outra tarefa pode estar ativa?") — já aconteceu numa sessão real do agente `sre`
-   presumir incorretamente a quem pertenciam arquivos não commitados de outra tarefa ativa na mesma
-   branch e realocá-los para o próprio PR; o padrão desta invocação é sempre isolar.
+   caso a caso ("outra tarefa pode estar ativa?") — sem isolamento, o agente pode presumir
+   incorretamente a quem pertencem arquivos não commitados de outra tarefa ativa na mesma branch e
+   realocá-los para o próprio PR; o padrão desta invocação é sempre isolar.
 3a. **Ao incluir na instrução um fato que outra etapa mediu, diga quem mediu e como — e marque se
    ele é carga para alguma conclusão desta etapa.** Repassar o que a etapa anterior já mediu é
    desejável (é para isso que as seções "o que a próxima etapa herda" existem), mas a repetição
@@ -90,15 +89,14 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    procedência, indistinguível de um fato do desenho — e quem recebe não tem como saber que precisa
    reconferir. Rotule assim: *"medido pelo `security-engineer` lendo `pull_request.base.sha` —
    **reconfira se sua conclusão depender disso**"*. Vale também para medição **sua**, de
-   orquestrador: diga o que você leu para chegar nela. Já aconteceu de verdade, duas vezes na mesma
-   fatia: (a) um achado de segurança afirmava que o pulo de um job de CI vinha "inteiramente" de uma
-   condição, com base em ler `pull_request.base.sha`; repassado como fato medido, o `sre` reconferiu
-   por iniciativa própria e descobriu que em evento `synchronize` o `base` efetivo é
-   `github.event.before` — a causa variava de run para run, e **o defeito era pior do que o
-   descrito**; (b) o orquestrador afirmou "1 módulo do Workbox importado", verdade no fonte e errado
-   sobre o artefato construído (que tinha marcadores de 4), e o `security-engineer` corrigiu. Nos
-   dois casos o resultado foi bom **por iniciativa do agente que recebeu**, não por instrução — e
-   uma medição errada herdada custa mais que uma remedição.
+   orquestrador: diga o que você leu para chegar nela. Duas armadilhas concretas mostram por que
+   isso importa: ler `pull_request.base.sha` não garante a causa real do pulo de um job de CI em
+   evento `synchronize`, onde o `base` efetivo é `github.event.before` — a causa pode variar de run
+   para run, e um defeito repassado como medido pode ser mais grave do que o descrito; e contar
+   módulos no código-fonte (ex.: "1 módulo do Workbox importado") pode divergir do artefato
+   construído, que pode ter mais de um marcador. Confira o artefato construído, não só o
+   código-fonte, e marque a procedência do fato — uma medição errada herdada custa mais que uma
+   remedição.
 3b. **Registre a duração desta invocação em `specs/<slug>/timing-log.md`** (crie a partir de
    `specs/_template/timing-log.template.md` se ainda não existir): uma linha com o horário do
    passo 3, o horário atual, e a diferença calculada (etapa "SRE", agente "sre", fatia desta
@@ -135,10 +133,7 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    usuário no campo `Escalonamento` da entrada correspondente neste mesmo turno** — não só no
    artefato da rodada. O gate instrui a *ler* o campo antes de ofertar de novo, mas sem dono para o
    preenchimento ele acumula `sem resposta` em entradas cuja resposta já foi dada, e a rodada
-   seguinte repete a oferta que o campo existe para evitar. Já aconteceu de uma entrada ter
-   `Escalonamento: sem resposta` com a decisão do usuário registrada em prosa no corpo do artefato
-   da rodada — terceira vez na mesma spec que uma decisão existia em prosa e não no campo
-   estruturado que a consome.
+   seguinte repete a oferta que o campo existe para evitar.
 4c. **Integre o commit do agente na branch da fatia, localmente** (`docs/GIT-WORKFLOW.md`,
    seção "Push único por fatia: o CI roda uma vez, não uma vez por artefato de revisão"). O agente
    commitou o artefato e informou a branch e o SHA; se ele rodou em working tree isolado, essa
@@ -174,10 +169,8 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    na invocação, a lista de itens VALIDAR DEPOIS de tipo "documentação" abertos nesta spec e nas
    anteriores** (condições do tipo "aceitar o risco + documentar", `agents/security-engineer.md`,
    item 3b): esta é a única etapa do pipeline com dono natural para texto de README, e ela **não
-   recebe a tarefa a menos que alguém a nomeie** — já aconteceu de o `tech-writer` só saber da
-   pendência porque `security-engineer` e `sre` a citaram à mão, em prosa, em duas seções diferentes
-   — não é um passo opcional a critério do usuário, roda automaticamente sempre que a última fatia é
-   aprovada. Escopo da invocação: só o que a feature `<slug>` mudou de verdade (mecanismos novos,
+   recebe a tarefa a menos que alguém a nomeie** — não é um passo opcional a critério do usuário,
+   roda automaticamente sempre que a última fatia é aprovada. Escopo da invocação: só o que a feature `<slug>` mudou de verdade (mecanismos novos,
    comportamento documentado alterado), nunca uma reescrita geral não relacionada. Lembre também o
    usuário que, depois do merge desta última fatia, `/btt-sdd:implement` conduz o teste geral
    obrigatório de fim de spec contra produção real (`docs/POST-MERGE-VALIDATION.md`) — não é algo
@@ -237,9 +230,7 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    normalmente não é, e nomeá-lo ali (mesmo só como contexto, ex.: "na spec X do projeto Y")
    vaza publicamente qual operador privado usa o pipeline. Descreva o contexto de forma genérica
    ("nesta fatia", "um projeto usando o pipeline", "a stack em uso") em vez de citar o nome real
-   do repositório/projeto/cliente. Isso já vazou de verdade: ~32 labels `spec:<projeto>/<slug>`
-   identificando publicamente três projetos privados, além do corpo de pelo menos uma issue
-   citando o nome do projeto em prosa (issue #607, `asengardeon/btt-sdd-pipeline`).
+   do repositório/projeto/cliente (issue #607).
 
    **Abra também, separadamente, uma issue de aprendizado** (prefixo "Aprendizado:" no título,
    label `aprendizado` em vez de `melhoria`, mesmo mecanismo, mesma regra de nunca identificar o
@@ -270,9 +261,9 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    no primeiro commit da fatia — mas nada no pipeline transiciona ele para "Ready for review"
    depois, mesmo sabendo, ao final desta etapa, que a fatia está pronta para merge. Confira
    (`gh pr view <PR> --json isDraft`); se `isDraft` for `true`, rode `gh pr ready <PR>` antes de
-   informar o resultado ao usuário. Isso já se repetiu 3 vezes (PRs `mergeStateStatus=CLEAN`/
-   `mergeable=MERGEABLE` mas bloqueados na UI do GitHub até essa transição manual) — não é uma
-   pendência a deixar para o usuário perceber sozinho. Reprovado não passa por este passo (o PR
+   informar o resultado ao usuário. PRs com `mergeStateStatus=CLEAN`/`mergeable=MERGEABLE` ainda
+   ficam bloqueados na UI do GitHub até essa transição manual — não é uma pendência a deixar para o
+   usuário perceber sozinho. Reprovado não passa por este passo (o PR
    continua draft até nova rodada de correção).
 
    **Num projeto com cadência `ci-antes-do-merge`** (`docs/PROJECT-CONVENTIONS.md`), esta transição
