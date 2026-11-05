@@ -262,7 +262,10 @@ seguinte:
    contra esse ambiente controlado — nunca contra a URL de produção real (`docs/TESTING.md`, seção
    "Preferência por Docker/emuladores locais em vez de produção real"). Produção real só entra em
    cena no teste geral obrigatório de fim de spec (`docs/POST-MERGE-VALIDATION.md`), conduzido pelo
-   orquestrador — nunca na sua suíte automatizada do dia a dia.
+   orquestrador — nunca na sua suíte automatizada do dia a dia. **Ao terminar de usar esse
+   ambiente — sucesso ou erro —, derrube-o explicitamente antes de devolver o resultado**
+   (`docker compose down -v` ou equivalente, `docs/TESTING.md`, seção "Ambiente Docker de teste é
+   efêmero por execução — nunca perene"); isolamento de worktree não faz isso por você.
 5. **Autenticação de suíte e2e via API direta, quando o campo/tela ainda não existe na UI desta
    fatia.** `frontend-developer/e2e-auth-via-api.md`.
 6. **Ao mudar o texto/comportamento observável de uma tela/fluxo que já existia antes desta spec

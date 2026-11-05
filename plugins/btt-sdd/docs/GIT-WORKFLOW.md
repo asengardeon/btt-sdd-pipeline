@@ -235,6 +235,15 @@ git worktree add <caminho-separado> -b <branch-temporária-do-agente> <branch-da
 git worktree remove <caminho-separado>   # ao terminar — nunca deixe worktree órfão
 ```
 
+**Fallback do orquestrador ao remover um worktree isolado**: antes de `git worktree remove`,
+verifique se há algum stack Docker com nome de projeto derivado daquele worktree/invocação ainda
+`Up` (`docker ps --filter name=<nome>`, ou `docker compose -p <nome> down -v` direto) e derrube-o.
+Containers não têm vínculo com o diretório do worktree depois de criados — removê-lo não os
+derruba por si só (`docs/TESTING.md`, seção "Ambiente Docker de teste é efêmero por execução —
+nunca perene"). Isto é rede de segurança, não substitui a exclusão que o próprio agente já deveria
+ter feito antes de devolver o resultado — um stack ainda de pé aqui é um bug daquela invocação
+específica, não comportamento esperado a ser compensado rotineiramente.
+
 **Worktree isolado nasce na base da invocação anterior — sincronize antes de qualquer leitura ou
 trabalho, contra a referência mais avançada entre a branch local e `origin/<branch>`, nunca contra
 `origin` às cegas.** O harness reaproveita um worktree já existente em vez de criar um novo a

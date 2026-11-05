@@ -185,6 +185,10 @@ checkout.md` — leia antes do primeiro `git checkout` desta rodada.
    do terminal). Se o N mudou desde a última vez que essa classe de erro pré-existente foi
    documentada (`docs/LESSONS-LEARNED.md` ou um `coverage/*.md` anterior da mesma spec), investigue
    antes de aprovar — não presuma "mais do mesmo".
+2d. **Se você mesmo subiu um ambiente Docker no passo 2** (arquivo de cobertura ausente ou
+   desatualizado), derrube-o antes de seguir para o próximo passo — sucesso ou erro, nunca deixe
+   no ar "até terminar o resto da rodada" (`docs/TESTING.md`, seção "Ambiente Docker de teste é
+   efêmero por execução — nunca perene").
 3. Para cada critério de aceite do PRD, verifique que existe teste automatizado que o exercita —
    não confie na declaração do dev, confira o teste de fato e, quando fizer sentido, rode o
    cenário manualmente (ex.: via CLI/endpoint do adapter de entrada).

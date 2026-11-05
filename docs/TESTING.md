@@ -180,13 +180,29 @@ Paralelizar sem isolar não economiza: troca tempo por investigação de falha e
   bibliotecas de container de teste), para a rodada local repetida de TDD.
 
 **Ambiente Docker de teste é efêmero por execução — nunca perene.** Reaproveitar enquanto a suíte
-roda (ponto acima) não é o mesmo que deixar no ar depois que ela termina: quem sobe o
-ambiente (`docker compose up`/equivalente) para uma execução completa da suíte de integração o
-**exclui** ao final dela — `docker compose down -v` (ou comando equivalente da stack), removendo
-volumes, não só parando o processo. Ambiente Docker de teste esquecido no ar acumula do mesmo jeito
-que worktree não removido (`docs/GIT-WORKFLOW.md`, seção "Limpe o worktree antes de apagar a branch
-associada") e com o mesmo sintoma final: disco local esgotado em silêncio, descoberto só quando
-outro processo falha por falta de espaço (issue #484, `asengardeon/btt-sdd-pipeline`).
+roda (ponto acima) não é o mesmo que deixar no ar depois que ela termina: quem sobe o ambiente
+(`docker compose up`/equivalente) — para uma execução completa da suíte de integração, para uma
+sessão de verificação ao vivo (ex.: `ux-designer` navegando a feature, `security-engineer` medindo
+isolamento contra container real) ou para qualquer outra validação manual contra container real —
+o **exclui** ao final dela, `docker compose down -v` (ou comando equivalente da stack), removendo
+volumes, não só parando o processo. **Isso vale tanto no caminho de sucesso quanto em qualquer
+saída antecipada por erro** — a exclusão não é um passo condicionado a "se tudo deu certo", é parte
+simétrica do encerramento da própria invocação, do mesmo jeito que o `up` é parte da abertura dela.
+
+Ambiente Docker de teste esquecido no ar acumula do mesmo jeito que worktree não removido
+(`docs/GIT-WORKFLOW.md`, seção "Limpe o worktree antes de apagar a branch associada"), mas o
+sintoma final nem sempre é disco esgotado em silêncio (issue #484,
+`asengardeon/btt-sdd-pipeline`): um nome de projeto Docker com porta fixa reaproveitada entre
+invocações pode colidir com uma invocação completamente não relacionada, horas depois, numa sessão
+sem nenhuma referência viva ao stack original — já observado como falha real de CI por "port is
+already allocated" (issue #643, idem), não só esgotamento de disco.
+
+**Isolamento de worktree não derruba o stack Docker.** Um agente isolado em `isolation: "worktree"`
+(`docs/GIT-WORKFLOW.md`) tem o próprio diretório/branch removido ao final pelo orquestrador, mas os
+containers que ele subiu não têm vínculo nenhum com esse diretório depois de criados — removê-lo
+não os derruba. A exclusão do ambiente Docker é responsabilidade explícita de quem o subiu, e
+acontece **antes** de devolver o resultado final, independente de o worktree em si ainda existir ou
+já ter sido removido.
 
 **4. Tokens: a saída da suíte não entra inteira no contexto.** O que decide uma aprovação são os
 números agregados e, no vermelho, **só os testes que falharam**. Então:

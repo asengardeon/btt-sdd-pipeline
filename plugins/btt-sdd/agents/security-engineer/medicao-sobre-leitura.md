@@ -22,6 +22,10 @@ arquivo de produção fica intocado; os testes temporários são revertidos ante
 no relatório qual dos dois métodos você usou e por quê — um veredito de isolamento sem medição
 nenhuma nunca é apresentado como equivalente aos dois.
 
+**Se você subiu o container de banco real para esta medição, derrube-o antes de devolver o
+resultado** — sucesso ou erro (`docker compose down -v` ou equivalente, `docs/TESTING.md`, seção
+"Ambiente Docker de teste é efêmero por execução — nunca perene").
+
 ## Condição de corrida com lock: confira todo lado que perde a corrida
 
 Ao revisar/corrigir uma condição de corrida com lock (`SELECT ... FOR UPDATE` ou equivalente),

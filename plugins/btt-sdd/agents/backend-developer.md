@@ -270,7 +270,10 @@ seguinte:
    container/emulador local, nunca contra o ambiente de produção real (`docs/TESTING.md`, seção
    "Preferência por Docker/emuladores locais em vez de produção real"). Produção real só entra em
    cena no teste geral obrigatório de fim de spec (`docs/POST-MERGE-VALIDATION.md`), conduzido pelo
-   orquestrador — nunca na sua suíte automatizada do dia a dia.
+   orquestrador — nunca na sua suíte automatizada do dia a dia. **Ao terminar de usar esse
+   ambiente — sucesso ou erro —, derrube-o explicitamente antes de devolver o resultado**
+   (`docker compose down -v` ou equivalente, `docs/TESTING.md`, seção "Ambiente Docker de teste é
+   efêmero por execução — nunca perene"); isolamento de worktree não faz isso por você.
 
 5. **Adapters que envolvem processo externo/CLI com "resultado vazio esperado" como caso de
    negócio válido**: `backend-developer/cli-wrapper-resultado-vazio.md`.
