@@ -50,6 +50,14 @@ crítico de acompanhar (contagem, latência, taxa de erro), e — quando a compl
 tracing entre componentes. Isso vira o "requisito de observabilidade" que o TRD já pede e
 `backend-developer`/`frontend-developer` implementam.
 
+**Fechamento de loop: a métrica crítica pode disparar `/sdd-hotfix` sem depender de alguém notar
+primeiro.** Quando o projeto já tem um sistema de monitoramento (métricas/alertas em produção), a
+métrica que este pilar identifica como crítica ganha um limiar registrado (`docs/PROJECT-
+CONVENTIONS.md`) que, ao ser violado, abre automaticamente a issue que inicia `/sdd-hotfix` — em
+vez de esperar alguém perceber o problema e abrir o ticket manualmente. `sre` propõe esse mecanismo
+ao aprovar a fatia final que expõe a feature em produção (`docs/gates/sre.md`); sem monitoramento
+real por trás, o mecanismo fica registrado como pendência, nunca simulado.
+
 ## Manutenibilidade
 
 Coberta estruturalmente por SOLID, Clean Code e a separação ports & adapters
