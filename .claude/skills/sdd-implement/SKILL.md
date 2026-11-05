@@ -160,6 +160,12 @@ entre trilhas paralelas após correção: `_rules/reconciliacao-contrato-trilhas
       `docs/LESSONS-LEARNED.md` foi aplicada e como (se alguma foi), e só prossiga com aprovação
       explícita (mesmo limite de 3 repetições dos outros agentes — na 3ª rodada sem convergência,
       registre como VALIDAR DEPOIS no TRD e pare).
+   c2. **Commite o plano aprovado como `specs/<slug>/plans/F-<N>.md`** (a partir de
+      `specs/_template/plan.template.md`), antes de invocar qualquer agente — arquivos que mudam,
+      ordem dos incrementos por trilha, riscos, lições aplicadas. `code-reviewer` lê este arquivo
+      quando existir e confere o diff contra ele, além do TRD. Se a implementação final se afastar
+      do plano, registre a divergência na seção correspondente do mesmo arquivo, no mesmo commit
+      em que ela aparecer — nunca reescreva o plano original para fingir que já previa o desvio.
    d. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 5a
       para registrar a duração de cada trilha. Só depois de aprovado, invoque o(s) agente(s) —
       **com as duas trilhas, em paralelo** (uma única mensagem, duas chamadas de Agent tool) —,
