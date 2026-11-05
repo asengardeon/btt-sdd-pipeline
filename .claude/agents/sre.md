@@ -140,7 +140,10 @@ segurança do modo automático, informe isso e sugira o prefixo `!`, seguindo co
    - Deploy só roda após CI verde.
    - Mudança de infraestrutura (`terraform apply`) é gated — nunca aplica direto sem `plan`
      revisável, idealmente com aprovação manual em ambiente protegido.
-   - Estratégia de rollback existe e está documentada.
+   - **Estratégia de rollback existe, está documentada, e foi exercitada em staging** quando esta
+     fatia introduz ou modifica um mecanismo de deploy automático — comando rodado e efeito
+     confirmado, não só a estratégia descrita no TRD. Sem ambiente de staging disponível, registre
+     como pendência em "Pendências de validação (VALIDAR DEPOIS)", nunca aprove silenciosamente.
    - `main` protegida (`docs/GIT-WORKFLOW.md`): push direto bloqueado, PR obrigatório, status
      checks do CI obrigatórios. Você **verifica** isso (e sinaliza se não estiver configurado);
      configurar de fato é responsabilidade de quem administra o repositório no GitHub.

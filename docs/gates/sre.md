@@ -61,6 +61,10 @@
   confirmação do usuário, nunca correção silenciosa) **antes** do veredito — não só ao notar
   `mergeStateStatus: BLOCKED` no fim. Receita completa em `.claude/agents/sre/ci-guard-rails.md`.
 - [ ] Deploy só roda após CI verde.
+- [ ] **Se esta fatia introduz ou modifica um mecanismo de deploy automático, o rollback foi
+  exercitado em staging** — comando rodado e efeito confirmado, não só a estratégia descrita no
+  TRD. Sem staging disponível, registre como pendência em "Pendências de validação (VALIDAR
+  DEPOIS)", nunca aprovado silenciosamente.
 - [ ] Se a fatia torna obrigatório um campo antes opcional/ausente numa rota já ativa consumida
   por um cliente já implantado que ainda não foi atualizado para enviá-lo, e os gates de deploy
   automático relevantes já estão ligados: bloqueante até haver um default retrocompatível nesta
