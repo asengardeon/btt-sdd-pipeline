@@ -457,8 +457,10 @@ por "already used by worktree" ou "refusing to fetch into branch checked out" (i
 **Confirme sempre o branch atual antes de qualquer `git merge`/`commit`/`pull`/`push` sem branch
 explícito que dependa dele, ou antes de editar qualquer artefato de spec (`trd.md`, `prd.md`,
 `code-review.md` etc.) fora do fluxo normal de uma invocação de agente — nunca assuma, mesmo
-quando o passo anterior parece ter terminado limpo.** Três gatilhos distintos produzem o mesmo
-sintoma (workspace principal numa branch diferente da esperada, sem erro visível):
+quando o passo anterior parece ter terminado limpo.** Quatro gatilhos distintos produzem o mesmo
+sintoma (workspace principal desincronizado em relação ao que a invocação anterior realmente
+produziu, sem erro visível — numa branch diferente da esperada, ou na branch certa mas atrás dos
+commits que acabaram de ser publicados):
 
 - **`git checkout <branch>` que falha por colisão de worktree.** `fatal: '<branch>' is already
   used by worktree at '<caminho>'` não é um erro fatal de shell — a sessão/script continua
@@ -497,6 +499,17 @@ sintoma (workspace principal numa branch diferente da esperada, sem erro visíve
   refeito na branch correta — mas o mesmo padrão, com uma edição já commitada, já custou ~28k
   tokens numa fatia anterior (worktree criado antes do TRD estar commitado) (issue #468,
   `asengardeon/btt-sdd-pipeline`).
+- **Duas ou mais trilhas em `isolation: "worktree"` apontando para a mesma branch compartilhada da
+  fatia terminam, cada uma dando `git push` para `origin/<branch-da-fatia>` a partir do próprio
+  worktree.** O checkout principal do orquestrador — de onde a branch foi criada antes de invocar
+  as trilhas — nunca recebe esses pushes automaticamente; voltar a ele depois das notificações de
+  conclusão e ver `git status` "clean" não significa sincronizado, só "sem mudanças não commitadas
+  no working tree local". Editar um artefato (ex.: promover Status no TRD) e commitar sobre essa
+  base desatualizada produz um `git push` rejeitado por non-fast-forward, exigindo
+  `fetch`+`rebase`/merge de emergência no meio da sessão para recuperar sem perder os commits das
+  trilhas. Já aconteceu de verdade: o orquestrador precisou de um `git fetch`+`git rebase` de
+  emergência depois de comitar sobre uma base que não tinha os commits publicados pelas duas
+  trilhas paralelas (issue #618, `asengardeon/btt-sdd-pipeline`).
 
 Rode `git branch --show-current` (ou confira com atenção o output do próprio `checkout`) antes de
 prosseguir sempre que houver qualquer dúvida sobre em que branch o passo anterior deixou o
@@ -505,7 +518,14 @@ tanto para o workaround de colisão de worktree acima quanto para o passo "Integ
 agente" de qualquer skill de revisão (`/btt-sdd:code-review`/`/btt-sdd:ux-review`/`/btt-sdd:qa`/
 `/btt-sdd:security`/`/btt-sdd:sre`), para a retomada sem isolamento de `/btt-sdd:implement`, e
 para qualquer edição de artefato de spec feita diretamente pelo orquestrador — `/btt-sdd:amend`
-confirma a branch como primeiro passo, antes de editar qualquer artefato in-place.
+confirma a branch como primeiro passo, antes de editar qualquer artefato in-place. **Depois que
+duas ou mais trilhas paralelas em worktree isolado terminam apontando para a mesma branch
+compartilhada, rode também `git fetch origin && git log HEAD..origin/<branch-da-fatia> --oneline`
+no checkout principal antes de editar qualquer arquivo nessa branch** — não basta confirmar o nome
+da branch (`git branch --show-current`) quando o risco é estar na branch certa, mas atrás dos
+commits que as trilhas acabaram de publicar; se houver commits novos listados, `git merge
+--ff-only origin/<branch-da-fatia>` (ou `reset --hard`, se o checkout principal não tiver trabalho
+próprio ainda) antes de prosseguir.
 
 **Um agente rodando num worktree isolado nunca deve fazer `git checkout main`/`<branch base>`
 como limpeza final dentro do próprio worktree.** O worktree principal do orquestrador
