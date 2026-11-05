@@ -23,17 +23,33 @@ pendente" indefinidamente.
 
 ## Sinalize a fatia final ao CI assim que o PR dela for aberto
 
-Se a fatia escolhida é a última pendente da spec, e este projeto documenta em
-`docs/PROJECT-CONVENTIONS.md` um mecanismo explícito de sinalização para o CI ativar a suíte e2e
-completa (ex.: label de PR, variável de ambiente), aplique esse sinal assim que o PR desta fatia
-for aberto — antes de invocar a primeira etapa de revisão. Não espere uma etapa no meio da
-cadência de revisão (QA, segurança) notar a ausência: o orquestrador já sabe, neste ponto, que
-esta é a fatia final — é a informação mais antiga disponível sobre isso, não a mais recente.
+Se a fatia escolhida é a última pendente da spec, e este projeto documenta um mecanismo explícito
+de sinalização para o CI ativar a suíte e2e completa (ex.: label de PR, variável de ambiente),
+aplique esse sinal assim que o PR desta fatia for aberto — antes de invocar a primeira etapa de
+revisão. Não espere uma etapa no meio da cadência de revisão (QA, segurança) notar a ausência: o
+orquestrador já sabe, neste ponto, que esta é a fatia final — é a informação mais antiga
+disponível sobre isso, não a mais recente.
 
-**Não invente esse mecanismo se o projeto ainda não o documentou** — decidir como sinalizar a
+**Verifique os dois lugares possíveis antes de concluir "nenhum mecanismo documentado" —
+`docs/PROJECT-CONVENTIONS.md` não é o único lugar onde esse mecanismo pode estar registrado.**
+Além de ler `docs/PROJECT-CONVENTIONS.md`, rode `grep` por termos como "última fatia"/"ultima-
+fatia"/"label" diretamente em `.github/workflows/ci.yml` (e `cd.yml`, se existir) — pelo menos um
+projeto real documenta esse mecanismo como comentário extenso dentro do próprio workflow, decisão
+registrada por issue própria do projeto, nunca copiada para `PROJECT-CONVENTIONS.md`. A decisão de
+onde documentar esse tipo de mecanismo varia por projeto; checar só um dos dois lugares possíveis
+faz o orquestrador concluir "não documentado" quando o mecanismo existe, e instruir o
+`code-reviewer`/`qa-engineer` erradamente nesse sentido. Já aconteceu de verdade: a última fatia de
+uma spec quase foi mergeada sem o job de e2e completo ter rodado nenhuma vez, porque o mecanismo
+real (um label de PR comentado no próprio `ci.yml`) nunca foi checado — só corrigido porque o
+`code-reviewer`, investigando por conta própria em vez de aceitar a premissa de "nenhum mecanismo
+existe" recebida do orquestrador, encontrou o label real antes do merge (issue #617,
+`asengardeon/btt-sdd-pipeline`).
+
+**Não invente esse mecanismo se nenhum dos dois lugares o documentar** — decidir como sinalizar a
 fatia final ao CI é do `architect`/`sre` deste projeto, registrado em `docs/PROJECT-CONVENTIONS.md`
-quando a cadência "e2e completo só na última fatia" for adotada (`docs/CI-WORKFLOW.md`, seção "O
-que não entra por padrão"). Já aconteceu de verdade, em duas specs diferentes do mesmo projeto: o
+ou no próprio workflow quando a cadência "e2e completo só na última fatia" for adotada
+(`docs/CI-WORKFLOW.md`, seção "O que não entra por padrão"). Já aconteceu de verdade, em duas
+specs diferentes do mesmo projeto: o
 sinal só foi aplicado durante a rodada de QA (ou mais tarde), depois que code review e UX já
 tinham aprovado sem a suíte e2e real ter rodado nenhuma vez — a primeira execução real do job
 encontrou um defeito presente desde a primeira fatia da spec (issue #473,
