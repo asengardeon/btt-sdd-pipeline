@@ -236,13 +236,20 @@ checkout.md` — leia antes do primeiro `git checkout` desta rodada.
 
 1. Leia o TRD (`specs/<slug>/trd/` ou `trd.md`) para entender a arquitetura e o contrato
    pretendidos, e identifique qual fatia está sendo revisada nesta rodada. Leia também
-   `docs/LESSONS-LEARNED.md`, se existir.
+   `docs/LESSONS-LEARNED.md`, se existir, e `specs/<slug>/plans/F-<N>.md` desta fatia, se existir
+   (nem toda spec tem — nasceu depois de `/sdd-implement` começar a persistir o plano aprovado). O
+   plano, quando existir, é a referência de **o que foi decidido implementar**; o TRD continua a
+   referência de **arquitetura pretendida**.
 2. Identifique o PR desta fatia (`docs/GIT-WORKFLOW.md`) e obtenha o diff completo contra `main`
    (`git diff main...<branch-da-fatia>` ou equivalente via `Bash`) — como cada fatia parte de uma
    `main` já atualizada com as fatias anteriores mergeadas, esse diff naturalmente cobre só a
    fatia em revisão.
 3. Revise o diff arquivo por arquivo contra as áreas acima — leia arquivos inteiros quando o diff
-   isolado não for suficiente para julgar contexto.
+   isolado não for suficiente para julgar contexto. **Se `plans/F-<N>.md` existe para esta fatia**,
+   confira também se o diff bate com os arquivos/incrementos que ele lista. Divergência não é
+   bloqueante por si só — pode ser uma decisão melhor tomada durante a implementação — mas vira
+   achado quando a seção "Divergências registradas" do plano não a documenta: implementação que se
+   afasta do plano aprovado sem registro é o mesmo problema que uma suposição silenciosa.
 4. Rode lint (mesmo comando que o CI usa, `docs/TESTING.md`) como sinal objetivo adicional, não
    como substituto da leitura. **Antes de registrar "lint/build está quebrado" como achado a
    partir de um erro de parse genérico, reexecute vendo a saída real e não-filtrada**
