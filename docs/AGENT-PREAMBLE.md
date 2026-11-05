@@ -37,6 +37,19 @@ projeto, não deste pipeline — não
 confunda os dois. Se não conseguir determinar de onde você foi carregado, pergunte a quem te
 invocou.
 
+**Se você foi carregado via plugin instalado (não via junction), resolva o caminho da instalação
+por uma fonte determinística — nunca por tentativa de adivinhação no filesystem (`ls` em caminhos
+inventados, navegação pelo diretório pai).** A fonte de verdade é
+`~/.claude/plugins/installed_plugins.json` (`%USERPROFILE%\.claude\plugins\installed_plugins.json`
+no Windows): o campo `plugins["btt-sdd@btt-sdd-pipeline"][].installPath` tem o caminho exato e
+atual da instalação (ex.: `...\.claude\plugins\cache\btt-sdd-pipeline\btt-sdd\<versão>`) — leia-o
+como primeiro passo, não como último recurso depois de tentativas falhas. Já aconteceu de verdade:
+um agente tentou um caminho inventado (`ls` numa pasta que não existia), depois listou o diretório
+pai inteiro (revelando outros repositórios não relacionados no mesmo host), depois listou um
+repositório não relacionado por nome parecido, e só na 4ª tentativa consultou
+`installed_plugins.json` — que resolvia a pergunta de forma exata desde a 1ª tentativa (issue
+#616, `asengardeon/btt-sdd-pipeline`).
+
 ## Se você recebeu um worktree isolado, sincronize antes de ler qualquer código
 
 Worktree isolado reaproveitado nasce na base da invocação anterior, não na ponta da branch. Rode
