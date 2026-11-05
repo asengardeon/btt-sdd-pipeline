@@ -1,6 +1,6 @@
 ---
 name: trd
-description: Etapa 2 do pipeline SDD. Use depois que um PRD existe e foi aprovado, para gerar o desenho técnico. Aciona o agente architect para produzir specs/<slug>/trd/ (split por tópico) a partir de specs/<slug>/prd/.
+description: Etapa 2 do pipeline SDD. Use depois que um PRD existe e foi aprovado, para gerar o desenho técnico. Aciona o agente architect para produzir specs/[slug]/trd/ (split por tópico) a partir de specs/[slug]/prd/.
 ---
 
 # /btt-sdd:trd

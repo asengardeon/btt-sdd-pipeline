@@ -1,6 +1,6 @@
 ---
 name: sdd-migrate
-description: Converte um artefato gerado pelo pipeline (qualquer um com template em specs/_template/) de uma versão de formato antiga para a versão atual, usando o marcador <!-- sdd-format-version: N --> e o registro de migrações em .claude/skills/sdd-migrate/migrations/. Use quando o usuário pedir para "atualizar"/"migrar"/"converter" uma spec antiga para o formato novo. Nunca roda automaticamente — sempre por pedido explícito, um artefato de uma spec por vez.
+description: Converte um artefato gerado pelo pipeline (qualquer um com template em specs/_template/) de uma versão de formato antiga para a versão atual, usando o marcador de versão sdd-format-version no comentário do template e o registro de migrações em .claude/skills/sdd-migrate/migrations/. Use quando o usuário pedir para "atualizar"/"migrar"/"converter" uma spec antiga para o formato novo. Nunca roda automaticamente — sempre por pedido explícito, um artefato de uma spec por vez.
 ---
 
 # /sdd-migrate

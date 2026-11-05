@@ -1,6 +1,6 @@
 ---
 name: sdd-ux-review
-description: Etapa 4b (condicional) do pipeline SDD. Use depois que a revisão de código aprovou uma fatia com superfície de UI perceptível pelo usuário final, antes do QA, para uma revisão de usabilidade/navegabilidade de designer sênior — heurísticas de Nielsen aplicadas à feature. Aciona o agente ux-designer para produzir specs/<slug>/ux-review.md. Fatia 100% backend, sem tela nem fluxo visível, pula esta etapa.
+description: Etapa 4b (condicional) do pipeline SDD. Use depois que a revisão de código aprovou uma fatia com superfície de UI perceptível pelo usuário final, antes do QA, para uma revisão de usabilidade/navegabilidade de designer sênior — heurísticas de Nielsen aplicadas à feature. Aciona o agente ux-designer para produzir specs/[slug]/ux-review.md. Fatia 100% backend, sem tela nem fluxo visível, pula esta etapa.
 ---
 
 # /sdd-ux-review
