@@ -100,9 +100,13 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
 3b. **Registre a duração desta invocação em `specs/<slug>/timing-log.md`** (crie a partir de
    `specs/_template/timing-log.template.md` se ainda não existir): uma linha com o horário do
    passo 3, o horário atual, e a diferença calculada (etapa "SRE", agente "sre", fatia desta
-   rodada). Commit e envie (push) essa atualização junto com o resto do que esta rodada já for
-   commitar (`docs/GIT-WORKFLOW.md`, regra 4, sobre agrupar pushes relacionados) — precisa estar
-   commitado antes do passo 5c (retrospectiva), que lê este arquivo. **Vale também quando esta
+   rodada).
+   **Escreva a linha no working tree e não a commite agora**: um commit de `timing-log.md` feito
+   antes da integração do commit do agente (passo 4c) move a ponta da branch da fatia, e o
+   `git merge --ff-only` falha por divergência, porque o worktree do agente nasceu do SHA anterior.
+   Acumule as linhas das etapas e commite-as **uma vez só**, logo depois da integração do passo 4c e
+   antes do passo 5c, que lê este arquivo (retrospectiva) (`docs/GIT-WORKFLOW.md`, seção "Push único
+   por fatia: o CI roda uma vez, não uma vez por artefato de revisão"). **Vale também quando esta
    invocação é só uma reverificação pontual de um achado específico** — nunca pule este registro
    por ser "só uma reverificação", senão o `timing-log.md` da fatia fica sistematicamente
    incompleto. **Quando a reverificação pontual retoma o agente via `SendMessage` em vez de
@@ -147,6 +151,10 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    ```bash
    git branch --show-current                              # confirme antes de qualquer merge
    git merge --ff-only <branch-informada-pelo-agente>
+   # se falhar por divergência ("Not possible to fast-forward") e a ponta da fatia só andou por
+   # commits de timing-log.md, o diff abaixo lista só esse arquivo — use merge normal:
+   git diff --name-only $(git merge-base HEAD <branch-informada-pelo-agente>) HEAD
+   git merge --no-edit <branch-informada-pelo-agente>
    # artefato alcançável na branch da fatia — formato novo são 3 arquivos, legado é 1:
    git log -1 --format=%H -- specs/<slug>/reviews/sre-review/ specs/<slug>/sre-review.md
    git worktree remove <caminho-do-worktree>              # se houver
@@ -154,6 +162,10 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
 
    Confirmar não é zelo: os itens de gate que antes exigiam push nasceram de artefato que não
    chegava à branch. A durabilidade continua obrigatória — o meio é que mudou.
+   **Nunca apague a branch temporária do agente (`git branch -d`/`-D`) nem o worktree antes de o
+   `git log -1` acima mostrar o artefato na branch da fatia**: se a integração falhar, essa branch é
+   a única referência ao commit do agente, e a recuperação por `cherry-pick` do SHA depende de ele
+   ainda existir.
 5. Mostre ao usuário o veredito e os checklists de CI, Docker e Terraform — incluindo a
    verificação de proteção da branch `main` (`docs/GIT-WORKFLOW.md`).
 5b. **Spec finalizada → aciona `tech-writer` automaticamente.** Se a fatia aprovada (ou aprovada com

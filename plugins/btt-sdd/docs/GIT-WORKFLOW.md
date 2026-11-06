@@ -119,13 +119,29 @@ que o pipeline **cria**: o gatilho é o push por etapa, e isso é escolha nossa.
 
    ```bash
    git merge --ff-only <branch-temporária-do-agente>
+   # se falhar por divergência ("Not possible to fast-forward") e a ponta da fatia só andou por
+   # commits de timing-log.md (item abaixo), o diff lista só esse arquivo — use merge normal:
+   git diff --name-only $(git merge-base HEAD <branch-temporária-do-agente>) HEAD
+   git merge --no-edit <branch-temporária-do-agente>
    git log -1 --format=%H -- specs/<slug>/<artefato>.md   # confirma que o artefato está alcançável
    git worktree remove <caminho-separado>
    ```
 
    Essa confirmação não é zelo: os itens de gate que antes exigiam push nasceram de artefato que
    não chegava à branch. A durabilidade continua obrigatória — o que muda é o meio.
-4. **Um push ao final da cadeia de revisão da fatia**, feito pela última etapa que rodou nela
+   **Nunca apague a branch temporária do agente (`git branch -d`/`-D`) nem o worktree antes dessa
+   confirmação**: se a integração falhar, a branch é a única referência ao commit do agente, e a
+   recuperação por `cherry-pick` do SHA depende de ele ainda existir.
+
+   **O `timing-log.md` não é commitado entre etapas.** Cada etapa acrescenta sua linha ao arquivo no
+   working tree, e as linhas acumuladas entram em **um commit só**, no fim da cadeia, antes do push
+   do item 4. O motivo é a ordem dos fatos: o worktree do agente da etapa N+1 nasce do SHA da ponta
+   da fatia; se o orquestrador commita o `timing-log.md` da etapa N depois de criar esse worktree, a
+   ponta diverge e o `git merge --ff-only` do artefato da etapa N+1 falha. A etapa de SRE é a
+   exceção de ordem, não de regra: ela commita o arquivo logo depois de integrar o próprio artefato,
+   porque a retrospectiva da fatia (passo 5c) lê o arquivo.
+4. **Um push ao final da cadeia de revisão da fatia**, depois do commit do `timing-log.md`
+   acumulado, feito pela última etapa que rodou nela
    (`/btt-sdd:qa` em fatia intermediária, `/btt-sdd:sre` na última fatia da spec — mesma lógica de
    quem
    tira o PR do draft, `docs/SDD-WORKFLOW.md`, seção "Cadência"). Daí em diante o PR está completo

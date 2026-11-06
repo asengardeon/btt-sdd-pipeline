@@ -17,6 +17,20 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.56.4 — 2026-11-06
+
+- **Timing-log não quebra mais o `merge --ff-only` do artefato da etapa seguinte.** As skills de
+  code-review, QA e SRE (passos 3b e de integração 3d/4c) mandavam commitar o `timing-log.md` no
+  meio da cadeia de revisão, o que movia a ponta da branch da fatia depois de o worktree do agente
+  seguinte ter nascido do SHA anterior — e o `--ff-only` falhava por divergência. Agora a linha de
+  cada etapa fica no working tree e entra em um commit só, junto com o push único da fatia (no
+  SRE, logo depois da integração do passo 4c e antes da retrospectiva do 5c); quando a ponta
+  divergiu só por commits de `timing-log.md`, o passo de integração manda usar `git merge
+  --no-edit`. Os passos também passam a proibir apagar a branch temporária do agente (ou o
+  worktree) antes de confirmar o artefato na branch da fatia. `docs/GIT-WORKFLOW.md` (seção "Push
+  único por fatia") ganhou as mesmas regras. Na skill de code-review, o segundo passo "3b"
+  (integração) foi renumerado para 3d, igual ao de QA.
+
 ## 1.53.9 — 2026-11-03
 
 - **Bloqueio do classificador de modo automático: deixado explícito que cobre também comandos

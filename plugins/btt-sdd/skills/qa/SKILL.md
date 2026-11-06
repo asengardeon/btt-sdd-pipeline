@@ -85,8 +85,13 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 3b. **Registre a duração desta invocação em `specs/<slug>/timing-log.md`** (crie a partir de
    `specs/_template/timing-log.template.md` se ainda não existir): uma linha com o horário do
    passo 3, o horário atual, e a diferença calculada (etapa "QA", agente "qa-engineer", fatia desta
-   rodada). Commit e envie (push) essa atualização junto com o resto do que esta rodada já for
-   commitar (`docs/GIT-WORKFLOW.md`, regra 4, sobre agrupar pushes relacionados). **Vale também
+   rodada).
+   **Escreva a linha no working tree e não a commite agora**: um commit de `timing-log.md` feito
+   antes da integração do commit do agente (passo 3d) move a ponta da branch da fatia, e o
+   `git merge --ff-only` falha por divergência, porque o worktree do agente nasceu do SHA anterior.
+   Acumule as linhas das etapas e commite-as **uma vez só**, no push único da fatia (passo 7, item
+   a0) (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia: o CI roda uma vez, não uma vez por
+   artefato de revisão"). **Vale também
    quando esta invocação é só uma reverificação pontual de um achado específico**
    (`qa-engineer.md`, seção "Escopo de uma rodada de reverificação de achado específico") — nunca
    pule este registro por ser "só uma reverificação", senão o `timing-log.md` da fatia fica
@@ -135,6 +140,10 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    ```bash
    git branch --show-current                              # confirme antes de qualquer merge
    git merge --ff-only <branch-informada-pelo-agente>
+   # se falhar por divergência ("Not possible to fast-forward") e a ponta da fatia só andou por
+   # commits de timing-log.md, o diff abaixo lista só esse arquivo — use merge normal:
+   git diff --name-only $(git merge-base HEAD <branch-informada-pelo-agente>) HEAD
+   git merge --no-edit <branch-informada-pelo-agente>
    # artefato alcançável na branch da fatia — formato novo são 3 arquivos, legado é 1:
    git log -1 --format=%H -- specs/<slug>/reviews/qa-report/ specs/<slug>/qa-report.md
    git worktree remove <caminho-do-worktree>              # se houver
@@ -142,6 +151,10 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 
    Confirmar não é zelo: os itens de gate que antes exigiam push nasceram de artefato que não
    chegava à branch. A durabilidade continua obrigatória — o meio é que mudou.
+   **Nunca apague a branch temporária do agente (`git branch -d`/`-D`) nem o worktree antes de o
+   `git log -1` acima mostrar o artefato na branch da fatia**: se a integração falhar, essa branch é
+   a única referência ao commit do agente, e a recuperação por `cherry-pick` do SHA depende de ele
+   ainda existir.
 4. Mostre ao usuário o veredito geral (aprovado/reprovado) e os pontos principais do relatório.
 5. Se reprovado, informe que a feature volta para `/btt-sdd:implement` com os achados listados — e
    siga a seção "Retomando para corrigir achados de revisão" de `skills/implement/SKILL.md` (prefira
