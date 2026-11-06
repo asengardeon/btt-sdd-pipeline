@@ -17,6 +17,17 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.56.6 — 2026-11-06
+
+- **Gate de merge exige citar o run que executou de verdade, não só o último.** O job de CI "só
+  documentação" pode marcar o run do push único da fatia (só `specs/` e relatórios) como todo
+  `skipped` mas `success`, e o `statusCheckRollup` do PR mostra só esse último run, de modo que o
+  verde final parece cobrir a fatia sem prova. `docs/gates/merge.md` ganhou a parte 3 do item "CI
+  verde" (relatório cita `id`, `headSha` e 0 passos caros `skipped` do run que executou, mais o
+  `git diff --stat` até o HEAD atual; job "só documentação" que decide pelo delta do último push
+  não conta como prova) e o passo 5c-bis de `skills/sre/SKILL.md` aponta para ela. Não havia
+  `ci.yml` no scaffold de `create-project` para ajustar.
+
 ## 1.53.9 — 2026-11-03
 
 - **Bloqueio do classificador de modo automático: deixado explícito que cobre também comandos

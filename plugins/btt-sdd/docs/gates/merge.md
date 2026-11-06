@@ -15,10 +15,10 @@
   da spec", que aceita explicitamente o risco de um defeito dessas três classes alcançar `main` e
   ficar lá até o fim da spec, limitado pelo piso objetivo de antecipação e pela revisão final do
   acumulado. O que a revisão final achar já mergeado vira `/btt-sdd:hotfix`, não um merge revertido.
-- [ ] **CI verde verificado em duas partes, pelo orquestrador que conduz o merge** — não é "CI
+- [ ] **CI verde verificado em três partes, pelo orquestrador que conduz o merge** — não é "CI
   verde" sem qualificação, e não é tarefa de nenhuma etapa de revisão. Um agente de revisão
   **reporta** o estado dos checks no próprio artefato e encerra (`docs/GIT-WORKFLOW.md`, seção
-  "Aguardando CI antes do merge"); quem espera e decide é quem mergeia. As duas partes:
+  "Aguardando CI antes do merge"); quem espera e decide é quem mergeia. As três partes:
   1. **A suíte de fato executou.** `conclusion: success` no nível do run é ambíguo num projeto com
      cadência condicional de CI (`docs/PROJECT-CONVENTIONS.md`, ex.: `ci-antes-do-merge`): pode
      significar "passou" ou "foi deliberadamente pulada". Inspecione os passos
@@ -28,6 +28,17 @@
      `headRefOid` atual do PR; se diferirem, prove por `git diff --stat <headSha>..<headRefOid>` que
      nada relevante ao workflow mudou entre os dois (`src/`, `frontend/`, manifestos de dependência,
      os próprios workflows). Caso contrário, dispare um run novo antes de mergear.
+  3. **O relatório de merge cita o run que executou de verdade, não só o último.** O
+     `statusCheckRollup` do PR mostra o run mais recente, e depois do push único da fatia (só
+     `specs/` e relatórios) ele pode ser o do caminho pulado: todo `skipped`, mas
+     `conclusion: success`. Quem lê o verde final acha que a suíte da fatia rodou. Registre no
+     relatório o `id` e o `headSha` do run que executou os passos caros, com a confirmação de 0
+     passos caros `skipped` (parte 1), e a saída de `git diff --stat <headSha>..<headRefOid>` até o
+     HEAD atual (parte 2). Se nenhum run da fatia executou os passos caros, dispare um run novo. Um
+     job "só documentação" que decide pelo delta do último push (`github.event.before`..`sha`) em
+     vez de pelo último run verde da branch pula tudo no push único mesmo quando o PR traz código —
+     num projeto assim, trate o verde do último run como não provado e cite o run anterior
+     (`docs/CI-WORKFLOW.md`, item 3).
   Delegar essa verificação adiante, etapa após etapa, sem que ninguém de fato a execute pode deixar
   passar um *required check* vermelho sem inspeção até o HEAD — e um run em draft reportando verde
   em segundos, com todos os passos caros `skipped`, não significa nada.

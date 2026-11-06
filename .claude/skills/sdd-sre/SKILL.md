@@ -255,7 +255,11 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    só confirma que não ficou nada por enviar. Um push que só acrescenta Markdown em `specs/` não
    precisa de run verde próprio: `docs/gates/merge.md` aceita o run anterior desde que você
    **prove**, com `git diff --stat <headSha-do-run>..<headRefOid-atual>`, que nada relevante ao
-   workflow mudou entre os dois — prova explícita, nunca presunção.
+   workflow mudou entre os dois — prova explícita, nunca presunção. **Cite no relatório de merge o run
+   que executou de verdade** (id, `headSha`, 0 passos caros `skipped`) e a saída desse
+   `git diff --stat` até o `headRefOid` atual: o `statusCheckRollup` do PR mostra só o último run, e
+   depois deste push ele pode ser o do caminho pulado (todo `skipped`, mas `success`) — sem a
+   citação o merge parece coberto sem prova explícita (`docs/gates/merge.md`, parte 3).
 5d. **Se aprovado (ou aprovado com ressalvas não-bloqueantes), tire o PR do modo draft antes da
    mensagem do passo 6.** `docs/GIT-WORKFLOW.md`, regra 4, já instrui abrir o PR cedo em modo draft
    no primeiro commit da fatia — mas nada no pipeline transiciona ele para "Ready for review"
