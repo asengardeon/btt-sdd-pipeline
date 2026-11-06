@@ -100,9 +100,11 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
 3b. **Registre a duração desta invocação em `specs/<slug>/timing-log.md`** (crie a partir de
    `specs/_template/timing-log.template.md` se ainda não existir): uma linha com o horário do
    passo 3, o horário atual, e a diferença calculada (etapa "SRE", agente "sre", fatia desta
-   rodada). Commit e envie (push) essa atualização junto com o resto do que esta rodada já for
-   commitar (`docs/GIT-WORKFLOW.md`, regra 4, sobre agrupar pushes relacionados) — precisa estar
-   commitado antes do passo 5c (retrospectiva), que lê este arquivo. **Vale também quando esta
+   rodada). **Não commite este arquivo agora**: deixe a linha no working tree da branch da fatia e commite o
+   `timing-log.md` acumulado **uma única vez**, junto do push único da fatia (`docs/GIT-WORKFLOW.md`,
+   seção "Push único por fatia"). Commitar a cada etapa move a ponta da branch depois que o worktree
+   do agente seguinte já nasceu dela, e o `merge --ff-only` do commit dele falha por divergência.
+   A retrospectiva do passo 5c lê este arquivo direto do working tree. **Vale também quando esta
    invocação é só uma reverificação pontual de um achado específico** — nunca pule este registro
    por ser "só uma reverificação", senão o `timing-log.md` da fatia fica sistematicamente
    incompleto. **Quando a reverificação pontual retoma o agente via `SendMessage` em vez de
@@ -151,6 +153,10 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    git log -1 --format=%H -- specs/<slug>/reviews/sre-review/ specs/<slug>/sre-review.md
    git worktree remove <caminho-do-worktree>              # se houver
    ```
+
+   **Nunca apague a branch temporária do agente antes de confirmar** que `git log -1 -- <artefato>`
+   devolve o commit dele na branch da fatia. Se o `--ff-only` falhar por divergência, integre com
+   `git cherry-pick <SHA-informado-pelo-agente>` em vez de descartar o trabalho.
 
    Confirmar não é zelo: os itens de gate que antes exigiam push nasceram de artefato que não
    chegava à branch. A durabilidade continua obrigatória — o meio é que mudou.
@@ -250,7 +256,7 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
 5c-bis. **Faça o push único da fatia antes do passo 5d**, agora que todos os artefatos de revisão
    dela estão commitados e integrados localmente (`docs/GIT-WORKFLOW.md`, seção "Push único por
    fatia: o CI roda uma vez, não uma vez por artefato de revisão"). Um `git push` só, na branch da
-   fatia. **Exceção**: se o `sre` ajustou `ci.yml`/`cd.yml`, `Dockerfile`/compose ou `infra/`, ele
+   fatia. Antes dele, **commite o `timing-log.md` acumulado num único commit** (passo 3b). **Exceção**: se o `sre` ajustou `ci.yml`/`cd.yml`, `Dockerfile`/compose ou `infra/`, ele
    já empurrou na hora e esperou o CI — isso muda comportamento e precisa de run próprio; aqui você
    só confirma que não ficou nada por enviar. Um push que só acrescenta Markdown em `specs/` não
    precisa de run verde próprio: `docs/gates/merge.md` aceita o run anterior desde que você

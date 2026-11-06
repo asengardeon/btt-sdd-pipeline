@@ -83,8 +83,10 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 3b. **Registre a duração desta invocação em `specs/<slug>/timing-log.md`** (crie a partir de
    `specs/_template/timing-log.template.md` se ainda não existir): uma linha com o horário do
    passo 3, o horário atual, e a diferença calculada (etapa "QA", agente "qa-engineer", fatia desta
-   rodada). Commit e envie (push) essa atualização junto com o resto do que esta rodada já for
-   commitar (`docs/GIT-WORKFLOW.md`, regra 4, sobre agrupar pushes relacionados). **Vale também
+   rodada). **Não commite este arquivo agora**: deixe a linha no working tree da branch da fatia e commite o
+   `timing-log.md` acumulado **uma única vez**, junto do push único da fatia (`docs/GIT-WORKFLOW.md`,
+   seção "Push único por fatia"). Commitar a cada etapa move a ponta da branch depois que o worktree
+   do agente seguinte já nasceu dela, e o `merge --ff-only` do commit dele falha por divergência. **Vale também
    quando esta invocação é só uma reverificação pontual de um achado específico**
    (`qa-engineer.md`, seção "Escopo de uma rodada de reverificação de achado específico") — nunca
    pule este registro por ser "só uma reverificação", senão o `timing-log.md` da fatia fica
@@ -140,6 +142,10 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    git worktree remove <caminho-do-worktree>              # se houver
    ```
 
+   **Nunca apague a branch temporária do agente antes de confirmar** que `git log -1 -- <artefato>`
+   devolve o commit dele na branch da fatia. Se o `--ff-only` falhar por divergência, integre com
+   `git cherry-pick <SHA-informado-pelo-agente>` em vez de descartar o trabalho.
+
    Confirmar não é zelo: os itens de gate que antes exigiam push nasceram de artefato que não
    chegava à branch. A durabilidade continua obrigatória — o meio é que mudou.
 4. Mostre ao usuário o veredito geral (aprovado/reprovado) e os pontos principais do relatório.
@@ -169,7 +175,7 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    sobre infraestrutura, e todas desapareceriam junto com a etapa 7:
    a0. **Faça o push único da fatia**, agora que todos os artefatos de revisão dela estão
       commitados e integrados localmente (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia: o CI
-      roda uma vez, não uma vez por artefato de revisão"). Um `git push` só, na branch da fatia.
+      roda uma vez, não uma vez por artefato de revisão"). Um `git push` só, na branch da fatia. Antes dele, **commite o `timing-log.md` acumulado num único commit** (passo 3b).
       Esse push não precisa do seu próprio run verde de CI: ele só acrescenta Markdown em `specs/`,
       e `docs/gates/merge.md` aceita o run verde anterior desde que você **prove**, com `git diff
       --stat <headSha-do-run>..<headRefOid-atual>`, que nada relevante ao workflow mudou entre os
