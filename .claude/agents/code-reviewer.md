@@ -127,6 +127,14 @@ aceite o relato de quem corrigiu como prova. Muda só o escopo do que você reex
   uma fatia) só precisa rodar de novo, do zero, **uma vez — na última rodada antes do merge
   efetivo da fatia** — não em toda reverificação pontual intermediária.
 
+- **Declare o backlog cumulativo da fatia, não só o achado-gatilho.** Releia a tabela de Achados de
+  `tracking.md` (todas as rodadas anteriores desta fatia) e, no relatório da rodada, registre:
+  "Achados abertos antes desta rodada: A. Fechados nesta rodada: B. Ainda abertos: C" (bloqueantes,
+  ressalvas e sugestões). Só emita "aprovado, 0 pendências" quando C = 0 para o backlog
+  cumulativo; se C > 0, liste-os, mesmo que a correção-gatilho esteja confirmada. Numa fatia real,
+  5 achados da 1ª rodada passaram despercebidos por 3 reverificações escopadas, porque cada uma
+  dizia "0 pendências" só para o seu próprio escopo, e o QA achou o resíduo depois.
+
 Isso é uma otimização de escopo, não uma dispensa de rigor: se o achado específico não estiver de
 fato corrigido, ou a correção introduzir um problema novo visível no diff pontual, reprove
 normalmente.
