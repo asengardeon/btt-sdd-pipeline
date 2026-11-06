@@ -117,7 +117,7 @@ specs/<slug>/trd/
   test-plan.md     — seção 11 (plano de testes, alto nível).
   tasks.md         — seção 13 (decomposição de tarefas e dependências — fatias verticais —,
                       incluindo a subseção "Janelas de quebra de contrato entre fatias").
-  tracking.md      — seções 15-16 (pendências VALIDAR DEPOIS; log de revisões), append-only.
+  tracking.md      — seções 15-16 (pendências VALIDAR DEPOIS, premissas assumidas; log de revisões), append-only.
 ```
 
 Toda referência numerada a seção de PRD/TRD em qualquer agente/skill/doc deste pipeline continua

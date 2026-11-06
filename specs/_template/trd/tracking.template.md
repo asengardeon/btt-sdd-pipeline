@@ -22,6 +22,15 @@ dependência citada no Contexto. Mover um item entre tabelas mantém o ID.
 | ID     | Pergunta                          | Contexto                              | Status              |
 |--------|--------------------------------------|-------------------------------------------|------------------------|
 
+## 15b. Premissas assumidas
+
+Lacuna do PRD com padrão razoável e reversão barata: o `architect` segue com o padrão e registra
+aqui (`architect/readiness-do-prd.md`). A tarefa que usa a premissa a marca para validação.
+
+| ID    | Padrão assumido | Impacto se estiver errada | Requisito de origem | Status              |
+|-------|-------------------|-------------------------------|------------------------|---------------------|
+| PRM-1 | <padrão escolhido> | <o que muda se for outro>       | <história/critério do PRD> | assumida / validada |
+
 ## 16. Log de revisões
 
 | Data | Autor | O que mudou | Motivo | Etapas revalidadas |
