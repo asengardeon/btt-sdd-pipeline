@@ -28,6 +28,10 @@
      `headRefOid` atual do PR; se diferirem, prove por `git diff --stat <headSha>..<headRefOid>` que
      nada relevante ao workflow mudou entre os dois (`src/`, `frontend/`, manifestos de dependência,
      os próprios workflows). Caso contrário, dispare um run novo antes de mergear.
+  **Cite no relatório de merge o run de referência**: id, `headSha`, contagem de passos `skipped`
+  (deve ser 0 nos passos caros) e a saída de `git diff --stat` até o `headRefOid` atual. O
+  `statusCheckRollup` do PR mostra só o último run — num push único só de `specs/`, ele pode ser todo
+  `skipped` e ainda assim `success`, e não prova que a suíte da fatia rodou.
   Delegar essa verificação adiante, etapa após etapa, sem que ninguém de fato a execute pode deixar
   passar um *required check* vermelho sem inspeção até o HEAD — e um run em draft reportando verde
   em segundos, com todos os passos caros `skipped`, não significa nada.

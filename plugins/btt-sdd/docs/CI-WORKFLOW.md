@@ -94,7 +94,9 @@ nunca funcionou. Declare a permissão junto do job, não depois.
 Um passo que só roda quando o short-circuit (ou a cadência do item 5) pulou os passos caros, dizendo
 isso em uma linha. Não é enfeite: um run verde de 23 s com todos os passos `skipped` é
 indistinguível de um run completo para quem olha só o `conclusion` — e as etapas de revisão são
-**obrigadas** a reportar o estado do CI nos artefatos delas (`docs/gates/sre.md`).
+**obrigadas** a reportar o estado do CI nos artefatos delas (`docs/gates/sre.md`). O passo imprime
+o `id` e o `headSha` do run de referência do item 3, para o merge poder citá-lo
+(`docs/gates/merge.md`): o verde do último run, sozinho, pode ser o verde do caminho pulado.
 
 ### 5. Cache de dependências do gerenciador da stack
 
