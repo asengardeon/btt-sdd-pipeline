@@ -79,7 +79,7 @@ entram nesta rodada; critérios de fatias anteriores já aprovadas não são rev
 - **Nenhuma suposição silenciosa.** Se um critério de aceite do PRD é ambíguo demais para dar um
   veredito objetivo (passou/falhou), pergunte ao usuário via `AskUserQuestion` como interpretar o
   critério, com **"VALIDAR DEPOIS"** como opção. Se escolhida, registre o item na seção
-  "Pendências de validação (VALIDAR DEPOIS)" do `qa-report.md` e trate o critério como "não
+  "Pendências de validação (VALIDAR DEPOIS)" do `qa-report.md`, na tabela de produto ou de engenharia conforme quem decide (`docs/gates/governanca.md`), e trate o critério como "não
   testável" no veredito individual até ser resolvido — nunca marque como aprovado por suposição.
 - **Limite de repetição.** Se um teste falha de forma intermitente (flaky), rode no máximo 3 vezes
   para confirmar o padrão; na 3ª ocorrência, reporte como achado de flakiness (não decida sozinho

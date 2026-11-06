@@ -27,8 +27,8 @@ geração de conteúdo novo a partir de análise.
 Este arquivo **não sabe como transformar nenhum artefato específico** — só sabe onde procurar a
 regra certa. Cada arquivo em
 `skills/migrate/migrations/<artefato>-v<origem>-to-v<destino>.md` descreve a detecção e a
-transformação de **um** par de versões de **um** artefato. Hoje existem 7 regras, todas `v1 →
-v2`: 5 arquivo único → split físico por rodada (`docs/MICRO-CONTEXT.md`, seção 2) e 2 arquivo
+transformação de **um** par de versões de **um** artefato. Hoje existem 14 regras: 7 `v1 → v2` e 7
+`v2 → v3` (tabela de pendências separada em produto e engenharia). As `v1 → v2`: 5 arquivo único → split físico por rodada (`docs/MICRO-CONTEXT.md`, seção 2) e 2 arquivo
 único → split por tópico (`docs/MICRO-CONTEXT.md`, seção 2b — PRD/TRD não têm rodada, só tópico):
 
 | Artefato | Arquivo de regra |
@@ -40,6 +40,9 @@ v2`: 5 arquivo único → split físico por rodada (`docs/MICRO-CONTEXT.md`, se�
 | `ux-review` | `migrations/ux-review-v1-to-v2.md` |
 | `prd` | `migrations/prd-v1-to-v2.md` |
 | `trd` | `migrations/trd-v1-to-v2.md` |
+
+Os pares `v2 → v3` seguem o mesmo nome: `migrations/<artefato>-v2-to-v3.md` para cada um dos sete
+artefatos acima.
 
 Artefatos sem regra registrada (`coverage-summary`, `timing-log`) nunca mudaram de formato desde
 que o pipeline existe — não é um erro, é "nada para migrar". Quando um desses artefatos ganhar
@@ -84,7 +87,7 @@ haver mais de um artefato defasado na mesma spec; cada migração é deliberada 
 2. **Determine a versão atual do template.** Leia a primeira linha de
    `specs/_template/<artefato>.template.md` — `<!-- sdd-format-version: N -->`. Se este artefato
    também tiver versão split, leia o marcador do `index.template.md` correspondente também: a
-   versão "atual" é sempre a mais alta das duas (hoje é sempre a do split — `v2`). O split pode
+   versão "atual" é sempre a mais alta das duas (hoje é sempre a do split — `v3`). O split pode
    estar em dois lugares (`docs/MICRO-CONTEXT.md`, seções 2 e 2b): `specs/_template/reviews/
    <artefato>/index.template.md` (split por rodada — os 5 artefatos de revisão) ou
    `specs/_template/<artefato>/index.template.md` (split por tópico — `prd`, `trd`).
@@ -113,9 +116,9 @@ haver mais de um artefato defasado na mesma spec; cada migração é deliberada 
 
 6. **Se a instância estiver mais de uma versão atrás** (ex.: template já em `v3`, instância em
    `v1`), aplique os pares em sequência — `v1→v2`, depois `v2→v3` — confirmando a versão
-   resultante a cada passo antes de aplicar o próximo. Hoje nenhum artefato tem mais de duas
-   versões conhecidas, então este caso ainda não ocorre na prática — a lógica existe para quando
-   ocorrer.
+   resultante a cada passo antes de aplicar o próximo. Os arquivos que a `v1 → v2` cria herdam o
+   marcador do template atual (`v3`) mas saem com a tabela única de pendências: a regra
+   `v2 → v3` decide pela estrutura, não pelo marcador, e roda em seguida.
 
 7. **Leia o arquivo de regra encontrado e siga exatamente os passos dele** — detecção fina das
    seções/tabelas de origem, quais arquivos criar, como transformar o conteúdo. O núcleo aqui não

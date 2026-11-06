@@ -16,9 +16,11 @@ FILES=(prd.md trd.md code-review.md ux-review.md qa-report.md security-review.md
 print_rows() {
   # $1 = rótulo do artefato exibido na tabela, $2 = caminho do arquivo
   awk -v artefato="$1" '
-    BEGIN { insec = 0 }
-    /^## .*VALIDAR DEPOIS/ { insec = 1; next }
+    BEGIN { insec = 0; tipo = "não classificada" }
+    /^## .*VALIDAR DEPOIS/ { insec = 1; tipo = "não classificada"; next }
     /^## / && insec == 1 { insec = 0 }
+    insec == 1 && /^###+ .*[Pp]roduto/ { tipo = "produto"; next }
+    insec == 1 && /^###+ .*[Ee]ngenharia/ { tipo = "engenharia"; next }
     insec == 1 && /^\|/ {
       line = $0
       gsub(/^\| */, "", line); gsub(/ *\|$/, "", line)
@@ -26,7 +28,7 @@ print_rows() {
       for (i = 1; i <= n; i++) { gsub(/^ +| +$/, "", cols[i]) }
       status4 = cols[4]; gsub(/^\*+/, "", status4)
       if (n >= 4 && cols[1] != "ID" && cols[1] !~ /^-+$/ && status4 ~ /^[Pp]endente/) {
-        printf("%s\t%s\t%s\t%s\n", artefato, cols[1], cols[2], cols[3])
+        printf("%s\t%s\t%s\t%s\t%s\n", artefato, cols[1], cols[2], cols[3], tipo)
       }
     }
   ' "$2"
@@ -116,9 +118,9 @@ SPECS_SEM_TRD=""
 
 collect_rows() {
   # $1 = feature exibida, $2 = artefato, $3 = arquivo
-  while IFS=$'\t' read -r artefato id pergunta contexto; do
+  while IFS=$'\t' read -r artefato id pergunta contexto tipo; do
     [ -z "$id" ] && continue
-    ROWS="${ROWS}${1}"$'\t'"${artefato}"$'\t'"${id}"$'\t'"${pergunta}"$'\t'"${contexto}"$'\n'
+    ROWS="${ROWS}${1}"$'\t'"${artefato}"$'\t'"${id}"$'\t'"${pergunta}"$'\t'"${contexto}"$'\t'"${tipo}"$'\n'
   done < <(print_rows "$2" "$3")
 }
 
@@ -180,11 +182,21 @@ printf -- '-%.0s' $(seq 1 130); echo
 
 found=0
 if [ -n "$ROWS" ]; then
-  while IFS=$'\t' read -r feature artefato id pergunta contexto; do
-    [ -z "$feature" ] && continue
+  DEDUPED="$(printf '%s' "$ROWS" | dedupe_rows)"
+  # Agrupa por dono da decisão (docs/gates/governanca.md); "não classificada" é a tabela única
+  # de um artefato ainda em v2.
+  for grupo in "produto" "engenharia" "não classificada"; do
+    grupo_rows="$(printf '%s\n' "$DEDUPED" | awk -F'\t' -v g="$grupo" '$6 == g')"
+    [ -z "$grupo_rows" ] && continue
     found=1
-    printf '%-28s | %-16s | %-6s | %-42s | %s\n' "$feature" "$artefato" "$id" "$pergunta" "$contexto"
-  done < <(printf '%s' "$ROWS" | dedupe_rows)
+    case "$grupo" in
+      "não classificada") echo "[Sem classificação (tabela única, formato v2)]" ;;
+      *) echo "[Decisões de $grupo]" ;;
+    esac
+    while IFS=$'\t' read -r feature artefato id pergunta contexto tipo; do
+      printf '%-28s | %-16s | %-6s | %-42s | %s\n' "$feature" "$artefato" "$id" "$pergunta" "$contexto"
+    done <<< "$grupo_rows"
+  done
 fi
 
 if [ "$found" = "0" ]; then

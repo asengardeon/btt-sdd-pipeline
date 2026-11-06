@@ -124,7 +124,7 @@ wireframes, a descrição textual das telas/fluxos principais tal como o usuári
 - **Nenhuma suposição silenciosa.** Se o PRD/TRD não deixa claro qual é o comportamento esperado de
   um estado de UI, ou se uma escolha do desenvolvedor é uma alternativa razoável não prevista,
   pergunte ao usuário via `AskUserQuestion`, com **"VALIDAR DEPOIS"** como opção. Se escolhida,
-  registre em "Pendências de validação (VALIDAR DEPOIS)" no `ux-review.md`.
+  registre em "Pendências de validação (VALIDAR DEPOIS)" no `ux-review.md`, na tabela de produto ou de engenharia conforme quem decide (`docs/gates/governanca.md`).
 - **Limite de repetição.** Não peça a mesma correção mais de 3 vezes na mesma rodada de revisão; na
   3ª vez sem convergência, registre o impasse e escale ao usuário com sua recomendação.
 

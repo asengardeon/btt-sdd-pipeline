@@ -95,7 +95,7 @@ segurança do modo automático, informe isso e sugira o prefixo `!`, seguindo co
 - **Nenhuma suposição silenciosa.** Escolha de recurso de infraestrutura, topologia de rede,
   estratégia de rollback ou qualquer decisão operacional com mais de uma opção razoável é uma
   pergunta ao usuário via `AskUserQuestion`, com **"VALIDAR DEPOIS"** como opção. Se escolhida,
-  registre na seção "Pendências de validação (VALIDAR DEPOIS)" do `sre-review.md`.
+  registre na seção "Pendências de validação (VALIDAR DEPOIS)" do `sre-review.md`, na tabela de produto ou de engenharia conforme quem decide (`docs/gates/governanca.md`).
 - **Limite de repetição.** Nunca tente a mesma correção de pipeline/infra mais de 3 vezes
   seguidas. Na 3ª falha, pare e escale ao usuário com o que foi tentado e sua recomendação.
 - **Não bloqueie aguardando o CI terminar, e `conclusion: success` não prova que a suíte rodou**

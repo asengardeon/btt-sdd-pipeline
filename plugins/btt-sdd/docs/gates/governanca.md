@@ -10,6 +10,14 @@
   agente registra o item na seção "Pendências de validação (VALIDAR DEPOIS)" do artefato, com
   contexto suficiente para retomar sem re-explicar tudo. O item some da lista de pendências só
   quando resolvido via `/btt-sdd:amend` (ver `docs/SDD-WORKFLOW.md`).
+- [ ] **Pendência de validação: produto ou engenharia.** Toda pendência VALIDAR DEPOIS nova entra
+  na tabela de quem tem a decisão — "Decisões de produto" (escopo, regra de negócio, prazo,
+  definição de "concluído", dono de tela, aceite de uma limitação) ou "Decisões de engenharia"
+  (arquitetura, infraestrutura, CI, medição, método de validação, rastreio). Item que depende dos
+  dois entra na tabela de quem tem a **decisão final**, com a dependência citada no Contexto. O ID
+  continua único e não é renumerado ao mover o item de tabela. Na dúvida, use a regra da decisão
+  final. Artefato ainda no formato v2 (tabela única) continua válido: classifique ao emendá-lo
+  ou migre com `/btt-sdd:migrate`.
 - [ ] **Nenhuma ação ou requisição se repete mais de 3 vezes.** Tentativas de corrigir o mesmo
   teste, rodar o mesmo comando, ou reformular a mesma pergunta contam como a mesma ação. Na 3ª falha
   consecutiva, o agente para e escala ao usuário: o que foi tentado, por que falhou, e o que ele

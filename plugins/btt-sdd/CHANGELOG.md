@@ -17,6 +17,16 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.57.0 — 2026-11-06
+
+- **Pendências VALIDAR DEPOIS separadas em "Decisões de produto" e "Decisões de engenharia"
+  (issue #662).** `tracking.md` de PRD, TRD e dos cinco artefatos de revisão passa a `v3`, com duas
+  tabelas pelo dono da decisão; item que depende dos dois fica com quem tem a decisão final, e o
+  ID não muda ao mover de tabela. Regra em `gates/governanca.md`; agentes classificam ao
+  registrar; `/btt-sdd:pending` agrupa a saída (produto / engenharia / sem classificação para
+  tabela única v2); sete regras novas `v2 → v3` em `skills/migrate/migrations/`. Specs em `v2`
+  continuam válidas até a próxima emenda ou `/btt-sdd:migrate`.
+
 ## 1.53.9 — 2026-11-03
 
 - **Bloqueio do classificador de modo automático: deixado explícito que cobre também comandos

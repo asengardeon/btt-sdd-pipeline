@@ -46,7 +46,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    passo 1a, não recriar `INDEX.md` nem os demais arquivos do mesmo diretório). Se a mudança
    resolve um item da seção "Pendências de validação (VALIDAR DEPOIS)", marque o item como
    "validado" em vez de removê-lo (mantém o histórico de que aquela dúvida existiu e foi
-   resolvida) — no formato split, essa seção vive em `tracking.md`.
+   resolvida; a linha fica na tabela em que está — produto ou engenharia — e, num artefato v2 de
+   tabela única, é classificada ao ser emendada) — no formato split, essa seção vive em `tracking.md`.
 
 3. Registre a mudança na seção "Log de revisões" do artefato editado: data, autor (você, como
    agente, citando a instrução do usuário), o que mudou, motivo — no formato split, essa seção
