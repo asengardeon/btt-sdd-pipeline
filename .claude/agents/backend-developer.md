@@ -45,7 +45,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 | Suíte completa revela erros pré-existentes/não relacionados (passo 5a) | `backend-developer/reconciliar-erros-pre-existentes.md` |
 | Trilha gera e commita artefato a partir de contrato (OpenAPI/GraphQL/protobuf) (passo 5a-ter) | `backend-developer/artefato-gerado-vs-commitado.md` |
 | Antes de reportar a trilha como concluída (passo 5b) | `backend-developer/confirmar-push-origin.md` |
-| Trilha tocou mais de um ponto de entrada estruturalmente equivalente (passo 5c) | `backend-developer/pontos-equivalentes-cobertura.md` |
+| Trilha tocou mais de um ponto de entrada estruturalmente equivalente, ou corrigindo achado de revisão do tipo "faltou guarda/asserção/checagem neste ponto" (passo 5c) | `backend-developer/pontos-equivalentes-cobertura.md` |
 | Construindo dublê de captura real, ou clique/interação em teste de automação (passo 5d) | `backend-developer/duble-captura-real-locator-estrito.md` |
 | Working tree isolado, ao encerrar a sessão (passo 7) | `backend-developer/worktree-saida.md` |
 | Adapter de processo externo/CLI com "resultado vazio" como caso de negócio válido (regra 5) | `backend-developer/cli-wrapper-resultado-vazio.md` |
