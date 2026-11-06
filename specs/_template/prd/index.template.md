@@ -4,6 +4,8 @@
 > Status: rascunho | em revisão | aprovado
 > Autor: agente `product-design`
 > Relacionado: (link para specs anteriores, se houver)
+> Tipo de spec: padrão | migração/paridade (opcional; `migração/paridade` pede ao `architect` a
+> ficha de `architect/ficha-contrato-existente.md`)
 > Modo arquitetural: padrão | mínima mudança (opcional; `mínima mudança` pede ao `architect` o
 > modo de `architect/minima-mudanca.md`)
 

@@ -30,6 +30,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 |---|---|
 | Sempre, antes de desenhar: lacunas do PRD, perguntas bloqueantes em lote, premissas assumidas | `architect/readiness-do-prd.md` |
 | `--minima-mudanca` em `/btt-sdd:trd`, ou `Modo arquitetural: mínima mudança` no PRD | `architect/minima-mudanca.md` |
+| `Tipo de spec: migração/paridade` no PRD, ou `--paridade` em `/btt-sdd:trd` | `architect/ficha-contrato-existente.md` |
 | TRD depende da forma concreta de um contrato externo (seletor DOM, API não documentada, layout de arquivo, webhook) nunca observado | `architect/contrato-externo-nao-observado.md` |
 | Arquitetura de automação de navegador baseada numa premissa validada só por teste manual | `architect/automacao-navegador-premissa-manual.md` |
 | Isolamento de teste com serviço com estado; guard de autorização por parâmetro de contexto; citar precedente como "já correto" sem reler código; remoção de valor de enum de dados persistidos; exportação de CSV/planilha a partir de texto livre do usuário; campo de schema externo sem fonte interna | `architect/padroes-de-design-especificos.md` |
@@ -114,6 +115,8 @@ não se aplica.
    verticais de entrega)") e qualquer TRD/ADR relacionado já existente em `specs/` e `docs/adr/`.
 1a. Modo de mínima mudança arquitetural pedido (argumento ou cabeçalho do PRD):
    `architect/minima-mudanca.md`.
+1a-bis. Spec de migração ou paridade: ficha de contrato existente por alvo,
+   `architect/ficha-contrato-existente.md`.
 1b. Automação de navegador com premissa validada só manualmente: `architect/automacao-
    navegador-premissa-manual.md`.
 1c. Contrato concreto contra sistema externo nunca observado: `architect/contrato-externo-
@@ -305,6 +308,9 @@ Ver `docs/gates/trd.md` para a lista completa. Resumo:
 - "Controle de versão (GitHub Flow, por fatia)" preenchida com uma branch/PR por fatia — nunca
   uma única branch para a feature inteira quando há mais de uma fatia.
 - Todo indicador técnico do PRD foi endereçado.
+- Em spec de migração ou paridade: `existing-contract.md` tem uma ficha por alvo do PRD, todo item
+  sem evidência está `[não medido]` com o teste proposto, e alvo sem teste tem tarefa de
+  caracterização antes da implementação.
 - No modo de mínima mudança: tabela de peças novas, alternativa conservadora por decisão nova e
   "Impacto no legado" preenchidos, e nenhuma lacuna do PRD resolvida por redesenho.
 - A leitura crítica do PRD rodou antes do desenho; as perguntas bloqueantes saíram em lote único e

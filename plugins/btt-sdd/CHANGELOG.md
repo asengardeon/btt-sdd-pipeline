@@ -17,6 +17,15 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.61.0 — 2026-11-06
+
+- **TRD: ficha de contrato existente por alvo em spec de migração ou paridade (issue #664).**
+  `Tipo de spec: migração/paridade` no PRD, ou `--paridade` em `/btt-sdd:trd`, aciona
+  `agents/architect/ficha-contrato-existente.md`: arquivo condicional `trd/existing-contract.md`
+  com uma ficha por alvo (interface, autorização, regras, efeitos colaterais, cliente atual,
+  testes), evidência `[medido]`/`[inferido]`/`[não medido]` e tarefa de teste de caracterização
+  antes da implementação de alvo sem teste. Arquivo novo e condicional, sem bump de formato.
+
 ## 1.60.0 — 2026-11-06
 
 - **Rodada de perguntas ao PM como seção padrão de `tracking.md` (issue #665).** PRD e TRD ganham,
