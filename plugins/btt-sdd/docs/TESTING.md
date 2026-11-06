@@ -78,6 +78,44 @@ peça isolada perceba — mesmo com code review, QA, segurança e SRE aprovando 
 primeira execução real passando pelo pipeline completo (validação manual pós-merge) revela a
 divergência.
 
+### Workflow de CD/infra validado por simulação: cenários verdes não bastam
+
+Quando a lógica não pode ser exercitada de verdade (o rollback de um workflow de CD só acontece num
+deploy que falha em produção), a prova costuma ser uma simulação: extrair os blocos `run:` reais do
+workflow e rodá-los com dublês dos comandos externos (`curl`, `jq`, CLIs de nuvem). Isso testa o
+**script**. Não testa a **fiação** que fica fora dele: a condição `if:` de cada passo, a ordem dos
+passos, `needs`, `permissions`, o uso de `always()`/`failure()`. Uma fatia real reportou 84 cenários
+verdes e ainda deixava passar quatro defeitos de fiação: sem `failure()` no `if:` o passo de
+rollback nunca rodava e a suíte seguia verde; `&&` trocado por `||` fazia o rollback rodar em todo
+deploy saudável; a janela do health check podia encolher; e os delimitadores do marcador de versão
+podiam mudar. Só mutações rodadas pela revisão, sobre o arquivo real, os encontraram — a revisão
+acabou fazendo o papel do teste.
+
+Quando a validação de um workflow ou script de infra é por simulação, a trilha que o entrega **antes
+de pedir revisão** faz as três coisas abaixo, além dos cenários:
+
+   1. **Checagem estática da fiação do YAML.** Um teste lê o arquivo real e afirma, por passo: o
+   `if:` exato, a posição na ordem dos passos, a ausência de `always()` em passo irreversível
+   (rollback, `terraform apply`, publicação), e as `permissions` do job. Esse teste falha se
+   qualquer um deles mudar.
+
+   2. **Passada de mutação automática sobre o arquivo real.** Um script aplica cada mutação a uma
+   **cópia** do arquivo (nunca ao arquivo versionado) e roda a suíte contra a cópia; a mutação que a
+   suíte não derruba é um defeito da suíte, e o script termina com falha. Mutações mínimas: remover
+   ou enfraquecer cada `if:`; trocar `&&` por `||` e o inverso; reduzir janelas, timeouts e
+   contagens de tentativa; alterar os delimitadores de qualquer marcador que o script lê de volta;
+   remover um passo.
+
+   3. **O resumo da trilha relata as mutações**: quantas foram aplicadas, quais morreram e quais
+   sobreviveram, com a causa de cada sobrevivente. "N cenários verdes" sozinho não é evidência — o
+   número de cenários mede o script, não a fiação.
+
+Quem revisa não aceita o relatório das mutações como prova
+(`qa-engineer/auto-avaliacao-mutacao-nao-e-evidencia.md`): confere que a suíte entregue **contém** a
+checagem estática e a passada de mutação e as roda, e aplica pelo menos uma mutação própria, de
+fiação, sobre o arquivo real (por exemplo, apagar o `failure()` do `if:` do passo irreversível) para
+ver a suíte falhar.
+
 ## Frontend (quando aplicável)
 
 Mesmo TDD, mesma pirâmide, mapeados em `frontend/tests/` — componentes/serviços testados com um

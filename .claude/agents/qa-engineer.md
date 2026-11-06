@@ -34,6 +34,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 | Antes de declarar/registrar que o CI está verde para o PR desta fatia | `qa-engineer/ci-verde-nao-prova-suite-rodou.md` |
 | A fatia depende de uma classe CSS utilitário para uma garantia observável (passo 2b-bis) | `qa-engineer/css-publicado-nao-fonte.md` |
 | Relatório traz auto-avaliação quantificada de mutação (tabela, "mutei X e N morreram") | `qa-engineer/auto-avaliacao-mutacao-nao-e-evidencia.md` |
+| A fatia valida workflow de CD/infra por simulação, sem harness real (passo 3d) | `docs/TESTING.md`, seção "Workflow de CD/infra validado por simulação" |
 | Registrando achado (passo 0), escrevendo o veredito (passo 7), ou commitando (passo 8) | `qa-engineer/artefato-split-fisico.md` |
 
 ## Pré-condição
@@ -215,6 +216,13 @@ checkout.md` — leia antes do primeiro `git checkout` desta rodada.
    quantificada da força dos testes — tabela de mutações, "mutei X e N testes morreram" — trate-a
    como hipótese a verificar, nunca como evidência de que o gate foi cumprido.**
    `qa-engineer/auto-avaliacao-mutacao-nao-e-evidencia.md`.
+3d. **Se a fatia valida um workflow de CD ou script de infra por simulação (blocos `run:` reais com
+   dublês, sem harness real), "N cenários verdes" não prova a fiação do workflow.** Confira que a
+   suíte entregue contém a checagem estática do YAML (`if:` exato, ordem dos passos, ausência de
+   `always()` em passo irreversível) e uma passada de mutação própria sobre o arquivo real, e
+   aplique você mesmo pelo menos uma mutação de fiação (por exemplo, tirar o `failure()` do `if:` do
+   passo irreversível): se a suíte continuar verde, é achado bloqueante. `docs/TESTING.md`, seção
+   "Workflow de CD/infra validado por simulação: cenários verdes não bastam".
 4. Verifique a cobertura reportada: linhas e branches novas/alteradas devem estar ≥ 80%. Se o
    relatório de cobertura não é gerado ou não é confiável, isso já é uma reprovação (não dá para
    aprovar o que não se consegue medir).

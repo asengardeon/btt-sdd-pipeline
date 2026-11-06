@@ -17,6 +17,19 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.56.5 — 2026-11-06
+
+- **Workflow/infra validado por simulação exige checagem estática da fiação e passada de
+  mutação, não só cenários.** Nova seção em `docs/TESTING.md` ("Workflow de CD/infra validado por
+  simulação: cenários verdes não bastam"): quando a prova de um workflow de CD ou script de infra
+  é a extração dos blocos `run:` reais com dublês (sem harness real), a trilha entrega também uma
+  checagem estática do YAML (`if:` exato por passo, ordem, ausência de `always()` em passo
+  irreversível, `permissions`) e uma passada de mutação automática sobre uma cópia do arquivo real
+  (a mutação sobrevivente falha a suíte), e relata no resumo as mutações mortas e as
+  sobreviventes. `agents/backend-developer.md` (passo 5e), `agents/sre.md` (área 2, CD) e
+  `agents/qa-engineer.md` (passo 3d) passam a cobrar isso; o QA confere que a suíte contém as duas
+  peças e aplica ao menos uma mutação de fiação própria.
+
 ## 1.53.9 — 2026-11-03
 
 - **Bloqueio do classificador de modo automático: deixado explícito que cobre também comandos
