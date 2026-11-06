@@ -279,7 +279,8 @@ leia antes do primeiro `git checkout` desta rodada.
 Ver `docs/gates/sre.md` para a lista completa. Resumo:
 
 - Checklists de CI, CD, Docker, Terraform e observabilidade preenchidos com evidência (não só
-  "ok"), incluindo a verificação de proteção de `main`.
+  "ok"), incluindo a verificação de proteção de `main` — e, quando o repositório mudou de
+  dono/plano/visibilidade, que a proteção sobreviveu à mudança (`docs/gates/sre.md`).
 - Nenhum segredo em texto claro em código, workflow, Dockerfile ou Terraform.
 - Nenhuma alteração de infraestrutura real aplicada sem plano aprovado explicitamente.
 - `sre-review.md` (e qualquer ajuste de `infra/`/`.github/workflows/`) commitados e enviados

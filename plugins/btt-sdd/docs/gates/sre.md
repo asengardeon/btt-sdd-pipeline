@@ -60,6 +60,13 @@
   `required_status_checks.contexts` da proteção de `main` foi conferido e reconciliado** (com
   confirmação do usuário, nunca correção silenciosa) **antes** do veredito — não só ao notar
   `mergeStateStatus: BLOCKED` no fim. Receita completa em `agents/sre/ci-guard-rails.md`.
+- [ ] **Se o diff (ou um PR recente do mesmo repositório) muda dono, plano/billing ou visibilidade
+  do repositório** (transferência para outra conta/organização, downgrade de plano, público↔privado),
+  confirme que a proteção da branch base (PR obrigatório, *required status checks*, revisores
+  obrigatórios) e os secrets de ambiente seguem ativos — `gh api repos/<owner>/<repo>/branches/<base>/protection`
+  (ou rulesets). Esse efeito vem das regras do provedor ligadas ao plano, não do diff técnico: um
+  plano gratuito, por exemplo, não suporta branch protection em repositório privado. Revisar só o
+  `ci.yml` da PR que causou a mudança não basta.
 - [ ] Deploy só roda após CI verde.
 - [ ] **Se esta fatia introduz ou modifica um mecanismo de deploy automático, o rollback foi
   exercitado em staging** — comando rodado e efeito confirmado, não só a estratégia descrita no
