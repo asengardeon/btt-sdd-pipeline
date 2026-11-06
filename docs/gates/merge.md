@@ -37,7 +37,7 @@
      HEAD atual (parte 2). Se nenhum run da fatia executou os passos caros, dispare um run novo. Um
      job "só documentação" que decide pelo delta do último push (`github.event.before`..`sha`) em
      vez de pelo último run verde da branch pula tudo no push único mesmo quando o PR traz código —
-     nesse projeto, trate o verde do último run como não provado e cite o run anterior
+     num projeto assim, trate o verde do último run como não provado e cite o run anterior
      (`docs/CI-WORKFLOW.md`, item 3).
   Delegar essa verificação adiante, etapa após etapa, sem que ninguém de fato a execute pode deixar
   passar um *required check* vermelho sem inspeção até o HEAD — e um run em draft reportando verde
