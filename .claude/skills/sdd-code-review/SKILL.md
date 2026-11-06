@@ -90,9 +90,13 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 3b. **Registre a duração desta invocação em `specs/<slug>/timing-log.md`** (crie a partir de
    `specs/_template/timing-log.template.md` se ainda não existir): uma linha com o horário do
    passo 3, o horário atual, e a diferença calculada (etapa "Code review", agente
-   "code-reviewer", fatia desta rodada). Commit e envie (push) essa atualização junto com o resto
-   do que esta rodada já for commitar (`docs/GIT-WORKFLOW.md`, regra 4, sobre agrupar pushes
-   relacionados). **Vale também quando esta invocação é só uma reverificação pontual de um achado
+   "code-reviewer", fatia desta rodada).
+   **Escreva a linha no working tree e não a commite agora**: um commit de `timing-log.md` feito
+   antes da integração do commit do agente (passo 3d) move a ponta da branch da fatia, e o
+   `git merge --ff-only` falha por divergência, porque o worktree do agente nasceu do SHA anterior.
+   Acumule as linhas das etapas e commite-as **uma vez só**, no push único da fatia, feito pela
+   última etapa de revisão dela (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia: o CI roda uma
+   vez, não uma vez por artefato de revisão"). **Vale também quando esta invocação é só uma reverificação pontual de um achado
    específico** (`code-reviewer.md`, seção "Escopo de uma rodada de reverificação de achado
    específico") — nunca pule este registro por ser "só uma reverificação", senão o `timing-log.md`
    da fatia fica sistematicamente incompleto. **Quando a reverificação pontual retoma o agente
@@ -129,7 +133,7 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    artefato da rodada. O gate instrui a *ler* o campo antes de ofertar de novo, mas sem dono para o
    preenchimento ele acumula `sem resposta` em entradas cuja resposta já foi dada, e a rodada
    seguinte repete a oferta que o campo existe para evitar.
-3b. **Integre o commit do agente na branch da fatia, localmente, e não dê push aqui**
+3d. **Integre o commit do agente na branch da fatia, localmente, e não dê push aqui**
    (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia: o CI roda uma vez, não uma vez por
    artefato de revisão"). O agente commitou o artefato e informou a branch e o SHA. Se ele rodou em
    working tree isolado, essa branch é a temporária do worktree: integre e confirme **antes** de
@@ -142,6 +146,10 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    ```bash
    git branch --show-current                              # confirme antes de qualquer merge
    git merge --ff-only <branch-informada-pelo-agente>
+   # se falhar por divergência ("Not possible to fast-forward") e a ponta da fatia só andou por
+   # commits de timing-log.md, o diff abaixo lista só esse arquivo — use merge normal:
+   git diff --name-only $(git merge-base HEAD <branch-informada-pelo-agente>) HEAD
+   git merge --no-edit <branch-informada-pelo-agente>
    # artefato alcançável na branch da fatia — formato novo são 3 arquivos, legado é 1:
    git log -1 --format=%H -- specs/<slug>/reviews/code-review/ specs/<slug>/code-review.md
    git worktree remove <caminho-do-worktree>              # se houver
@@ -149,6 +157,10 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 
    Confirmar não é zelo: os itens de gate que antes exigiam push nasceram de artefato que não
    chegava à branch. A durabilidade continua obrigatória — o meio é que mudou.
+   **Nunca apague a branch temporária do agente (`git branch -d`/`-D`) nem o worktree antes de o
+   `git log -1` acima mostrar o artefato na branch da fatia**: se a integração falhar, essa branch é
+   a única referência ao commit do agente, e a recuperação por `cherry-pick` do SHA depende de ele
+   ainda existir.
 4. Mostre ao usuário o veredito geral (aprovado/aprovado com ressalvas/reprovado) e os achados
    principais do relatório.
 5. Se reprovado, informe que a feature volta para `/sdd-implement` com os achados listados — e
