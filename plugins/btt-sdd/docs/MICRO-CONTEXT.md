@@ -147,7 +147,11 @@ arquivo por par `<artefato>-v<origem>-to-v<destino>`, cada um descrevendo a pró
 transformação — nenhum comando genérico centraliza a lógica de todo artefato, só sabe onde
 procurar o par certo. Hoje existe um par `v1 → v2` registrado para sete artefatos —
 `code-review`, `qa-report`, `security-review`, `sre-review` e `ux-review` (`v2` = split físico
-por rodada, seção 2 acima) e `prd` e `trd` (`v2` = split por tópico, seção 2b acima). Artefatos
+por rodada, seção 2 acima) e `prd` e `trd` (`v2` = split por tópico, seção 2b acima). Os mesmos
+sete têm também um par `v2 → v3`: `v3` separa a seção "Pendências de validação (VALIDAR DEPOIS)"
+do `tracking.md` em duas tabelas, "Decisões de produto" e "Decisões de engenharia"
+(`gates/governanca.md` do pipeline); `INDEX.md` e `tracking.md` sobem para `v3`, os demais
+arquivos do split ficam em `v2`. Artefatos
 sem par registrado (`coverage-summary`, `timing-log`) nunca mudaram de formato desde que o
 pipeline existe — o comando responde "nada para migrar" para eles, não um erro; é a
 infraestrutura pronta para quando (e se) uma mudança de formato futura precisar de um par novo,

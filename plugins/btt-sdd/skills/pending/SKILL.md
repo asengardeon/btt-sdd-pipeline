@@ -32,7 +32,10 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
      `docs/BASELINE.md`, filtra só os itens com status
      "pendente" e devolve feature | artefato | ID | pergunta | contexto — já deduplicada (linhas
      que só repetem uma referência a uma rodada anterior sem conteúdo novo, ex. "ver rodada
-     anterior", são colapsadas na ocorrência mais informativa da mesma pergunta).
+     anterior", são colapsadas na ocorrência mais informativa da mesma pergunta). A saída vem
+     agrupada pelo dono da decisão — `[Decisões de produto]`, `[Decisões de engenharia]` (tabelas
+     do formato v3, `docs/gates/governanca.md`) e `[Sem classificação]` (tabela única de um
+     artefato ainda em v2, que `/sdd-amend` ou `/sdd-migrate` classificam).
    - **Tarefas ainda não implementadas**: varre a tabela de decomposição do TRD (`trd/tasks.md`
      no formato novo, `trd.md` no legado) e lista toda linha cujo **Status** ainda não chegou a
      "implementado" (ou seja, está em "pendente", "em andamento" ou "bloqueado") — feature | ID |
@@ -84,7 +87,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 2. Filtre só os itens com status "pendente" (ignore os já marcados "validado").
 3. Se `args` traz um slug específico, mostre só aquela feature; senão, mostre todas as que têm
    pendência.
-4. Apresente uma tabela: feature | artefato | ID | pergunta | contexto resumido.
+4. Apresente uma tabela: feature | artefato | ID | pergunta | contexto resumido, agrupada em
+   produto / engenharia quando o artefato tem as duas tabelas (v3).
 5. Para a segunda tabela, leia a seção "Decomposição de tarefas e dependências" do TRD
    (`trd/tasks.md` no formato novo, `trd.md` no legado) e filtre as linhas cujo **Status** não
    seja "implementado", "aprovado" nem "concluído (mergeado)" (ou seja, "pendente", "em andamento"

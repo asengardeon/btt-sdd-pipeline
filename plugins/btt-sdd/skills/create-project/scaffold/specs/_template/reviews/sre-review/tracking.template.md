@@ -1,4 +1,4 @@
-<!-- sdd-format-version: 2 -->
+<!-- sdd-format-version: 3 -->
 # SRE Review — <Nome da Feature> — Pendências, VALIDAR DEPOIS e Log
 
 Três tabelas compactas, append-only — nunca uma linha apagada, só marcada (`MICRO-CONTEXT.md` do
@@ -17,9 +17,20 @@ vez de apagá-la ou duplicá-la.
 
 ## Pendências de validação (VALIDAR DEPOIS)
 
+Duas tabelas, pelo dono da decisão (`gates/governanca.md` do pipeline, "Pendência de
+validação: produto ou engenharia"). Item que depende dos dois fica na tabela de quem tem a
+decisão final, com a dependência citada no Contexto. Mover um item entre tabelas mantém o ID.
+
+### Decisões de produto
+
 | ID    | Pergunta                          | Contexto                              | Status              |
 |-------|--------------------------------------|-------------------------------------------|------------------------|
 | SRE-1 | <pergunta que ficou sem resposta>     | <por que essa pergunta importa>            | pendente / validado |
+
+### Decisões de engenharia
+
+| ID    | Pergunta                          | Contexto                              | Status              |
+|-------|--------------------------------------|-------------------------------------------|------------------------|
 
 ## Log de revisões
 

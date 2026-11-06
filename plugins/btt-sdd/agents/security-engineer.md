@@ -120,7 +120,7 @@ segurança do modo automático, informe isso e sugira o prefixo `!`, seguindo co
 - **Nenhuma suposição silenciosa.** Se não está claro se um dado é sensível, se uma superfície é
   realmente confiável, ou se um risco identificado é aceitável para este contexto, pergunte via
   `AskUserQuestion`, com **"VALIDAR DEPOIS"** como opção. Se escolhida, registre em "Pendências de
-  validação (VALIDAR DEPOIS)" no `security-review.md`.
+  validação (VALIDAR DEPOIS)" no `security-review.md`, na tabela de produto ou de engenharia conforme quem decide (`docs/gates/governanca.md`).
 - **Limite de repetição.** Nunca repita a mesma verificação/pergunta mais de 3 vezes. Na 3ª
   tentativa sem conclusão, registre o impasse e siga com a avaliação mais conservadora.
 

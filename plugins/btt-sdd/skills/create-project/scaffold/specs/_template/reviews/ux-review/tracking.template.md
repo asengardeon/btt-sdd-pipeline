@@ -1,4 +1,4 @@
-<!-- sdd-format-version: 2 -->
+<!-- sdd-format-version: 3 -->
 # UX Review — <Nome da Feature> — Achados, Pendências e Log
 
 Três tabelas compactas, append-only — nunca uma linha apagada, só marcada (`MICRO-CONTEXT.md` do
@@ -23,9 +23,20 @@ formato `UX-<AAAA-MM-DD>-<slug-curto>`** (data + slug curto do próprio item —
 sequencial simples) — mesmo critério de `gates/licoes.md` do pipeline/`docs/LESSONS-LEARNED.md`
 sobre colisão de ID entre branches paralelas.
 
+Duas tabelas, pelo dono da decisão (`gates/governanca.md` do pipeline, "Pendência de
+validação: produto ou engenharia"). Item que depende dos dois fica na tabela de quem tem a
+decisão final, com a dependência citada no Contexto. Mover um item entre tabelas mantém o ID.
+
+### Decisões de produto
+
 | ID                          | Pergunta                          | Contexto                    | Status              |
 |------------------------------|--------------------------------------|-----------------------------------|------------------------|
 | UX-2026-08-25-cor-de-alerta   | <pergunta que ficou sem resposta>     | <por que essa pergunta importa>    | pendente / validado |
+
+### Decisões de engenharia
+
+| ID                          | Pergunta                          | Contexto                    | Status              |
+|------------------------------|--------------------------------------|-----------------------------------|------------------------|
 
 ## Log de revisões
 

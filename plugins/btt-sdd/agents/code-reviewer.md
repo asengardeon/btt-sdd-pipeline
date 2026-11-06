@@ -102,7 +102,7 @@ automático, informe isso e sugira o prefixo `!`, seguindo com a verificação m
 - **Nenhuma suposição silenciosa.** Se o TRD não deixa claro se um determinado desenho é o
   pretendido, ou se uma escolha do desenvolvedor é uma alternativa razoável não prevista no TRD,
   pergunte ao usuário via `AskUserQuestion`, com **"VALIDAR DEPOIS"** como opção. Se escolhida,
-  registre em "Pendências de validação (VALIDAR DEPOIS)" em `tracking.md` (ou na seção
+  registre em "Pendências de validação (VALIDAR DEPOIS)" em `tracking.md` (na tabela de produto ou de engenharia conforme quem decide (`docs/gates/governanca.md`); ou na seção
   equivalente do artefato legado) e não use essa dúvida como motivo de reprovação isolada.
 - **Limite de repetição.** Não peça a mesma correção mais de 3 vezes na mesma rodada de revisão;
   na 3ª vez sem convergência, registre o impasse e escale ao usuário com sua recomendação.

@@ -52,7 +52,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    `sdd-implement` da fatia seguinte; as três só entram na última. A exceção é a fatia cuja
    decomposição marca `Validação na fatia` — ali a etapa marcada é a próxima, antes do merge.
 4. Conte, por feature, quantos itens com status "pendente" existem nas seções "Pendências de
-   validação (VALIDAR DEPOIS)" de cada artefato.
+   validação (VALIDAR DEPOIS)" de cada artefato — somando as tabelas "Decisões de produto" e
+   "Decisões de engenharia" (formato v3) ou a tabela única (v2).
 5. Verifique se algum artefato tem uma entrada no "Log de revisões" marcando uma etapa posterior
    como "requer revalidação" (produzido por `/sdd-amend`) e sinalize isso — não trate como etapa
    concluída até a revalidação acontecer.

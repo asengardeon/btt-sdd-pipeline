@@ -1,4 +1,4 @@
-<!-- sdd-format-version: 2 -->
+<!-- sdd-format-version: 3 -->
 # PRD — <Nome da Feature> — Índice
 
 > Status: rascunho | em revisão | aprovado

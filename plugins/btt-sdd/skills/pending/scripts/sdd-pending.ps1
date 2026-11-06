@@ -31,15 +31,18 @@ function Get-PendingRows {
   param([string]$Content)
   $rows = @()
   $inSection = $false
+  $tipo = "nao classificada"
   foreach ($line in ($Content -split "`r?`n")) {
-    if ($line -match '^## .*VALIDAR DEPOIS') { $inSection = $true; continue }
+    if ($line -match '^## .*VALIDAR DEPOIS') { $inSection = $true; $tipo = "nao classificada"; continue }
     if ($inSection -and $line -match '^## ') { $inSection = $false }
+    if ($inSection -and $line -match '^###+ .*[Pp]roduto') { $tipo = "produto"; continue }
+    if ($inSection -and $line -match '^###+ .*[Ee]ngenharia') { $tipo = "engenharia"; continue }
     if ($inSection -and $line -match '^\|') {
       $trimmed = $line.Trim().Trim('|')
       $cols = $trimmed -split '\|' | ForEach-Object { $_.Trim() }
       $status4 = $cols[3] -replace '^\*+', ''
       if ($cols.Count -ge 4 -and $cols[0] -ne 'ID' -and $cols[0] -notmatch '^-+$' -and $status4 -match '^pendente') {
-        $rows += [PSCustomObject]@{ Id = $cols[0]; Pergunta = $cols[1]; Contexto = $cols[2] }
+        $rows += [PSCustomObject]@{ Id = $cols[0]; Pergunta = $cols[1]; Contexto = $cols[2]; Tipo = $tipo }
       }
     }
   }
@@ -126,7 +129,7 @@ $specsSemTrd = @()
 if (Test-Path "docs/BASELINE.md") {
   $content = Get-Content "docs/BASELINE.md" -Raw -Encoding UTF8
   foreach ($row in (Get-PendingRows -Content $content)) {
-    $allRows += [PSCustomObject]@{ Feature = "(baseline)"; Artefato = "BASELINE"; Id = $row.Id; Pergunta = $row.Pergunta; Contexto = $row.Contexto }
+    $allRows += [PSCustomObject]@{ Feature = "(baseline)"; Artefato = "BASELINE"; Id = $row.Id; Pergunta = $row.Pergunta; Contexto = $row.Contexto; Tipo = $row.Tipo }
   }
 }
 
@@ -159,7 +162,7 @@ if (Test-Path $SpecsDir) {
       if (-not (Test-Path $file)) { continue }
       $content = Get-Content $file -Raw -Encoding UTF8
       foreach ($row in (Get-PendingRows -Content $content)) {
-        $allRows += [PSCustomObject]@{ Feature = $d.Name; Artefato = $f; Id = $row.Id; Pergunta = $row.Pergunta; Contexto = $row.Contexto }
+        $allRows += [PSCustomObject]@{ Feature = $d.Name; Artefato = $f; Id = $row.Id; Pergunta = $row.Pergunta; Contexto = $row.Contexto; Tipo = $row.Tipo }
       }
     }
 
@@ -187,9 +190,16 @@ if (Test-Path $SpecsDir) {
 
 $deduped = Get-DedupedRows -AllRows $allRows
 $found = $false
-foreach ($row in $deduped) {
+# Agrupa por dono da decisao (docs/gates/governanca.md); "nao classificada" e a tabela unica
+# de um artefato ainda em v2.
+foreach ($grupo in @("produto", "engenharia", "nao classificada")) {
+  $doGrupo = @($deduped | Where-Object { $_.Tipo -eq $grupo })
+  if ($doGrupo.Count -eq 0) { continue }
   $found = $true
-  "{0,-28} | {1,-16} | {2,-6} | {3,-42} | {4}" -f $row.Feature, $row.Artefato, $row.Id, $row.Pergunta, $row.Contexto
+  if ($grupo -eq "nao classificada") { "[Sem classificacao (tabela unica, formato v2)]" } else { "[Decisoes de $grupo]" }
+  foreach ($row in $doGrupo) {
+    "{0,-28} | {1,-16} | {2,-6} | {3,-42} | {4}" -f $row.Feature, $row.Artefato, $row.Id, $row.Pergunta, $row.Contexto
+  }
 }
 
 if (-not $found) {

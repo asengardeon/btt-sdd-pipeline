@@ -1,4 +1,4 @@
-<!-- sdd-format-version: 2 -->
+<!-- sdd-format-version: 3 -->
 # TRD — <Nome da Feature> — Índice
 
 > Status: rascunho | em revisão | aprovado

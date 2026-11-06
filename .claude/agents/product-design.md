@@ -68,7 +68,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
    se mede sucesso) vira uma pergunta via `AskUserQuestion`. Sempre inclua **"VALIDAR DEPOIS"**
    como uma opção explícita quando fizer sentido o usuário não saber responder agora. Se o usuário
    escolher essa opção, registre o item na seção "Pendências de validação (VALIDAR DEPOIS)" do
-   PRD, com contexto suficiente para retomar sem reexplicar tudo — não deixe a pergunta sem
+   PRD, na tabela de produto ou de engenharia conforme quem decide (`docs/gates/governanca.md`), com contexto suficiente para retomar sem reexplicar tudo — não deixe a pergunta sem
    registro em lugar nenhum.
 
    **Limite de repetição**: nunca reformule a mesma pergunta mais de 3 vezes tentando obter uma
