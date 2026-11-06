@@ -90,9 +90,10 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 3b. **Registre a duração desta invocação em `specs/<slug>/timing-log.md`** (crie a partir de
    `specs/_template/timing-log.template.md` se ainda não existir): uma linha com o horário do
    passo 3, o horário atual, e a diferença calculada (etapa "Code review", agente
-   "code-reviewer", fatia desta rodada). Commit e envie (push) essa atualização junto com o resto
-   do que esta rodada já for commitar (`docs/GIT-WORKFLOW.md`, regra 4, sobre agrupar pushes
-   relacionados). **Vale também quando esta invocação é só uma reverificação pontual de um achado
+   "code-reviewer", fatia desta rodada). **Não commite este arquivo agora**: deixe a linha no working tree da branch da fatia e commite o
+   `timing-log.md` acumulado **uma única vez**, junto do push único da fatia (`docs/GIT-WORKFLOW.md`,
+   seção "Push único por fatia"). Commitar a cada etapa move a ponta da branch depois que o worktree
+   do agente seguinte já nasceu dela, e o `merge --ff-only` do commit dele falha por divergência. **Vale também quando esta invocação é só uma reverificação pontual de um achado
    específico** (`code-reviewer.md`, seção "Escopo de uma rodada de reverificação de achado
    específico") — nunca pule este registro por ser "só uma reverificação", senão o `timing-log.md`
    da fatia fica sistematicamente incompleto. **Quando a reverificação pontual retoma o agente
@@ -146,6 +147,10 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    git log -1 --format=%H -- specs/<slug>/reviews/code-review/ specs/<slug>/code-review.md
    git worktree remove <caminho-do-worktree>              # se houver
    ```
+
+   **Nunca apague a branch temporária do agente antes de confirmar** que `git log -1 -- <artefato>`
+   devolve o commit dele na branch da fatia. Se o `--ff-only` falhar por divergência, integre com
+   `git cherry-pick <SHA-informado-pelo-agente>` em vez de descartar o trabalho.
 
    Confirmar não é zelo: os itens de gate que antes exigiam push nasceram de artefato que não
    chegava à branch. A durabilidade continua obrigatória — o meio é que mudou.

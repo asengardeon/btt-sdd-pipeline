@@ -113,6 +113,12 @@ que o pipeline **cria**: o gatilho é o push por etapa, e isso é escolha nossa.
    era assim). É esse push que dispara o run de CI que importa — o que de fato exercita código.
 2. Cada etapa de revisão **commita** seu artefato na branch da fatia e **não** dá push. Artefato
    nunca fica como mudança não commitada: o commit é obrigatório, o push é que é postergado.
+   **Exceção, só para `specs/<slug>/timing-log.md`**: as linhas dele se acumulam no working tree
+   da branch da fatia e saem num **único** commit, junto do push único. Commitá-lo a cada etapa move
+   a ponta da branch depois que o worktree do agente seguinte já nasceu dela, e o `merge --ff-only`
+   do commit dele falha por divergência. Nunca apague a branch temporária de um agente antes de
+   `git log -1 -- <artefato>` confirmar o commit dele na branch da fatia; se o `--ff-only` falhar,
+   integre por `git cherry-pick <SHA>`.
 3. Rodando em **working tree isolado** (seção acima), o agente commita na sua branch temporária e
    **reporta o nome dela e o SHA** no resultado. Quem orquestra integra na branch da fatia
    localmente, **antes de remover o worktree**:
