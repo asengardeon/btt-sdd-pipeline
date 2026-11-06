@@ -4,6 +4,8 @@
 > Status: rascunho | em revisão | aprovado
 > Autor: agente `product-design`
 > Relacionado: (link para specs anteriores, se houver)
+> Modo arquitetural: padrão | mínima mudança (opcional; `mínima mudança` pede ao `architect` o
+> modo de `architect/minima-mudanca.md`)
 
 Núcleo pequeno, sempre lido por completo — identidade da feature, escopo, objetivos e os
 indicadores que o `architect` precisa antes de decidir arquitetura (`docs/MICRO-CONTEXT.md`,
