@@ -16,6 +16,22 @@ Como a feature se encaixa em ports & adapters (`docs/ARCHITECTURE.md`):
 Descreva os componentes reais desta feature nesse diagrama. Se a feature inclui frontend, indique
 também onde ele entra (consumindo o adapter de entrada via o contrato de `contract.md`, seção 8).
 
+## 3b. Mínima mudança arquitetural (condicional)
+
+Só no modo `mínima mudança` (`architect/minima-mudanca.md`); em outro modo, apague esta seção.
+
+| Peça nova | Componente existente mais próximo que ela imita | Por que o existente não basta |
+|---|---|---|
+| <peça> | <componente> | <motivo> |
+
+**Impacto no legado e nos produtos atuais**
+
+| Repositório/módulo | Tocado | Não tocado | Risco de regressão |
+|---|---|---|---|
+
+Consumidores do que está sendo alterado: <conhecidos e desconhecidos, cada um `[medido]` ou
+`[não medido]`>.
+
 ## 4. Modelo de domínio
 
 Entidades, value objects, invariantes e regras de negócio — sem menção a framework/infra.

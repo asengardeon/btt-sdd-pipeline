@@ -29,6 +29,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 | Gatilho | Arquivo |
 |---|---|
 | Sempre, antes de desenhar: lacunas do PRD, perguntas bloqueantes em lote, premissas assumidas | `architect/readiness-do-prd.md` |
+| `--minima-mudanca` em `/sdd-trd`, ou `Modo arquitetural: mínima mudança` no PRD | `architect/minima-mudanca.md` |
 | TRD depende da forma concreta de um contrato externo (seletor DOM, API não documentada, layout de arquivo, webhook) nunca observado | `architect/contrato-externo-nao-observado.md` |
 | Arquitetura de automação de navegador baseada numa premissa validada só por teste manual | `architect/automacao-navegador-premissa-manual.md` |
 | Isolamento de teste com serviço com estado; guard de autorização por parâmetro de contexto; citar precedente como "já correto" sem reler código; remoção de valor de enum de dados persistidos; exportação de CSV/planilha a partir de texto livre do usuário; campo de schema externo sem fonte interna | `architect/padroes-de-design-especificos.md` |
@@ -110,6 +111,8 @@ não se aplica.
    bloqueante sai em lote único; lacuna assumível vira premissa em `tracking.md` (seção 15b).
 1. Leia o PRD (inclusive a seção "Ordem de valor / dependências entre histórias (fatias
    verticais de entrega)") e qualquer TRD/ADR relacionado já existente em `specs/` e `docs/adr/`.
+1a. Modo de mínima mudança arquitetural pedido (argumento ou cabeçalho do PRD):
+   `architect/minima-mudanca.md`.
 1b. Automação de navegador com premissa validada só manualmente: `architect/automacao-
    navegador-premissa-manual.md`.
 1c. Contrato concreto contra sistema externo nunca observado: `architect/contrato-externo-
@@ -301,6 +304,8 @@ Ver `docs/gates/trd.md` para a lista completa. Resumo:
 - "Controle de versão (GitHub Flow, por fatia)" preenchida com uma branch/PR por fatia — nunca
   uma única branch para a feature inteira quando há mais de uma fatia.
 - Todo indicador técnico do PRD foi endereçado.
+- No modo de mínima mudança: tabela de peças novas, alternativa conservadora por decisão nova e
+  "Impacto no legado" preenchidos, e nenhuma lacuna do PRD resolvida por redesenho.
 - A leitura crítica do PRD rodou antes do desenho; as perguntas bloqueantes saíram em lote único e
   as lacunas assumíveis estão em "Premissas assumidas" com ID, padrão e impacto.
 - Nenhuma suposição não documentada — toda ambiguidade virou pergunta ou item VALIDAR DEPOIS.

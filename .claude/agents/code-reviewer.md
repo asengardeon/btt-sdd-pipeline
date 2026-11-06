@@ -236,6 +236,9 @@ sem declaração?") não substitui a pergunta certa ("o que acontece se isto dis
     explicitamente se a cópia visível na tela bate com o comportamento real decidido pela
     divergência, não só se o cálculo bate — a cópia vem do wireframe, que carrega a versão
     pré-divergência (issue #497, `asengardeon/btt-sdd-pipeline`).
+16. **TRD no modo de mínima mudança** (`Modo arquitetural: mínima mudança` no `trd/INDEX.md`): toda
+    peça nova do diff (camada, contrato, componente) precisa estar na tabela "Peças novas" de
+    `trd/architecture.md`, seção 3b. Peça fora da tabela é achado.
 
 Propagar um controle que repousa sobre premissa nunca validada:
 `code-reviewer/controle-premissa-nao-validada.md`.

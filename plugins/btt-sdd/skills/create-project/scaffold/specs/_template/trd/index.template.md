@@ -5,6 +5,7 @@
 > Autor: agente `architect`
 > PRD relacionado: `specs/<slug>/prd/` (ou `prd.md`, se a spec ainda está no formato legado)
 > ADRs relacionados: (link, se houver)
+> Modo arquitetural: padrão | mínima mudança (ver `architect/minima-mudanca.md`)
 
 Núcleo pequeno, sempre lido por completo — contexto, stack tecnológica, controle de versão por
 fatia e aprovação (`docs/MICRO-CONTEXT.md`, seção 2b). O resto do TRD — arquitetura, contrato,

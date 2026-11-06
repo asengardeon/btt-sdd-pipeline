@@ -15,6 +15,9 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
 
 ## Passos
 
+0. **Flags em `args`**: `--minima-mudanca` ativa o modo de mínima mudança arquitetural
+   (`architect/minima-mudanca.md`). Retire a flag de `args` antes do passo 1 e repasse-a ao
+   `architect` no passo 3.
 1. Identifique o PRD de entrada: se `args` é um caminho de arquivo existente, use-o diretamente
    como PRD (mesmo fora da convenção `specs/<slug>/prd/` — você não depende dessa convenção
    para funcionar em qualquer projeto). Senão, identifique o slug (se `args` traz um slug ou
@@ -25,7 +28,7 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    primeiro — não prossiga sem PRD.
 3. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 3c para
    registrar a duração desta invocação. Invoque o agente `architect` (Agent tool,
-   `subagent_type: "architect"`) passando o caminho do PRD e instrução para salvar o TRD no
+   `subagent_type: "architect"`) passando o caminho do PRD, a flag `--minima-mudanca` quando presente, e instrução para salvar o TRD no
    formato split por tópico em `specs/<slug>/trd/` (`docs/MICRO-CONTEXT.md`, seção 2b, a partir
    dos templates em `specs/_template/trd/` — nunca o arquivo único legado `trd.md` para uma spec
    nova), registrando ADRs em `docs/adr/` quando relevante.

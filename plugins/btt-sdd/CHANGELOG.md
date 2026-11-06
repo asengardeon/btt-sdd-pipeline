@@ -17,6 +17,15 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.59.0 — 2026-11-06
+
+- **`/trd`: modo de mínima mudança arquitetural (issue #667).** `--minima-mudanca` (ou `Modo
+  arquitetural: mínima mudança` no cabeçalho do PRD, por spec, sem herança) ativa
+  `agents/architect/minima-mudanca.md`: tabela de peças novas contra o componente existente que
+  cada uma imita, alternativa conservadora por decisão nova, seção de impacto no legado, lacuna do
+  PRD como decisão de produto em vez de redesenho, e arquivo a imitar em cada tarefa. Seção 3b
+  condicional em `architecture.md`; `code-reviewer` trata peça fora da tabela como achado.
+
 ## 1.58.0 — 2026-11-06
 
 - **`architect`: fase 0 de leitura crítica do PRD antes de desenhar (issue #666).** Novo arquivo-filho
