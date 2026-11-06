@@ -17,6 +17,17 @@ dependência citada no Contexto. Mover um item entre tabelas mantém o ID.
 |--------|--------------------------------------|-------------------------------------------|------------------------|
 | TRD-1  | <pergunta que ficou sem resposta>     | <por que essa pergunta importa>            | pendente / validado |
 
+#### Rodada de perguntas ao PM
+
+Preencha quando houver 5 ou mais pendências de produto abertas (`docs/gates/governanca.md`,
+"Rodada de perguntas ao PM"). Uma rodada por vez, numerada; deixe vazia enquanto não houver.
+
+**Rodada 1**
+
+| # | Pergunta | Alvos afetados | Opções | Sugestão padrão | Resolve |
+|---|----------|------------------|--------|-------------------|---------|
+| 1 | <pergunta fechada> | <telas/endpoints/tarefas> | <A; B; C (a de menor custo)> | <premissa adotada sem resposta> | <ID da pendência> |
+
 ### Decisões de engenharia
 
 | ID     | Pergunta                          | Contexto                              | Status              |

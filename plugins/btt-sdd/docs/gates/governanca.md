@@ -18,6 +18,16 @@
   continua único e não é renumerado ao mover o item de tabela. Na dúvida, use a regra da decisão
   final. Artefato ainda no formato v2 (tabela única) continua válido: classifique ao emendá-lo
   ou migre com `/btt-sdd:migrate`.
+- [ ] **Rodada de perguntas ao PM.** Com 5 ou mais pendências de produto abertas no PRD ou no TRD,
+  `product-design`/`architect` agrupam as perguntas numa "Rodada N de perguntas ao PM" em
+  `tracking.md` (dentro de "Decisões de produto"), em vez de só acumular linhas. Cada linha é uma
+  pergunta fechada, com opções explícitas (incluindo a de menor custo), a **sugestão padrão** e o
+  ID da pendência que ela **resolve**. A sugestão padrão é a premissa que a spec adota sem
+  resposta: diga-a como premissa, nunca como decisão tomada, e marque-a para validação na tarefa
+  que a usa. Uma pendência de índice ("Rodada N de perguntas ao PM") aponta para a seção e é o
+  item que `/sdd-pending` lista. Ao registrar a resposta, preencha a decisão, marque como
+  "validado" todas as pendências do campo "Resolve" e acrescente **uma** linha no "Log de revisões"
+  por resposta recebida (citando todas as decisões e IDs resolvidos), sem renumerar IDs.
 - [ ] **Nenhuma ação ou requisição se repete mais de 3 vezes.** Tentativas de corrigir o mesmo
   teste, rodar o mesmo comando, ou reformular a mesma pergunta contam como a mesma ação. Na 3ª falha
   consecutiva, o agente para e escala ao usuário: o que foi tentado, por que falhou, e o que ele

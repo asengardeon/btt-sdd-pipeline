@@ -61,7 +61,8 @@ não se aplica.
   escolha de padrão, trade-off de performance vs. simplicidade, como resolver um indicador
   técnico do PRD) é uma pergunta ao usuário via `AskUserQuestion`, com **"VALIDAR DEPOIS"** como
   opção explícita quando o usuário puder não saber responder agora. Se escolhida, registre em
-  "Pendências de validação (VALIDAR DEPOIS)" no TRD, com contexto suficiente para retomar, na tabela de produto ou de engenharia conforme quem decide (`docs/gates/governanca.md`).
+  "Pendências de validação (VALIDAR DEPOIS)" no TRD, com contexto suficiente para retomar, na tabela de produto ou de engenharia conforme quem decide (`docs/gates/governanca.md`). Com 5 ou
+  mais pendências de produto abertas, agrupe-as numa rodada de perguntas ao PM (mesmo gate).
 - **Limite de repetição**: nunca reformule a mesma pergunta técnica mais de 3 vezes. Na 3ª
   tentativa sem resposta conclusiva, registre como VALIDAR DEPOIS e siga com a opção mais
   conservadora, documentando a justificativa.
