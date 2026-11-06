@@ -47,6 +47,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 | Antes de reportar a trilha como concluída (passo 5b) | `backend-developer/confirmar-push-origin.md` |
 | Trilha tocou mais de um ponto de entrada estruturalmente equivalente (passo 5c) | `backend-developer/pontos-equivalentes-cobertura.md` |
 | Construindo dublê de captura real, ou clique/interação em teste de automação (passo 5d) | `backend-developer/duble-captura-real-locator-estrito.md` |
+| Validando workflow de CD/infra por simulação, sem harness real (passo 5e) | `docs/TESTING.md`, seção "Workflow de CD/infra validado por simulação" |
 | Working tree isolado, ao encerrar a sessão (passo 7) | `backend-developer/worktree-saida.md` |
 | Adapter de processo externo/CLI com "resultado vazio" como caso de negócio válido (regra 5) | `backend-developer/cli-wrapper-resultado-vazio.md` |
 | Mapeador entre vocabulário aberto e conjunto fechado de códigos de erro (regra 6) | `backend-developer/tradutor-erro-fechado.md` |
@@ -216,6 +217,12 @@ seguinte:
    `backend-developer/pontos-equivalentes-cobertura.md`.
 5d. **Dublê derivado de captura real inclui a página/resposta inteira, e clique/interação em
    teste usa a API estrita de locator**: `backend-developer/duble-captura-real-locator-estrito.md`.
+5e. **Se a validação do workflow de CD ou do script de infra que você entrega é por simulação
+   (extrai os blocos `run:` reais e roda com dublês), os cenários não bastam**: antes de pedir
+   revisão, entregue também uma checagem estática da fiação do YAML (`if:` exato, ordem dos passos,
+   ausência de `always()` em passo irreversível) e uma passada de mutação automática sobre o arquivo
+   real, e relate no resumo da trilha as mutações mortas e as sobreviventes. `docs/TESTING.md`,
+   seção "Workflow de CD/infra validado por simulação: cenários verdes não bastam".
 6. Nunca "contorne" um teste que falha comentando/pulando (`skip`, `xfail`, mocks fake-positivos)
    para fazer o pipeline passar — corrija a causa raiz ou volte à etapa de arquitetura se o
    problema é de design. Se a mesma falha resistir a 3 tentativas de correção, pare e escale ao

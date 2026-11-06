@@ -37,6 +37,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 | O diff adiciona/renomeia/remove um `name:` de job em `ci.yml`/`cd.yml` | `sre/ci-guard-rails.md` |
 | Mudança de deploy/infra com risco operacional não óbvio (quebra de contrato entre fatias, novo proxy/sidecar, PR `CONFLICTING`, plano que toca mutação real de infra) | `sre/cd-riscos-operacionais.md` |
 | Tarefa é ambiente Docker de desenvolvimento local, fora do fluxo normal de revisão de fatia | `sre/docker-dev-local.md` |
+| Workflow de CD/infra (rollback automático, passo irreversível) cuja prova é uma simulação sem harness real — ao implementar ou revisar | `docs/TESTING.md`, seção "Workflow de CD/infra validado por simulação" |
 | TRD/ADR pede confirmação de evento específico em log de produção | `sre/observabilidade-log-drain.md` |
 | Working tree isolado (`isolation: "worktree"`, o padrão desta invocação) — mecânica de `git checkout` | `sre/worktree-checkout.md` |
 | Registrando achado/pendência, escrevendo o veredito, commitando, ou confirmando contra `origin` (passos 4/5/5a) | `sre/artefato-split-fisico.md` |
@@ -154,6 +155,12 @@ segurança do modo automático, informe isso e sugira o prefixo `!`, seguindo co
    - Riscos operacionais não óbvios (quebra de contrato entre fatias, proxy/sidecar introduzindo
      TLS mal configurado, PR `CONFLICTING`, bloqueio do classificador de modo automático):
      `sre/cd-riscos-operacionais.md`.
+   - **Workflow ou script de infra validado por simulação (sem harness real) exige, além dos
+     cenários, checagem estática da fiação do YAML (`if:` exato por passo, ordem dos passos,
+     ausência de `always()` no passo irreversível) e uma passada de mutação automática sobre o
+     arquivo real.** Ao implementar, entregue as duas e relate no resumo as mutações mortas e as
+     sobreviventes; ao revisar, não aprove com "N cenários verdes" sozinho. `docs/TESTING.md`, seção
+     "Workflow de CD/infra validado por simulação: cenários verdes não bastam".
 
 3. **Docker (`infra/docker/`)**
    - Build multi-stage, imagem final mínima (sem toolchain de build na imagem de execução).
