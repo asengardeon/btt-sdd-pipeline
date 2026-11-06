@@ -45,6 +45,7 @@ criado/atualizado com o mesmo conteúdo — próximas features reaproveitam a pa
 | `quality.md` | 10, 12 | Pilares de engenharia de software; riscos e trade-offs | `code-reviewer`/`security-engineer`/`sre`, e qualquer rodada que precise justificar um desvio |
 | `test-plan.md` | 11 | Plano de testes (alto nível) | Ao planejar a suíte (`backend-developer`/`frontend-developer`), ou QA validando cobertura |
 | `tasks.md` | 13 | Decomposição de tarefas e dependências (fatias verticais), incl. janelas de quebra de contrato | `/sdd-implement`, `/sdd-status`, `/sdd-pending` — a tabela mais lida de toda a spec |
+| `existing-contract.md` | — | Ficha de contrato existente por alvo (condicional, só spec de migração ou paridade) | `backend-developer`/`frontend-developer` ao implementar paridade; `qa-engineer` ao provar paridade |
 | `tracking.md` | 15-16 | Pendências VALIDAR DEPOIS + log de revisões | Ao rodar `/sdd-pending`/`/sdd-amend`, ou investigar o histórico de uma mudança |
 
 ## 14. Controle de versão (GitHub Flow, por fatia)

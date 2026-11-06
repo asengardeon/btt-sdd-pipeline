@@ -112,6 +112,8 @@ specs/<slug>/trd/
                       adapters, modelo de dados/contratos externos).
   contract.md      — seção 8 (contrato Frontend↔Backend) — lido isoladamente por
                       `backend-developer`/`frontend-developer` sem precisar reler o TRD inteiro.
+  existing-contract.md — (condicional) ficha de contrato existente por alvo, só em spec de
+                      migração ou paridade (`architect/ficha-contrato-existente.md`).
   use-cases.md     — seção 6 (casos de uso — critério de aceite do PRD → caso de uso → ports).
   quality.md       — seções 10, 12 (pilares de engenharia de software; riscos e trade-offs).
   test-plan.md     — seção 11 (plano de testes, alto nível).
