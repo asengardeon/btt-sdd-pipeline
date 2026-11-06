@@ -17,6 +17,14 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.58.0 — 2026-11-06
+
+- **`architect`: fase 0 de leitura crítica do PRD antes de desenhar (issue #666).** Novo arquivo-filho
+  `agents/architect/readiness-do-prd.md`: lacunas classificadas em bloqueante / assumível / técnica,
+  perguntas bloqueantes em lote único, premissas assumíveis na nova seção 15b "Premissas assumidas"
+  de `trd/tracking.md` (aditiva, sem bump de formato) e toda decisão do TRD citando o requisito de
+  origem. Gate de TRD atualizado.
+
 ## 1.57.0 — 2026-11-06
 
 - **Pendências VALIDAR DEPOIS separadas em "Decisões de produto" e "Decisões de engenharia"

@@ -8,6 +8,9 @@
   usuário), ou decidida nesta sessão com o usuário. Nunca implícita dentro de Ports/Adapters/Modelo
   de dados.
 - [ ] Todo critério de aceite do PRD tem um caso de uso e um plano de teste correspondente.
+- [ ] A leitura crítica do PRD rodou antes do desenho (`architect/readiness-do-prd.md`): bloqueantes
+  perguntados em lote, assumíveis em "Premissas assumidas" (`tracking.md`, seção 15b) com ID,
+  padrão e impacto, e toda decisão do TRD cita o requisito de origem.
 - [ ] Todo port tem contrato claro sem vazar detalhe de implementação de adapter.
 - [ ] Indicadores técnicos do PRD foram lidos e endereçados (decisão tomada ou explicitamente adiada
   com justificativa, nunca ignorados).
