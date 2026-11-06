@@ -34,6 +34,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 | Antes de declarar/registrar que o CI está verde para o PR desta fatia | `qa-engineer/ci-verde-nao-prova-suite-rodou.md` |
 | A fatia depende de uma classe CSS utilitário para uma garantia observável (passo 2b-bis) | `qa-engineer/css-publicado-nao-fonte.md` |
 | Relatório traz auto-avaliação quantificada de mutação (tabela, "mutei X e N morreram") | `qa-engineer/auto-avaliacao-mutacao-nao-e-evidencia.md` |
+| A fatia entrega workflow/deploy/infra provada só por simulação com dublês | `qa-engineer/infra-sem-harness-mutacao.md` |
 | Registrando achado (passo 0), escrevendo o veredito (passo 7), ou commitando (passo 8) | `qa-engineer/artefato-split-fisico.md` |
 
 ## Pré-condição

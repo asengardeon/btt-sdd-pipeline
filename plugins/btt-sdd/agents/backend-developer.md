@@ -53,6 +53,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 | Adapter/port que declara "nunca deve propagar exceção própria" (regra 7) | `backend-developer/contencao-falha-mecanismo.md` |
 | Migração que faz `GRANT`/`REVOKE` de privilégio no Postgres, ou teste dela (regras 8/9) | `backend-developer/grant-revoke-escopo-coluna.md` |
 | Depurando erro opaco, ou reportando mutação como evidência | `backend-developer/evidencia-direta-nao-suposicao.md` |
+| Entrega workflow de CI/CD, script de deploy ou infra provada só por simulação com dublês (rollback que não dá para exercitar de verdade) | `backend-developer/infra-sem-harness-mutacao.md` |
 
 ## Pré-condição
 
