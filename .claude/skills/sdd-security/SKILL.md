@@ -153,6 +153,9 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    **Nunca apague a branch temporária do agente antes de confirmar** que `git log -1 -- <artefato>`
    devolve o commit dele na branch da fatia. Se o `--ff-only` falhar por divergência, integre com
    `git cherry-pick <SHA-informado-pelo-agente>` em vez de descartar o trabalho.
+   Se o agente informar que integrou por **push direto** (ele não alcançava o checkout principal —
+   `docs/GIT-WORKFLOW.md`, "Isolamento aninhado"), não há branch temporária para integrar: rode
+   `git fetch origin` + `git merge --ff-only origin/<branch-da-fatia>` e confirme o artefato.
 
    Confirmar não é zelo: os itens de gate que antes exigiam push nasceram de artefato que não
    chegava à branch. A durabilidade continua obrigatória — o meio é que mudou.

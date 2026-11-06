@@ -436,7 +436,11 @@ trabalho evitável indo direto para a branch temporária desde o início.
 
 **Isolamento aninhado — o próprio orquestrador rodando num worktree isolado (não o checkout
 principal) — quebra o workaround acima: integre via push direto ao remoto, nunca merge/fetch
-local.** O workaround de colisão de worktree pressupõe que o orquestrador opera a partir do
+local.** Isto não é contingência rara: numa fatia real aconteceu em todas as etapas de revisão
+(code review, QA, UX, segurança), então trate o push direto como o **caminho principal esperado**
+sempre que o agente isolado não alcança o checkout principal, e o `merge --ff-only` local como o
+caminho que só vale quando ele alcança. Depois do push, o orquestrador sincroniza o checkout
+principal com `git fetch origin` + `git merge --ff-only origin/<branch-da-fatia>`. O workaround de colisão de worktree pressupõe que o orquestrador opera a partir do
 checkout principal do repositório, onde a branch da fatia está (ou pode ficar) disponível. Quando
 o próprio orquestrador é invocado como subagente isolado de outra sessão (ou retomado numa sessão
 que nasceu dentro de um worktree), a branch da fatia pode estar checked out no checkout
