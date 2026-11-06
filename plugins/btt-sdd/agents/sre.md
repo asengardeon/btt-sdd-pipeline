@@ -37,6 +37,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 | O diff adiciona/renomeia/remove um `name:` de job em `ci.yml`/`cd.yml` | `sre/ci-guard-rails.md` |
 | Mudança de deploy/infra com risco operacional não óbvio (quebra de contrato entre fatias, novo proxy/sidecar, PR `CONFLICTING`, plano que toca mutação real de infra) | `sre/cd-riscos-operacionais.md` |
 | Tarefa é ambiente Docker de desenvolvimento local, fora do fluxo normal de revisão de fatia | `sre/docker-dev-local.md` |
+| O diff traz lógica de workflow/deploy/infra provada só por simulação com dublês (rollback que não dá para exercitar de verdade) | `sre/infra-sem-harness-mutacao.md` |
 | TRD/ADR pede confirmação de evento específico em log de produção | `sre/observabilidade-log-drain.md` |
 | Working tree isolado (`isolation: "worktree"`, o padrão desta invocação) — mecânica de `git checkout` | `sre/worktree-checkout.md` |
 | Registrando achado/pendência, escrevendo o veredito, commitando, ou confirmando contra `origin` (passos 4/5/5a) | `sre/artefato-split-fisico.md` |
