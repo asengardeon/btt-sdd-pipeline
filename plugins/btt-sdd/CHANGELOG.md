@@ -17,6 +17,15 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.60.0 — 2026-11-06
+
+- **Rodada de perguntas ao PM como seção padrão de `tracking.md` (issue #665).** PRD e TRD ganham,
+  dentro de "Decisões de produto", a subseção "Rodada de perguntas ao PM" (pergunta fechada,
+  alvos afetados, opções, sugestão padrão, pendência que resolve). `product-design`/`architect`
+  a geram com 5 ou mais pendências de produto abertas; `/btt-sdd:amend` resolve em lote com uma
+  linha de log; `/btt-sdd:pending` lista a rodada como um item. Mudança aditiva, sem bump de
+  formato. Regra em `gates/governanca.md`.
+
 ## 1.59.0 — 2026-11-06
 
 - **`/trd`: modo de mínima mudança arquitetural (issue #667).** `--minima-mudanca` (ou `Modo

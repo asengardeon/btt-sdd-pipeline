@@ -47,7 +47,9 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    resolve um item da seção "Pendências de validação (VALIDAR DEPOIS)", marque o item como
    "validado" em vez de removê-lo (mantém o histórico de que aquela dúvida existiu e foi
    resolvida; a linha fica na tabela em que está — produto ou engenharia — e, num artefato v2 de
-   tabela única, é classificada ao ser emendada) — no formato split, essa seção vive em `tracking.md`.
+   tabela única, é classificada ao ser emendada). Resposta de uma rodada de perguntas ao PM que
+   resolve várias pendências marca todas as do campo "Resolve" como "validado", com uma só linha
+   no log (`docs/gates/governanca.md`) — no formato split, essa seção vive em `tracking.md`.
 
 3. Registre a mudança na seção "Log de revisões" do artefato editado: data, autor (você, como
    agente, citando a instrução do usuário), o que mudou, motivo — no formato split, essa seção

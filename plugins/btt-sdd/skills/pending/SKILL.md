@@ -35,7 +35,8 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
      anterior", são colapsadas na ocorrência mais informativa da mesma pergunta). A saída vem
      agrupada pelo dono da decisão — `[Decisões de produto]`, `[Decisões de engenharia]` (tabelas
      do formato v3, `docs/gates/governanca.md`) e `[Sem classificação]` (tabela única de um
-     artefato ainda em v2, que `/sdd-amend` ou `/sdd-migrate` classificam).
+     artefato ainda em v2, que `/btt-sdd:amend` ou `/btt-sdd:migrate` classificam). Uma "Rodada N de
+     perguntas ao PM" aparece como um item só, pela pendência de índice que aponta para ela.
    - **Tarefas ainda não implementadas**: varre a tabela de decomposição do TRD (`trd/tasks.md`
      no formato novo, `trd.md` no legado) e lista toda linha cujo **Status** ainda não chegou a
      "implementado" (ou seja, está em "pendente", "em andamento" ou "bloqueado") — feature | ID |
