@@ -33,6 +33,15 @@
   acontece no caminho normal, não num desvio — a etapa 4b roda depois da 4 e **gera código de
   produção**, então correções de achados de UX aceitas pelo usuário atravessam duas etapas com um
   carimbo que já não corresponde ao código. O custo da checagem é um comando.
+  **Exceção: delta provado só de comentário ou texto.** Se o delta não vazio altera apenas
+  comentários e documentação, o orquestrador prova isso mecanicamente e registra a prova no
+  `qa-report.md` em vez de abrir nova instância de code review. Prova válida: para cada arquivo
+  alterado, as linhas de código são idênticas entre o `<sha>` e o `HEAD` depois de remover os
+  comentários pela sintaxe da linguagem (ou o diff do arquivo de documentação, ex.: `.md`, `.txt`,
+  só toca texto). Qualquer dúvida mantém a regra normal: comentário que uma ferramenta lê
+  (`eslint-disable`, `@ts-ignore`, `noqa`, pragma, docstring usada como teste ou documentação
+  gerada, anotação), linha de código tocada, ou arquivo cuja sintaxe você não consegue separar do
+  comentário.
 - [ ] Cobertura medida e comparada ao gate de 80% — sem relatório de cobertura confiável, não há
   aprovação possível.
 - [ ] Se a fatia tem trilha de frontend, ou gera qualquer outro artefato de build/empacotamento

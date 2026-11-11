@@ -17,6 +17,13 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.61.12 — 2026-11-11
+
+- **Gate de frescor do QA aceita delta provado só de comentário/texto (issue #683).** `skills/qa/SKILL.md`
+  (passo 2a) e `docs/gates/qa.md`: o orquestrador prova mecanicamente que as linhas de código são
+  idênticas sem os comentários e registra a prova, sem nova rodada de code review. Comentário lido por
+  ferramenta, linha de código tocada ou dúvida mantêm a regra normal.
+
 ## 1.61.11 — 2026-11-11
 
 - **Skills de revisão fixam a ref do worktree isolado e orientam o fallback quando ele bloqueia
