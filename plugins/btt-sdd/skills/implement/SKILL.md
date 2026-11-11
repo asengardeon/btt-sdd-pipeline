@@ -63,6 +63,11 @@ fluxo normal de "nova fatia" — pule os passos da seção "Passos" abaixo e tra
    bloqueada.** Faça isso antes de mandar a mensagem. O agente retomado comenta a transição na
    Issue GitHub de cada tarefa, mas não edita a tabela (`agents/backend-developer.md`,
    passo 1b).
+2c. **Marque você mesmo, no `tracking.md` da etapa que levantou o achado, a linha de cada achado
+   que a correção endereça como `corrigido na fatia, pendente de reverificação`** (com o SHA da
+   correção), no mesmo commit da correção. A rodada de reverificação do agente de revisão fecha a
+   linha com a evidência (`corrigido`). Sem esta marca, a linha fica `aberto` até o fim da spec
+   e a reconciliação vira um trabalho à parte, linha a linha.
 3. Retomar não abre mão de rigor: o agente retomado ainda segue TDD (teste antes da correção, red
    → green → refactor) e ainda roda a suíte completa com cobertura ao final (dosagem do alcance:
    `_rules/dosagem-validacao-correcao.md`). A próxima rodada da mesma etapa de revisão que

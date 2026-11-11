@@ -17,6 +17,13 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.61.3 — 2026-11-11
+
+- **Tracking de achados fechado na própria fatia (issue #678).** `skills/implement/SKILL.md` (retomada,
+  passo 2c): o orquestrador marca a linha do achado como `corrigido na fatia, pendente de
+  reverificação` no commit da correção. `docs/gates/merge.md`: item de gate novo — nenhuma linha
+  `aberto` sem `corrigido`/`aceito`/`transferido` ao fechar a fatia, conferido por quem fecha.
+
 ## 1.61.2 — 2026-11-11
 
 - **Implement: pré-requisitos externos verificados antes de despachar o agente (issues #673, #679).**

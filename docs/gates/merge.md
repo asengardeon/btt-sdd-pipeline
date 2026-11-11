@@ -42,6 +42,11 @@
   --json closingIssuesReferences`), e as que não fecharam sozinhas foram fechadas à mão citando o
   PR. Não basta o corpo do PR *parecer* correto: `Closes #A, #B, #C` fecha só a primeira em
   silêncio — a forma válida repete a palavra-chave (`docs/GIT-WORKFLOW.md`, regras 5b e 5c).
+- [ ] **Nenhuma linha de achado desta fatia segue `aberto` nos `tracking.md` das etapas que
+  rodaram.** Cada linha está `corrigido` (com a evidência da reverificação), `aceito` (decisão
+  explícita do usuário) ou `transferido` (para outra fatia, com a fatia citada). Quem fecha a
+  fatia (última etapa que rodou) confere isso antes de informar o resultado, e fecha ele mesmo as
+  linhas `corrigido na fatia, pendente de reverificação` cuja correção verificou na própria rodada.
 - [ ] Se houver fatia seguinte pendente na feature, ela só começa depois deste merge
   (`docs/GIT-WORKFLOW.md`).
 - [ ] Nenhum item "VALIDAR DEPOIS" bloqueante (marcado como tal pelo usuário) segue em aberto.
