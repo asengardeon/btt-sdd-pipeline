@@ -17,6 +17,12 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.61.4 — 2026-11-11
+
+- **`Closes #N` das issues de tarefa conferido antes do merge (issue #687).** `skills/implement/SKILL.md`
+  ganha o passo 5c (orquestrador compara `closingIssuesReferences` com a coluna "Issue GitHub" do TRD
+  e completa o corpo do PR) e `docs/gates/merge.md` ganha o item equivalente antes do merge.
+
 ## 1.61.3 — 2026-11-11
 
 - **Tracking de achados fechado na própria fatia (issue #678).** `skills/implement/SKILL.md` (retomada,

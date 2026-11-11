@@ -38,6 +38,11 @@
   Delegar essa verificação adiante, etapa após etapa, sem que ninguém de fato a execute pode deixar
   passar um *required check* vermelho sem inspeção até o HEAD — e um run em draft reportando verde
   em segundos, com todos os passos caros `skipped`, não significa nada.
+- [ ] **Antes do merge, o corpo do PR fecha todas as issues de tarefa da fatia.** Compare `gh pr
+  view <PR> --json closingIssuesReferences` com a coluna "Issue GitHub" das tarefas da fatia no
+  TRD; se faltar alguma, corrija o corpo (uma linha `Closes #N` por issue) e só então mergeie. A
+  conferência de depois do merge, abaixo, continua valendo, mas encontra o erro tarde: a issue
+  fica aberta e só o SRE da última fatia nota.
 - [ ] **Depois do merge, todas as issues da fatia foram confirmadas fechadas** (`gh pr view <PR>
   --json closingIssuesReferences`), e as que não fecharam sozinhas foram fechadas à mão citando o
   PR. Não basta o corpo do PR *parecer* correto: `Closes #A, #B, #C` fecha só a primeira em
