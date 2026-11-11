@@ -17,6 +17,15 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.61.1 — 2026-11-11
+
+- **Code review: provar o run completo antes de revisar quando a fatia mexe em CI/Docker/dependência
+  autenticada (issues #672, #674, #680).** `skills/code-review/SKILL.md` ganha o passo 2d: sob
+  `ci-antes-do-merge`, o orquestrador tira o PR do draft, dispara o run com delta de código/infra,
+  confere os passos do job e passa o id do run ao revisor; inclui o fallback de rodar no checkout
+  principal quando o worktree isolado recusa `git`. `docs/gates/merge.md` registra que push só de
+  `specs/` e `gh pr ready` logo após um push não provam os passos caros.
+
 ## 1.61.0 — 2026-11-06
 
 - **TRD: ficha de contrato existente por alvo em spec de migração ou paridade (issue #664).**
