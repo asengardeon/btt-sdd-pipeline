@@ -215,6 +215,13 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    usuário antes de qualquer menção a merge, nunca como nota de rodapé. `/sdd-status` já sinaliza
    esse tipo de gap corretamente quando consultado — este passo existe para que o gap seja visto
    *antes* do merge, não só depois.
+6c. **Confira se o merge vai disparar o deploy — antes de pedir o merge, não depois.** Liste os
+   arquivos do diff (`git diff --name-only origin/main...HEAD`) e compare com o filtro `paths:` do
+   gatilho `push` do workflow de CD. Nenhum arquivo bate (ex.: hotfix só em `.github/workflows/cd.yml`
+   com CD filtrado por `backend/**`/`frontend/**`)? O merge não implanta nada e o hotfix fica sem
+   efeito em produção. Avise o usuário nesta mesma mensagem e peça já a autorização do
+   `workflow_dispatch` pós-merge e do acesso de leitura de que ele precisa para validar o run —
+   uma pergunta só, junto da decisão de merge.
 7. **Merge é decisão do usuário**, nunca automática — mesma regra de GitHub Flow de qualquer PR
    deste pipeline. Depois do merge, **confirme que a(s) issue(s) do PR fecharam de fato** (`gh pr
    view <PR> --json closingIssuesReferences`) e feche à mão, citando o PR, qualquer uma que tenha

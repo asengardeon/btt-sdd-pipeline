@@ -17,6 +17,12 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.61.5 — 2026-11-11
+
+- **Gate de merge e hotfix avisam quando o filtro de paths do CD impede o deploy (issue #688).**
+  `skills/hotfix/SKILL.md` ganha o passo 6c e `docs/gates/merge.md` o item equivalente: comparar o diff
+  com o `paths:` do CD e pedir a autorização do `workflow_dispatch` já antes do merge.
+
 ## 1.61.4 — 2026-11-11
 
 - **`Closes #N` das issues de tarefa conferido antes do merge (issue #687).** `skills/implement/SKILL.md`
