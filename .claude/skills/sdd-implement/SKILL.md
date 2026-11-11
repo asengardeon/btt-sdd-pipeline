@@ -221,6 +221,12 @@ entre trilhas paralelas após correção: `_rules/reconciliacao-contrato-trilhas
    deixá-lo invisível no log. **Uma linha por etapa, sempre**
    (`specs/_template/timing-log.template.md`). Diferente de PRD/TRD, aqui já existe branch/PR —
    commit e envie (push) essa atualização junto com o resto do que esta rodada já for commitar.
+5c. **Confira o corpo do PR contra as issues da fatia antes de seguir.** Compare `gh pr view <PR>
+   --json closingIssuesReferences` com a coluna "Issue GitHub" das tarefas desta fatia na seção
+   13 do TRD. Falta alguma? Leia o corpo atual (`gh pr view <PR> --json body`) e acrescente uma
+   linha `Closes #N` por issue que faltar — nunca reescreva o corpo do zero. Os agentes de
+   implementação já recebem esta regra (`.claude/agents/backend-developer/pr-step1-mecanica.md`),
+   mas só você confere o resultado das duas trilhas juntas.
 6. Mostre ao usuário um resumo do que foi implementado nesta fatia (por trilha, se full-stack), o
    link/nome do PR, os comandos usados para rodar os testes, e a cobertura obtida por pacote.
    **Inclua também uma tabela resumo do Status atual de todas as tarefas da spec** (não só desta
