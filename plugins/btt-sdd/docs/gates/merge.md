@@ -43,6 +43,10 @@
   TRD; se faltar alguma, corrija o corpo (uma linha `Closes #N` por issue) e só então mergeie. A
   conferência de depois do merge, abaixo, continua valendo, mas encontra o erro tarde: a issue
   fica aberta e só o SRE da última fatia nota.
+- [ ] **O merge dispara o deploy, ou o disparo manual já foi autorizado.** Compare os arquivos do
+  diff com o filtro `paths:` do gatilho `push` do workflow de CD. Se nenhum bate (ex.: mudança só no
+  próprio workflow de CD), o merge não implanta: avise e peça a autorização do `workflow_dispatch`
+  (e do acesso de leitura para validar o run) neste gate, antes do merge.
 - [ ] **Depois do merge, todas as issues da fatia foram confirmadas fechadas** (`gh pr view <PR>
   --json closingIssuesReferences`), e as que não fecharam sozinhas foram fechadas à mão citando o
   PR. Não basta o corpo do PR *parecer* correto: `Closes #A, #B, #C` fecha só a primeira em silêncio
