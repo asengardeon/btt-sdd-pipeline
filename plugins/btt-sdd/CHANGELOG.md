@@ -17,6 +17,14 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.61.11 — 2026-11-11
+
+- **Skills de revisão fixam a ref do worktree isolado e orientam o fallback quando ele bloqueia
+  `git` (issue #686).** `skills/{code-review,qa,security,sre,ux-review}/SKILL.md`: a instrução ao
+  agente informa branch e SHA da ponta e manda seguir `worktree-checkout.md` e confirmar o SHA.
+  `skills/implement/SKILL.md`: fallback de trilhas em sequência no diretório principal, backend
+  primeiro, com o custo de perder o paralelismo.
+
 ## 1.61.10 — 2026-11-11
 
 - **Code review reaproveita o artefato de cobertura fresco para suíte e build (issue #676).**
