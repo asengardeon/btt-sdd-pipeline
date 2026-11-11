@@ -39,6 +39,10 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    documentação, só texto muda), registre a prova no `qa-report.md` e siga sem nova rodada. Dúvida
    ou comentário que uma ferramenta lê (`eslint-disable`, `noqa`, pragma, docstring usada em
    teste ou doc gerada) mantém a regra normal (`docs/gates/qa.md`).
+   **Segunda exceção:** delta só de infra/dev (entrypoint, workflow, IaC, config de deploy,
+   ambiente de desenvolvimento), sem código de aplicação, não pede nova rodada do `code-reviewer`
+   se o `sre` desta fatia o revisa ou já o revisou: registre o SHA do delta no `qa-report.md` como
+   "coberto pelo `sre`". Sem `sre` previsto nesta fatia, vale a regra normal (`docs/gates/qa.md`).
 2b. **Se a branch/PR original da fatia já foi mergeado e apagado** (comum em revisão retroativa
    pedida depois do fato — ex.: um `/btt-sdd:hotfix` que pulou QA no momento do merge, e o usuário
    pede para formalizar essa etapa depois), não tente localizar/rebasear uma branch inexistente:
