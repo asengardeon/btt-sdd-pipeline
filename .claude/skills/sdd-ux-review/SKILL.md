@@ -74,8 +74,9 @@ pulado" em `/sdd-hotfix`), em vez de simplesmente não mencionar a etapa.
    branch da fatia. Na instrução, informe a branch e o SHA da ponta (`git rev-parse HEAD` no
    checkout principal), mande o agente seguir `ux-designer/worktree-checkout.md` e confirmar o SHA com
    `git rev-parse HEAD` antes de revisar. **Se o worktree isolado recusa `git`** (hook do
-   ambiente), rode a revisão no checkout principal enquanto não há agente concorrente e registre o
-   motivo no artefato.
+   ambiente), ou se o plano/`timing-log.md` da spec já registra "recusa git"
+   (`implement`, passo 4d), não passe `isolation` e rode a revisão no checkout principal enquanto
+   não há agente concorrente; registre o motivo no artefato.
 4b. **Registre a duração desta invocação em `specs/<slug>/timing-log.md`** (crie a partir de
    `specs/_template/timing-log.template.md` se ainda não existir): uma linha com o horário do
    passo 4, o horário atual, e a diferença calculada (etapa "UX review", agente "ux-designer",
