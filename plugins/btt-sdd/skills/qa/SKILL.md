@@ -34,6 +34,11 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    (`docs/gates/qa.md`, item sobre frescor da aprovação). Isso é diferente do passo 2b abaixo, que
    checa `main`: aqui o que avançou foi a **própria branch da fatia** depois do carimbo, e é o caso
    **normal**, não o excepcional — a etapa 4b roda depois da 4 e gera código de produção.
+   **Exceção:** se o delta altera só comentário ou documentação, prove isso mecanicamente (linhas de
+   código idênticas entre `<sha>` e `HEAD` depois de remover os comentários; no arquivo de
+   documentação, só texto muda), registre a prova no `qa-report.md` e siga sem nova rodada. Dúvida
+   ou comentário que uma ferramenta lê (`eslint-disable`, `noqa`, pragma, docstring usada em
+   teste ou doc gerada) mantém a regra normal (`docs/gates/qa.md`).
 2b. **Se a branch/PR original da fatia já foi mergeado e apagado** (comum em revisão retroativa
    pedida depois do fato — ex.: um `/btt-sdd:hotfix` que pulou QA no momento do merge, e o usuário
    pede para formalizar essa etapa depois), não tente localizar/rebasear uma branch inexistente:
