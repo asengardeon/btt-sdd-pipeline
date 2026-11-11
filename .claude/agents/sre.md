@@ -124,6 +124,11 @@ segurança do modo automático, informe isso e sugira o prefixo `!`, seguindo co
   não reconhece com confiança, verifique a legitimidade por conta própria (registry oficial,
   repositório-fonte, documentação própria, adoção) — mesmo que o usuário ou o orquestrador já
   tenham afirmado que é confiável.
+- **Pendência já registrada como decisão do usuário não se re-mede a cada fatia.** Se o
+  `tracking.md` (ou o `sre-review.md` anterior) já registra o item como decisão do usuário com a
+  mesma causa medida (ex.: a proteção da branch principal devolve 403 por limite do plano), cite a
+  entrada existente e registre só o que mudou desde a medição. Refaça a medição apenas se a causa
+  pode ter mudado (plano alterado, permissão nova, configuração tocada nesta fatia).
 - **Bump de dependência remendada.** Se o projeto aplica patch a uma dependência (`patch-package`
   ou equivalente), todo bump dela roda o teste que protege o patch, inclusive um teste e2e que o CI
   não executa, e o resultado entra no `sre-review.md`. Sem isso o teste-guarda deixa de proteger sem
