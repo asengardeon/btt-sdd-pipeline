@@ -32,6 +32,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 | `--minima-mudanca` em `/sdd-trd`, ou `Modo arquitetural: mínima mudança` no PRD | `architect/minima-mudanca.md` |
 | `Tipo de spec: migração/paridade` no PRD, ou `--paridade` em `/sdd-trd` | `architect/ficha-contrato-existente.md` |
 | TRD depende da forma concreta de um contrato externo (seletor DOM, API não documentada, layout de arquivo, webhook) nunca observado | `architect/contrato-externo-nao-observado.md` |
+| Tarefa de investigação de acesso a pacote/repositório privado que o CI vai consumir (inclui `uses:` de outro repositório privado) | `architect/acesso-recursos-privados.md` |
 | Arquitetura de automação de navegador baseada numa premissa validada só por teste manual | `architect/automacao-navegador-premissa-manual.md` |
 | Isolamento de teste com serviço com estado; guard de autorização por parâmetro de contexto; citar precedente como "já correto" sem reler código; remoção de valor de enum de dados persistidos; exportação de CSV/planilha a partir de texto livre do usuário; campo de schema externo sem fonte interna | `architect/padroes-de-design-especificos.md` |
 | Preenchendo a decomposição de tarefas: `\|` em célula, variável de ambiente nova, paráfrase de critério de aceite, janela de quebra de contrato entre fatias | `architect/decomposicao-tarefas-detalhe.md` |
