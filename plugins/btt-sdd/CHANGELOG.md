@@ -17,6 +17,13 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.61.6 — 2026-11-11
+
+- **Passo de workflow que só roda fora de PR é provado por sonda descartável no runner (issue #684).**
+  Novo `agents/sre/sonda-descartavel-runner.md` e `agents/security-engineer/sonda-descartavel-runner.md`:
+  antes de classificar como `[inferido]`, o agente pede ao orquestrador uma branch de sonda com um
+  workflow de `push` que repete os comandos do passo; o orquestrador cria e remove a branch.
+
 ## 1.61.5 — 2026-11-11
 
 - **Gate de merge e hotfix avisam quando o filtro de paths do CD impede o deploy (issue #688).**

@@ -32,6 +32,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 |---|---|
 | Dúvida sobre por que a base de um diff de fatia nunca é o SHA salvo direto, ou o que "completo" significa numa auditoria | `sre/base-diff-fatia.md` |
 | Antes de declarar/registrar que o CI está verde para o PR desta fatia | `sre/ci-verde-nao-prova-suite-rodou.md` |
+| O diff altera passo de workflow que não roda em PR (CD, push em `main`) e a conclusão depende do comportamento no runner | `sre/sonda-descartavel-runner.md` |
 | Conduzindo a retrospectiva de fatia (leitura de `timing-log.md`) | `sre/retrospectiva-timing-log.md` |
 | Desenhando/revisando cadência, custo de runner, concorrência ou short-circuit de `ci.yml`/`cd.yml` | `sre/ci-cadencia-e-custo.md` |
 | O diff adiciona/renomeia/remove um `name:` de job em `ci.yml`/`cd.yml` | `sre/ci-guard-rails.md` |

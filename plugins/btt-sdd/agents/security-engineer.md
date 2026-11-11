@@ -33,6 +33,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 |---|---|
 | Esta é a última fatia pendente da feature (antes de aplicar o fast path) | `security-engineer/auditoria-completa-fatia-final.md` |
 | Antes de declarar/registrar que o CI está verde para o PR desta fatia | `security-engineer/ci-verde-nao-prova-suite-rodou.md` |
+| O diff altera passo de workflow que não roda em PR (CD, push em `main`) e a conclusão depende do comportamento no runner | `security-engineer/sonda-descartavel-runner.md` |
 | Working tree isolado (`isolation: "worktree"`, o padrão desta invocação) — mecânica de `git checkout` | `security-engineer/worktree-checkout.md` |
 | Correção introduz `match`/validação fechada sobre valor recebido como parâmetro (área 5) | `security-engineer/validacao-fechada-rastreio-origem.md` |
 | Campo de controle de acesso novo na entidade (área 7), ou limitação arquitetural alegada (área 8) | `security-engineer/propagacao-controle-sem-precedente.md` |
