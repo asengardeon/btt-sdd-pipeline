@@ -185,6 +185,9 @@ entre trilhas paralelas após correção: `_rules/reconciliacao-contrato-trilhas
       entre agentes concorrentes") — passe `isolation: "worktree"` em cada chamada da Agent tool;
       não deixe os dois agentes dividirem o mesmo diretório de trabalho só porque tocam pastas
       diferentes (`src/` vs. `frontend/`).
+      **Se o worktree isolado não consegue usar `git`** (hook do ambiente recusa todo comando e o
+      agente não executa nenhuma tarefa), rode as trilhas em sequência no diretório principal,
+      backend primeiro. O custo é perder o paralelismo; registre isso no plano e na rodada.
    e. **Promova a coluna Status das tarefas desta fatia para `em andamento` você mesmo, numa
       única passada, antes de invocar as trilhas.** Os agentes de implementação não editam essa
       transição — só comentam na Issue GitHub de cada tarefa. É simétrico à promoção para

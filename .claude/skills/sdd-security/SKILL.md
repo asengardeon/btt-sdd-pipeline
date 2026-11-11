@@ -74,6 +74,12 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes concorrentes"). Não é
    uma condição a avaliar caso a caso ("outra tarefa pode estar ativa?") — é o padrão desta
    invocação.
+   **Diga ao agente em qual ref revisar.** O worktree isolado nasce na branch principal, não na
+   branch da fatia. Na instrução, informe a branch e o SHA da ponta (`git rev-parse HEAD` no
+   checkout principal), mande o agente seguir `security-engineer/worktree-checkout.md` e confirmar o SHA com
+   `git rev-parse HEAD` antes de revisar. **Se o worktree isolado recusa `git`** (hook do
+   ambiente), rode a revisão no checkout principal enquanto não há agente concorrente e registre o
+   motivo no artefato.
 3a. **Ao incluir na instrução um fato que outra etapa mediu, diga quem mediu e como — e marque se
    ele é carga para alguma conclusão desta etapa.** Repassar o que a etapa anterior já mediu é
    desejável (é para isso que as seções "o que a próxima etapa herda" existem), mas a repetição

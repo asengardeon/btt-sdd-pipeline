@@ -71,6 +71,12 @@ review pulado (justificado)` com a justificativa (mesmo padrão já usado para "
    (`specs/<slug>/ux-review.md`), conforme `agents/ux-designer/artefato-split-fisico.md`; você
    não precisa decidir isso por ele. **Sempre passe `isolation: "worktree"` nesta chamada**
    (`docs/GIT-WORKFLOW.md`, seção "Isolamento de working tree entre agentes concorrentes").
+   **Diga ao agente em qual ref revisar.** O worktree isolado nasce na branch principal, não na
+   branch da fatia. Na instrução, informe a branch e o SHA da ponta (`git rev-parse HEAD` no
+   checkout principal), mande o agente seguir `ux-designer/worktree-checkout.md` e confirmar o SHA com
+   `git rev-parse HEAD` antes de revisar. **Se o worktree isolado recusa `git`** (hook do
+   ambiente), rode a revisão no checkout principal enquanto não há agente concorrente e registre o
+   motivo no artefato.
 4b. **Registre a duração desta invocação em `specs/<slug>/timing-log.md`** (crie a partir de
    `specs/_template/timing-log.template.md` se ainda não existir): uma linha com o horário do
    passo 4, o horário atual, e a diferença calculada (etapa "UX review", agente "ux-designer",
