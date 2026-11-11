@@ -17,6 +17,13 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.61.14 — 2026-11-11
+
+- **Sondar uma vez por spec se o worktree isolado aceita `git` (issue #702).** `skills/implement/SKILL.md`
+  (passo 4d): o primeiro agente isolado roda `git status` antes da tarefa; o resultado vai para o plano e
+  o `timing-log.md`, e com "recusa git" o resto da spec roda no checkout principal. As skills
+  `code-review`, `qa`, `security`, `sre` e `ux-review` leem esse registro e não repetem a tentativa.
+
 ## 1.61.13 — 2026-11-11
 
 - **Delta de infra/dev pós-code-review fica coberto pelo `sre` (issue #675).** `docs/gates/qa.md` e

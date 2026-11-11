@@ -192,6 +192,13 @@ entre trilhas paralelas após correção: `_rules/reconciliacao-contrato-trilhas
       **Se o worktree isolado não consegue usar `git`** (hook do ambiente recusa todo comando e o
       agente não executa nenhuma tarefa), rode as trilhas em sequência no diretório principal,
       backend primeiro. O custo é perder o paralelismo; registre isso no plano e na rodada.
+      **Sonde uma vez por spec, não a cada etapa.** Antes de qualquer tarefa, a instrução ao primeiro
+      agente isolado da spec manda rodar `git status` e, se o ambiente o recusar, parar e devolver
+      "git recusado no worktree". Registre o resultado ("worktree isolado: ok" ou "recusa git") na
+      seção "Riscos" de `plans/F-<N>.md` e numa linha de nota no `timing-log.md`. Com "recusa git",
+      o restante da spec dispensa `isolation: "worktree"` e roda no checkout principal, em
+      sequência (implement e as skills de revisão), sem repetir a tentativa. Fatia seguinte da mesma
+      spec lê esse registro antes de despachar; spec nova sonda de novo.
    e. **Promova a coluna Status das tarefas desta fatia para `em andamento` você mesmo, numa
       única passada, antes de invocar as trilhas.** Os agentes de implementação não editam essa
       transição — só comentam na Issue GitHub de cada tarefa. É simétrico à promoção para
