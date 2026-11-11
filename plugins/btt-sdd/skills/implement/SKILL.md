@@ -28,6 +28,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 | A fatia escolhida/mergeada é a última pendente da spec | `_rules/fatia-final-bookkeeping.md` |
 | Antes de invocar um agente de implementação: confirmar que o trabalho é mesmo pendente (sem trilha de código, PR já aprovado existente, issue faltando, PRD/TRD não commitado) | `_rules/fatia-sem-trabalho-pendente.md` |
 | Montando o plano: pontos de entrada estruturalmente equivalentes, ou janela de convivência sendo encerrada | `_rules/plano-implementacao-detalhe.md` |
+| Montando o plano: o plano depende de credencial, permissão, tag/release ou ferramenta fora do repositório | `_rules/pre-requisitos-externos.md` |
 | Agente assíncrono devolveu pergunta/plano em texto puro (fallback, não o caminho esperado) | `_rules/fallback-plano-texto-puro.md` |
 | Troca de provedor/serviço externo descoberta durante a implementação | `_rules/troca-de-provedor.md` |
 | Validação manual pós-merge contra produção real / fechar item VALIDAR DEPOIS | `_rules/validacao-pos-merge-pendencias.md` |
@@ -156,7 +157,9 @@ entre trilhas paralelas após correção: `_rules/reconciliacao-contrato-trilhas
       esse mesmo contrato, em paralelo, desde o incremento 1, usando um dublê até o endpoint
       existir de verdade") — aplicando como restrição adicional qualquer lição de
       `docs/LESSONS-LEARNED.md` relevante. Dois casos específicos a verificar antes de fechar o
-      plano: `_rules/plano-implementacao-detalhe.md`.
+      plano: `_rules/plano-implementacao-detalhe.md`. Se o plano depende de algo fora do
+      repositório (credencial, permissão, tag/release, ferramenta local), verifique antes de
+      apresentá-lo: `_rules/pre-requisitos-externos.md`.
    c. Apresente esse plano ao usuário via `AskUserQuestion`, citando explicitamente qual lição de
       `docs/LESSONS-LEARNED.md` foi aplicada e como (se alguma foi), e só prossiga com aprovação
       explícita (mesmo limite de 3 repetições dos outros agentes — na 3ª rodada sem convergência,
