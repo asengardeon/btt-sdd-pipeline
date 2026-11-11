@@ -17,6 +17,13 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.61.13 — 2026-11-11
+
+- **Delta de infra/dev pós-code-review fica coberto pelo `sre` (issue #675).** `docs/gates/qa.md` e
+  `skills/qa/SKILL.md` (passo 2a): correção só de infra/dev, sem código de aplicação, não exige nova
+  rodada de code review quando o `sre` da fatia a revisa; o QA registra o SHA como "coberto pelo
+  `sre`". `skills/implement/SKILL.md` (retomada, passo 2d) avisa o orquestrador.
+
 ## 1.61.12 — 2026-11-11
 
 - **Gate de frescor do QA aceita delta provado só de comentário/texto (issue #683).** `skills/qa/SKILL.md`

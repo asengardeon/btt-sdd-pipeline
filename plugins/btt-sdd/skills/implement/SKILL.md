@@ -63,6 +63,10 @@ fluxo normal de "nova fatia" — pule os passos da seção "Passos" abaixo e tra
    bloqueada.** Faça isso antes de mandar a mensagem. O agente retomado comenta a transição na
    Issue GitHub de cada tarefa, mas não edita a tabela (`agents/backend-developer.md`,
    passo 1b).
+2d. **Correção de infra/dev encomendada depois do code review** (entrypoint, workflow, IaC, config
+   de deploy; sem código de aplicação): avise na mensagem ao agente que o `sre` da fatia cobre esse
+   delta, e garanta que ele o revise, porque o QA aceita o delta nessa condição em vez de exigir
+   nova rodada de code review (`docs/gates/qa.md`, item sobre frescor da aprovação).
 2c. **Marque você mesmo, no `tracking.md` da etapa que levantou o achado, a linha de cada achado
    que a correção endereça como `corrigido na fatia, pendente de reverificação`** (com o SHA da
    correção), no mesmo commit da correção. A rodada de reverificação do agente de revisão fecha a

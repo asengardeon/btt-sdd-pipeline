@@ -42,6 +42,13 @@
   (`eslint-disable`, `@ts-ignore`, `noqa`, pragma, docstring usada como teste ou documentação
   gerada, anotação), linha de código tocada, ou arquivo cuja sintaxe você não consegue separar do
   comentário.
+  **Exceção: delta só de infra/dev, coberto pelo `sre`.** Uma correção encomendada depois do code
+  review (ex.: após a segurança) que toca só entrypoint de container, workflow de CI/CD, IaC,
+  configuração de deploy ou ambiente de desenvolvimento, sem arquivo de código de aplicação, não
+  exige nova rodada do `code-reviewer`. Em vez disso, o `qa-report.md` registra o `<sha>` do delta
+  como "coberto pelo `sre`" e o `sre` desta fatia o revisa (ou já o revisou, e o `sre-review.md`
+  cita o SHA). Se nenhuma etapa de `sre` vai rodar nesta fatia, ou o delta toca qualquer código de
+  aplicação, vale a regra normal.
 - [ ] Cobertura medida e comparada ao gate de 80% — sem relatório de cobertura confiável, não há
   aprovação possível.
 - [ ] Se a fatia tem trilha de frontend, ou gera qualquer outro artefato de build/empacotamento
