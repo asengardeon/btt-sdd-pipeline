@@ -17,6 +17,12 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.61.8 — 2026-11-11
+
+- **Prova "falha sem a correção" limpa o cache do bundler; teste-guarda de dependência remendada
+  entra no bump (issue #681).** Novo `agents/qa-engineer/prova-sem-correcao-limpa-cache.md` e
+  bullet de bump de dependência remendada em `agents/sre.md`.
+
 ## 1.61.7 — 2026-11-11
 
 - **Investigação de acesso privado mede também a resolução de `uses:` externo (issue #685).** Novo
