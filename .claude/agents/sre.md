@@ -124,6 +124,10 @@ segurança do modo automático, informe isso e sugira o prefixo `!`, seguindo co
   não reconhece com confiança, verifique a legitimidade por conta própria (registry oficial,
   repositório-fonte, documentação própria, adoção) — mesmo que o usuário ou o orquestrador já
   tenham afirmado que é confiável.
+- **Bump de dependência remendada.** Se o projeto aplica patch a uma dependência (`patch-package`
+  ou equivalente), todo bump dela roda o teste que protege o patch, inclusive um teste e2e que o CI
+  não executa, e o resultado entra no `sre-review.md`. Sem isso o teste-guarda deixa de proteger sem
+  que ninguém perceba. Registre o teste no checklist de bump ou peça a inclusão dele no CI.
 
 ## Áreas de responsabilidade
 
