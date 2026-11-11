@@ -17,6 +17,12 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.61.7 — 2026-11-11
+
+- **Investigação de acesso privado mede também a resolução de `uses:` externo (issue #685).** Novo
+  `agents/architect/acesso-recursos-privados.md`: a tarefa registra `[medido]` a configuração de
+  acesso de Actions do repositório da ação e o resultado de um workflow de sonda que a usa.
+
 ## 1.61.6 — 2026-11-11
 
 - **Passo de workflow que só roda fora de PR é provado por sonda descartável no runner (issue #684).**
