@@ -32,6 +32,9 @@
   (deve ser 0 nos passos caros) e a saída de `git diff --stat` até o `headRefOid` atual. O
   `statusCheckRollup` do PR mostra só o último run — num push único só de `specs/`, ele pode ser todo
   `skipped` e ainda assim `success`, e não prova que a suíte da fatia rodou.
+  Para provar um passo que a fatia introduziu, o run precisa ter disparado com o PR fora do draft
+  e com delta de código ou infra: um push só de `specs/` também pula os passos caros, e `gh pr
+  ready` logo depois de um push pode herdar `draft=true` no payload do run.
   Delegar essa verificação adiante, etapa após etapa, sem que ninguém de fato a execute pode deixar
   passar um *required check* vermelho sem inspeção até o HEAD — e um run em draft reportando verde
   em segundos, com todos os passos caros `skipped`, não significa nada.
