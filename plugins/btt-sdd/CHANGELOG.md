@@ -17,6 +17,13 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.61.10 — 2026-11-11
+
+- **Code review reaproveita o artefato de cobertura fresco para suíte e build (issue #676).**
+  `agents/code-reviewer.md`, área 8: com o `Commit` do artefato batendo, não reexecuta a suíte
+  completa nem o build; a reexecução integral fica com o `qa-engineer`. O reaproveitamento por
+  trilha já existia em `docs/TESTING.md` e `agents/qa-engineer.md`.
+
 ## 1.61.9 — 2026-11-11
 
 - **Pendência já registrada como decisão do usuário não é re-medida a cada fatia (issue #677).**

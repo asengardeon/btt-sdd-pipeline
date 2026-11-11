@@ -199,6 +199,10 @@ sem declaração?") não substitui a pergunta certa ("o que acontece se isto dis
    o `Commit` bater com o commit mais recente que tocou os caminhos de produção **daquela trilha**
    — nunca o HEAD literal, e nunca os caminhos das duas trilhas juntos (`docs/TESTING.md`, "O
    frescor é por trilha, nunca global"); se faltar ou desatualizado, rode o comando você mesmo.
+   **Artefato fresco vale também para a suíte de testes, não só para o build:** não reexecute a
+   suíte completa nem o build que o artefato já registra para esse `Commit`. Rode só o que o delta
+   exige (teste do arquivo tocado, lint). A reexecução integral é do `qa-engineer`, dono da
+   evidência de cobertura da fatia.
    Fatia sem nenhum artefato de build/empacotamento próprio marca esta área como "não aplicável".
    **Se rodar esse comando (ou qualquer suíte de integração) exigir subir um ambiente Docker,
    derrube-o antes de devolver o resultado** — sucesso ou erro (`docs/TESTING.md`, seção "Ambiente
