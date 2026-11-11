@@ -17,6 +17,11 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.61.9 — 2026-11-11
+
+- **Pendência já registrada como decisão do usuário não é re-medida a cada fatia (issue #677).**
+  `agents/sre.md`: cita a entrada existente e registra só o que mudou.
+
 ## 1.61.8 — 2026-11-11
 
 - **Prova "falha sem a correção" limpa o cache do bundler; teste-guarda de dependência remendada
