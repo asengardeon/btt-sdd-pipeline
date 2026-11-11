@@ -17,6 +17,14 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.61.2 — 2026-11-11
+
+- **Implement: pré-requisitos externos verificados antes de despachar o agente (issues #673, #679).**
+  Novo `skills/implement/_rules/pre-requisitos-externos.md`: o plano lista credenciais, permissões,
+  tags/releases e ferramentas locais, o orquestrador verifica cada um com um comando barato e
+  pede o que faltar no mesmo `AskUserQuestion` que aprova o plano, em vez de o agente parar em
+  segundos e a espera humana correr depois.
+
 ## 1.61.1 — 2026-11-11
 
 - **Code review: provar o run completo antes de revisar quando a fatia mexe em CI/Docker/dependência
