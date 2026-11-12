@@ -198,7 +198,9 @@ entre trilhas paralelas após correção: `_rules/reconciliacao-contrato-trilhas
       seção "Riscos" de `plans/F-<N>.md` e numa linha de nota no `timing-log.md`. Com "recusa git",
       o restante da spec dispensa `isolation: "worktree"` e roda no checkout principal, em
       sequência (implement e as skills de revisão), sem repetir a tentativa. Fatia seguinte da mesma
-      spec lê esse registro antes de despachar; spec nova sonda de novo.
+      spec lê esse registro antes de despachar. Para uma spec nova, consulte antes os `timing-log.md` e
+      planos de specs anteriores do mesmo projeto: se já registram "recusa git", herde o resultado e
+      não sonde; sonde só quando não há registro anterior.
    e. **Promova a coluna Status das tarefas desta fatia para `em andamento` você mesmo, numa
       única passada, antes de invocar as trilhas.** Os agentes de implementação não editam essa
       transição — só comentam na Issue GitHub de cada tarefa. É simétrico à promoção para
