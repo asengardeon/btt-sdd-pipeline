@@ -82,7 +82,10 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    (`implement`, passo 4d), não passe `isolation` e rode a revisão no checkout principal enquanto
    não há agente concorrente; registre o motivo no artefato.
 3a. **Ao incluir na instrução um fato que outra etapa mediu, diga quem mediu e como — e marque se
-   ele é carga para alguma conclusão desta etapa.** Repassar o que a etapa anterior já mediu é
+   ele é carga para alguma conclusão desta etapa.** **Medição que decide aprovação contra um limiar
+   (contraste, cobertura, tempo, tamanho) se repassa com o valor bruto, todas as casas, e o método,
+   nunca arredondada;** valor a menos de 1% do limiar sai rotulado "reconfira" ("no limite" é sinal
+   para reconferir, não para aceitar: 4,497:1 reprova um mínimo de 4,5:1). Repassar o que a etapa anterior já mediu é
    desejável (é para isso que as seções "o que a próxima etapa herda" existem), mas a repetição
    **lava a origem**: o que era "medido pela etapa X, com o método Y" chega como premissa sem
    procedência, indistinguível de um fato do desenho — e quem recebe não tem como saber que precisa

@@ -17,6 +17,12 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.61.16 — 2026-11-12
+
+- **Medição contra limiar é repassada com valor bruto e método (issue #707).** Passo 3a de
+  `skills/{code-review,qa,security,sre}/SKILL.md`: sem arredondar, e "reconfira" a menos de 1% do
+  limiar. `agents/sre.md` (passo 4b): um comentário-resumo por fatia em vez de um por issue.
+
 ## 1.61.15 — 2026-11-12
 
 - **Teste de acesso negado (403/401) precisa de tarefa dona no TRD; sondagem de worktree herda registro

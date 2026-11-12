@@ -262,6 +262,10 @@ leia antes do primeiro `git checkout` desta rodada.
    implementado, com link do PR e dos artefatos de revisão. Não feche a issue você mesmo — o PR já
    referencia `Closes #N` e o fechamento automático acontece quando o usuário mergear. Se `gh`
    falhar, nunca tente mais de 3 vezes seguidas. Se a fatia foi reprovada, não comente nada.
+   **Com mais de uma issue na fatia, poste um único comentário-resumo** (issues e resolução de cada
+   uma, PR, artefatos) na issue principal da fatia, em vez de um `gh issue comment` por issue: o
+   classificador do modo automático já bloqueou o comando em laço. Se ainda assim for bloqueado,
+   deixe o texto do comentário pronto em `sre-review.md` e registre a postagem como pendência manual.
 5. **Commite e envie (push) o artefato** antes de devolver o resultado: quais arquivos entram no
    `git add`: `sre/artefato-split-fisico.md`. Mais qualquer arquivo de
    `infra/`/`.github/workflows/` que você tenha ajustado (liste-os explicitamente), mais
