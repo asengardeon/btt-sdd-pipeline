@@ -17,6 +17,12 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.61.17 — 2026-11-12
+
+- **Checklist pré-revisão do `frontend-developer` cobre rótulo-no-nome, contraste calculado, nome de
+  instâncias repetidas e mutação nos ramos novos (issue #706).**
+  `agents/frontend-developer/checklist-pre-revisao.md`.
+
 ## 1.61.16 — 2026-11-12
 
 - **Medição contra limiar é repassada com valor bruto e método (issue #707).** Passo 3a de
