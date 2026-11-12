@@ -19,6 +19,10 @@
   feature, nunca em branco ou genérica.
 - [ ] Se a feature inclui frontend, "Contrato Frontend↔Backend" está definido (no TRD ou num ADR
   referenciado) — nunca "a definir depois".
+- [ ] **Todo critério de aceite de acesso negado (403/401) tem uma tarefa dona do teste.** Quando o
+  critério reaproveita uma rota ou permissão existente, alguma tarefa lista o teste daquela rota
+  (arquivo e caso), ou registra "teste já existente: `<arquivo>`" verificado por `grep`. "Suíte de
+  isolamento" genérica não conta (`agents/architect/acesso-negado-teste-dono.md`).
 - [ ] **No artefato da tarefa de investigação, cada afirmação está marcada `[medido]` ou
   `[inferido]`** — inclusive (sobretudo) as das seções de "nota operacional"/"consequência prática",
   que é onde a inferência se esconde. Uma frase inferida escrita num artefato cuja autoridade vem de
