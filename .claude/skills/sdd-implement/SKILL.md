@@ -86,7 +86,8 @@ fluxo normal de "nova fatia" — pule os passos da seção "Passos" abaixo e tra
    do mesmo agente e registre a **diferença**, nunca o bruto
    (`specs/_template/timing-log.template.md`, seção "O que a coluna 'Duração' mede").
 3d. A correção não pode reintroduzir, numa forma vizinha, a classe de defeito que esta fatia/spec
-   existe para eliminar: `_rules/correcao-nao-reintroduz-defeito.md`.
+   existe para eliminar: `_rules/correcao-nao-reintroduz-defeito.md`. A mesma regra pede testes dos
+   valores de borda vizinhos quando a correção muda a normalização/validação de um campo de entrada.
 3e. **Se o achado é um erro opaco, peça a medição direta antes da correção — e cobre-a como
    critério de aceite da rodada.** Erro opaco é o que não nomeia sua própria causa: um `422` sem
    detalhe de campo, um overflow de N pixels, uma falha de e2e com mensagem genérica. Inclua no

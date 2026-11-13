@@ -20,3 +20,13 @@ cenário for pior que a violação original que a correção corrige — por exe
 relatório em vez de um relatório mal classificado —, a correção reintroduziu a classe de defeito.
 Prefira degradação local (log + valor default) a um `throw`/`return` de erro novo, com teste de
 exaustividade mais apertado garantindo a cobertura.
+
+## Correção que muda a normalização ou a validação de um campo de entrada
+
+Gatilho: a correção altera como um campo de entrada é normalizado, mascarado ou validado (ex.: um
+`replace` na digitação, um novo limite, um novo parser).
+
+Peça ao agente testes dos **valores de borda vizinhos** ao do achado, não só do caso apontado:
+zero, vazio, valor máximo, valor colado, e o valor que o achado tratava. O teste do caso corrigido
+passa por construção; o defeito novo mora no vizinho que ninguém digitou. Exemplo: uma máscara que
+remove zeros à esquerda corrige o achado e torna `0` impossível de digitar.
