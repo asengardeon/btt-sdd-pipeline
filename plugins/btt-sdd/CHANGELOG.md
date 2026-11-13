@@ -17,6 +17,10 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.61.19 — 2026-11-13
+
+- **`architect` lê o código do chamador de outra spec antes de afirmar que o escopo do port já vem instalado** (#712): novo `agents/architect/escopo-do-chamador-outra-spec.md` (arquivo/linha no TRD; `null` cobre ausência, não exceção) e linha no índice de `architect.md`.
+
 ## 1.61.18 — 2026-11-12
 
 - **Correção que muda normalização/validação de campo de entrada exige testes dos valores vizinhos** (#710): `skills/implement/_rules/correcao-nao-reintroduz-defeito.md` ganha a seção com zero, vazio, máximo e colado; passo 3d aponta para ela.
