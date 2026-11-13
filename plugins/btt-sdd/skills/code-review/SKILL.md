@@ -64,7 +64,9 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    mudado, mas o sinal pode nunca ter sido verificado de novo (issue #528).
 2d. **Se a fatia altera workflow de CI/CD, Dockerfile ou dependência autenticada (registry privado,
    ação de outro repositório) e o projeto usa a cadência `ci-antes-do-merge`, tire o PR do draft e
-   prove o run completo antes de invocar `code-reviewer`.** Em draft os passos caros ficam
+   prove o run completo antes de invocar `code-reviewer`.** (Em fatia de código comum o run fora do
+   draft também pode sair todo `skipped`, por baseline `docs_only` vazio: `docs/gates/merge.md` trata
+   isso no merge.) Em draft os passos caros ficam
    `skipped`, e o verde não prova o que a fatia introduziu. Dispare o run com o PR fora do draft e
    com um delta de código ou infra: um push só de `specs/` também pula os passos, porque o filtro
    compara com o commit anterior do push, não com o PR inteiro. Confira os passos do job (`gh run

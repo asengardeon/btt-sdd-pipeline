@@ -17,6 +17,10 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.61.20 — 2026-11-13
+
+- **Run fora do draft com passos caros `skipped` não prova a suíte, em qualquer fatia de código** (#713): `docs/gates/merge.md` estende a regra além de workflow/Docker; `sre/ci-cadencia-e-custo.md` proíbe baseline que pulou os passos caros e manda o `workflow_dispatch` ignorar o filtro; nota no passo 2d de `code-review`.
+
 ## 1.61.19 — 2026-11-13
 
 - **`architect` lê o código do chamador de outra spec antes de afirmar que o escopo do port já vem instalado** (#712): novo `agents/architect/escopo-do-chamador-outra-spec.md` (arquivo/linha no TRD; `null` cobre ausência, não exceção) e linha no índice de `architect.md`.
