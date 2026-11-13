@@ -117,7 +117,11 @@ Duas formas erradas de resolver:
 idêntico ao de um SHA que **já passou** no CI nesta mesma branch.
 
 1. Consulte, via `gh api` com o `GITHUB_TOKEN`, o run mais recente **bem-sucedido** do workflow de
-   CI para esta branch, e pegue seu `headSha`. **O job que faz essa consulta declara `permissions:
+   CI para esta branch **cujos passos caros de fato rodaram**, e pegue seu `headSha`. Um run verde
+   que pulou os passos caros (draft, ou ele próprio `docs_only`) nunca serve de baseline: sem essa
+   exigência, o PR que sai do draft herda o verde de um run vazio e termina verde em segundos sem
+   rodar a suíte. O `workflow_dispatch` ignora o filtro por completo e roda todos os passos caros,
+   não só o job de navegador. **O job que faz essa consulta declara `permissions:
    actions: read`** — o `GITHUB_TOKEN` padrão não traz esse escopo em toda configuração de
    repositório, e sem ele a chamada falha silenciosamente (o workflow continua correto, o
    desperdício continua inteiro, e ninguém descobre que o short-circuit nunca funcionou).

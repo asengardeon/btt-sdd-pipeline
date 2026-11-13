@@ -32,6 +32,11 @@
   (deve ser 0 nos passos caros) e a saída de `git diff --stat` até o `headRefOid` atual. O
   `statusCheckRollup` do PR mostra só o último run — num push único só de `specs/`, ele pode ser todo
   `skipped` e ainda assim `success`, e não prova que a suíte da fatia rodou.
+  Isso vale para **qualquer** fatia com código, não só a que toca workflow: uma fatia que passou
+  quase toda a vida em draft chega ao merge com o último run todo `skipped` (o filtro `docs_only`
+  comparou com um baseline que também não executou nada). Run fora do draft com os passos caros
+  todos `skipped` não prova a suíte: não mergeie com ele, force o run completo (`workflow_dispatch`
+  que ignora o filtro) ou peça ao `sre` para corrigir o baseline do filtro.
   Para provar um passo que a fatia introduziu, o run precisa ter disparado com o PR fora do draft
   e com delta de código ou infra: um push só de `specs/` também pula os passos caros, e `gh pr
   ready` logo depois de um push pode herdar `draft=true` no payload do run.
