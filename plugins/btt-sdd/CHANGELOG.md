@@ -17,6 +17,10 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.61.23 — 2026-11-14
+
+- **`architect` descreve a ordem de execução do deploy quando uma tarefa liga comportamento por configuração persistente** (#720): novo `agents/architect/ordem-de-execucao-do-deploy.md` (ordem config → código → release → config, rollback, guarda contra release falha/rerun, premissas de plataforma não medidas com falha fechada) e linha no índice de `architect.md`.
+
 ## 1.61.22 — 2026-11-14
 
 - **Agentes de revisão não declaram a próxima etapa; `sre` ignora passos informativos "Pulado — ..." ao julgar se a suíte rodou** (#717): `qa-engineer`, `code-reviewer` e `security-engineer` passam a escrever "roteamento da próxima etapa: ver a skill" (a cadência por fatia decide); `sre/ci-cadencia-e-custo.md` manda ler só os passos reais.
