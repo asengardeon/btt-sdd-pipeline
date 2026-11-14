@@ -77,6 +77,10 @@ aquele ainda evita repetir a suíte se o código não mudou desde o último run 
 
 **O caminho pulado precisa de um passo informativo próprio** — sem ele, um run verde de 23 s com
 todos os passos `skipped` é indistinguível de um run completo para quem olha só o `conclusion`.
+**Ao julgar se a suíte rodou, leia só os passos reais** (`Lint`, `Tests`, `Build`, os que o
+projeto nomeou) e ignore os passos informativos "Pulado — ...": eles aparecem `skipped` mesmo
+quando a suíte rodou, porque só executam no caminho pulado. Um `skipped` num passo informativo não é
+evidência de suíte pulada; um `skipped` num passo real é.
 
 **Essa cadência é opt-in por projeto, nunca o padrão que você aplica por conta própria**, e o
 motivo é honesto: o sinal de teste não desaparece durante a fatia (os agentes de implementação

@@ -268,5 +268,6 @@ Ver `docs/gates/qa.md` para a lista completa. Resumo:
 - `qa-report.md` (e o arquivo de cobertura, se regravado) commitados e enviados (push) na branch
   do PR.
 
-Se aprovado, informe ao usuário que a próxima etapa é `/btt-sdd:security` com o agente
-`security-engineer`. Se reprovado, informe que a feature volta para `/btt-sdd:implement`.
+Se aprovado, não declare a próxima etapa: o roteamento depende da coluna `Validação na fatia` do TRD e da
+posição da fatia (`docs/SDD-WORKFLOW.md`, seção "Cadência"), e quem decide é a skill. Escreva
+"roteamento da próxima etapa: ver a skill". Se reprovado, informe que a feature volta para `/btt-sdd:implement`.
