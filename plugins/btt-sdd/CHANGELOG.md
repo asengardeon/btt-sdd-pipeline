@@ -17,6 +17,10 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.62.0 — 2026-11-14
+
+- **`sre` em modo consultivo antes do code review quando a fatia altera infra** (#719): novo `agents/sre/modo-consultivo.md` (só leitura sobre o delta de `cd.yml`/`ci.yml`/`Dockerfile`/IaC: ordem de deploy, idempotência, rollback, persistência de configuração; não carimba nada) e passo 2e em `skills/code-review`, com nota em `skills/sre`. Etapa adicional, não substitui a revisão normal do `sre`.
+
 ## 1.61.23 — 2026-11-14
 
 - **`architect` descreve a ordem de execução do deploy quando uma tarefa liga comportamento por configuração persistente** (#720): novo `agents/architect/ordem-de-execucao-do-deploy.md` (ordem config → código → release → config, rollback, guarda contra release falha/rerun, premissas de plataforma não medidas com falha fechada) e linha no índice de `architect.md`.

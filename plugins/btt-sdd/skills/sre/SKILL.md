@@ -41,6 +41,8 @@ fatia
 intermediária sem essa marcação na tabela, diga isso ao usuário antes de rodar: a etapa cabe no
 fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe para cortar.
 
+**Modo consultivo.** `/btt-sdd:code-review` (passo 2e) pode invocar o `sre` só para ler o delta de infra antes do code review (`agents/sre/modo-consultivo.md`). Esse modo não passa por estes passos: não exige QA nem segurança, não escreve artefato, não carimba veredito e não faz retrospectiva. Os passos abaixo valem para a revisão normal.
+
 ## Passos
 
 1. Identifique o slug da feature (mesma lógica das skills anteriores).
