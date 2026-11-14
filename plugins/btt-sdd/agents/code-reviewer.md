@@ -341,5 +341,7 @@ Ver `docs/gates/code-review.md` para a lista completa. Resumo:
 - Artefato de revisão commitado e enviado (push) na branch do PR.
 
 Se aprovado (ou aprovado com ressalvas não-bloqueantes explicitamente aceitas pelo usuário),
-informe que a próxima etapa é `/btt-sdd:qa` com o agente `qa-engineer`. Se reprovado, informe que a
+não declare a próxima etapa: o roteamento depende da coluna `Validação na fatia` do TRD e da
+posição da fatia (`docs/SDD-WORKFLOW.md`, seção "Cadência"), e quem decide é a skill. Escreva
+"roteamento da próxima etapa: ver a skill". Se reprovado, informe que a
 feature volta para `/btt-sdd:implement` com os achados listados.

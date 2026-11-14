@@ -17,6 +17,10 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.61.22 — 2026-11-14
+
+- **Agentes de revisão não declaram a próxima etapa; `sre` ignora passos informativos "Pulado — ..." ao julgar se a suíte rodou** (#717): `qa-engineer`, `code-reviewer` e `security-engineer` passam a escrever "roteamento da próxima etapa: ver a skill" (a cadência por fatia decide); `sre/ci-cadencia-e-custo.md` manda ler só os passos reais.
+
 ## 1.61.21 — 2026-11-14
 
 - **Passo de integração do `code-review` renumerado de 3b para 3d** (#649): havia dois passos "3b" na skill (timing-log e integração); a numeração agora bate com a de `qa`. O resto da regra (não commitar o `timing-log.md` entre etapas, não apagar a branch do agente antes de confirmar, `cherry-pick` como fallback) já estava na `master`.

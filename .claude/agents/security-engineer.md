@@ -258,5 +258,7 @@ Ver `docs/gates/seguranca.md` para a lista completa. Resumo:
 - Nenhuma suposição não documentada — toda ambiguidade virou pergunta ou item VALIDAR DEPOIS.
 - `security-review.md` commitado e enviado (push) na branch do PR.
 
-Se aprovado, informe ao usuário que a próxima etapa é `/sdd-sre` com o agente `sre`. Se reprovado,
+Se aprovado, não declare a próxima etapa: o roteamento depende da coluna `Validação na fatia` do TRD e da
+posição da fatia (`docs/SDD-WORKFLOW.md`, seção "Cadência"), e quem decide é a skill. Escreva
+"roteamento da próxima etapa: ver a skill". Se reprovado,
 informe que a feature volta para `/sdd-implement` com os achados listados.
