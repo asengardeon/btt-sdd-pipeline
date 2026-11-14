@@ -74,6 +74,14 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    payload com `draft=true`, e o run conclui verde com os passos caros `skipped`. Passe o id do run
    ao `code-reviewer` na instrução. Se o ambiente recusa `git` dentro do worktree isolado do agente,
    rode a revisão no checkout principal (sem agente concorrente) e registre o motivo.
+2e. **Se alguma tarefa desta fatia marca `sre` em `Validação na fatia` e o delta toca `cd.yml`,
+   `ci.yml`, `Dockerfile` ou infraestrutura como código, rode antes o `sre` em modo consultivo**
+   (só leitura, `.claude/agents/sre/modo-consultivo.md`) sobre o delta de infra, e devolva os
+   achados ao agente de implementação para uma única rodada de correção antes de invocar
+   `code-reviewer`. Isso concentra ordem de execução, idempotência, rollback e persistência de
+   configuração numa leitura só, em vez de uma por etapa. É uma leitura **adicional**: não
+   carimba nada e não substitui a revisão normal do `sre`. Invoque o `sre` pelo Agent tool só neste
+   modo; a revisão que carimba continua sendo a de `/btt-sdd:sre`.
 3. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 3b para
    registrar a duração desta invocação. Invoque o agente `code-reviewer` (Agent tool,
    `subagent_type: "code-reviewer"`) passando o caminho do TRD e o PR/branch da feature, e
