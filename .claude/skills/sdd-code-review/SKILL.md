@@ -152,7 +152,7 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    artefato da rodada. O gate instrui a *ler* o campo antes de ofertar de novo, mas sem dono para o
    preenchimento ele acumula `sem resposta` em entradas cuja resposta já foi dada, e a rodada
    seguinte repete a oferta que o campo existe para evitar.
-3b. **Integre o commit do agente na branch da fatia, localmente, e não dê push aqui**
+3d. **Integre o commit do agente na branch da fatia, localmente, e não dê push aqui**
    (`docs/GIT-WORKFLOW.md`, seção "Push único por fatia: o CI roda uma vez, não uma vez por
    artefato de revisão"). O agente commitou o artefato e informou a branch e o SHA. Se ele rodou em
    working tree isolado, essa branch é a temporária do worktree: integre e confirme **antes** de
