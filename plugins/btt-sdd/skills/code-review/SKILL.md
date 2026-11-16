@@ -72,7 +72,9 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    compara com o commit anterior do push, não com o PR inteiro. Confira os passos do job (`gh run
    view <id> --json jobs`), não só o `conclusion`: `gh pr ready` logo depois de um push pode herdar o
    payload com `draft=true`, e o run conclui verde com os passos caros `skipped`. Passe o id do run
-   ao `code-reviewer` na instrução. Se o ambiente recusa `git` dentro do worktree isolado do agente,
+   ao `code-reviewer` na instrução. **Depois de cada commit de correção que toca `src/`,
+   `frontend/` ou `tests/`, repita o ciclo** (`gh pr ready --undo`, pausa, `gh pr ready`) e confira
+   pelos passos do job que `Tests` e a cobertura rodaram na ponta (`docs/gates/merge.md`). Se o ambiente recusa `git` dentro do worktree isolado do agente,
    rode a revisão no checkout principal (sem agente concorrente) e registre o motivo.
 2e. **Se alguma tarefa desta fatia marca `sre` em `Validação na fatia` e o delta toca `cd.yml`,
    `ci.yml`, `Dockerfile` ou infraestrutura como código, rode antes o `sre` em modo consultivo**

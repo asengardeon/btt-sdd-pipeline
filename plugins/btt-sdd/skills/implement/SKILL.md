@@ -227,6 +227,9 @@ entre trilhas paralelas após correção: `_rules/reconciliacao-contrato-trilhas
    (`docs/GIT-WORKFLOW.md`, regra 4) — sem isso, a seção 14 fica mostrando "não iniciado" para uma
    fatia que já tem PR aberto até uma etapa de revisão posterior notar e corrigir (issue #486,
    `asengardeon/btt-sdd-pipeline`).
+   **Depois de cada commit de correção que toque `src/`, `frontend/` ou `tests/`**, converta o PR
+   para draft e marque-o como pronto de novo (`gh pr ready --undo`, pausa, `gh pr ready`) e confira
+   pelos passos do job que `Tests` e a cobertura rodaram na ponta (`docs/gates/merge.md`).
 5a. **Registre a duração desta rodada em `specs/<slug>/timing-log.md`** (crie a partir de
    `specs/_template/timing-log.template.md` se ainda não existir): uma linha por trilha invocada
    nesta rodada (etapa "Implementação", agente "backend-developer" e/ou "frontend-developer",
