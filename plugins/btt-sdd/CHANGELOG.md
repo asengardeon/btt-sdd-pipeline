@@ -17,6 +17,10 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.62.1 — 2026-11-16
+
+- **Ciclo draft→pronto depois de cada correção de código ou teste** (#724): `docs/gates/merge.md`, `skills/implement` (passo 5), `skills/code-review` (passo 2d) e `skills/qa` (passo 2a2) mandam converter o PR para draft e marcá-lo pronto de novo após o commit de correção, e conferir pelos passos do job (não pelo `conclusion`) que `Tests` e a cobertura rodaram na ponta. Um run cancelado por push seguinte pulava a suíte e só o `sre` da última etapa notava.
+
 ## 1.62.0 — 2026-11-14
 
 - **`sre` em modo consultivo antes do code review quando a fatia altera infra** (#719): novo `agents/sre/modo-consultivo.md` (só leitura sobre o delta de `cd.yml`/`ci.yml`/`Dockerfile`/IaC: ordem de deploy, idempotência, rollback, persistência de configuração; não carimba nada) e passo 2e em `skills/code-review`, com nota em `skills/sre`. Etapa adicional, não substitui a revisão normal do `sre`.

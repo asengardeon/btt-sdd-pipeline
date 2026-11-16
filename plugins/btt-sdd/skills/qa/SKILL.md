@@ -43,6 +43,10 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    ambiente de desenvolvimento), sem código de aplicação, não pede nova rodada do `code-reviewer`
    se o `sre` desta fatia o revisa ou já o revisou: registre o SHA do delta no `qa-report.md` como
    "coberto pelo `sre`". Sem `sre` previsto nesta fatia, vale a regra normal (`docs/gates/qa.md`).
+2a2. **Depois de cada commit de correção desta etapa que toque `src/`, `frontend/` ou `tests/`**,
+   converta o PR para draft e marque-o como pronto de novo (`gh pr ready --undo`, pausa, `gh pr
+   ready`) e confira pelos passos do job que `Tests` e a cobertura rodaram na ponta
+   (`docs/gates/merge.md`).
 2b. **Se a branch/PR original da fatia já foi mergeado e apagado** (comum em revisão retroativa
    pedida depois do fato — ex.: um `/btt-sdd:hotfix` que pulou QA no momento do merge, e o usuário
    pede para formalizar essa etapa depois), não tente localizar/rebasear uma branch inexistente:

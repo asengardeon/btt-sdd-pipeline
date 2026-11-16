@@ -40,6 +40,13 @@
   Para provar um passo que a fatia introduziu, o run precisa ter disparado com o PR fora do draft
   e com delta de código ou infra: um push só de `specs/` também pula os passos caros, e `gh pr
   ready` logo depois de um push pode herdar `draft=true` no payload do run.
+  **Depois de qualquer commit de correção que toque `src/`, `frontend/` ou `tests/`** (rodada de
+  code review, QA ou segurança), quem orquestra converte o PR para draft e o marca como pronto de
+  novo (`gh pr ready --undo`, pausa, `gh pr ready`) e confere pelos passos do job, não pelo
+  `conclusion`, que `Tests` e a cobertura executaram e que o `headSha` do run é a ponta. Um run
+  cancelado por um push seguinte deixa a ponta comparada só com o commit anterior: o filtro pula a
+  suíte e os testes corrigidos nunca rodam. O id do run entra na instrução da etapa seguinte; não
+  espere o `sre` da última etapa notar.
   Delegar essa verificação adiante, etapa após etapa, sem que ninguém de fato a execute pode deixar
   passar um *required check* vermelho sem inspeção até o HEAD — e um run em draft reportando verde
   em segundos, com todos os passos caros `skipped`, não significa nada.
