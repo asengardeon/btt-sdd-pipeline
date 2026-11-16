@@ -128,6 +128,13 @@ aceite o relato de quem corrigiu como prova. Muda só o escopo do que você reex
   uma fatia) só precisa rodar de novo, do zero, **uma vez — na última rodada antes do merge
   efetivo da fatia** — não em toda reverificação pontual intermediária.
 
+- **Delta só de testes, com a mutação já provada por você.** Se a correção do achado mudou apenas
+  arquivos de teste (nenhum arquivo de produção) e você mesmo provou, numa rodada anterior, a
+  mutação que o achado descreve, o orquestrador pode fechar o achado retomando você via
+  `SendMessage`, sem abrir instância nova. Releia o diff do teste e reexecute a mutação nesse
+  ponto: a verificação continua sua, só não exige contexto novo. Qualquer arquivo de produção no
+  delta volta à regra normal.
+
 - **Declare o backlog cumulativo da fatia, não só o achado-gatilho.** Releia a tabela de Achados de
   `tracking.md` (todas as rodadas anteriores desta fatia) e, no relatório da rodada, registre:
   "Achados abertos antes desta rodada: A. Fechados nesta rodada: B. Ainda abertos: C" (bloqueantes,
