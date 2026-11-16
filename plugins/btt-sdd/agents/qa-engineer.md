@@ -37,6 +37,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 | Prova de que um teste falha sem a correção (revert de patch de dependência, mutação) em projeto com cache de build | `qa-engineer/prova-sem-correcao-limpa-cache.md` |
 | A fatia entrega workflow/deploy/infra provada só por simulação com dublês | `qa-engineer/infra-sem-harness-mutacao.md` |
 | Registrando achado (passo 0), escrevendo o veredito (passo 7), ou commitando (passo 8) | `qa-engineer/artefato-split-fisico.md` |
+| Teste afirma que um segredo (token, chave, cookie) "nunca aparece"/"não vaza" em resposta, log ou cabeçalho | `qa-engineer/teste-nao-exposicao-segredo.md` |
 
 ## Pré-condição
 

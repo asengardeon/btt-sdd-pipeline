@@ -17,6 +17,10 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.62.2 — 2026-11-16
+
+- **Teste de não-exposição de segredo deriva o valor da sessão sob teste e prova com mutação** (#723): novo `agents/code-reviewer/teste-nao-exposicao-segredo.md` (confere a origem do valor procurado e exige a mutação que expõe o segredo) e `agents/qa-engineer/teste-nao-exposicao-segredo.md` (o QA aplica a mutação), com linha de índice nos dois agentes.
+
 ## 1.62.1 — 2026-11-16
 
 - **Ciclo draft→pronto depois de cada correção de código ou teste** (#724): `docs/gates/merge.md`, `skills/implement` (passo 5), `skills/code-review` (passo 2d) e `skills/qa` (passo 2a2) mandam converter o PR para draft e marcá-lo pronto de novo após o commit de correção, e conferir pelos passos do job (não pelo `conclusion`) que `Tests` e a cobertura rodaram na ponta. Um run cancelado por push seguinte pulava a suíte e só o `sre` da última etapa notava.
