@@ -195,6 +195,10 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    siga a seção "Retomando para corrigir achados de revisão" de
    `.claude/skills/sdd-implement/SKILL.md` (prefira retomar o mesmo agente que implementou a
    fatia via `SendMessage` para correções pequenas e objetivas, em vez de invocar um agente novo).
+   Quando a correção mudou só arquivos de teste e o próprio `code-reviewer` já provou a mutação do
+   achado numa rodada anterior, retome também **ele** via `SendMessage` para fechar o achado, em
+   vez de abrir uma instância nova a cada rodada (`.claude/agents/code-reviewer.md`, seção
+   "Escopo de uma rodada de reverificação de achado específico").
    Se aprovado (ou aprovado com ressalvas aceitas pelo usuário), **a próxima etapa é `/sdd-qa` —
    com uma exceção declarada.** A 4b (UX) roda ao final da spec, sobre o diff acumulado
    (`docs/SDD-WORKFLOW.md`, seção "Cadência: o que roda por fatia e o que roda ao final da spec"),

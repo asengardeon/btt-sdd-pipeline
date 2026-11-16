@@ -38,6 +38,10 @@ Resolva esse caminho a partir de onde **você** foi carregado: via junction glob
 (`.claude/agents/<seu-nome>.md`), é `docs/` na raiz do repositório do pipeline; via plugin, é
 `docs/` dentro do pacote. Se não conseguir determinar, pergunte a quem te invocou.
 
+**O template do `ux-review.md` é `specs/_template/ux-review.template.md`**, resolvido a partir da
+raiz do pipeline (o mesmo ponto que o `docs/` acima), e não do projeto onde você trabalha, que
+normalmente não tem `specs/_template/`. Nunca copie o modelo de outra spec.
+
 ## Índice de regras sob demanda
 
 Leia o arquivo-filho correspondente **só quando o gatilho bater** — nunca pré-carregue todos "por

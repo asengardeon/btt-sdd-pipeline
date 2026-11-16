@@ -17,6 +17,10 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.62.3 — 2026-11-16
+
+- **Reverificação só de teste pelo mesmo revisor e caminho do template de UX** (#725): `agents/code-reviewer.md` e `skills/code-review` (passo 5) permitem fechar o achado retomando o `code-reviewer` via `SendMessage` quando o delta é só de testes e ele já provou a mutação; `agents/ux-designer.md` cita `specs/_template/ux-review.template.md` como o template, a partir da raiz do pipeline. O item 3 (aviso do job `navegador`) fica fora: dependem do workflow de CI de cada projeto.
+
 ## 1.62.2 — 2026-11-16
 
 - **Teste de não-exposição de segredo deriva o valor da sessão sob teste e prova com mutação** (#723): novo `agents/code-reviewer/teste-nao-exposicao-segredo.md` (confere a origem do valor procurado e exige a mutação que expõe o segredo) e `agents/qa-engineer/teste-nao-exposicao-segredo.md` (o QA aplica a mutação), com linha de índice nos dois agentes.
