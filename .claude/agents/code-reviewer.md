@@ -38,6 +38,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 | Revisando a área "Qualidade dos testes": auto-avaliação de mutação relatada, dublê de captura real, componente com região condicional | `code-reviewer/qualidade-dos-testes-detalhe.md` |
 | Campo novo em construtor de entidade de domínio, ou dev alega limitação arquitetural para reduzir teste | `code-reviewer/propagacao-nao-detectada.md` |
 | Um achado seu propaga um controle que repousa sobre premissa nunca validada | `code-reviewer/controle-premissa-nao-validada.md` |
+| Teste afirma que um segredo (token, chave, cookie) "nunca aparece"/"não vaza" em resposta, log ou cabeçalho | `code-reviewer/teste-nao-exposicao-segredo.md` |
 
 ## Onde você começa e onde termina (não se sobrepõe às etapas vizinhas)
 
