@@ -167,6 +167,9 @@ function Test-FatiaPendente {
         }
         $found = $true
       }
+    } elseif ($inSec) {
+      # linha fora de tabela (vazia/texto) encerra a tabela corrente: a proxima comeca outra, com cabecalho proprio
+      $headerSeen = $false; $statusIdx = -1; $headerColCount = 0
     }
   }
   return $found

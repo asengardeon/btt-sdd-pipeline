@@ -17,6 +17,10 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.62.6 — 2026-11-19
+
+- **`sdd-status` lê só a tabela com coluna Status quando a decomposição tem mais de uma tabela** (#733): em `skills/status/scripts/sdd-status.sh` e `.ps1`, uma linha fora de tabela (vazia ou texto) encerra a tabela corrente e a seguinte começa com cabeçalho próprio. Antes, uma segunda tabela (ex.: `| ID | Validação na fatia |`) gerava um aviso falso de colunas deslocadas por linha, a cada execução.
+
 ## 1.62.5 — 2026-11-18
 
 - **`sdd-status` não conta tarefa `cancelado` como fatia pendente** (#730): `has_fatia_pendente()` em `skills/status/scripts/sdd-status.sh` e `.ps1` passa a ignorar Status `cancelad[oa]`, ao lado de `removid`/`descartad`; antes sugeria `/sdd-implement (retomar próxima fatia)` para uma spec sem trabalho pendente. `docs/gates/status-de-tarefas.md` documenta `cancelado` como valor válido.
