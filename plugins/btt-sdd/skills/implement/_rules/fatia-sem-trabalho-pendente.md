@@ -56,7 +56,17 @@ o usuário e ofereça, via `AskUserQuestion`, acionar `architect` para criar as 
 desta fatia (opção recomendada) antes de prosseguir — nunca inicie a fatia sem elas, mesmo que o
 usuário peça para pular o gate.
 
-## Garanta PRD/TRD commitados antes do primeiro worktree
+## Garanta PRD/TRD em `main` antes de começar; e commitados antes do primeiro worktree
+
+**Regra atual:** `/btt-sdd:prd` e `/btt-sdd:trd` publicam cada artefato num PR próprio (passo 5b de
+cada skill, `docs/GIT-WORKFLOW.md`). Antes de criar a branch da fatia, confirme que
+`specs/<slug>/prd/` e `specs/<slug>/trd/` (ou os arquivos legados) estão em `origin/main`
+(`git ls-tree -r origin/main --name-only -- specs/<slug>`). Se algum PR ainda está aberto, pare e
+peça ao usuário para mergeá-lo: nunca inicie a fatia sobre uma definição que não está em `main`.
+Como o worktree nasce de um ref commitado, PRD/TRD já mergeados também ficam visíveis a ele.
+
+**Spec em andamento, anterior a essa regra** (PRD/TRD só como arquivos não commitados): vale o
+caminho antigo abaixo.
 
 Ao criar a branch desta rodada, garanta que o PRD/TRD desta spec estão commitados em algum ref
 antes de invocar qualquer agente com `isolation: "worktree"`. Um `git worktree add` cria um
@@ -71,8 +81,8 @@ primeiro commit — antes de qualquer `git worktree add`/invocação com `isolat
 esta fatia.
 
 **Nunca** contorne isso commitando PRD/TRD direto em `main` (regra 1 de `docs/GIT-WORKFLOW.md` —
-ninguém commita direto nela) nem criando um PR de documentação avulso para isso — eles seguem
-incluídos no mesmo PR desta fatia, revisados normalmente como o resto do conteúdo da branch. Um
+ninguém commita direto nela) nem, **neste caminho antigo**, criando um PR de documentação avulso
+para isso — eles seguem incluídos no mesmo PR desta fatia, revisados normalmente como o resto do conteúdo da branch. Um
 agente invocado com `isolation: "worktree"` sem essa commitagem prévia falha de cara, porque o TRD
 da spec só existe como arquivo não commitado no checkout principal — forçando a implementação
 inteira a ser refeita (~28k tokens de custo). Se duas specs em paralelo estão nessa mesma situação,
