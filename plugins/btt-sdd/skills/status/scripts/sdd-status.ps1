@@ -103,7 +103,7 @@ function Get-ValidarDepoisPendentesCount {
 # (a) a convencao real usada pelos agentes de revisao nem sempre escreve
 # "concluido (mergeado)" - "aprovado (mergeado, PR #N)" e "implementado" tambem
 # significam tarefa concluida; (b) uma linha removida/nao aplicavel (-, n/a,
-# "removida", "descartada" na coluna Status) nao e uma pendencia real; (c) o caso
+# "removida", "descartada", "cancelada" na coluna Status) nao e uma pendencia real; (c) o caso
 # mais comum na pratica - "aprovado (SRE, PR #N)" - e ambiguo por texto sozinho:
 # a mesma string descreve tanto "SRE aprovou, PR ainda nao mergeado" (pendente de
 # verdade) quanto "SRE aprovou e o PR ja foi mergeado ha dias, ninguem atualizou a
@@ -152,7 +152,7 @@ function Test-FatiaPendente {
       }
       if ($statusIdx -ge 0 -and $statusIdx -lt $cols.Count) {
         $status = $cols[$statusIdx]
-        if ($status -match '(?i)conclu.do|aprovado.*mergead|^implementado$|n/a|removid|descartad') {
+        if ($status -match '(?i)conclu.do|aprovado.*mergead|^implementado$|n/a|removid|descartad|cancelad') {
           continue
         }
         $stripped = ($status -replace '[^a-zA-Z0-9]', '')

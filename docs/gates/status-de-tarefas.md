@@ -42,6 +42,9 @@ gravada por quem causa a transição.
   é comentada na issue (`gh issue comment`) pelo mesmo agente/skill que a causou — mesma
   tolerância de falha de 3 tentativas das demais interações com `gh` no pipeline (relate o erro e
   siga sem bloquear a transição por isso).
+- [ ] **`cancelado` é um Status válido**: tarefa descartada por decisão do usuário (texto riscado,
+  decisão registrada no TRD). `/sdd-status` e `/sdd-pending` não a contam como fatia pendente, no
+  mesmo grupo de `removido` e `descartado`.
 - [ ] `/sdd-implement`, ao final de cada rodada de implementação, apresenta ao usuário uma tabela
   com o Status atual de **todas** as tarefas da spec (não só as desta fatia) — visão de progresso
   ponta a ponta, não só do incremento mais recente.
