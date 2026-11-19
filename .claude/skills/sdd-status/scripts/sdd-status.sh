@@ -94,7 +94,7 @@ count_validar_depois_pendentes() {
 # (a) a convenção real usada pelos agentes de revisão nem sempre escreve
 # "concluído (mergeado)" — "aprovado (mergeado, PR #N)" e "implementado" também
 # significam tarefa concluída; (b) uma linha removida/não aplicável (`—`, `n/a`,
-# "removida", "descartada" na coluna Status) não é uma pendência real; (c) o caso
+# "removida", "descartada", "cancelada" na coluna Status) não é uma pendência real; (c) o caso
 # mais comum na prática — "aprovado (SRE, PR #N)" — é ambíguo por texto sozinho:
 # a mesma string descreve tanto "SRE aprovou, PR ainda não mergeado" (pendente de
 # verdade) quanto "SRE aprovou e o PR já foi mergeado há dias, ninguém atualizou a
@@ -115,7 +115,7 @@ has_fatia_pendente() {
   while IFS= read -r status; do
     [ -z "$status" ] && continue
     lstatus="$(printf '%s' "$status" | tr '[:upper:]' '[:lower:]')"
-    if printf '%s' "$lstatus" | grep -qE 'conclu.*do|aprovado.*mergead|^implementado$|n/a|removid|descartad'; then
+    if printf '%s' "$lstatus" | grep -qE 'conclu.*do|aprovado.*mergead|^implementado$|n/a|removid|descartad|cancelad'; then
       continue
     fi
     stripped="$(printf '%s' "$status" | tr -cd '[:alnum:]')"

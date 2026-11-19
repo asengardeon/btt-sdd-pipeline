@@ -17,6 +17,10 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.62.5 — 2026-11-18
+
+- **`sdd-status` não conta tarefa `cancelado` como fatia pendente** (#730): `has_fatia_pendente()` em `skills/status/scripts/sdd-status.sh` e `.ps1` passa a ignorar Status `cancelad[oa]`, ao lado de `removid`/`descartad`; antes sugeria `/sdd-implement (retomar próxima fatia)` para uma spec sem trabalho pendente. `docs/gates/status-de-tarefas.md` documenta `cancelado` como valor válido.
+
 ## 1.62.4 — 2026-11-18
 
 - **Push antes do QA na última fatia com e2e que só roda no CI** (#729): `skills/qa` ganha o passo 2c (com o label documentado já aplicado e spec e2e nova, o orquestrador faz o push antes de invocar o `qa-engineer` e passa o id do run), e `docs/GIT-WORKFLOW.md` registra que isso não quebra o push único dos artefatos de revisão.
