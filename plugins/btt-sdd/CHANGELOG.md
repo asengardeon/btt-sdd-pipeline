@@ -17,6 +17,10 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.62.4 — 2026-11-18
+
+- **Push antes do QA na última fatia com e2e que só roda no CI** (#729): `skills/qa` ganha o passo 2c (com o label documentado já aplicado e spec e2e nova, o orquestrador faz o push antes de invocar o `qa-engineer` e passa o id do run), e `docs/GIT-WORKFLOW.md` registra que isso não quebra o push único dos artefatos de revisão.
+
 ## 1.62.3 — 2026-11-16
 
 - **Reverificação só de teste pelo mesmo revisor e caminho do template de UX** (#725): `agents/code-reviewer.md` e `skills/code-review` (passo 5) permitem fechar o achado retomando o `code-reviewer` via `SendMessage` quando o delta é só de testes e ele já provou a mutação; `agents/ux-designer.md` cita `specs/_template/ux-review.template.md` como o template, a partir da raiz do pipeline. O item 3 (aviso do job `navegador`) fica fora: dependem do workflow de CI de cada projeto.
