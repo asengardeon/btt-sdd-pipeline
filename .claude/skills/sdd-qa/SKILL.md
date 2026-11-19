@@ -67,6 +67,11 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    Markdown desses arquivos), e envie (push) o resultado. Isso evita que esta e as
    etapas seguintes (segurança, SRE) commitem "às cegas" sobre uma base que já vai gerar conflito —
    descoberto só na última etapa, exigindo uma correção retroativa.
+2c. **Se esta é a última fatia, o projeto documenta um label que ativa o e2e de navegador no CI e a
+   fatia traz spec e2e nova, faça o push antes de invocar o `qa-engineer`**, com o label já
+   aplicado, e passe o id do run do CI na instrução. Sem isso o QA só pode dizer "não executado
+   localmente" e a ressalva fica aberta até o fim da cadeia. O push único continua valendo para os
+   artefatos de revisão que vêm depois (`docs/GIT-WORKFLOW.md`).
 3. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 3b para
    registrar a duração desta invocação. Invoque o agente `qa-engineer` (Agent tool,
    `subagent_type: "qa-engineer"`) passando os caminhos do PRD e TRD e o PR/branch da feature

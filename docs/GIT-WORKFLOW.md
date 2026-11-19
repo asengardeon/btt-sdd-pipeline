@@ -226,7 +226,9 @@ proteção adicional para o caminho do harness, onde não há garantia observada
 prefira o commit local mais recente sobre o estado publicado em `origin`. Um push intermediário
 aqui não quebra a regra de "push único por fatia": aquela regra é sobre não fragmentar pushes
 arbitrariamente, não sobre nunca dar push quando outro agente isolado depende de ver aquele commit
-(issue #488).
+(issue #488). O mesmo vale para o push antes do QA na última fatia com e2e novo que só roda no CI
+sob um label documentado (`/sdd-qa`, passo 2c): o QA precisa do run real, e os artefatos de revisão
+seguintes continuam no push único.
 
 **Mecanismo equivalente manual** (Agent tool sem essa opção, ou um agente seguindo sua própria
 definição `.md` diretamente fora do harness): crie um worktree próprio antes de começar a
