@@ -133,6 +133,8 @@ has_fatia_pendente() {
     BEGIN { insec = 0; status_idx = 0; header_seen = 0; hdr_n = 0 }
     /^#{1,4}[[:space:]].*Decomposição de tarefas/ { insec = 1; next }
     insec == 1 && /^#{1,4}[[:space:]]/ { insec = 0 }
+    # linha fora de tabela (vazia/texto) encerra a tabela corrente: a próxima começa outra, com cabeçalho próprio
+    insec == 1 && !/^\|/ { header_seen = 0; status_idx = 0 }
     insec == 1 && /^\|/ {
       if ($0 ~ /^\|[-|[:space:]]+\|?$/) next
       line = $0
