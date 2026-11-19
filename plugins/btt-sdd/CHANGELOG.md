@@ -17,6 +17,10 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.63.0 — 2026-11-19
+
+- **PRD e TRD têm ciclo próprio até o merge em `main`** (#736): `skills/prd` e `skills/trd` ganham o passo 5b (issue, branch `docs/<NNNN-slug>-prd`/`-trd`, commit do artefato e do `timing-log.md`, PR com `Closes #N`; o merge é do usuário). `skills/trd` confere o PRD em `main` (passo 2b) e `skills/implement` (`_rules/fatia-sem-trabalho-pendente.md`) confere PRD e TRD em `main` antes da fatia 1. Antes, os dois ficavam como arquivos não commitados até o primeiro commit da fatia 1 e a definição não aparecia no repositório. Spec já em andamento, com PRD/TRD não commitados, segue o caminho antigo. `docs/GIT-WORKFLOW.md` atualizado.
+
 ## 1.62.6 — 2026-11-19
 
 - **`sdd-status` lê só a tabela com coluna Status quando a decomposição tem mais de uma tabela** (#733): em `skills/status/scripts/sdd-status.sh` e `.ps1`, uma linha fora de tabela (vazia ou texto) encerra a tabela corrente e a seguinte começa com cabeçalho próprio. Antes, uma segunda tabela (ex.: `| ID | Validação na fatia |`) gerava um aviso falso de colunas deslocadas por linha, a cada execução.

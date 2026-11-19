@@ -320,7 +320,10 @@ Detalhe completo em `docs/QUALITY-GATES.md` — aqui só o resumo:
    antes de criar a branch, crie uma branch com o prefixo certo (`fix/`, `hotfix/`, `chore/`,
    `docs/`, `refactor/`, `perf/`, `test/`, `ci/` — tabela completa em `docs/GIT-WORKFLOW.md`) e
    abra PR referenciando `Closes #N` antes de mergear — todo PR fica sempre vinculado à issue que
-   registra o porquê da mudança, não só o diff que mostra o quê mudou.
+   registra o porquê da mudança, não só o diff que mostra o quê mudou. **PRD e TRD também têm ciclo
+   próprio até `main`** (`/sdd-prd` e `/sdd-trd`, passo 5b): cada um vira um PR `docs/` logo após a
+   aprovação, mergeado pelo usuário, sem esperar a fatia 1. `/sdd-trd` só começa com o PRD em
+   `main` e `/sdd-implement` só com PRD e TRD em `main`.
 6. Nunca avance uma etapa sem o artefato de entrada da etapa anterior existir e estar aprovado
    pelo usuário (não apenas gerado).
 7. Nunca escreva código de produção fora de `src/`/`frontend/` seguindo a separação de

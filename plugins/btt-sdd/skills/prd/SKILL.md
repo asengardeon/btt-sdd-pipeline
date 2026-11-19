@@ -115,16 +115,25 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    nesta etapa** — investigação executada sem agente, rodadas de `AskUserQuestion` que custaram
    tempo real de relógio, intermediação de plano/pergunta de subagente isolado —, **registre-o como
    uma linha própria** com `Agente = orquestrador (sem agente)`, em vez de deixá-lo invisível no log
-   (`specs/_template/timing-log.template.md`, seção "Trabalho conduzido pelo orquestrador"). Como
-   o PRD em si (`docs/GIT-WORKFLOW.md`, seção "Mapeamento no pipeline SDD"), esse
-   arquivo ainda não tem branch/PR nesta etapa — fica como mudança não commitada até
-   `/btt-sdd:implement`, passo 2c-bis, incluí-lo no primeiro commit da branch da 1ª fatia junto com
-   PRD/TRD.
+   (`specs/_template/timing-log.template.md`, seção "Trabalho conduzido pelo orquestrador"). Esse
+   arquivo entra no commit do PRD (passo 5b).
 4. Depois que o agente retornar, mostre ao usuário um resumo do PRD gerado (não o arquivo
    inteiro) e pergunte se aprova ou quer ajustes.
 5. Se pedir ajustes, repasse o feedback ao agente `product-design` (ou edite diretamente se for
    um ajuste trivial de texto) até haver aprovação explícita.
-6. Ao final, informe que a próxima etapa é `/btt-sdd:trd`.
+5b. **Publique o PRD aprovado: ciclo próprio até o merge em `main`, sem esperar a fatia 1**
+   (`docs/GIT-WORKFLOW.md`, seção "Mapeamento no pipeline SDD"). Um PRD que fica só como arquivo
+   não commitado não aparece no repositório: a definição se perde se a spec for abandonada ou se
+   a primeira fatia demorar. Com a aprovação do passo 5:
+   a. Confirme (ou crie) uma issue do GitHub para a spec e anote o número.
+   b. A partir da base atualizada (`git pull`), crie a branch `docs/<NNNN-slug>-prd`.
+   c. Commite `specs/<NNNN-slug>/prd/` (ou o arquivo informado) e o `timing-log.md`. Não commite
+      mais nada: mudança de outra tarefa não entra.
+   d. `git push -u origin <branch>` e abra o PR com `Closes #<N>` no corpo. **Pare aí: o merge é
+      decisão do usuário.** Informe o número do PR.
+   Sem remoto ou sem `gh`, commite na branch, avise e deixe o push e o PR para o usuário.
+6. Ao final, informe que a próxima etapa é `/btt-sdd:trd`, **que só começa com o PRD já em `main`**
+   (o `/btt-sdd:trd` confere isso e para se o PR do PRD ainda estiver aberto).
 
 ## Quando usar sem o agente
 

@@ -27,6 +27,11 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    `specs/<slug>/prd.md` (formato legado) existe.
 2. Se nenhum PRD foi encontrado nem indicado, informe o usuário e sugira rodar `/btt-sdd:prd`
    primeiro — não prossiga sem PRD.
+2b. **Confirme que o PRD está em `main`** (`git fetch origin` e `git ls-tree -r origin/main --name-only
+   -- specs/<slug>/prd`, ou `prd.md` no formato legado). Se o PR do PRD (`/btt-sdd:prd`, passo 5b)
+   ainda está aberto, pare e peça ao usuário para mergeá-lo antes de seguir. Um PRD que só existe
+   na branch dele ou no checkout local não está na definição do repositório. **Spec já em
+   andamento**, com PRD só como arquivo não commitado: avise o usuário e siga, sem bloquear.
 3. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 3c para
    registrar a duração desta invocação. Invoque o agente `architect` (Agent tool,
    `subagent_type: "architect"`) passando o caminho do PRD, as flags `--minima-mudanca`/`--paridade` quando presentes, e instrução para salvar o TRD no
@@ -57,13 +62,21 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    tempo real de relógio, intermediação de plano/pergunta de subagente isolado —, **registre-o como
    uma linha própria** com `Agente = orquestrador (sem agente)`, em vez de deixá-lo invisível no log
    (`specs/_template/timing-log.template.md`, seção "Trabalho conduzido pelo orquestrador").
-   Como o TRD em si (`docs/GIT-WORKFLOW.md`, seção "Mapeamento no pipeline SDD"), esse arquivo
-   ainda não tem branch/PR nesta etapa — fica como mudança não commitada até `/btt-sdd:implement`,
-   passo 2c-bis, incluí-lo no primeiro commit da branch da 1ª fatia junto com PRD/TRD.
+   Esse arquivo entra no commit do TRD (passo 5b).
 4. Mostre ao usuário um resumo do TRD (arquitetura proposta, ports definidos, principais
    trade-offs) e peça aprovação explícita.
 5. Se pedir ajustes, repasse ao `architect` até aprovação.
-6. Ao final, informe que a próxima etapa é `/btt-sdd:implement`.
+5b. **Publique o TRD aprovado: ciclo próprio até o merge em `main`, sem esperar a fatia 1**
+   (`docs/GIT-WORKFLOW.md`, seção "Mapeamento no pipeline SDD"). Com a aprovação do passo 5:
+   a. Confirme (ou crie) uma issue do GitHub para o TRD e anote o número.
+   b. A partir da base atualizada (`git pull`), crie a branch `docs/<NNNN-slug>-trd`.
+   c. Commite `specs/<NNNN-slug>/trd/` (ou o arquivo informado), `docs/STACK.md` e ADRs novos desta
+      rodada, se houver, e o `timing-log.md`. Não commite mais nada.
+   d. `git push -u origin <branch>` e abra o PR com `Closes #<N>` no corpo. **Pare aí: o merge é
+      decisão do usuário.** Informe o número do PR.
+   Sem remoto ou sem `gh`, commite na branch, avise e deixe o push e o PR para o usuário.
+6. Ao final, informe que a próxima etapa é `/btt-sdd:implement`, **que só começa com PRD e TRD já
+   em `main`**.
 
 ## Quando usar sem o agente
 
