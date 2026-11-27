@@ -51,3 +51,11 @@ falso-positivo sempre visível (ex.: mensagem de erro renderizada mesmo sem nenh
 submissão) só aparece quando alguém testa a ausência explicitamente. Lacuna de cobertura é achado
 por si só, mesmo que o bug ainda não tenha se manifestado (issue #494,
 `asengardeon/btt-sdd-pipeline`).
+
+**Teste de arquitetura parametrizado por tabela de configuração** (lista fechada de consumidores,
+tabela guardada por gatilho, política por tabela): confira que existe um teste de sanidade com a
+cardinalidade esperada dos casos gerados (`docs/TESTING.md`, seção "Teste de arquitetura
+parametrizado por tabela afirma a cardinalidade do que cobre"). Mute pelo menos um item de cada
+lista fechada (acrescente um consumidor fantasma) e confirme que o teste falha. Lista que cobre
+menos itens que o pretendido passa verde e só a mutação revela (issue #739, `asengardeon/btt-sdd-
+pipeline`).

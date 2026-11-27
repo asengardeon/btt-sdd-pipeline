@@ -17,6 +17,10 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.63.2 — 2026-11-26
+
+- **Teste de arquitetura parametrizado por tabela afirma a cardinalidade** (#739): seção nova em `docs/TESTING.md` e item em `agents/code-reviewer/qualidade-dos-testes-detalhe.md` — teste de sanidade com o número esperado de casos e mutação de um item de cada lista fechada.
+
 ## 1.63.1 — 2026-11-26
 
 - **Serviços locais conferidos antes de despachar QA, segurança e SRE** (#738): `skills/qa`, `skills/security` e `skills/sre` ganham um passo antes da invocação do agente — rodar `docker ps` (ou o equivalente documentado) e, com serviço parado, perguntar ao usuário se sobe o ambiente ou aceita a evidência do CI. Item novo em `docs/gates/qa.md`.
