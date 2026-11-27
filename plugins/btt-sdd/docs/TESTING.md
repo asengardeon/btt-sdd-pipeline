@@ -323,6 +323,20 @@ Corolário, válido além de DOM: captura de fragmento ⟹ o dublê não pode de
 seletor ⟹ a interação precisa ser por locator estrito, para que ambiguidade vire falha alta em vez
 de silêncio.
 
+## Teste de arquitetura parametrizado por tabela afirma a cardinalidade do que cobre
+
+Quando um teste de arquitetura roda uma vez por linha de uma tabela de configuração (lista fechada
+de consumidores de um port, tabelas guardadas por gatilho, política por tabela), um erro de forma
+na tabela reduz a cobertura sem derrubar nada. Exemplo: duas entradas aninhadas por engano dentro
+de outra, e o provider de dados que itera só as chaves de primeiro nível. O teste passa verde
+cobrindo 3 dos 5 itens pretendidos, e o código de produção satisfaz as listas, então a suíte não
+acusa.
+
+Regra: junto de cada teste desse tipo, escreva um teste de sanidade que compara o número de casos
+gerados com o número esperado, ou que confirma que a fonte da lista é única e plana. Sem ele, um
+consumidor novo de um port fora da tabela passa sem aviso (issue #739, `asengardeon/btt-sdd-
+pipeline`).
+
 ## O gate de cobertura de 80%
 
 - **Por pacote**: `src/` e, se existir, `frontend/` têm cada um seu próprio gate de 80% — não é uma
