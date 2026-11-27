@@ -50,6 +50,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 | Antes de reportar a trilha como concluída (passo 5b) | `frontend-developer/confirmar-push-origin.md` |
 | Trilha tocou mais de um ponto de entrada estruturalmente equivalente, ou corrigindo achado de revisão do tipo "faltou guarda/asserção/checagem neste ponto" (passo 5c) | `frontend-developer/pontos-equivalentes-cobertura.md` |
 | Working tree isolado, ao encerrar a sessão (passo 7) | `frontend-developer/worktree-saida.md` |
+| Devolvendo o relatório da trilha com código que diverge do desenho do TRD (passo 5b) | `frontend-developer/divergencias-do-trd-para-emenda.md` |
 | e2e precisa autenticar contra tela que ainda não existe nesta fatia (regra 5) | `frontend-developer/e2e-auth-via-api.md` |
 | Mudança em tela já existente, ou tela com wireframe pré-divergência `TRD-N` (regras 6/7) | `frontend-developer/grep-antes-de-concluir.md` |
 | Depurando erro opaco, ou reportando mutação como evidência | `frontend-developer/evidencia-direta-nao-suposicao.md` |

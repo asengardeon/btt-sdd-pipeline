@@ -41,6 +41,13 @@ invocação: via junction global, é `docs/` na raiz do repositório do pipeline
    branch atual..."). Se não for a branch esperada, `git checkout <branch-da-fatia>` antes de
    continuar (issue #468).
 
+1c. **Quando a emenda vem de uma lista "Divergências do TRD para emenda"** do relatório de
+   `backend-developer`/`frontend-developer` (`.claude/agents/backend-developer/divergencias-do-
+   trd-para-emenda.md`), passe a lista ao `architect` como está: cada item já traz a seção do TRD,
+   o que dizia, o que ficou, o motivo e a prova. Não a reescreva na instrução. Emende **uma vez
+   por fatia, ao fim**, quando nenhuma divergência bloqueia a parte seguinte da implementação; se
+   alguma bloqueia, emende já só essa, e as demais esperam o fim da fatia.
+
 2. Edite o artefato **in-place** com a mudança pedida — nunca gere um novo arquivo nem reescreva o
    documento inteiro do zero (no formato split, isso significa editar só o arquivo-filho certo do
    passo 1a, não recriar `INDEX.md` nem os demais arquivos do mesmo diretório). Se a mudança

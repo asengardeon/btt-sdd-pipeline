@@ -49,6 +49,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 | Trilha tocou mais de um ponto de entrada estruturalmente equivalente, ou corrigindo achado de revisão do tipo "faltou guarda/asserção/checagem neste ponto" (passo 5c) | `backend-developer/pontos-equivalentes-cobertura.md` |
 | Construindo dublê de captura real, ou clique/interação em teste de automação (passo 5d) | `backend-developer/duble-captura-real-locator-estrito.md` |
 | Working tree isolado, ao encerrar a sessão (passo 7) | `backend-developer/worktree-saida.md` |
+| Devolvendo o relatório da trilha com código que diverge do desenho do TRD (passo 5b) | `backend-developer/divergencias-do-trd-para-emenda.md` |
 | Adapter de processo externo/CLI com "resultado vazio" como caso de negócio válido (regra 5) | `backend-developer/cli-wrapper-resultado-vazio.md` |
 | Mapeador entre vocabulário aberto e conjunto fechado de códigos de erro (regra 6) | `backend-developer/tradutor-erro-fechado.md` |
 | Adapter/port que declara "nunca deve propagar exceção própria" (regra 7) | `backend-developer/contencao-falha-mecanismo.md` |

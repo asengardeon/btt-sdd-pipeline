@@ -17,6 +17,10 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.64.0 — 2026-11-26
+
+- **Relatório de implementação com seção estruturada "Divergências do TRD para emenda"** (#740): arquivos-filho novos `agents/backend-developer/divergencias-do-trd-para-emenda.md` e `agents/frontend-developer/...` (índice nos dois agentes) padronizam a lista (seção do TRD, o que dizia, o que ficou, motivo, prova); `skills/amend` ganha o passo 1c, que passa a lista ao `architect` sem reescrevê-la e emenda uma vez por fatia, salvo divergência que bloqueie a parte seguinte.
+
 ## 1.63.4 — 2026-11-26
 
 - **Auditoria de segurança da fatia final lista os arquivos de entrada lidos** (#742): `agents/security-engineer/auditoria-completa-fatia-final.md` exige a seção "Arquivos de entrada lidos" e só aceita veredito de auditoria completa com todos lidos; `skills/security` ganha o passo 3e, que reenvia o agente quando a seção falta ou tem item "não lido".
