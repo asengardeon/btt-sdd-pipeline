@@ -59,3 +59,10 @@ parametrizado por tabela afirma a cardinalidade do que cobre"). Mute pelo menos 
 lista fechada (acrescente um consumidor fantasma) e confirme que o teste falha. Lista que cobre
 menos itens que o pretendido passa verde e só a mutação revela (issue #739, `asengardeon/btt-sdd-
 pipeline`).
+
+**Teste que espera exceção com `try { ação; falhar() } catch (Tipo)`**: confira se o tipo
+capturado é ancestral da exceção de falha do framework de teste (ex.: `fail()` do PHPUnit estende
+`RuntimeException`, e `catch (RuntimeException)` engole a falha). Se for, o teste nunca reprova: é
+achado bloqueante, porque cobre só na aparência. Peça `expectException`/equivalente nativo, ou
+captura com a asserção fora do `catch`, e varra o repositório pelo mesmo padrão (issue #741,
+`asengardeon/btt-sdd-pipeline`).

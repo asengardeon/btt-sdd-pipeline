@@ -41,6 +41,7 @@ garantia" (`docs/MICRO-CONTEXT.md`, seção 1).
 | `AskUserQuestion` indisponível nesta invocação (ambiguidade pontual, ou plano inteiro da Fase 1) | `backend-developer/askuserquestion-indisponivel.md` |
 | Abrindo/atualizando o PR da fatia — `Closes #N` ou título com quebra de contrato (passo 1) | `backend-developer/pr-step1-mecanica.md` |
 | Rodando o comando de teste de um incremento (passo 2) | `backend-developer/nunca-run-in-background-teste.md` |
+| Escrevendo teste que espera exceção com `try`/`catch` + falha explícita, em vez do mecanismo nativo (passo 2) | `backend-developer/falha-dentro-de-try-catch.md` |
 | Commit adicional depois de reportar a trilha pronta, ou tarefa sem código de produção (passo 5) | `backend-developer/coverage-artefato-excecoes.md` |
 | Suíte completa revela erros pré-existentes/não relacionados (passo 5a) | `backend-developer/reconciliar-erros-pre-existentes.md` |
 | Trilha gera e commita artefato a partir de contrato (OpenAPI/GraphQL/protobuf) (passo 5a-ter) | `backend-developer/artefato-gerado-vs-commitado.md` |
