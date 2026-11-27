@@ -96,3 +96,8 @@
   passo 6). Se alguma antecipou, quem fizer o push é quem rodar por último de verdade, não o QA
   só porque rodou primeiro. Commit e integração continuam obrigatórios: artefato que não chega à
   branch é o que este item existe para impedir.
+- [ ] **Serviços locais no ar antes de despachar `qa-engineer`, `security-engineer` ou `sre`.**
+  Quem orquestra a etapa confere os serviços de que a suíte de integração depende (`docker ps` ou
+  o equivalente documentado do projeto) antes de invocar o agente. Serviço parado: pergunte ao
+  usuário se sobe o ambiente ou aceita a evidência do CI, e registre a resposta na instrução. Sem
+  isso o agente tenta a suíte, falha em cascata e as etapas seguintes herdam o "não medido".

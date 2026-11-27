@@ -17,6 +17,10 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.63.1 — 2026-11-26
+
+- **Serviços locais conferidos antes de despachar QA, segurança e SRE** (#738): `skills/qa`, `skills/security` e `skills/sre` ganham um passo antes da invocação do agente — rodar `docker ps` (ou o equivalente documentado) e, com serviço parado, perguntar ao usuário se sobe o ambiente ou aceita a evidência do CI. Item novo em `docs/gates/qa.md`.
+
 ## 1.63.0 — 2026-11-19
 
 - **PRD e TRD têm ciclo próprio até o merge em `main`** (#736): `skills/prd` e `skills/trd` ganham o passo 5b (issue, branch `docs/<NNNN-slug>-prd`/`-trd`, commit do artefato e do `timing-log.md`, PR com `Closes #N`; o merge é do usuário). `skills/trd` confere o PRD em `main` (passo 2b) e `skills/implement` (`_rules/fatia-sem-trabalho-pendente.md`) confere PRD e TRD em `main` antes da fatia 1. Antes, os dois ficavam como arquivos não commitados até o primeiro commit da fatia 1 e a definição não aparecia no repositório. Spec já em andamento, com PRD/TRD não commitados, segue o caminho antigo. `docs/GIT-WORKFLOW.md` atualizado.

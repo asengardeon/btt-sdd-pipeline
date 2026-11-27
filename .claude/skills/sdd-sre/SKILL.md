@@ -72,6 +72,11 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
    até esta última etapa, descoberta só pelo `sre` depois que code review, QA e segurança já
    tiverem commitado às cegas sobre uma base que gera conflito — exigindo uma invocação extra só
    para resolver retroativamente.
+2c. **Confira os serviços locais de que a suíte de integração depende antes de invocar o agente**
+   (`docs/gates/qa.md`, item "Serviços locais no ar"). Rode o comando barato do projeto (`docker
+   ps` ou o equivalente documentado). Se algum serviço estiver parado, pergunte ao usuário via
+   `AskUserQuestion` — subir o ambiente ou aceitar a evidência do CI — **antes** de gastar a
+   invocação, e escreva a resposta na instrução ao agente.
 3. **Anote o horário atual (`date -u +%Y-%m-%dT%H:%M:%SZ`)** — vai precisar dele no passo 3b para
    registrar a duração desta invocação. Invoque o agente `sre` (Agent tool, `subagent_type:
    "sre"`) passando o caminho do TRD (seção de pilares de engenharia/infra), do `qa-report.md` e do
