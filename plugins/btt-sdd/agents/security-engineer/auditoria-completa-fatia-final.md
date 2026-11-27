@@ -20,3 +20,12 @@ commit da branch, ou `main`), que já é o comportamento padrão de uma primeira
 equivalente) e registrar o veredito em uma linha citando esse comando como evidência — não
 reescrever do zero a investigação inteira em prosa só porque é a fatia final. Prosa detalhada de
 investigação continua obrigatória só para a(s) área(s) que o diff efetivamente toca.
+
+**Registre os arquivos de entrada lidos.** Na fatia final, o artefato desta rodada traz uma seção
+"Arquivos de entrada lidos" com um item por arquivo que a instrução mandou ler (plano da fatia,
+casos de uso, qualidade, plano de testes e tarefas do TRD, investigações citadas, relatórios das
+etapas anteriores): o caminho e, para cada um, "lido" ou "não lido" com o motivo. O veredito de
+auditoria completa só vale com todos os itens lidos. Com algum "não lido", o veredito é
+"incompleto", sem aprovação, e o agente lista o que falta (issue #742, `asengardeon/btt-sdd-
+pipeline`). Varredura de ferramenta (segredos, dependências, análise estática, mutações) não
+substitui essa leitura.
