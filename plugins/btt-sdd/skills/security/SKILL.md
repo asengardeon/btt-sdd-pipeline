@@ -171,6 +171,11 @@ fim da spec, e rodá-la por fatia é exatamente o custo que a cadência existe p
 
    Confirmar não é zelo: os itens de gate que antes exigiam push nasceram de artefato que não
    chegava à branch. A durabilidade continua obrigatória — o meio é que mudou.
+3e. **Na fatia final, confira a seção "Arquivos de entrada lidos" do artefato antes de mostrar o
+   veredito** (`.claude/agents/security-engineer/auditoria-completa-fatia-final.md`). Se algum
+   arquivo da instrução está "não lido", ou a seção falta, o veredito de auditoria completa não
+   vale: reenvie o agente (`SendMessage`) para ler o que falta, em vez de aprovar com a ressalva
+   declarada.
 4. Mostre ao usuário o veredito geral e os achados por área (OWASP, segredos, autenticação,
    validação de entrada, dependências).
 5. Se reprovado, informe que a feature volta para `/btt-sdd:implement` com os achados listados — e

@@ -17,6 +17,10 @@ partir do histórico real de PRs/commits deste repositório (2026-11-02) — cad
 entrada a entrada porque reflete quem escreveu aquele PR na época. Da próxima versão em diante,
 toda entrada nasce no próprio PR que bate a versão (passo 3c acima), não mais reconstruída depois.
 
+## 1.63.4 — 2026-11-26
+
+- **Auditoria de segurança da fatia final lista os arquivos de entrada lidos** (#742): `agents/security-engineer/auditoria-completa-fatia-final.md` exige a seção "Arquivos de entrada lidos" e só aceita veredito de auditoria completa com todos lidos; `skills/security` ganha o passo 3e, que reenvia o agente quando a seção falta ou tem item "não lido".
+
 ## 1.63.3 — 2026-11-26
 
 - **Teste que espera exceção não captura a própria falha do framework** (#741): arquivo-filho novo `agents/backend-developer/falha-dentro-de-try-catch.md` (índice em `backend-developer.md`) e item em `agents/code-reviewer/qualidade-dos-testes-detalhe.md`. `try { ação; fail() } catch (Tipo)` em que o tipo é ancestral da exceção de falha do framework (PHPUnit: `RuntimeException`) nunca reprova; usar o mecanismo nativo ou afirmar fora do `catch`.
